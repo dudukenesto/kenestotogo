@@ -68,7 +68,8 @@ class Documents extends Component {
   }
 
   onEndReached() {
-    this.props.dispatch(this.props.scrollFunc())
+    const {dispatch, env, sessionToken, documentlist} = this.props
+    dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
   }
 
 
@@ -163,11 +164,11 @@ class Documents extends Component {
   }
 
   _renderSectionHeader(sectionData, sectionID) {
+   
     return (
+       
        <View style={styles.backButton}>
-        
-            <Text style={styles.backLabel}>{sectionID}</Text>
-          
+            <Text style={styles.backLabel}>{sectionData}</Text>
         </View>
       )
   }

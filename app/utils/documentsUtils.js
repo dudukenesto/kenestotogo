@@ -6,19 +6,18 @@ import stricturiEncode from 'strict-uri-encode'
 export function constructRetrieveDocumentsUrl(env, sessionToken, fId) {
 
     var urls = _.find(config.urls, { 'env': env });
-    var apiBaseUrl = config.urls.ApiBaseUrl;
-    const encodeSessionToken  = encodeURIComponent(sessionToken)
+    var apiBaseUrl = urls.ApiBaseUrl;
     var url
     if (urls == null)
         return null;
 
     if(fId == undefined || fId=="")
       {
-        return  `${apiBaseUrl}/KDocuments.svc/RetrieveDocuments?t=${encodeSessionToken}`
+        return  `${apiBaseUrl}/KDocuments.svc/RetrieveDocuments?t=${sessionToken}`
       }
       else
       {
-        return  `${apiBaseUrl}/KDocuments.svc/RetrieveDocuments?t=${encodeSessionToken}&fid=${fId}`
+        return  `${apiBaseUrl}/KDocuments.svc/RetrieveDocuments?t=${sessionToken}&fid=${fId}`
       }   
 
 }
