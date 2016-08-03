@@ -136,6 +136,8 @@ const styles = StyleSheet.create({
         if (value == null) { // if validation fails, value will be null
             return false; // value here is an instance of Person
         }
+        // kuku
+
        this.props.dispatch(this.props.login(this.state.value.username, this.state.value.password, this.props.env))
    }
     
