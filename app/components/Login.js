@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
             return false; // value here is an instance of Person
         }
         // kuku
+
        this.props.dispatch(this.props.login(this.state.value.username, this.state.value.password, this.props.env))
    }
     
