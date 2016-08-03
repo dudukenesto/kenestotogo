@@ -18,6 +18,8 @@
 // )
 // AppRegistry.registerComponent('KenestoM', () => KenestoM);
 
+// dudu
+
 import React from 'react-native'
 import Root from './app/root'
 
