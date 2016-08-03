@@ -45,7 +45,8 @@ function accessReducer (state = { isLoggedIn : false, token: "" , env : 'dev', i
             ...state, 
             isLoggedIn: action.isLoggedIn, 
             sessionToken: action.sessionToken, 
-            isFetching: false
+            isFetching: false,
+            env: action.env
         }
        
     }
