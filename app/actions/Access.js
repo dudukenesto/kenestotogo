@@ -1,6 +1,7 @@
 import * as types from '../constants/ActionTypes';
 import {getAuthUrl, getLoginUrl, getForgotPasswordUrl, clearCredentials, setCredentials} from '../utils/accessUtils';
 import { push, pop } from './navActions'
+var stricturiEncode = require('strict-uri-encode');
 
 export function updateIsFetching(isFetching: boolean){
     return {
@@ -146,8 +147,9 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                         })
                         .then( (responseData) => {
                             setCredentials(userId, password, env);
-                            console.log('token = ' + token)
-                            return dispatch(updateLoginInfo(true, token));
+                            var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
+
+                            return dispatch(updateLoginInfo(true, stricturiEncode(sessionToken)));
                          
 
                         })
