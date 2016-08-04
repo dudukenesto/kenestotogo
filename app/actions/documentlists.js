@@ -5,7 +5,7 @@ let {
   Alert
 } = React
 
-function fetchDocumentsTable(url, documentlist, actionType) {
+function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
   return (dispatch, getState) => {
     dispatch(requestDocumentsTable(documentlist))
     console.log("fetchDocumentsTable:"+url)
@@ -30,17 +30,10 @@ function fetchDocumentsTable(url, documentlist, actionType) {
         //Actions.error({data: 'get documents faliled failed'})
         Alert('Failed to get documents')
       })
-      .then((responseData) => {
-
-        //  if (responseData.ResponseStatus == 'FAILED')
-        //  {
-        //    Alert('Action failed')
-        //  }
-      })
   }
 }
 
-export function fetchTableIfNeeded(env, sessionToken, documentlist) {
+export function fetchTableIfNeeded(env:string, sessionToken:string, documentlist: Object) {
   return (dispatch, getState) => {
     const {documentlists} = getState()
     if (shouldFetchDocuments(documentlists, documentlist)) {
@@ -50,7 +43,7 @@ export function fetchTableIfNeeded(env, sessionToken, documentlist) {
   }
 }
 
-export function changeTable(env, sessionToken, documentlist) {
+export function changeTable(env:string, sessionToken:string, documentlist:Object) {
   return (dispatch, getState) => {
     const {documentlists} = getState()
     const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
@@ -58,14 +51,14 @@ export function changeTable(env, sessionToken, documentlist) {
   }
 }
 
-export function refreshTable(env, sessionToken, documentlist) {
+export function refreshTable(env:string, sessionToken:string, documentlist:Object) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
 
-function getNextUrl(env, sessionToken, documentlists, documentlist) {
+function getNextUrl(env:string, sessionToken:string ,documentlists:Object, documentlist:Object) {
 
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
@@ -74,20 +67,18 @@ function getNextUrl(env, sessionToken, documentlists, documentlist) {
   return activeDocumentsList.nextUrl
 }
 
-function changeDocumentsTable(documents, nextUrl, documentlist) {
+function changeDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
   return {
     type: types.CHANGE_DOCUMENTS_LIST,
     nextUrl,
     name: documentlist.name,
     catId: documentlist.catId,
     fId: documentlist.fId,
-    parentId: documentlist.parentId,
-    parentName: documentlist.parentName,
     documents
   }
 }
 
-function receiveDocumentsTable(documents, nextUrl, documentlist) {
+function receiveDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
 
   return {
     type: types.RECEIVE_DOCUMENTS,
@@ -97,7 +88,7 @@ function receiveDocumentsTable(documents, nextUrl, documentlist) {
   }
 }
 
-function refreshDocumentsTable(documents, nextUrl, documentlist) {
+function refreshDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
 
   return {
     type: types.REFRESH_DOCUMENTS_LIST,
@@ -107,7 +98,7 @@ function refreshDocumentsTable(documents, nextUrl, documentlist) {
   }
 }
 
-function requestDocumentsTable(documentlist) {
+function requestDocumentsTable(documentlist:Object) {
   console.log(requestDocumentsTable+types.REQUEST_DOCUMENTS)
   return {
     type: types.REQUEST_DOCUMENTS,
@@ -115,7 +106,7 @@ function requestDocumentsTable(documentlist) {
   }
 }
 
-function shouldFetchDocuments(documentlists, documentlist) {
+function shouldFetchDocuments(documentlists:Object, documentlist:Object) {
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
     return true

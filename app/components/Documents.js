@@ -15,7 +15,7 @@ import {View,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
-
+import * as constans from '../constants/GlobalConstans'
 
 import InteractionManager from 'InteractionManager'
 
@@ -55,7 +55,25 @@ class Documents extends Component {
     this._onGoBack = this._onGoBack.bind(this)
   }
 
+  getCategoryName(categoryType)
+  {
+    switch (categoryType) {
+      case constans.ALL_DOCUMENTS:
+        return "All Documents"
+      default:
+        return "";
+    }
+  }
 
+ getBaseCatId(categoryType)
+  {
+    switch (categoryType) {
+      case constans.ALL_DOCUMENTS:
+        return "All Documents"
+      default:
+        return "";
+    }
+  }
   componentWillMount() {
     const {dispatch, env, sessionToken, documentlist} = this.props
     dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
@@ -81,9 +99,7 @@ class Documents extends Component {
       var newId;
       var newName = document.Name;
       var fId = document.Id;
-      var parentId = documentlist.catId;
-      var parentName = documentlist.name;
-
+ 
       if (documentlist.catId.indexOf(splitChars) >= 0) {
         var dtlStr = documentlist.catId.split(splitChars);
         var newId = `${dtlStr[0]}${splitChars}${document.Id}`//i.e all_docuemnts|{folderID}
@@ -94,10 +110,12 @@ class Documents extends Component {
 
 
       var folderT = new Object(); 
-      folderT.Id = document.Id;
-      folderT.Name = document.Name;
-      this.foldersTrail.push(folderT);
-      dispatch(updateDocumentList(newId, newName, fId, parentId, parentName))
+        folderT.catId = newId;
+        folderT.name = newName;
+        folderT.fId = fId;
+        this.foldersTrail.push(folderT);
+
+      dispatch(updateDocumentList(newId, newName, fId))
     }
     else {
 
@@ -135,22 +153,23 @@ class Documents extends Component {
 
   _onGoBack() {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-
-    var fId = "";
-    var id = documentlists[documentlist.catId].parentId;
-    var name = documentlists[documentlist.catId].parentName;
-    var parentId = documentlists[id].parentId;
-    var parentName = documentlists[id].parentName;
-
-    if (id.indexOf(splitChars) >= 0) {
-      var dtlStr = id.split(splitChars);
-      fId = dtlStr[1];
-    }
-
-    this.foldersTrail.pop();  
-     var testFid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].Id: null;
+    var baseCatId ;
+     if (documentlist.catId.indexOf(splitChars) >= 0) {
+        var dtlStr = documentlist.catId.split(splitChars);
+        var baseCatId = dtlStr[0];
+      }
+      else
+      {
+        baseCatId = documentlist.catId;
+      }
+     
+    this.foldersTrail.pop();
+      
+    var catId = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].catId: baseCatId;
+    var name = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].name: this.getCategoryName(baseCatId);
+     var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].fId: "";
     
-    dispatch(updateDocumentList(id, name, fId, parentId, parentName))
+    dispatch(updateDocumentList(catId, name, fid))
   }
 
   _onRefresh(type, message) {
@@ -162,9 +181,11 @@ class Documents extends Component {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
 
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
-    const showBreadCrums = documentlist.catId in documentlists && documentlists[documentlist.catId].parentName != undefined ? true : false;
+    const showBreadCrums = this.foldersTrail.length > 0 ? true : false;
+
     if (!isFetching && showBreadCrums) {
-      var parentName = documentlists[documentlist.catId].parentName;
+
+      var parentName =  this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length-1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
       return (
         <View>
           <TouchableOpacity style={styles.backButton} onPress={this._onGoBack.bind(this) }>

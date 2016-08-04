@@ -36,9 +36,7 @@ function documentlist(state = {
         nextUrl: action.nextUrl,
         name: action.name,
         catId: action.catId,
-        fId: action.fId,
-        parentId: action.parentId,
-        parentName: action.parentName,
+        fId: action.fId
       }
 
     default:
