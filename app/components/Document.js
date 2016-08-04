@@ -10,32 +10,28 @@ var {
   View,
   WebView
 } = ReactNative;
-
+import Button from './Button'
+import _ from "lodash";
 var HEADER = '#3b5998';
 var BGWASH = 'rgba(255,255,255,0.8)';
 var DISABLED_WASH = 'rgba(255,255,255,0.25)';
 
 var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
-var DEFAULT_URL = 'www.one.co.il';
 import ProggressBar from "../components/ProgressBar";
-import ViewTransformer from 'react-native-view-transformer';
+//import ViewTransformer from 'react-native-view-transformer';
 
 
 
-class DocumentView extends React.Component{
+class Document extends React.Component{
   constructor(props){
-    
+  
     super(props);
+    const {routes } = this.props.navigation
+    this.documentProps =  _.filter(routes, function(o) { return o.key == 'document'; })[0];
+   
     this.state = {  
-      sessionToken : props.sessionToken,
-      viewerUrl: props.viewerUrl,
-      url: DEFAULT_URL,
       isLoading: true,
-     // status: 'No Page Loaded',
-     // backButtonEnabled: false,
-     // forwardButtonEnabled: false,
-     // loading: true,
       scalingEnabled: true};
   }
   
@@ -99,25 +95,24 @@ class DocumentView extends React.Component{
       // </ViewTransformer>
   
   render(){
-    var sessionToken = this.state.sessionToken;
-    // / alert(this.state.viewerUrl);
     return(
     
-        
-   
-          <View style={{ flex: 1 }}>
-      
-             <WebView
-                    style={styles.webview_body}
-                  source={{uri: this.state.viewerUrl}}
-                   onLoadEnd={this.onLoadEnd.bind(this)}
-                      javaScriptEnabled={true}
-                      domStorageEnabled={true}
-                     startInLoadingState={true}
-                    scalesPageToFit={true}
-                    renderLoading={this.renderLoading}
-                  />
-       
+      <View style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Text style={styles.title}>{this.documentProps.data.title}</Text>
+          <Button onPress={ () => this.props._goBack() } label='Go Back' />
+        </View>
+        <WebView
+          style={styles.webview_body}
+          source={{ uri: this.state.viewerUrl }}
+          onLoadEnd={this.onLoadEnd.bind(this) }
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          startInLoadingState={true}
+          scalesPageToFit={true}
+          renderLoading={this.renderLoading}
+          />
+
       </View>
 
         
@@ -129,25 +124,12 @@ class DocumentView extends React.Component{
   
 }
 
-var Button = React.createClass({
-  _handlePress: function() {
-    if (this.props.enabled !== false && this.props.onPress) {
-      this.props.onPress();
-    }
-  },
-  render: function() {
-    return (
-      <TouchableWithoutFeedback onPress={this._handlePress}>
-        <View style={[styles.button, this.props.enabled ? {} : styles.buttonDisabled]}>
-          <Text style={styles.buttonText}>{this.props.text}</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  }
-});
-
-
 var styles = StyleSheet.create({
+   title: {
+    marginBottom: 20,
+    fontSize: 22,
+    textAlign: 'center'
+  },
   container: {
     flex: 1,
     backgroundColor: HEADER,
@@ -256,4 +238,4 @@ var styles = StyleSheet.create({
   
 });
 
-module.exports = DocumentView;
+module.exports = Document;
