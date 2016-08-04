@@ -3,6 +3,7 @@ import Home from './Home'
 import About from './About'
 import ForgotPassword from './ForgotPassword'
 import Documents from './Documents'
+import Document from './Document'
 import LoginContainer from '../containers/LoginContainer'
 import DocumentsContainer from '../containers/DocumentsContainer'
 import LauncherContainer from '../containers/LauncherContainer'
@@ -33,10 +34,10 @@ class NavRoot extends Component {
     const { route } = props.scene
     if (route.key === 'KenestoLauncher')
     {
-      return <LauncherContainer  _handleNavigate={this._handleNavigate.bind(this)}/>
+      return <LauncherContainer _handleNavigate={this._handleNavigate.bind(this)}/>
     }
     if (route.key ===  'home') {
-      return <Home   _handleNavigate={this._handleNavigate.bind(this)}  />
+      return <Home  _handleNavigate={this._handleNavigate.bind(this)}  />
     }
     if (route.key === 'about') {
       return <About _goBack={this._handleBackAction.bind(this)} />
@@ -51,7 +52,11 @@ class NavRoot extends Component {
     }
 
      if (route.key === 'documents') {
-      return <DocumentsContainer _goBack={this._handleBackAction.bind(this)}/>
+      return <DocumentsContainer _goBack={this._handleBackAction.bind(this)} _handleNavigate={this._handleNavigate.bind(this)}/>
+    }
+
+     if (route.key === 'document') {
+      return <Document _goBack={this._handleBackAction.bind(this)} {...this.props}/>
     }
   }
   _handleBackAction () {

@@ -23,11 +23,18 @@ export const forgotPasswordRoute = {
   }
 }
 
-export const documentRoute = {
-  type: 'push',
-  route: {
-    key: 'document',
-    title: 'document'
-  }
+export function documentRoute(data) {
+  return (
+    {
+      type: 'push',
+      route: {
+        key: 'document',
+        data:data
+      }
+    }
+
+  );
+
+ 
 }
 

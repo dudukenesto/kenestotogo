@@ -32,6 +32,7 @@ import {updateDocumentList} from '../actions/documentlist'
 import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
+import * as routes from '../constants/routes'
 import Button from './Button'
 
 // const Documents = ({_goBack}) => (
@@ -54,7 +55,7 @@ class Documents extends Component {
     this._onGoBack = this._onGoBack.bind(this)
   }
 
- 
+
   componentWillMount() {
     const {dispatch, env, sessionToken, documentlist} = this.props
     dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
@@ -74,15 +75,15 @@ class Documents extends Component {
 
 
   selectItem(document) {
-    if (document.FamilyCode == 'FOLDER') {
-      const {dispatch, env, sessionToken, documentlist} = this.props
+    const {dispatch, env, sessionToken, documentlist} = this.props
 
+    if (document.FamilyCode == 'FOLDER') {
       var newId;
       var newName = document.Name;
       var fId = document.Id;
       var parentId = documentlist.id;
       var parentName = documentlist.name;
-    
+
       if (documentlist.id.indexOf(splitChars) >= 0) {
         var dtlStr = documentlist.id.split(splitChars);
         var newId = `${dtlStr[0]}${splitChars}${document.Id}`//i.e all_docuemnts|{folderID}
@@ -94,7 +95,13 @@ class Documents extends Component {
       dispatch(updateDocumentList(newId, newName, fId, parentId, parentName))
     }
     else {
-     // Actions.documentView({ sessionToken: this.props.sessionToken, viewerUrl: document.ViewerUrl });
+
+      var data = {
+        title: document.Name,
+        id: document.Id,
+        viewerUrl: document.ViewerUrl
+      }
+      this.props._handleNavigate(routes.documentRoute(data));
     }
 
   }
@@ -129,7 +136,7 @@ class Documents extends Component {
     var name = documentlists[documentlist.id].parentName;
     var parentId = documentlists[id].parentId;
     var parentName = documentlists[id].parentName;
- 
+
     if (id.indexOf(splitChars) >= 0) {
       var dtlStr = id.split(splitChars);
       fId = dtlStr[1];
@@ -146,7 +153,7 @@ class Documents extends Component {
 
   _renderBreadCrums() {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-  
+
     const isFetching = documentlist.id in documentlists ? documentlists[documentlist.id].isFetching : false;
     const showBreadCrums = documentlist.id in documentlists && documentlists[documentlist.id].parentName != undefined ? true : false;
     if (!isFetching && showBreadCrums) {
@@ -164,13 +171,13 @@ class Documents extends Component {
   }
 
   _renderSectionHeader(sectionData, sectionID) {
-   
+
     return (
-       
-       <View style={styles.sectionHeader}>
-            <Text style={styles.sectionLabel}>{sectionData}</Text>
-        </View>
-      )
+
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionLabel}>{sectionData}</Text>
+      </View>
+    )
   }
   _renderTableContent(dataSource, isFetching) {
     if (dataSource.getRowCount() === 0) {
@@ -192,7 +199,7 @@ class Documents extends Component {
           }
           renderSeparator={this.renderSeparator}
           dataSource={dataSource}
-          renderSectionHeader={this._renderSectionHeader.bind(this)}
+          renderSectionHeader={this._renderSectionHeader.bind(this) }
           renderRow={(document, sectionID, rowID, highlightRowFunc) => {
             return (<DocumentCell
               key={document.Id}
@@ -218,69 +225,69 @@ class Documents extends Component {
     const {dispatch, documentlists, documentlist } = this.props
 
     const isFetching = documentlist.id in documentlists ? documentlists[documentlist.id].isFetching : false
-   
-    var items = documentlist.id in documentlists ? documentlists[documentlist.id].items: [],
-            length = items.length,
-            dataBlob = {},
-            sectionIDs = [],
-            rowIDs = [],
-            foldersSection,
-            docuemntsSection,
-            folders,
-            documents,
-            i,
-            j;
+
+    var items = documentlist.id in documentlists ? documentlists[documentlist.id].items : [],
+      length = items.length,
+      dataBlob = {},
+      sectionIDs = [],
+      rowIDs = [],
+      foldersSection,
+      docuemntsSection,
+      folders,
+      documents,
+      i,
+      j;
 
 
- dataBlob["ID1"] = "Folders";
- dataBlob["ID2"] = "Documents";
- 
- sectionIDs[0] = "ID1";
- sectionIDs[1] = "ID2";
+    dataBlob["ID1"] = "Folders";
+    dataBlob["ID2"] = "Documents";
 
-folders  = _.filter(items, function(o) { return o.FamilyCode == 'FOLDER'; });
-documents = _.filter(items, function(o) { return o.FamilyCode != 'FOLDER'; });
+    sectionIDs[0] = "ID1";
+    sectionIDs[1] = "ID2";
 
-// console.log("Folders:"+JSON.stringify(folders))
+    folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
+    documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
-// console.log("documents:"+JSON.stringify(documents))
+    // console.log("Folders:"+JSON.stringify(folders))
 
-rowIDs[0] = [];
-for(j = 0; j < folders.length; j++) {
-                folder = folders[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[0].push(folder.Id);
+    // console.log("documents:"+JSON.stringify(documents))
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID1:' + folder.Id] = folder;
-            }
+    rowIDs[0] = [];
+    for (j = 0; j < folders.length; j++) {
+      folder = folders[j];
+      // Add Unique Row ID to RowID Array for Section
+      rowIDs[0].push(folder.Id);
 
-rowIDs[1] = [];
-for(j = 0; j < documents.length; j++) {
-                document = documents[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[1].push(document.Id);
+      // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+      dataBlob['ID1:' + folder.Id] = folder;
+    }
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID2:' + document.Id] = document;
-            }
+    rowIDs[1] = [];
+    for (j = 0; j < documents.length; j++) {
+      document = documents[j];
+      // Add Unique Row ID to RowID Array for Section
+      rowIDs[1].push(document.Id);
+
+      // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+      dataBlob['ID2:' + document.Id] = document;
+    }
 
     var getSectionData = (dataBlob, sectionID) => {
-        return dataBlob[sectionID];
+      return dataBlob[sectionID];
     }
 
     var getRowData = (dataBlob, sectionID, rowID) => {
-        return dataBlob[sectionID + ':' + rowID];
+      return dataBlob[sectionID + ':' + rowID];
     }
     let ds = new ListView.DataSource({
-            getSectionData          : getSectionData,
-            getRowData              : getRowData,
-            rowHasChanged           : (row1, row2) => row1 !== row2,
-            sectionHeaderHasChanged : (s1, s2) => s1 !== s2
-        })
-    
+      getSectionData: getSectionData,
+      getRowData: getRowData,
+      rowHasChanged: (row1, row2) => row1 !== row2,
+      sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+    })
 
-    let dataSource = documentlist.id in documentlists ? ds.cloneWithRowsAndSections(dataBlob, sectionIDs,rowIDs): ds.cloneWithRows([])
+
+    let dataSource = documentlist.id in documentlists ? ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) : ds.cloneWithRows([])
     var additionalStyle = {};
 
     return (
@@ -363,7 +370,7 @@ var styles = StyleSheet.create({
     opacity: 0.0,
   },
   backButton: {
-    marginTop:15,
+    marginTop: 15,
     padding: 15,
     backgroundColor: '#3C5773',
     alignSelf: 'stretch'
@@ -378,12 +385,12 @@ var styles = StyleSheet.create({
     color: 'white',
   },
   sectionHeader: {
-    marginTop:15,
+    marginTop: 15,
     padding: 15,
     backgroundColor: '#eeeeee',
     alignSelf: 'stretch'
   },
-   sectionLabel: {
+  sectionLabel: {
     color: '#2f2f2f',
     textAlign: 'center'
   },
