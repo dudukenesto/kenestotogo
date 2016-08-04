@@ -4,10 +4,10 @@ let {
   Alert
 } = React
 
-export function updateDocumentList(id, name, fId, parentId, parentName) {
+export function updateDocumentList(catId, name, fId, parentId, parentName) {
   return {
     type: types.UPDATE_DOCUMENTS_LIST,
-    id: id,
+    catId: catId,
     name: name,
     fId: fId,
     parentId: parentId,

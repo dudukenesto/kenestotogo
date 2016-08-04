@@ -8,36 +8,38 @@ function documentlist(state = {
 }, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         isFetching: false,
         items: [...state.items, ...action.documents],
         nextUrl: action.nextUrl
-      })
+      }
 
     case types.REQUEST_DOCUMENTS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         isFetching: true,
         nextUrl: null
-      })
+      }
 
-    case types.REFRESH_DOCUMENTS_TABLE:
-      return Object.assign({}, state, {
+    case types.REFRESH_DOCUMENTS_LIST:
+      return {
         isFetching: false,
         items: [...action.documents],
         nextUrl: action.nextUrl
-      })
+      }
 
-    case types.CHANGE_DOCUMENTS_TABLE:
-      return Object.assign({}, state, {
+    case types.CHANGE_DOCUMENTS_LIST:
+      return {
         isFetching: false,
         items: [...action.documents],
         nextUrl: action.nextUrl,
         name: action.name,
-        id: action.id,
+        catId: action.catId,
         fId: action.fId,
         parentId: action.parentId,
         parentName: action.parentName,
-      })
+      }
 
     default:
       return state
@@ -48,22 +50,22 @@ export default function documentlists(state = {}, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
       return Object.assign({}, state, {
-        [action.id]: documentlist(state[action.id], action)
+        [action.catId]: documentlist(state[action.catId], action)
       })
 
     case types.REQUEST_DOCUMENTS:
       return Object.assign({}, state, {
-        [action.id]: documentlist(state[action.id], action)
+        [action.catId]: documentlist(state[action.catId], action)
       })
 
-    case types.REFRESH_DOCUMENTS_TABLE:
+    case types.REFRESH_DOCUMENTS_LIST:
       return Object.assign({}, state, {
-        [action.id]: documentlist(state[action.id], action),
+        [action.catId]: documentlist(state[action.catId], action),
       })
 
-    case types.CHANGE_DOCUMENTS_TABLE:
+    case types.CHANGE_DOCUMENTS_LIST:
       return Object.assign({}, state, {
-        [action.id]: documentlist(state[action.id], action),
+        [action.catId]: documentlist(state[action.catId], action),
       })
 
     default:

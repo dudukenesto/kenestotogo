@@ -1,8 +1,8 @@
 import * as types from '../constants/ActionTypes'
-
+import * as constans from '../constants/GlobalConstans'
 export default function documentlist(state = {
   name: "All Documents",
-  id: "all_documents",
+  catId: constans.ALL_DOCUMENTS,
   fId: "",
   parentId: "",
   parentName: ""

@@ -56,7 +56,7 @@ class NavRoot extends Component {
     }
 
      if (route.key === 'document') {
-      return <Document _goBack={this._handleBackAction.bind(this)} {...this.props}/>
+      return <Document _goBack={this._handleBackAction.bind(this)} data={route.data}/>
     }
   }
   _handleBackAction () {

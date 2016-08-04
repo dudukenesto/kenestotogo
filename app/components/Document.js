@@ -27,8 +27,8 @@ class Document extends React.Component{
   constructor(props){
   
     super(props);
-    const {routes } = this.props.navigation
-    this.documentProps =  _.filter(routes, function(o) { return o.key == 'document'; })[0];
+   
+    this.documentProps = this.props.data// _.filter(routes, function(o) { return o.key == 'document'; })[0];
    
     this.state = {  
       isLoading: true,
@@ -99,7 +99,7 @@ class Document extends React.Component{
     
       <View style={{ flex: 1 }}>
         <View style={styles.container}>
-          <Text style={styles.title}>{this.documentProps.data.title}</Text>
+          <Text style={styles.title}>{this.documentProps.title}</Text>
           <Button onPress={ () => this.props._goBack() } label='Go Back' />
         </View>
         <WebView

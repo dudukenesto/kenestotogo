@@ -15,13 +15,13 @@ function fetchDocumentsTable(url, documentlist, actionType) {
         const nextUrl = json.ResponseData.next_href
 
         switch (actionType) {
-          case types.CHANGE_DOCUMENTS_TABLE:
+          case types.CHANGE_DOCUMENTS_LIST:
             dispatch(changeDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
             break
           case types.RECEIVE_DOCUMENTS:
             dispatch(receiveDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
             break
-          case types.REFRESH_DOCUMENTS_TABLE:
+          case types.REFRESH_DOCUMENTS_LIST:
             dispatch(refreshDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
             break
         }
@@ -54,20 +54,20 @@ export function changeTable(env, sessionToken, documentlist) {
   return (dispatch, getState) => {
     const {documentlists} = getState()
     const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
-    return dispatch(fetchDocumentsTable(url, documentlist, types.CHANGE_DOCUMENTS_TABLE))
+    return dispatch(fetchDocumentsTable(url, documentlist, types.CHANGE_DOCUMENTS_LIST))
   }
 }
 
 export function refreshTable(env, sessionToken, documentlist) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
-    return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_TABLE))
+    return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
 
 function getNextUrl(env, sessionToken, documentlists, documentlist) {
 
-  const activeDocumentsList = documentlists[documentlist.id]
+  const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
     return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
   }
@@ -76,10 +76,10 @@ function getNextUrl(env, sessionToken, documentlists, documentlist) {
 
 function changeDocumentsTable(documents, nextUrl, documentlist) {
   return {
-    type: types.CHANGE_DOCUMENTS_TABLE,
+    type: types.CHANGE_DOCUMENTS_LIST,
     nextUrl,
     name: documentlist.name,
-    id: documentlist.id,
+    catId: documentlist.catId,
     fId: documentlist.fId,
     parentId: documentlist.parentId,
     parentName: documentlist.parentName,
@@ -92,7 +92,7 @@ function receiveDocumentsTable(documents, nextUrl, documentlist) {
   return {
     type: types.RECEIVE_DOCUMENTS,
     nextUrl,
-    id: documentlist.id,
+    catId: documentlist.catId,
     documents
   }
 }
@@ -100,9 +100,9 @@ function receiveDocumentsTable(documents, nextUrl, documentlist) {
 function refreshDocumentsTable(documents, nextUrl, documentlist) {
 
   return {
-    type: types.REFRESH_DOCUMENTS_TABLE,
+    type: types.REFRESH_DOCUMENTS_LIST,
     nextUrl,
-    id: documentlist.id,
+    catId: documentlist.catId,
     documents
   }
 }
@@ -111,12 +111,12 @@ function requestDocumentsTable(documentlist) {
   console.log(requestDocumentsTable+types.REQUEST_DOCUMENTS)
   return {
     type: types.REQUEST_DOCUMENTS,
-    id: documentlist.id
+    catId: documentlist.catId
   }
 }
 
 function shouldFetchDocuments(documentlists, documentlist) {
-  const activeDocumentsList = documentlists[documentlist.id]
+  const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
     return true
   }

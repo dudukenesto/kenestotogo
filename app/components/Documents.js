@@ -48,7 +48,7 @@ class Documents extends Component {
     this.state = {
       isFetchingTail: false
     }
-
+    this.foldersTrail = [];
     this.onEndReached = this.onEndReached.bind(this)
     this.selectItem = this.selectItem.bind(this)
     this._onRefresh = this._onRefresh.bind(this)
@@ -63,7 +63,7 @@ class Documents extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-    if (documentlist.id !== nextProps.documentlist.id) {
+    if (documentlist.catId !== nextProps.documentlist.catId) {
       dispatch(changeTable(env, sessionToken, nextProps.documentlist));
     }
   }
@@ -81,17 +81,22 @@ class Documents extends Component {
       var newId;
       var newName = document.Name;
       var fId = document.Id;
-      var parentId = documentlist.id;
+      var parentId = documentlist.catId;
       var parentName = documentlist.name;
 
-      if (documentlist.id.indexOf(splitChars) >= 0) {
-        var dtlStr = documentlist.id.split(splitChars);
+      if (documentlist.catId.indexOf(splitChars) >= 0) {
+        var dtlStr = documentlist.catId.split(splitChars);
         var newId = `${dtlStr[0]}${splitChars}${document.Id}`//i.e all_docuemnts|{folderID}
       }
       else {
-        var newId = `${documentlist.id}${splitChars}${document.Id}`
+        var newId = `${documentlist.catId}${splitChars}${document.Id}`
       }
 
+
+      var folderT = new Object(); 
+      folderT.Id = document.Id;
+      folderT.Name = document.Name;
+      this.foldersTrail.push(folderT);
       dispatch(updateDocumentList(newId, newName, fId, parentId, parentName))
     }
     else {
@@ -132,8 +137,8 @@ class Documents extends Component {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
 
     var fId = "";
-    var id = documentlists[documentlist.id].parentId;
-    var name = documentlists[documentlist.id].parentName;
+    var id = documentlists[documentlist.catId].parentId;
+    var name = documentlists[documentlist.catId].parentName;
     var parentId = documentlists[id].parentId;
     var parentName = documentlists[id].parentName;
 
@@ -142,22 +147,24 @@ class Documents extends Component {
       fId = dtlStr[1];
     }
 
+    this.foldersTrail.pop();  
+     var testFid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].Id: null;
+    
     dispatch(updateDocumentList(id, name, fId, parentId, parentName))
   }
 
   _onRefresh(type, message) {
     const {dispatch, env, sessionToken, documentlist} = this.props
-    console.log("_onRefresh" + dispatch)
     dispatch(refreshTable(env, sessionToken, documentlist))
   }
 
   _renderBreadCrums() {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
 
-    const isFetching = documentlist.id in documentlists ? documentlists[documentlist.id].isFetching : false;
-    const showBreadCrums = documentlist.id in documentlists && documentlists[documentlist.id].parentName != undefined ? true : false;
+    const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
+    const showBreadCrums = documentlist.catId in documentlists && documentlists[documentlist.catId].parentName != undefined ? true : false;
     if (!isFetching && showBreadCrums) {
-      var parentName = documentlists[documentlist.id].parentName;
+      var parentName = documentlists[documentlist.catId].parentName;
       return (
         <View>
           <TouchableOpacity style={styles.backButton} onPress={this._onGoBack.bind(this) }>
@@ -224,9 +231,9 @@ class Documents extends Component {
   render() {
     const {dispatch, documentlists, documentlist } = this.props
 
-    const isFetching = documentlist.id in documentlists ? documentlists[documentlist.id].isFetching : false
+    const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
 
-    var items = documentlist.id in documentlists ? documentlists[documentlist.id].items : [],
+    var items = documentlist.catId in documentlists ? documentlists[documentlist.catId].items : [],
       length = items.length,
       dataBlob = {},
       sectionIDs = [],
@@ -287,7 +294,7 @@ class Documents extends Component {
     })
 
 
-    let dataSource = documentlist.id in documentlists ? ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) : ds.cloneWithRows([])
+    let dataSource = documentlist.catId in documentlists ? ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) : ds.cloneWithRows([])
     var additionalStyle = {};
 
     return (
