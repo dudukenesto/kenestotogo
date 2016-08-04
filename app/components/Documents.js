@@ -167,8 +167,8 @@ class Documents extends Component {
    
     return (
        
-       <View style={styles.backButton}>
-            <Text style={styles.backLabel}>{sectionData}</Text>
+       <View style={styles.sectionHeader}>
+            <Text style={styles.sectionLabel}>{sectionData}</Text>
         </View>
       )
   }
@@ -376,6 +376,16 @@ var styles = StyleSheet.create({
     fontSize: 20,
     height: 22,
     color: 'white',
+  },
+  sectionHeader: {
+    marginTop:15,
+    padding: 15,
+    backgroundColor: '#eeeeee',
+    alignSelf: 'stretch'
+  },
+   sectionLabel: {
+    color: '#2f2f2f',
+    textAlign: 'center'
   },
 });
 
