@@ -225,6 +225,7 @@ class Documents extends Component {
               onRefresh={this._onRefresh.bind(this) }
               />
           }
+          enableEmptySections={true}
           renderSeparator={this.renderSeparator}
           dataSource={dataSource}
           renderSectionHeader={this._renderSectionHeader.bind(this) }
