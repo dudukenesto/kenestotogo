@@ -17,12 +17,13 @@ export function setEnv(env: string){
     }
 }
 
-export function updateLoginInfo(isLoggedIn : boolean, sessionToken: string) {
+export function updateLoginInfo(isLoggedIn : boolean, sessionToken: string, env: string) {
     
     return {
         type: types.UPDATE_LOGIN_INFO, 
         isLoggedIn: isLoggedIn, 
-        sessionToken : sessionToken
+        sessionToken : sessionToken, 
+        env : env
     }
 }
 
@@ -107,7 +108,10 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
 }
 
 export function login(userId : string, password: string, env: string = 'dev')  {
+
     return (dispatch, getstate) => {
+
+
 
         if (env == null)
         {
@@ -149,7 +153,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                             setCredentials(userId, password, env);
                             var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
 
-                            return dispatch(updateLoginInfo(true, stricturiEncode(sessionToken)));
+                            return dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env));
                          
 
                         })

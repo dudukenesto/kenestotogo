@@ -28,6 +28,7 @@ class LauncherContainer extends Component {
 function mapStateToProps(state) {
 
   const {isLoggedIn, env  } = state.accessReducer; 
+
   return {
     isLoggedIn, 
     env

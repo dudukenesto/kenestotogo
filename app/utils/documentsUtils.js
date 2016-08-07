@@ -4,7 +4,6 @@ import stricturiEncode from 'strict-uri-encode'
 
 
 export function constructRetrieveDocumentsUrl(env, sessionToken, fId) {
-
     var urls = _.find(config.urls, { 'env': env });
     var apiBaseUrl = urls.ApiBaseUrl;
     var url

@@ -47,7 +47,6 @@ class KenestoLauncher extends React.Component {
     }
 
     componentWillReceiveProps(nextProps){
-        console.log('componentWillReceiveProps ' + nextProps.isLoggedIn);
         if (nextProps.isLoggedIn)
         {
             this.props._handleNavigate(routes.documentsRoute);
@@ -62,6 +61,7 @@ class KenestoLauncher extends React.Component {
 
         var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: this.props.login, updateIsFetching : this.props.updateIsFetching});
 
+    
          creadetiails.then(function(storedCredentials) {
             if (storedCredentials.hasCredentials)
             {
@@ -115,8 +115,6 @@ class KenestoLauncher extends React.Component {
     
    
     render(){
-       
-
             if ( (this.props.isLoggedIn == null || this.props.isLoggedIn == false) && this.props.isFetching)
             return(
                     <View {...this.props}  style={styles.container}>

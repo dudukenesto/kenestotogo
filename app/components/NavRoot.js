@@ -31,6 +31,8 @@ class NavRoot extends Component {
     BackAndroid.removeEventListener('hardwareBackPress', this._handleBackAction)
   }
   _renderScene (props) {
+
+  
     const { route } = props.scene
     if (route.key === 'KenestoLauncher')
     {
