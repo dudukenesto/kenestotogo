@@ -11,6 +11,9 @@ var stricturiEncode = require('strict-uri-encode');
 
 var Form = Tcomb.form.Form;
 
+var _ = require('lodash');
+const formStylesheet = _.cloneDeep(Form.stylesheet);
+
 var Email = Tcomb.refinement(Tcomb.String, function (s) {
   return /\S+@\S+\.\S+/.test(s);
 });
@@ -32,48 +35,30 @@ var User = Tcomb.struct({
 });
 
 var options = {
-    stylesheet: customFormStyles,
+    stylesheet: formStylesheet,
     fields: {
         username: {
             placeholder: 'Username',
             label: ' ',
             autoFocus: true,
-            stylesheet: myCustomStylesheet
+            placeholderTextColor: '#ccc',
+            underlineColorAndroid: "#ccc",
         },
         password: {
             placeholder: 'Password',
             label: ' ',
-            secureTextEntry:true
+            secureTextEntry: true,
+            placeholderTextColor: '#ccc',
+            underlineColorAndroid: "#ccc",
         }
     }
 };
 
-var myCustomStylesheet = {
-    normal: {
-                color: "red"
-            }  
+formStylesheet.textbox.normal = {
+    height: 50,            
+    fontSize: 17,
+    marginBottom: -20,    
 }
-
-var customFormStyles = {
-        textbox: {
-            normal: {
-                color: "red"
-            }            
-        },
-        TextInput : {
-            normal: {
-                color: "red"
-            }            
-        },
-        formGroup: {
-            normal: {
-                marginBottom: 0
-            },
-            error: {
-                marginBottom: 20
-            }
-        },
-    }
 
 const styles = StyleSheet.create({
     container: {
@@ -81,8 +66,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: "#F5FCFF",
         padding: 36,
-        borderColor: "#000",
-        borderWidth: 1
     },
     formContainer: {
         flex: 1,
@@ -94,12 +77,13 @@ const styles = StyleSheet.create({
     loginBtn: {       
         color: "#fff",
         fontWeight: "bold",
-        fontSize: 16,
+        fontSize: 18,
     },
     loginBtnContainer: {
         height: 50,
         backgroundColor: "#F6841F",
-        justifyContent: "center"
+        justifyContent: "center",
+        marginTop: 40,
     },
     forgotPwd: {
         alignSelf: "center",
@@ -131,6 +115,7 @@ const styles = StyleSheet.create({
 //         width: 30,
 //         height: 30,
 //    },
+
 });
 
 
@@ -222,7 +207,7 @@ const styles = StyleSheet.create({
                             onChange={this.onChange.bind(this)}
                             options={options}
                         />
-            
+                    
                     <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
 
                     <TouchableHighlight
