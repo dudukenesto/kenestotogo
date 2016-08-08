@@ -91,12 +91,10 @@ const styles = StyleSheet.create({
         width: 178,
         height: 61,        
     },
-    loginBtn: {        
-        
+    loginBtn: {       
         color: "#fff",
         fontWeight: "bold",
         fontSize: 16,
-        
     },
     loginBtnContainer: {
         height: 50,

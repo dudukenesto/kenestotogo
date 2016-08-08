@@ -54,7 +54,15 @@ constructor (props) {
     render(){
         return(
             <View style={styles.container}> 
-                
+                <ToolbarAndroid 
+                    style={styles.toolbar}
+                    actions={toolbarActions}
+                    onActionSelected={this.onActionSelected}
+                    titleColor='#fff'
+                    title={'Kenesto hello'}
+                    navIcon={require('../assets/menu-icon2.png')}
+                    onIconClicked = {this.onNavIconClicked.bind(this)}
+                />
                 <NavigationRootContainer />
             </View>
         )
