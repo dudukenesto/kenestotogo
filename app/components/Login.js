@@ -43,6 +43,7 @@ var options = {
             autoFocus: true,
             placeholderTextColor: '#ccc',
             underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
         },
         password: {
             placeholder: 'Password',
@@ -50,6 +51,7 @@ var options = {
             secureTextEntry: true,
             placeholderTextColor: '#ccc',
             underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
         }
     }
 };
@@ -57,7 +59,8 @@ var options = {
 formStylesheet.textbox.normal = {
     height: 50,            
     fontSize: 17,
-    marginBottom: -20,    
+    marginBottom: -20,  
+    paddingLeft: 35  
 }
 
 const styles = StyleSheet.create({
@@ -217,7 +220,6 @@ const styles = StyleSheet.create({
                     </TouchableHighlight>
                 </View>
                             
-            
             </View>
               )
     }
