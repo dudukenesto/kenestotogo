@@ -1,5 +1,5 @@
 import React from "react";
-import {View, Text, StyleSheet, TouchableHighlight, AsyncStorage, } from "react-native";
+import {View, Text, StyleSheet, TouchableHighlight, AsyncStorage, Image, } from "react-native";
 import Button from "react-native-button";
 import Tcomb from "tcomb-form-native";
 import config from '../utils/app.config';
@@ -26,48 +26,113 @@ Password.getValidationErrorMessage = function (value, path, context) {
   return 'Field is required!';
 };
 
-
 var User = Tcomb.struct({      
   username: Email,  //required email
   password: Password,
 });
 
 var options = {
+    stylesheet: customFormStyles,
     fields: {
-    username: {
-    placeholder: 'Username',
-    label: ' ',
-    autoFocus: true
-    },
-     password: {
-     placeholder: 'Password',
-     label: ' ',
-     secureTextEntry:true
+        username: {
+            placeholder: 'Username',
+            label: ' ',
+            autoFocus: true,
+            stylesheet: myCustomStylesheet
+        },
+        password: {
+            placeholder: 'Password',
+            label: ' ',
+            secureTextEntry:true
+        }
     }
- }
 };
+
+var myCustomStylesheet = {
+    normal: {
+                color: "red"
+            }  
+}
+
+var customFormStyles = {
+        textbox: {
+            normal: {
+                color: "red"
+            }            
+        },
+        TextInput : {
+            normal: {
+                color: "red"
+            }            
+        },
+        formGroup: {
+            normal: {
+                marginBottom: 0
+            },
+            error: {
+                marginBottom: 20
+            }
+        },
+    }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center",
         backgroundColor: "#F5FCFF",
+        padding: 36,
+        borderColor: "#000",
+        borderWidth: 1
     },
-    welcome: {
-        fontSize: 20,
-        textAlign: "center",
-        margin: 10,
+    formContainer: {
+        flex: 1,
     },
-    instructions: {
-        textAlign: "center",
-        color: "#333333",
-        marginBottom: 5,
+    logo: {
+        width: 178,
+        height: 61,        
     },
-     spinner: {
-        width: 30,
-        height: 30,
-   },
+    loginBtn: {        
+        
+        color: "#fff",
+        fontWeight: "bold",
+        fontSize: 16,
+        
+    },
+    loginBtnContainer: {
+        height: 50,
+        backgroundColor: "#F6841F",
+        justifyContent: "center"
+    },
+    forgotPwd: {
+        alignSelf: "center",
+        fontSize: 16,   
+        marginTop: 12,    
+    },
+    logoContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: "flex-end",
+    },
+    form: {
+        flex: 3,
+    },
+    
+        
+    // welcome: {
+    //     fontSize: 20,
+    //     textAlign: "center",
+    //     margin: 10,
+    // },
+    
+//     instructions: {
+//         textAlign: "center",
+//         color: "#333333",
+//         marginBottom: 5,
+//     },
+//      spinner: {
+//         width: 30,
+//         height: 30,
+//    },
 });
 
 
@@ -149,24 +214,27 @@ const styles = StyleSheet.create({
 
            
                             
-            return(<View style={[styles.container, this.props.style]}>
+            return(<View style={[this.props.style, styles.formContainer]}>
                 {this._renderProgressBar()}
-
-            <Form
-                ref="form"
-                type={User}
-                value={this.state.value}
-                onChange={this.onChange.bind(this)}
-                options={options}
-            />
+                <View style={styles.logoContainer}><Image source={require('../assets/kenesto_logo.png')} style={styles.logo}></Image></View>
+                <View style={styles.form}><Form
+                            ref="form"
+                            type={User}
+                            value={this.state.value}
+                            onChange={this.onChange.bind(this)}
+                            options={options}
+                        />
             
-            <Button onPress={this._makeLogin.bind(this)}>Login</Button>
+                    <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
 
-            <TouchableHighlight
-                onPress={ this.NavigateToForgotPassword.bind(this)}
-                 >
-                <Text>Forgot Password?</Text>
-                </TouchableHighlight>
+                    <TouchableHighlight
+                        onPress={ this.NavigateToForgotPassword.bind(this)}
+                        >
+                        <Text style={styles.forgotPwd}>Forgot Your Password?</Text>
+                    </TouchableHighlight>
+                </View>
+                            
+            
             </View>
               )
     }

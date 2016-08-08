@@ -333,14 +333,14 @@ class Documents extends Component {
         {this._renderTableContent(dataSource, isFetching) }
         <ActionButton buttonColor="rgba(231,76,60,1)">
           <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => this._onRefresh('info', 'wawa ziba and his group') }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
+            <Icon name="https" style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' title="Upload" onPress={() => Actions.animated() }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
+            <Icon name="file-upload" style={styles.actionButtonIcon} />
           </ActionButton.Item>
 
           <ActionButton.Item buttonColor='#1abc9c' title="New Folder" onPress={() => Actions.createFolder({ env: this.state.env, currentFolderId: this.state.folderId, sessionToken: this.props.sessionToken, afterCreateCallback: this._onRefresh, updateLoading: this.updateLoadingState }) }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
+            <Icon name="send" style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>
       </ViewContainer>
