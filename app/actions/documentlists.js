@@ -6,6 +6,7 @@ let {
 } = React
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
+  console.log("fetchDocumentsTable: "+url)
   return (dispatch, getState) => {
     dispatch(requestDocumentsList(documentlist))
     return fetch(url)
@@ -13,7 +14,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
       .then(json => {
         const nextUrl = json.ResponseData.next_href
         if (json.ResponseData.ResponseStatus == "FAILED") {
-          dispatch(failedToFetchDocumentsList(documentlist, json.ResponseData.ErrorMessage))
+          dispatch(failedToFetchDocumentsList(documentlist, url, json.ResponseData.ErrorMessage))
         }
         else {
           switch (actionType) {
@@ -32,7 +33,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
       })
       .catch((error) => {
-        dispatch(failedToFetchDocumentsList(documentlist, "Failed to retrieve documents"))
+        dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
       })
   }
 }
@@ -102,11 +103,12 @@ function refreshDocumentsList(documents:Object, nextUrl:string, documentlist:Obj
   }
 }
 
-function failedToFetchDocumentsList(documentlist:Object, errorMessage:string) {
+function failedToFetchDocumentsList(documentlist:Object,url:string, errorMessage:string) {
   return {
     type: types.SUBMIT_ERROR,
     catId: documentlist.catId,
-    errorMessage:errorMessage
+    errorMessage:errorMessage,
+    nextUrl :url
   }
 }
 

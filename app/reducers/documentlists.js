@@ -32,7 +32,8 @@ function documentlist(state = {
         ...state,
         isFetching: false,
         hasError: true,
-        errorMessage: action.errorMessage
+        errorMessage: action.errorMessage,
+        nextUrl: action.nextUrl
       }
 
     case types.REFRESH_DOCUMENTS_LIST:
