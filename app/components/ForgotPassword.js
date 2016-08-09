@@ -90,6 +90,14 @@ const styles = StyleSheet.create({
         fontWeight: "normal",
         fontSize: 18, 
    },
+   messageContainer: {
+       flex: 1, 
+       justifyContent: "center",
+   },
+   message: {
+       textAlign: "center",
+        fontSize: 17,
+   },
       
   
 });
@@ -148,7 +156,7 @@ const styles = StyleSheet.create({
     _renderForgotPassword(){
             
         if (!this.props.passwordSent) {
-            return(  <View>
+            return(  <View style={{flex: 1}}>
                         <View style={styles.titleContainer}>
                             <Text style={styles.title}>Forgot Password</Text>
                         </View>
@@ -172,12 +180,17 @@ const styles = StyleSheet.create({
         }
         else
         {
-        return( <View>
-                    <View>
-                        <Text>Email was sent successfully</Text>
-                        <Text> Please check your email for further instructions...</Text>
+        return( <View style={{flex: 1}}>
+                    <View style={styles.titleContainer}>
+                            <Text style={styles.title}>Forgot Password</Text>
+                        </View>
+                    <View style={styles.messageContainer}>
+                        <Text style={styles.message}>Email was sent successfully.</Text>
+                        <Text style={styles.message}>Please check your email for further instructions...</Text>
                     </View>
-                    <Button onPress={ () => this.props._goBack()}>Back to login screen</Button>
+                    <View style={[styles.buttonsContainer, {justifyContent: "center"}]}>
+                        <Button containerStyle={[styles.singleBtnContainer, {width: 200}]} style={styles.button} onPress={ () => this.props._goBack()}>Back to login screen</Button>
+                    </View>
             </View>)
         }
     }
