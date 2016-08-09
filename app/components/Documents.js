@@ -66,9 +66,7 @@ class Documents extends Component {
         return "";
     }
   }
- componentDidMount(){
-    this._showStatusBar()
-  }
+ 
   getBaseCatId(categoryType) {
     switch (categoryType) {
       case constans.ALL_DOCUMENTS:
@@ -77,6 +75,7 @@ class Documents extends Component {
         return "";
     }
   }
+ 
   componentWillMount() {
     const {dispatch, env, sessionToken, documentlist} = this.props
     dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
@@ -89,6 +88,10 @@ class Documents extends Component {
     }
   }
 
+componentDidUpdate()
+{
+  this._showStatusBar()
+}
   onEndReached() {
     const {dispatch, env, sessionToken, documentlist} = this.props
     dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
@@ -204,8 +207,10 @@ class Documents extends Component {
   }
 
   _renderSectionHeader(sectionData, sectionID) {
-    return (
+    if(sectionID == 'ID1')
+      return false;
 
+    return (
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionLabel}>{sectionData}</Text>
       </View>
@@ -216,7 +221,7 @@ class Documents extends Component {
     const {documentlist, documentlists} = this.props
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
     const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
-
+   
     if (hasError) {
       this.refs.masterView.showMessage("error", errorMessage);
     }
@@ -336,6 +341,8 @@ class Documents extends Component {
     return (
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
         {this._renderBreadCrums() }
+       
+      
         <View style={styles.separator} />
 
         { isFetching &&
@@ -347,7 +354,7 @@ class Documents extends Component {
         {this._renderTableContent(dataSource, isFetching) }
         <ActionButton buttonColor="rgba(231,76,60,1)">
           <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => this._onRefresh('info', 'wawa ziba and his group') }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
+            <Icon name="person" style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' title="Upload" onPress={() => Actions.animated() }>
             <Icon name="folder" style={styles.actionButtonIcon} />
