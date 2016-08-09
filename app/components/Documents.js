@@ -55,7 +55,9 @@ class Documents extends Component {
     this.selectItem = this.selectItem.bind(this)
     this._onRefresh = this._onRefresh.bind(this)
     this._onGoBack = this._onGoBack.bind(this)
+    this._onSort = this._onSort.bind(this)
     
+
   }
 
   getCategoryName(categoryType) {
@@ -66,7 +68,7 @@ class Documents extends Component {
         return "";
     }
   }
- 
+
   getBaseCatId(categoryType) {
     switch (categoryType) {
       case constans.ALL_DOCUMENTS:
@@ -75,7 +77,7 @@ class Documents extends Component {
         return "";
     }
   }
- 
+
   componentWillMount() {
     const {dispatch, env, sessionToken, documentlist} = this.props
     dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
@@ -83,15 +85,16 @@ class Documents extends Component {
 
   componentWillReceiveProps(nextProps) {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-    if (documentlist.catId !== nextProps.documentlist.catId) {
+    if ((documentlist.catId !== nextProps.documentlist.catId) ||
+      (documentlist.sortDirection !== nextProps.documentlist.sortDirection) ||
+      (documentlist.sortBy !== nextProps.documentlist.sortBy)) {
       dispatch(changeTable(env, sessionToken, nextProps.documentlist));
     }
   }
 
-componentDidUpdate()
-{
-  this._showStatusBar()
-}
+  componentDidUpdate() {
+    this._showStatusBar()
+  }
   onEndReached() {
     const {dispatch, env, sessionToken, documentlist} = this.props
     dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
@@ -156,6 +159,10 @@ componentDidUpdate()
     );
   }
 
+  _onSort(sortDirection, sortBy) {
+    const {dispatch, documentlist} = this.props
+    dispatch(updateDocumentList(documentlist.catId, documentlist.name, documentlist.fid, sortDirection, sortBy))
+  }
 
   _onGoBack() {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
@@ -182,32 +189,44 @@ componentDidUpdate()
     dispatch(refreshTable(env, sessionToken, documentlist))
   }
 
-  _renderBreadCrums() {
+  _renderSortBar() {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
 
+    const sortDirection = documentlist.sortDirection;//documentlist.catId in documentlists ? documentlists[documentlist.catId].sortDirection : false;
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
     const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
 
     const showBreadCrums = this.foldersTrail.length > 0 ? true : false;
+    var parentName = this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
 
-    if (!isFetching && showBreadCrums) {
-
-      var parentName = this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
-      return (
-        <View>
-          <TouchableOpacity style={styles.backButton} onPress={this._onGoBack.bind(this) }>
-            <Text style={styles.backLabel}>Go to {parentName} Page</Text>
-          </TouchableOpacity>
-        </View>)
-    }
-    else {
-      return null;
-    }
+    return (
+      <View style={styles.sortContainer}>
+        <Text>Name</Text>
+        {
+          (sortDirection == constans.ASCENDING)
+            ? (
+              <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING,documentlist.sortBy) }/>
+            ) :
+            (
+              <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING,documentlist.sortBy) }/>
+            )
+        }
+        {
+          (!isFetching && showBreadCrums)
+            ? (
+              <Icon name="arrow-back" style={styles.arrowButtonIcon} onPress={this._onGoBack.bind(this) }/>
+            )
+            : (
+              <View></View>
+            )
+        }
+      </View>
+    )
   }
 
   _renderSectionHeader(sectionData, sectionID) {
-    if(sectionID == 'ID1')
+    if (sectionID == 'ID1')
       return false;
 
     return (
@@ -221,11 +240,12 @@ componentDidUpdate()
     const {documentlist, documentlists} = this.props
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
     const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
-   
-    if (hasError) {
+
+    if (hasError && this.refs.masterView != undefined) {
       this.refs.masterView.showMessage("error", errorMessage);
     }
   }
+
 
   _renderTableContent(dataSource, isFetching) {
     if (dataSource.getRowCount() === 0) {
@@ -295,7 +315,7 @@ componentDidUpdate()
     sectionIDs[0] = "ID1";
     sectionIDs[1] = "ID2";
 
-   
+
     // console.log("Folders:"+JSON.stringify(folders))
 
     // console.log("documents:"+JSON.stringify(documents))
@@ -340,9 +360,7 @@ componentDidUpdate()
 
     return (
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
-        {this._renderBreadCrums() }
-       
-      
+        {this._renderSortBar() }
         <View style={styles.separator} />
 
         { isFetching &&
@@ -373,10 +391,10 @@ componentDidUpdate()
 
 var NoDocuments = React.createClass({
   render: function () {
-   var text = 'No documents found';
-     if (this.props.isFetching) {
-       return false;
-     }
+    var text = 'No documents found';
+    if (this.props.isFetching) {
+      return false;
+    }
 
     return (
       <View style={[styles.container, styles.centerText]}>
@@ -430,13 +448,23 @@ var styles = StyleSheet.create({
     height: 22,
     color: 'white',
   },
+  arrowButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: '#2f2f2f',
+  },
   sectionHeader: {
     marginTop: 15,
     padding: 15,
     backgroundColor: '#eeeeee',
     alignSelf: 'stretch'
   },
-
+  sortContainer: {
+    padding: 0,
+    backgroundColor: '#eeeeee',
+    flex: 0,
+    flexDirection: "row-reverse",
+  },
   statusBar: {
     marginTop: 15,
     padding: 15,
