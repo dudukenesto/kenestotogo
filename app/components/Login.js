@@ -124,24 +124,6 @@ const styles = StyleSheet.create({
         flex: 3,
     },
     
-        
-    // welcome: {
-    //     fontSize: 20,
-    //     textAlign: "center",
-    //     margin: 10,
-    // },
-    
-//     instructions: {
-//         textAlign: "center",
-//         color: "#333333",
-//         marginBottom: 5,
-//     },
-//      spinner: {
-//         width: 30,
-//         height: 30,
-//    },
-
-
 });
 
 
