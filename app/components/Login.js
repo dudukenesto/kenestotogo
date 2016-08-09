@@ -68,6 +68,7 @@ var options = {
             placeholderTextColor: '#ccc',
             underlineColorAndroid: "#ccc",
             selectionColor: "orange",
+            iconName: "https",
         }
     }
 };
