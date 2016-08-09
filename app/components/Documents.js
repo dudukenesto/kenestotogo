@@ -14,9 +14,11 @@ import {View,
   RefreshControl
 } from 'react-native'
 
+
+
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import * as constans from '../constants/GlobalConstans'
-
+import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
 
 let deviceWidth = Dimensions.get('window').width
@@ -33,7 +35,7 @@ import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
-import Button from './Button'
+
 
 // const Documents = ({_goBack}) => (
 //   <View style={styles.container}>
@@ -53,10 +55,10 @@ class Documents extends Component {
     this.selectItem = this.selectItem.bind(this)
     this._onRefresh = this._onRefresh.bind(this)
     this._onGoBack = this._onGoBack.bind(this)
+    
   }
 
-  getCategoryName(categoryType)
-  {
+  getCategoryName(categoryType) {
     switch (categoryType) {
       case constans.ALL_DOCUMENTS:
         return "All Documents"
@@ -64,9 +66,10 @@ class Documents extends Component {
         return "";
     }
   }
-
- getBaseCatId(categoryType)
-  {
+ componentDidMount(){
+    this._showStatusBar()
+  }
+  getBaseCatId(categoryType) {
     switch (categoryType) {
       case constans.ALL_DOCUMENTS:
         return "All Documents"
@@ -99,7 +102,7 @@ class Documents extends Component {
       var newId;
       var newName = document.Name;
       var fId = document.Id;
- 
+
       if (documentlist.catId.indexOf(splitChars) >= 0) {
         var dtlStr = documentlist.catId.split(splitChars);
         var newId = `${dtlStr[0]}${splitChars}${document.Id}`//i.e all_docuemnts|{folderID}
@@ -109,11 +112,11 @@ class Documents extends Component {
       }
 
 
-      var folderT = new Object(); 
-        folderT.catId = newId;
-        folderT.name = newName;
-        folderT.fId = fId;
-        this.foldersTrail.push(folderT);
+      var folderT = new Object();
+      folderT.catId = newId;
+      folderT.name = newName;
+      folderT.fId = fId;
+      this.foldersTrail.push(folderT);
 
       dispatch(updateDocumentList(newId, newName, fId))
     }
@@ -153,22 +156,21 @@ class Documents extends Component {
 
   _onGoBack() {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-    var baseCatId ;
-     if (documentlist.catId.indexOf(splitChars) >= 0) {
-        var dtlStr = documentlist.catId.split(splitChars);
-        var baseCatId = dtlStr[0];
-      }
-      else
-      {
-        baseCatId = documentlist.catId;
-      }
-     
+    var baseCatId;
+    if (documentlist.catId.indexOf(splitChars) >= 0) {
+      var dtlStr = documentlist.catId.split(splitChars);
+      var baseCatId = dtlStr[0];
+    }
+    else {
+      baseCatId = documentlist.catId;
+    }
+
     this.foldersTrail.pop();
-      
-    var catId = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].catId: baseCatId;
-    var name = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].name: this.getCategoryName(baseCatId);
-     var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].fId: "";
-    
+
+    var catId = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].catId : baseCatId;
+    var name = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(baseCatId);
+    var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].fId : "";
+
     dispatch(updateDocumentList(catId, name, fid))
   }
 
@@ -181,11 +183,14 @@ class Documents extends Component {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
 
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
+    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
+    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+
     const showBreadCrums = this.foldersTrail.length > 0 ? true : false;
 
     if (!isFetching && showBreadCrums) {
 
-      var parentName =  this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length-1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
+      var parentName = this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
       return (
         <View>
           <TouchableOpacity style={styles.backButton} onPress={this._onGoBack.bind(this) }>
@@ -199,7 +204,6 @@ class Documents extends Component {
   }
 
   _renderSectionHeader(sectionData, sectionID) {
-
     return (
 
       <View style={styles.sectionHeader}>
@@ -207,11 +211,22 @@ class Documents extends Component {
       </View>
     )
   }
+
+  _showStatusBar() {
+    const {documentlist, documentlists} = this.props
+    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
+    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+
+    if (hasError) {
+      this.refs.masterView.showMessage("error", errorMessage);
+    }
+  }
+
   _renderTableContent(dataSource, isFetching) {
     if (dataSource.getRowCount() === 0) {
       return (<NoDocuments
         filter={this.state.filter}
-        isLoading={isFetching}
+        isFetching={isFetching}
         onRefresh={this._onRefresh.bind(this) }
         />)
     }
@@ -248,8 +263,6 @@ class Documents extends Component {
     }
   }
 
-
-
   render() {
     const {dispatch, documentlists, documentlist } = this.props
 
@@ -267,16 +280,17 @@ class Documents extends Component {
       i,
       j;
 
+    folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
+    documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
-    dataBlob["ID1"] = "Folders";
-    dataBlob["ID2"] = "Documents";
+
+    dataBlob["ID1"] = `Folders (${folders.length})`
+    dataBlob["ID2"] = `Files (${documents.length})`
 
     sectionIDs[0] = "ID1";
     sectionIDs[1] = "ID2";
 
-    folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
-    documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
-
+   
     // console.log("Folders:"+JSON.stringify(folders))
 
     // console.log("documents:"+JSON.stringify(documents))
@@ -320,7 +334,7 @@ class Documents extends Component {
     var additionalStyle = {};
 
     return (
-      <ViewContainer  ref="masterView" style={[styles.container, additionalStyle]}>
+      <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
         {this._renderBreadCrums() }
         <View style={styles.separator} />
 
@@ -352,14 +366,10 @@ class Documents extends Component {
 
 var NoDocuments = React.createClass({
   render: function () {
-    var text = '';
-    if (this.props.filter) {
-      text = `No results for "${this.props.filter}"`;
-    } else if (!this.props.isLoading) {
-      // If we're looking at the latest documents, aren't currently loading, and
-      // still have no results, show a message
-      text = 'No documents found';
-    }
+   var text = 'No documents found';
+     if (this.props.isFetching) {
+       return false;
+     }
 
     return (
       <View style={[styles.container, styles.centerText]}>
@@ -374,7 +384,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    marginTop: 40
+    marginTop: 0
   },
   centerText: {
     alignItems: 'center',
@@ -417,6 +427,13 @@ var styles = StyleSheet.create({
     marginTop: 15,
     padding: 15,
     backgroundColor: '#eeeeee',
+    alignSelf: 'stretch'
+  },
+
+  statusBar: {
+    marginTop: 15,
+    padding: 15,
+    backgroundColor: 'red',
     alignSelf: 'stretch'
   },
   sectionLabel: {
