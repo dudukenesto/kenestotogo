@@ -7,28 +7,32 @@ let {
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
   return (dispatch, getState) => {
-    dispatch(requestDocumentsTable(documentlist))
-    console.log("fetchDocumentsTable:"+url)
+    dispatch(requestDocumentsList(documentlist))
     return fetch(url)
       .then(response => response.json())
       .then(json => {
         const nextUrl = json.ResponseData.next_href
-
-        switch (actionType) {
-          case types.CHANGE_DOCUMENTS_LIST:
-            dispatch(changeDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
-            break
-          case types.RECEIVE_DOCUMENTS:
-            dispatch(receiveDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
-            break
-          case types.REFRESH_DOCUMENTS_LIST:
-            dispatch(refreshDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
-            break
+        if (json.ResponseData.ResponseStatus == "FAILED") {
+          dispatch(failedToFetchDocumentsList(documentlist, json.ResponseData.ErrorMessage))
         }
+        else {
+          switch (actionType) {
+            case types.CHANGE_DOCUMENTS_LIST:
+              dispatch(changeDocumentsList(json.ResponseData.DocumentsList, nextUrl, documentlist))
+              break
+            case types.RECEIVE_DOCUMENTS:
+              dispatch(receiveDocumentsList(json.ResponseData.DocumentsList, nextUrl, documentlist))
+              break
+            case types.REFRESH_DOCUMENTS_LIST:
+              dispatch(refreshDocumentsList(json.ResponseData.DocumentsList, nextUrl, documentlist))
+              break
+          }
+        }
+
+
       })
       .catch((error) => {
-        //Actions.error({data: 'get documents faliled failed'})
-        Alert('Failed to get documents')
+        dispatch(failedToFetchDocumentsList(documentlist, "Failed to retrieve documents"))
       })
   }
 }
@@ -67,7 +71,7 @@ function getNextUrl(env:string, sessionToken:string ,documentlists:Object, docum
   return activeDocumentsList.nextUrl
 }
 
-function changeDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
+function changeDocumentsList(documents:Object, nextUrl:string, documentlist:Object) {
   return {
     type: types.CHANGE_DOCUMENTS_LIST,
     nextUrl,
@@ -78,7 +82,7 @@ function changeDocumentsTable(documents:Object, nextUrl:string, documentlist:Obj
   }
 }
 
-function receiveDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
+function receiveDocumentsList(documents:Object, nextUrl:string, documentlist:Object) {
 
   return {
     type: types.RECEIVE_DOCUMENTS,
@@ -88,7 +92,7 @@ function receiveDocumentsTable(documents:Object, nextUrl:string, documentlist:Ob
   }
 }
 
-function refreshDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
+function refreshDocumentsList(documents:Object, nextUrl:string, documentlist:Object) {
 
   return {
     type: types.REFRESH_DOCUMENTS_LIST,
@@ -98,8 +102,16 @@ function refreshDocumentsTable(documents:Object, nextUrl:string, documentlist:Ob
   }
 }
 
-function requestDocumentsTable(documentlist:Object) {
-  console.log(requestDocumentsTable+types.REQUEST_DOCUMENTS)
+function failedToFetchDocumentsList(documentlist:Object, errorMessage:string) {
+  return {
+    type: types.SUBMIT_ERROR,
+    catId: documentlist.catId,
+    errorMessage:errorMessage
+  }
+}
+
+function requestDocumentsList(documentlist:Object) {
+  console.log(requestDocumentsList+types.REQUEST_DOCUMENTS)
   return {
     type: types.REQUEST_DOCUMENTS,
     catId: documentlist.catId

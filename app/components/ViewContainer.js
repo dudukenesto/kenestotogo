@@ -37,6 +37,7 @@ MessageBarManager.registerMessageBar(this.refs.alert);
   render() {
     return (
       <View style={[styles.viewContainer, this.props.style || {}]}>
+      <View style={styles.sortContainer}>
        <Text>Name</Text>
       </View>
       
@@ -55,8 +56,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "stretch"
   },
+  sortContainer :{
     padding: 0,
     backgroundColor: '#eeeeee',
+    flex: 0,
    flexDirection: "row-reverse",
   }
 
