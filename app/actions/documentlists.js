@@ -51,14 +51,14 @@ export function fetchTableIfNeeded(env:string, sessionToken:string, documentlist
 export function changeTable(env:string, sessionToken:string, documentlist:Object) {
   return (dispatch, getState) => {
     const {documentlists} = getState()
-    const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
+    const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
     return dispatch(fetchDocumentsTable(url, documentlist, types.CHANGE_DOCUMENTS_LIST))
   }
 }
 
 export function refreshTable(env:string, sessionToken:string, documentlist:Object) {
   return (dispatch, getState) => {
-    const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
+    const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
@@ -67,7 +67,7 @@ function getNextUrl(env:string, sessionToken:string ,documentlists:Object, docum
 
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
-    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
+    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
   }
   return activeDocumentsList.nextUrl
 }

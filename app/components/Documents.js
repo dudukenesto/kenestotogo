@@ -56,7 +56,7 @@ class Documents extends Component {
     this._onRefresh = this._onRefresh.bind(this)
     this._onGoBack = this._onGoBack.bind(this)
     this._onSort = this._onSort.bind(this)
-    
+
 
   }
 
@@ -159,10 +159,7 @@ class Documents extends Component {
     );
   }
 
-  _onSort(sortDirection, sortBy) {
-    const {dispatch, documentlist} = this.props
-    dispatch(updateDocumentList(documentlist.catId, documentlist.name, documentlist.fid, sortDirection, sortBy))
-  }
+
 
   _onGoBack() {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
@@ -189,10 +186,16 @@ class Documents extends Component {
     dispatch(refreshTable(env, sessionToken, documentlist))
   }
 
+  _onSort(sortDirection, sortBy) {
+    const {dispatch, documentlist} = this.props
+    dispatch(updateDocumentList(documentlist.catId, documentlist.name, documentlist.fid, sortDirection, sortBy))
+  }
+
   _renderSortBar() {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
 
-    const sortDirection = documentlist.sortDirection;//documentlist.catId in documentlists ? documentlists[documentlist.catId].sortDirection : false;
+    const sortBy = documentlist.sortBy == null || documentlist.sortBy == "" ? constans.ASSET_NAME : documentlist.sortBy;
+    const sortDirection = documentlist.sortDirection == null || documentlist.sortDirection == "" ? constans.ASCENDING : documentlist.sortDirection;
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
     const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
@@ -206,10 +209,10 @@ class Documents extends Component {
         {
           (sortDirection == constans.ASCENDING)
             ? (
-              <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING,documentlist.sortBy) }/>
+              <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING, sortBy) }/>
             ) :
             (
-              <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING,documentlist.sortBy) }/>
+              <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING, sortBy) }/>
             )
         }
         {

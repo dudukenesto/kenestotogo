@@ -6,7 +6,7 @@ export default function documentlist(state = {
   catId: constans.ALL_DOCUMENTS,
   fId: "",
   sortDirection:constans.ASCENDING,
-  sortBy:constans.NAME_FIELD
+  sortBy:constans.MODIFICATION_DATE
 
 }, action) {
   switch (action.type) {
