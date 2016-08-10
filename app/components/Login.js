@@ -1,11 +1,11 @@
 import React from "react";
-import {View, Text, StyleSheet, TouchableHighlight, AsyncStorage, Image, } from "react-native";
+import {View, Text, TextInput, StyleSheet, TouchableHighlight, AsyncStorage, Image, } from "react-native";
 import Button from "react-native-button";
 import Tcomb from "tcomb-form-native";
 import config from '../utils/app.config';
 import ProggressBar from "../components/ProgressBar";
-import * as routes from '../constants/routes'
-
+import * as routes from '../constants/routes';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 var stricturiEncode = require('strict-uri-encode');
 
@@ -34,8 +34,23 @@ var User = Tcomb.struct({
   password: Password,
 });
 
+// CUSTOM FIELDS TEMPLATE FOR DRAWING ICON. ref:  https://github.com/gcanti/tcomb-form-native/blob/master/lib/templates/bootstrap/textbox.js
+// function textboxTemplate(locals)
+// {
+//     return(
+//         <View >
+//             <Icon name={locals.iconName} />
+//             <TextInput 
+//                 placeholder={locals.placeholder}
+//             />
+//         </View>
+//     )
+// }
 var options = {
     stylesheet: formStylesheet,
+    // templates: {
+    //     textbox: textboxTemplate,
+    // },
     fields: {
         username: {
             placeholder: 'Username',
@@ -43,6 +58,8 @@ var options = {
             autoFocus: true,
             placeholderTextColor: '#ccc',
             underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
+            iconName: "person",            
         },
         password: {
             placeholder: 'Password',
@@ -50,6 +67,8 @@ var options = {
             secureTextEntry: true,
             placeholderTextColor: '#ccc',
             underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
+            iconName: "https",
         }
     }
 };
@@ -57,14 +76,20 @@ var options = {
 formStylesheet.textbox.normal = {
     height: 50,            
     fontSize: 17,
-    marginBottom: -20,    
+    marginBottom: -20,  
+    // paddingLeft: 35  
+}
+formStylesheet.textbox.error = {
+    height: 50,            
+    fontSize: 17,
+    // paddingLeft: 35  
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
-        backgroundColor: "#F5FCFF",
+        backgroundColor: "#fff",
         padding: 36,
     },
     formContainer: {
@@ -99,23 +124,6 @@ const styles = StyleSheet.create({
         flex: 3,
     },
     
-        
-    // welcome: {
-    //     fontSize: 20,
-    //     textAlign: "center",
-    //     margin: 10,
-    // },
-    
-//     instructions: {
-//         textAlign: "center",
-//         color: "#333333",
-//         marginBottom: 5,
-//     },
-//      spinner: {
-//         width: 30,
-//         height: 30,
-//    },
-
 });
 
 
@@ -216,8 +224,7 @@ const styles = StyleSheet.create({
                         <Text style={styles.forgotPwd}>Forgot Your Password?</Text>
                     </TouchableHighlight>
                 </View>
-                            
-            
+
             </View>
               )
     }
