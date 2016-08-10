@@ -16,7 +16,8 @@ import {View,
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import * as constans from '../constants/GlobalConstans'
-
+import Modal from 'react-native-modalbox';
+//var Modal   = require('react-native-modalbox');
 import InteractionManager from 'InteractionManager'
 
 let deviceWidth = Dimensions.get('window').width
@@ -249,6 +250,12 @@ class Documents extends Component {
   }
 
 
+openModal(){
+  //this.refs.modal3.open();
+  this.context.kModal.open();
+}
+
+
 
   render() {
     const {dispatch, documentlists, documentlist } = this.props
@@ -321,6 +328,8 @@ class Documents extends Component {
 
     return (
       <ViewContainer  ref="masterView" style={[styles.container, additionalStyle]}>
+
+       
         {this._renderBreadCrums() }
         <View style={styles.separator} />
 
@@ -332,7 +341,7 @@ class Documents extends Component {
 
         {this._renderTableContent(dataSource, isFetching) }
         <ActionButton buttonColor="rgba(231,76,60,1)">
-          <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => this._onRefresh('info', 'wawa ziba and his group') }>
+          <ActionButton.Item buttonColor='#9b59b6' title="open modal" onPress={() => this.openModal()}>
             <Icon name="https" style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' title="Upload" onPress={() => Actions.animated() }>
@@ -343,6 +352,8 @@ class Documents extends Component {
             <Icon name="send" style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>
+
+        
       </ViewContainer>
     )
   }
@@ -369,6 +380,9 @@ var NoDocuments = React.createClass({
     );
   }
 });
+
+
+
 
 var styles = StyleSheet.create({
   container: {
@@ -423,6 +437,25 @@ var styles = StyleSheet.create({
     color: '#2f2f2f',
     textAlign: 'center'
   },
+    modal: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  modal2: {
+    height: 230,
+    backgroundColor: "#3B5998"
+  },
+
+  modal3: {
+    height: 300,
+    width: 300
+  },
 });
+
+Documents.contextTypes = {
+    kModal:  React.PropTypes.object
+};
+
 
 export default Documents
