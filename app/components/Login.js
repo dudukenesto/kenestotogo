@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {View, Text, TextInput, StyleSheet, TouchableHighlight, AsyncStorage, Image, } from "react-native";
 import Button from "react-native-button";
 import Tcomb from "tcomb-form-native";
@@ -6,6 +6,8 @@ import config from '../utils/app.config';
 import ProggressBar from "../components/ProgressBar";
 import * as routes from '../constants/routes';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { Hideo } from 'react-native-textinput-effects';
 
 var stricturiEncode = require('strict-uri-encode');
 
@@ -35,17 +37,52 @@ var User = Tcomb.struct({
 });
 
 // CUSTOM FIELDS TEMPLATE FOR DRAWING ICON. ref:  https://github.com/gcanti/tcomb-form-native/blob/master/lib/templates/bootstrap/textbox.js
-// function textboxTemplate(locals)
-// {
-//     return(
-//         <View >
-//             <Icon name={locals.iconName} />
-//             <TextInput 
-//                 placeholder={locals.placeholder}
-//             />
-//         </View>
-//     )
-// }
+function usernameTemplate(locals)
+{
+    var error = locals.hasError && locals.error ? <Text accessibilityLiveRegion="polite" style={locals.stylesheet.errorBlock}>{locals.error}</Text> : null;
+    return(
+         <View>
+          <Hideo
+            style={styles.template}
+            iconClass={Icon}
+            iconName={'person'}
+            iconColor={'#F6841F'}
+            iconBackgroundColor={'#fff'}
+            inputStyle={{ color: '#000' }}
+            placeholder={'Username'}
+            autoFocus={true}
+            placeholderTextColor={'#ccc'}
+            selectionColor={"orange"}
+            onChangeText={(value) => locals.onChange(value)}
+          />
+            {error}
+        </View>
+    )
+}
+
+function passwordTemplate(locals)
+{
+    var error = locals.hasError && locals.error ? <Text accessibilityLiveRegion="polite" style={locals.stylesheet.errorBlock}>{locals.error}</Text> : null;
+    return(
+         <View >
+          <Hideo
+            style={styles.template}
+            iconClass={Icon}
+            iconName={'https'}
+            iconColor={'#F6841F'}
+            iconBackgroundColor={'#fff'}
+            inputStyle={{ color: "#000" }}
+            placeholder={'Password'}
+            secureTextEntry={true}
+            placeholderTextColor={'#ccc'}
+            selectionColor={"orange"}
+            onChangeText={(value) => locals.onChange(value)}
+          />
+            {error}
+        </View>
+    )
+}
+
 var options = {
     stylesheet: formStylesheet,
     // templates: {
@@ -53,22 +90,22 @@ var options = {
     // },
     fields: {
         username: {
-            placeholder: 'Username',
-            label: ' ',
-            autoFocus: true,
-            placeholderTextColor: '#ccc',
-            underlineColorAndroid: "#ccc",
-            selectionColor: "orange",
-            iconName: "person",            
+            template: usernameTemplate,
+            // placeholder: 'Username',
+            // label: ' ',
+            // autoFocus: true,
+            // placeholderTextColor: '#ccc',
+            // underlineColorAndroid: "#ccc",
+            // selectionColor: "orange",
         },
         password: {
-            placeholder: 'Password',
-            label: ' ',
-            secureTextEntry: true,
-            placeholderTextColor: '#ccc',
-            underlineColorAndroid: "#ccc",
-            selectionColor: "orange",
-            iconName: "https",
+            template: passwordTemplate,
+            // placeholder: 'Password',
+            // label: ' ',
+            // secureTextEntry: true,
+            // placeholderTextColor: '#ccc',
+            // underlineColorAndroid: "#ccc",
+            // selectionColor: "orange",
         }
     }
 };
@@ -95,9 +132,15 @@ const styles = StyleSheet.create({
     formContainer: {
         flex: 1,
     },
+    logoContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: "center",
+    },
     logo: {
         width: 178,
-        height: 61,        
+        height: 61, 
+        // marginBottom: 20,     
     },
     loginBtn: {       
         color: "#fff",
@@ -108,22 +151,24 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: "#F6841F",
         justifyContent: "center",
-        marginTop: 40,
+        marginTop: 20,
     },
     forgotPwd: {
         alignSelf: "center",
         fontSize: 16,   
         marginTop: 12,    
     },
-    logoContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: "flex-end",
-    },
     form: {
-        flex: 3,
+        flex: 2,
+        
     },
-    
+    template: {
+        borderWidth: 0.5,
+        borderColor: "#666",
+        marginTop: 15,
+        marginBottom: 10,
+    },
+  
 });
 
 
