@@ -98,7 +98,7 @@ constructor (props) {
                     title={'Kenesto hello'}
                     navIconName='menu'
                     iconColor='orange'
-                    onIconClicked = {this.onNavIconClicked}
+                    onIconClicked = {this.onNavIconClicked.bind(this)}
                     actions={[
                             {title: 'Search', iconName: 'search',iconSize: 30, show: 'always', iconColor: '#000'  },
                             {title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' }

@@ -10,16 +10,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#F5FCFF",
     },
-    welcome: {
-        fontSize: 20,
-        textAlign: "center",
-        margin: 10,
-    },
-    instructions: {
-        textAlign: "center",
-        color: "#333333",
-        marginBottom: 5,
-    },
     row: {
         alignItems: 'center',
         backgroundColor: 'white',
@@ -27,7 +17,10 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 10,
         paddingLeft: 30,
-        paddingRight: 15
+        paddingRight: 15,
+    },
+    selectedRow: {
+        backgroundColor: "#E9EAEC",
     },
     selectedItem: {
         fontWeight : '900'
@@ -44,7 +37,8 @@ const styles = StyleSheet.create({
     },
     itemCount: {
       flex: 1,
-      textAlign: 'right'
+      textAlign: 'right',
+         
     }
 });
 
@@ -69,8 +63,9 @@ export default class LeftMenuItem extends React.Component {
  
 
         var imageName = this.props.IsSelected ? this.props.listItem.iconSeleted :  this.props.listItem.itemIcon;
-        var itemStyle = this.props.IsSelected ? [styles.itemTitle,  styles.selectedItem] : styles.itemTitle; 
-
+        var itemTitleStyle = this.props.IsSelected ? [styles.itemTitle,  styles.selectedItem] : styles.itemTitle; 
+        var itemCountStyle = this.props.IsSelected ? [styles.itemCount,  styles.selectedItem] : styles.itemCount; 
+        var rowStyle = this.props.IsSelected ? [styles.row,  styles.selectedRow] : styles.row; 
 
         return (
             <View>
@@ -78,15 +73,15 @@ export default class LeftMenuItem extends React.Component {
                         onPress={this.props.onSelect}
                         onShowUnderlay={this.props.onHighlight}
                         onHideUnderlay={this.props.onUnhighlight}>
-                        <View style={styles.row}>
+                        <View style={rowStyle}>
                             <Image    
                                 source={{ uri: imageName, isStatic: true }}                 
                                 style={styles.itemIcon}
                             />
-                            <Text style={itemStyle} >
+                            <Text style={itemTitleStyle} >
                                 {this.props.listItem.itemTitle}
                             </Text>
-                            <Text style={itemStyle}>
+                            <Text style={itemCountStyle}>
                                 {this.props.listItem.itemCount}
                             </Text>
                         </View>
