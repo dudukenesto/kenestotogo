@@ -102,6 +102,7 @@ function passwordTemplate(locals)
             placeholderTextColor={locals.placeholderTextColor}
             selectionColor={locals.selectionColor}
             underlineColorAndroid={locals.underlineColorAndroid}
+            secureTextEntry={locals.secureTextEntry}
             onKeyPress={locals.onKeyPress}
             placeholder={locals.placeholder}
             style={textboxStyle}
