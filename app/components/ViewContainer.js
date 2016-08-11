@@ -1,7 +1,7 @@
 'use strict'
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native'
+import { View,Text, StyleSheet } from 'react-native'
 
 
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
@@ -37,6 +37,8 @@ MessageBarManager.registerMessageBar(this.refs.alert);
   render() {
     return (
       <View style={[styles.viewContainer, this.props.style || {}]}>
+      
+      
         {this.props.children}
          <MessageBarAlert ref="alert" />
       </View>
@@ -52,7 +54,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "stretch"
   }
-
 })
 
 module.exports = ViewContainer

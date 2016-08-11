@@ -15,6 +15,7 @@
     "react-native-vector-icons": "2.0.3",
     "react-native-message-bar": "^1.6.0",
     "react-native-action-button": "^1.1.5",
+    "react-native-menu": "0.20.1",
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",

@@ -1,1 +1,5 @@
 export const ALL_DOCUMENTS = 'ALL_DOCUMENTS'
+export const ASCENDING = 'asc'
+export const DESCENDING = 'desc'
+export const ASSET_NAME = 'asset_name'
+export const MODIFICATION_DATE = 'modification_date'
