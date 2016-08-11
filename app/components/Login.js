@@ -7,7 +7,6 @@ import ProggressBar from "../components/ProgressBar";
 import * as routes from '../constants/routes';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { Hideo } from 'react-native-textinput-effects';
 
 var stricturiEncode = require('strict-uri-encode');
 
@@ -36,47 +35,78 @@ var User = Tcomb.struct({
   password: Password,
 });
 
+var usernameIconStyle = {
+        color: "#ddd"
+    }
+var passwordIconStyle = {
+    color: "#ddd"
+}
 // CUSTOM FIELDS TEMPLATE FOR DRAWING ICON. ref:  https://github.com/gcanti/tcomb-form-native/blob/master/lib/templates/bootstrap/textbox.js
 function usernameTemplate(locals)
 {
-    var error = locals.hasError && locals.error ? <Text accessibilityLiveRegion="polite" style={locals.stylesheet.errorBlock}>{locals.error}</Text> : null;
+    var stylesheet = locals.stylesheet;
+    var formGroupStyle = stylesheet.formGroup.normal;
+    var textboxStyle = stylesheet.textbox.normal;
+    var errorBlockStyle = stylesheet.errorBlock;
+    
+
+    if (locals.hasError) {
+        formGroupStyle = stylesheet.formGroup.error;
+        textboxStyle = stylesheet.textbox.error;
+    }
+    var error = locals.hasError && locals.error ? <Text accessibilityLiveRegion="polite" style={errorBlockStyle}>{locals.error}</Text> : null;
     return(
-         <View>
-          <Hideo
-            style={styles.template}
-            iconClass={Icon}
-            iconName={'person'}
-            iconColor={'#F6841F'}
-            iconBackgroundColor={'#fff'}
-            inputStyle={{ color: '#000' }}
-            placeholder={'Username'}
-            autoFocus={true}
-            placeholderTextColor={'#ccc'}
-            selectionColor={"orange"}
-            onChangeText={(value) => locals.onChange(value)}
+         <View style={formGroupStyle}>
+            <Icon name="person" style={[styles.formIcon, usernameIconStyle]} />
+            <TextInput
+            placeholderTextColor={locals.placeholderTextColor}
+            selectionColor={locals.selectionColor}
+            underlineColorAndroid={locals.underlineColorAndroid}
+            onKeyPress={locals.onKeyPress}
+            placeholder={locals.placeholder}
+            style={textboxStyle}
+            value={locals.value}          
+            onChangeText={(value) =>{ updateIcon(value, usernameIconStyle); locals.onChange(value)}}
           />
             {error}
         </View>
     )
 }
 
+function updateIcon(value, usernameIconStyle){
+    
+        // console.log(usernameIconStyle.color)
+        // usernameIconStyle = {
+        // color: "red"
+        // }
+        // console.log(usernameIconStyle.color)  
+     
+}
+
 function passwordTemplate(locals)
 {
+    var stylesheet = locals.stylesheet;
+    var formGroupStyle = stylesheet.formGroup.normal;
+    var textboxStyle = stylesheet.textbox.normal;
+    var errorBlockStyle = stylesheet.errorBlock;
+
+    if (locals.hasError) {
+        formGroupStyle = stylesheet.formGroup.error;
+        textboxStyle = stylesheet.textbox.error;
+    }
     var error = locals.hasError && locals.error ? <Text accessibilityLiveRegion="polite" style={locals.stylesheet.errorBlock}>{locals.error}</Text> : null;
     return(
-         <View >
-          <Hideo
-            style={styles.template}
-            iconClass={Icon}
-            iconName={'https'}
-            iconColor={'#F6841F'}
-            iconBackgroundColor={'#fff'}
-            inputStyle={{ color: "#000" }}
-            placeholder={'Password'}
-            secureTextEntry={true}
-            placeholderTextColor={'#ccc'}
-            selectionColor={"orange"}
-            onChangeText={(value) => locals.onChange(value)}
+         <View style={formGroupStyle}>
+            <Icon name="https" style={[styles.formIcon, passwordIconStyle]} />
+            <TextInput
+            placeholderTextColor={locals.placeholderTextColor}
+            selectionColor={locals.selectionColor}
+            underlineColorAndroid={locals.underlineColorAndroid}
+            onKeyPress={locals.onKeyPress}
+            placeholder={locals.placeholder}
+            style={textboxStyle}
+            value={locals.value}          
+            onChangeText={(value) =>{ updateIcon(value); locals.onChange(value)}}
           />
             {error}
         </View>
@@ -85,27 +115,24 @@ function passwordTemplate(locals)
 
 var options = {
     stylesheet: formStylesheet,
-    // templates: {
-    //     textbox: textboxTemplate,
-    // },
     fields: {
         username: {
             template: usernameTemplate,
-            // placeholder: 'Username',
-            // label: ' ',
-            // autoFocus: true,
-            // placeholderTextColor: '#ccc',
-            // underlineColorAndroid: "#ccc",
-            // selectionColor: "orange",
+            placeholder: 'Username',
+            label: ' ',
+            autoFocus: true,
+            placeholderTextColor: '#ccc',
+            underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
         },
         password: {
             template: passwordTemplate,
-            // placeholder: 'Password',
-            // label: ' ',
-            // secureTextEntry: true,
-            // placeholderTextColor: '#ccc',
-            // underlineColorAndroid: "#ccc",
-            // selectionColor: "orange",
+            placeholder: 'Password',
+            label: ' ',
+            secureTextEntry: true,
+            placeholderTextColor: '#ccc',
+            underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
         }
     }
 };
@@ -113,13 +140,13 @@ var options = {
 formStylesheet.textbox.normal = {
     height: 50,            
     fontSize: 17,
-    marginBottom: -20,  
-    // paddingLeft: 35  
+    paddingLeft: 40,
+    paddingBottom: 15,  
 }
 formStylesheet.textbox.error = {
     height: 50,            
     fontSize: 17,
-    // paddingLeft: 35  
+    paddingLeft: 40  
 }
 
 const styles = StyleSheet.create({
@@ -140,7 +167,6 @@ const styles = StyleSheet.create({
     logo: {
         width: 178,
         height: 61, 
-        // marginBottom: 20,     
     },
     loginBtn: {       
         color: "#fff",
@@ -160,15 +186,22 @@ const styles = StyleSheet.create({
     },
     form: {
         flex: 2,
-        
+        paddingTop: 20,
     },
-    template: {
-        borderWidth: 0.5,
-        borderColor: "#666",
-        marginTop: 15,
-        marginBottom: 10,
-    },
-  
+    formIcon: {
+        fontSize: 32,
+        height: 30,
+        color: '#ddd',
+        position: "absolute",
+        top: 5
+    },  
+    formIcon2: {
+        fontSize: 32,
+        height: 30,
+        color: '#000',
+        position: "absolute",
+        top: 5
+    },  
 });
 
 
@@ -176,18 +209,32 @@ const styles = StyleSheet.create({
       constructor(props) {
 
          
-            super(props)
+        super(props)
 
-            this.state = {
-            value:{
+        this.state = {
+            value: {
                 username: "",
-                password: ""
+                password: "",
+            
             },    
-         }
-         
-      }
+        }         
+    }
     
     onChange(value) {
+        // options.fields.password.template= "passwordTemplate2"
+        console.log(value.username)
+        if(value.username != false){
+            usernameIconStyle = { color: "#000" }
+        }
+        else {
+            usernameIconStyle = { color: "#ddd" }
+        }
+        if(value.password != false){
+            passwordIconStyle = { color: "#000" }
+        }
+        else {
+            passwordIconStyle = { color: "#ddd" }
+        }
         this.props.Update
         this.setState({value});
     }
@@ -246,9 +293,6 @@ const styles = StyleSheet.create({
     
     _renderLogin(){
        
-          
-
-           
                             
             return(<View style={[this.props.style, styles.formContainer]}>
                 {this._renderProgressBar()}
@@ -269,7 +313,6 @@ const styles = StyleSheet.create({
                         <Text style={styles.forgotPwd}>Forgot Your Password?</Text>
                     </TouchableHighlight>
                 </View>
-
             </View>
               )
     }
