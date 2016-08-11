@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     avatarContainer: {
-        margin: 5
+        margin: 15
     },
     avatar: {
         height: 50,
@@ -30,16 +30,6 @@ const styles = StyleSheet.create({
   },
     userInfoContainer: {
         flex: 1
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: "center",
-        margin: 10,
-    },
-    instructions: {
-        textAlign: "center",
-        color: "#333333",
-        marginBottom: 5,
     },
      rowSeparator: {
         backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -82,59 +72,59 @@ class TabView extends React.Component {
         var menuItems = [
             {
                 Index: 0,
-                itemTitle : 'Recent Documents', 
+                itemTitle : 'My Documents', 
                 itemCount : 60, 
-                itemIcon: 'folder_icon',
-                iconSeleted : 'rotten_tomatoes_icon',
-                selected: true
+                itemIcon: 'folder',
+                selected: true,
+                customStyle: ''
             },
             {
                 Index: 1,
-                itemTitle : 'My Documents', 
+                itemTitle : 'Shared with me', 
                 itemCount : 140, 
-                itemIcon: 'folder_icon',
-                iconSeleted : 'rotten_tomatoes_icon',
-                selected: false
+                itemIcon: 'folder',
+                selected: false,
+                customStyle: ''
             },
             {
                 Index: 2,
                 itemTitle : 'All Documents', 
-                itemCount : 60, 
-                itemIcon: 'folder_icon',
-                iconSeleted : 'rotten_tomatoes_icon',
-                selected: false
+                itemCount :20, 
+                itemIcon: 'folder',
+                selected: false,
+                customStyle: ''
             },
             {
                 Index: 3,
                 itemTitle : 'Checked-out Documents', 
-                iconSeleted : 'rotten_tomatoes_icon',
-                itemCount : 60, 
-                itemIcon: 'folder_icon',
-                selected: false
+                itemCount : 42, 
+                itemIcon: 'android',
+                selected: false,
+                customStyle: ''
             },
              {
                 Index: 4,
                 itemTitle : 'Archived Documents', 
-                itemCount : 60, 
-                itemIcon: 'folder_icon',
-                iconSeleted : 'rotten_tomatoes_icon',
-                selected: false
+                itemCount : 18, 
+                itemIcon: 'restore',
+                selected: false,
+                customStyle: ''
             },
             {
                 Index: 5,
                 itemTitle : 'My usage space', 
                 itemCount : null, 
-                itemIcon: 'folder_icon',
-                iconSeleted : 'rotten_tomatoes_icon',
-                selected: false
+                itemIcon: 'android',
+                selected: false,
+                customStyle: ''
             },
             {
                 Index: 6,
                 itemTitle : 'Logout', 
                 itemCount : null, 
-                itemIcon: 'folder_icon',
-                iconSeleted : 'rotten_tomatoes_icon',
-                selected: false
+                itemIcon: 'power-settings-new',
+                selected: false,
+                customStyle: {color: "#FA8302"}
             }
         ]; 
 
@@ -148,17 +138,16 @@ class TabView extends React.Component {
     
     render(){
         const drawer = this.context.drawer;
-    
          
         return (
             <View style={styles.screenContainer}>
                 <View style={[styles.headerContainer, this.props.sceneStyle]}>
                     <View style={styles.avatarContainer}>
-                        <Image source={{ uri: 'folder_icon', isStatic: true }}    style={styles.avatar} />
+                        <Image source={require('../assets/userpic.jpg')} style={styles.avatar} />
                     </View>
                     <View  style={styles.userInfoContainer}>
                         <Text style={{color: '#000'}}>Username</Text>
-                        <Text>{this.props.loggedUser}</Text>
+                        <Text>{this.props.loggedUser}loggedUser (this.props.loggedUser)</Text>
                     </View>
                                         
                 </View>

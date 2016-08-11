@@ -1,7 +1,7 @@
 import React from "react";
 import {View, Text, StyleSheet,Image,Platform, TouchableHighlight, TouchableNativeFeedback} from "react-native";
 import Button from "react-native-button";
-
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const styles = StyleSheet.create({
     container: {
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingTop: 10,
         paddingBottom: 10,
-        paddingLeft: 30,
+        paddingLeft: 25,
         paddingRight: 15,
     },
     selectedRow: {
@@ -27,9 +27,12 @@ const styles = StyleSheet.create({
     },
     itemIcon: {
         backgroundColor: 'transparent',
-        height: 22,
+        fontSize: 24,
         marginRight: 15,
-        width:22,
+        color: "#999",
+    },
+    selectedItemIcon: {
+        color: "#000",
     },
     itemTitle: {
         fontSize: 14,
@@ -61,11 +64,10 @@ export default class LeftMenuItem extends React.Component {
                 TouchableElement = TouchableNativeFeedback;
         }
  
-
-        var imageName = this.props.IsSelected ? this.props.listItem.iconSeleted :  this.props.listItem.itemIcon;
-        var itemTitleStyle = this.props.IsSelected ? [styles.itemTitle,  styles.selectedItem] : styles.itemTitle; 
-        var itemCountStyle = this.props.IsSelected ? [styles.itemCount,  styles.selectedItem] : styles.itemCount; 
         var rowStyle = this.props.IsSelected ? [styles.row,  styles.selectedRow] : styles.row; 
+        var iconStyle = this.props.IsSelected ? [styles.itemIcon,  styles.selectedItemIcon, this.props.listItem.customStyle] : [styles.itemIcon, this.props.listItem.customStyle]; 
+        var itemTitleStyle = this.props.IsSelected ? [styles.itemTitle,  styles.selectedItem, this.props.listItem.customStyle] : [styles.itemTitle, this.props.listItem.customStyle]; 
+        var itemCountStyle = this.props.IsSelected ? [styles.itemCount,  styles.selectedItem] : styles.itemCount; 
 
         return (
             <View>
@@ -74,10 +76,7 @@ export default class LeftMenuItem extends React.Component {
                         onShowUnderlay={this.props.onHighlight}
                         onHideUnderlay={this.props.onUnhighlight}>
                         <View style={rowStyle}>
-                            <Image    
-                                source={{ uri: imageName, isStatic: true }}                 
-                                style={styles.itemIcon}
-                            />
+                            <Icon name={this.props.listItem.itemIcon} style={iconStyle} />
                             <Text style={itemTitleStyle} >
                                 {this.props.listItem.itemTitle}
                             </Text>
