@@ -113,7 +113,6 @@ function failedToFetchDocumentsList(documentlist:Object,url:string, errorMessage
 }
 
 function requestDocumentsList(documentlist:Object) {
-  console.log(requestDocumentsList+types.REQUEST_DOCUMENTS)
   return {
     type: types.REQUEST_DOCUMENTS,
     catId: documentlist.catId

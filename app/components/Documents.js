@@ -56,8 +56,7 @@ class Documents extends Component {
     this._onRefresh = this._onRefresh.bind(this)
     this._onGoBack = this._onGoBack.bind(this)
     this._onSort = this._onSort.bind(this)
-
-
+    this._onChangeVisibleRows = this._onChangeVisibleRows.bind(this)
   }
 
   getCategoryName(categoryType) {
@@ -69,6 +68,16 @@ class Documents extends Component {
     }
   }
 
+ getSortByName(sortBy) {
+    switch (sortBy) {
+      case constans.ASSET_NAME:
+        return "Name"
+        case constans.MODIFICATION_DATE:
+        return "Modification Date"
+      default:
+        return "";
+    }
+  }
   getBaseCatId(categoryType) {
     switch (categoryType) {
       case constans.ALL_DOCUMENTS:
@@ -191,10 +200,15 @@ class Documents extends Component {
     dispatch(updateDocumentList(documentlist.catId, documentlist.name, documentlist.fid, sortDirection, sortBy))
   }
 
-  _renderSortBar() {
+_onChangeVisibleRows(visibleRows, changedRows)
+{
+  console.log("visibleRows: "+JSON.stringify(visibleRows))
+   console.log("changedRows: "+JSON.stringify(changedRows))
+}
+  _renderSortBar(title) {
     const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
 
-    const sortBy = documentlist.sortBy == null || documentlist.sortBy == "" ? constans.ASSET_NAME : documentlist.sortBy;
+    const sortBy = constans.ASSET_NAME;
     const sortDirection = documentlist.sortDirection == null || documentlist.sortDirection == "" ? constans.ASCENDING : documentlist.sortDirection;
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
@@ -205,25 +219,30 @@ class Documents extends Component {
 
     return (
       <View style={styles.sortContainer}>
-        <Text>Name</Text>
-        {
-          (sortDirection == constans.ASCENDING)
-            ? (
-              <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING, sortBy) }/>
-            ) :
-            (
-              <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING, sortBy) }/>
-            )
-        }
-        {
-          (!isFetching && showBreadCrums)
-            ? (
-              <Icon name="arrow-back" style={styles.arrowButtonIcon} onPress={this._onGoBack.bind(this) }/>
-            )
-            : (
-              <View></View>
-            )
-        }
+        
+          {
+            (sortDirection == constans.ASCENDING)
+              ? (
+                <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING, sortBy) }/>
+              ) :
+              (
+                <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING, sortBy) }/>
+              )
+          }
+          <Text>{this.getSortByName(sortBy)}</Text>
+          {
+            (!isFetching && showBreadCrums)
+              ? (
+                <Icon name="arrow-back" style={styles.arrowButtonIcon} onPress={this._onGoBack.bind(this) }/>
+              )
+              : (
+                <View></View>
+              )
+          }
+
+        <View>
+          <Text>{title}</Text>
+        </View>
       </View>
     )
   }
@@ -311,7 +330,8 @@ class Documents extends Component {
     folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
     documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
-
+    var sortBarTitle = `Folders`
+    
     dataBlob["ID1"] = `Folders (${folders.length})`
     dataBlob["ID2"] = `Files (${documents.length})`
 
@@ -363,7 +383,7 @@ class Documents extends Component {
 
     return (
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
-        {this._renderSortBar() }
+        {this._renderSortBar(sortBarTitle) }
         <View style={styles.separator} />
 
         { isFetching &&
