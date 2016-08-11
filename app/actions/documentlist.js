@@ -6,7 +6,7 @@ let {
   Alert
 } = React
 
-export function updateDocumentList(catId: string, name: string, fId: string, sortDirection: string =constans.ASCENDING , sortBy: string = constans.MODIFICATION_DATE) {
+export function updateDocumentList(catId: string, name: string, fId: string="", sortDirection: string =constans.ASCENDING , sortBy: string = constans.ASSET_NAME) {
   return {
     type: types.UPDATE_DOCUMENTS_LIST,
     catId: catId,

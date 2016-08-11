@@ -6,14 +6,16 @@ function documentlist(state = {
   items: [],
   nextUrl: false,
   errorMessage: '',
-  hasError: false
+  hasError: false,
+  dataSource:{}
 }, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
       return {
         ...state,
         isFetching: false,
-        items: [...state.items, ...action.documents],
+        items: [...action.documents],
+        dataSource: action.dataSource,
         nextUrl: action.nextUrl,
         hasError: false,
         errorMessage: ''
@@ -40,6 +42,7 @@ function documentlist(state = {
       return {
         isFetching: false,
         items: [...action.documents],
+        dataSource: action.dataSource,
         nextUrl: action.nextUrl,
         hasError: false,
         errorMessage: ''
@@ -49,6 +52,7 @@ function documentlist(state = {
       return {
         isFetching: false,
         items: [...action.documents],
+        dataSource: action.dataSource,
         nextUrl: action.nextUrl,
         name: action.name,
         catId: action.catId,

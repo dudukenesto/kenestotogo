@@ -68,11 +68,11 @@ class Documents extends Component {
     }
   }
 
- getSortByName(sortBy) {
+  getSortByName(sortBy) {
     switch (sortBy) {
       case constans.ASSET_NAME:
         return "Name"
-        case constans.MODIFICATION_DATE:
+      case constans.MODIFICATION_DATE:
         return "Modification Date"
       default:
         return "";
@@ -88,16 +88,14 @@ class Documents extends Component {
   }
 
   componentWillMount() {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
+    const {dispatch, documentlist} = this.props
+    dispatch(fetchTableIfNeeded(documentlist))
   }
 
   componentWillReceiveProps(nextProps) {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-    if ((documentlist.catId !== nextProps.documentlist.catId) ||
-      (documentlist.sortDirection !== nextProps.documentlist.sortDirection) ||
-      (documentlist.sortBy !== nextProps.documentlist.sortBy)) {
-      dispatch(changeTable(env, sessionToken, nextProps.documentlist));
+    const {dispatch, documentlist, documentlists} = this.props
+    if (documentlist.catId !== nextProps.documentlist.catId) {
+      //dispatch(changeTable(nextProps.documentlist));
     }
   }
 
@@ -105,13 +103,13 @@ class Documents extends Component {
     this._showStatusBar()
   }
   onEndReached() {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
+    const {dispatch, documentlist} = this.props
+    dispatch(fetchTableIfNeeded(documentlist))
   }
 
 
   selectItem(document) {
-    const {dispatch, env, sessionToken, documentlist} = this.props
+    const {dispatch, documentlist} = this.props
 
     if (document.FamilyCode == 'FOLDER') {
       var newId;
@@ -133,7 +131,15 @@ class Documents extends Component {
       folderT.fId = fId;
       this.foldersTrail.push(folderT);
 
-      dispatch(updateDocumentList(newId, newName, fId))
+      dispatch(updateDocumentList(newId, newName, fId, documentlist.sortDirection, documentlist.sortBy))
+      var nextDocumentlist = {
+        name: newName,
+        catId: newId,
+        fId: fId,
+        sortDirection: constans.ASCENDING,
+        sortBy: constans.ASSET_NAME
+      }
+      dispatch(changeTable(nextDocumentlist));
     }
     else {
 
@@ -171,7 +177,7 @@ class Documents extends Component {
 
 
   _onGoBack() {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
+    const {dispatch, documentlist, documentlists} = this.props
     var baseCatId;
     if (documentlist.catId.indexOf(splitChars) >= 0) {
       var dtlStr = documentlist.catId.split(splitChars);
@@ -187,26 +193,40 @@ class Documents extends Component {
     var name = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(baseCatId);
     var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].fId : "";
 
-    dispatch(updateDocumentList(catId, name, fid))
+
+var nextDocumentlist = {
+      name: name,
+      catId: catId,
+      fId: fid,
+      sortDirection: documentlist.sortDirection,
+      sortBy: documentlist.sortBy
+    }
+
+    dispatch(updateDocumentList(catId, name, fid, documentlist.sortDirection, documentlist.sortBy))
+    
+    //dispatch(changeTable(nextDocumentlist));
   }
 
   _onRefresh(type, message) {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(refreshTable(env, sessionToken, documentlist))
+    const {dispatch, documentlist} = this.props
+    dispatch(refreshTable(documentlist))
   }
 
   _onSort(sortDirection, sortBy) {
     const {dispatch, documentlist} = this.props
-    dispatch(updateDocumentList(documentlist.catId, documentlist.name, documentlist.fid, sortDirection, sortBy))
+
+    documentlist.sortDirection = sortDirection;
+    documentlist.sortBy;
+    //dispatch(updateDocumentList(documentlist.catId, documentlist.name, documentlist.fid, sortDirection, sortBy))
+    dispatch(refreshTable(documentlist));
   }
 
-_onChangeVisibleRows(visibleRows, changedRows)
-{
-  console.log("visibleRows: "+JSON.stringify(visibleRows))
-   console.log("changedRows: "+JSON.stringify(changedRows))
-}
+  _onChangeVisibleRows(visibleRows, changedRows) {
+    console.log("visibleRows: " + JSON.stringify(visibleRows))
+    console.log("changedRows: " + JSON.stringify(changedRows))
+  }
   _renderSortBar(title) {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
+    const {dispatch, documentlist, documentlists} = this.props
 
     const sortBy = constans.ASSET_NAME;
     const sortDirection = documentlist.sortDirection == null || documentlist.sortDirection == "" ? constans.ASCENDING : documentlist.sortDirection;
@@ -219,26 +239,26 @@ _onChangeVisibleRows(visibleRows, changedRows)
 
     return (
       <View style={styles.sortContainer}>
-        
-          {
-            (sortDirection == constans.ASCENDING)
-              ? (
-                <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING, sortBy) }/>
-              ) :
-              (
-                <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING, sortBy) }/>
-              )
-          }
-          <Text>{this.getSortByName(sortBy)}</Text>
-          {
-            (!isFetching && showBreadCrums)
-              ? (
-                <Icon name="arrow-back" style={styles.arrowButtonIcon} onPress={this._onGoBack.bind(this) }/>
-              )
-              : (
-                <View></View>
-              )
-          }
+
+        {
+          (sortDirection == constans.ASCENDING)
+            ? (
+              <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING, sortBy) }/>
+            ) :
+            (
+              <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING, sortBy) }/>
+            )
+        }
+        <Text>{this.getSortByName(sortBy) }</Text>
+        {
+          (!isFetching && showBreadCrums)
+            ? (
+              <Icon name="arrow-back" style={styles.arrowButtonIcon} onPress={this._onGoBack.bind(this) }/>
+            )
+            : (
+              <View></View>
+            )
+        }
 
         <View>
           <Text>{title}</Text>
@@ -270,7 +290,10 @@ _onChangeVisibleRows(visibleRows, changedRows)
 
 
   _renderTableContent(dataSource, isFetching) {
-    if (dataSource.getRowCount() === 0) {
+    const {documentlist, documentlists} = this.props
+    const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
+
+    if (itemsLength == 0) {
       return (<NoDocuments
         filter={this.state.filter}
         isFetching={isFetching}
@@ -314,73 +337,10 @@ _onChangeVisibleRows(visibleRows, changedRows)
     const {dispatch, documentlists, documentlist } = this.props
 
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
-
-    var items = documentlist.catId in documentlists ? documentlists[documentlist.catId].items : [],
-      length = items.length,
-      dataBlob = {},
-      sectionIDs = [],
-      rowIDs = [],
-      foldersSection,
-      docuemntsSection,
-      folders,
-      documents,
-      i,
-      j;
-
-    folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
-    documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
-
-    var sortBarTitle = `Folders`
-    
-    dataBlob["ID1"] = `Folders (${folders.length})`
-    dataBlob["ID2"] = `Files (${documents.length})`
-
-    sectionIDs[0] = "ID1";
-    sectionIDs[1] = "ID2";
-
-
-    // console.log("Folders:"+JSON.stringify(folders))
-
-    // console.log("documents:"+JSON.stringify(documents))
-
-    rowIDs[0] = [];
-    for (j = 0; j < folders.length; j++) {
-      folder = folders[j];
-      // Add Unique Row ID to RowID Array for Section
-      rowIDs[0].push(folder.Id);
-
-      // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-      dataBlob['ID1:' + folder.Id] = folder;
-    }
-
-    rowIDs[1] = [];
-    for (j = 0; j < documents.length; j++) {
-      document = documents[j];
-      // Add Unique Row ID to RowID Array for Section
-      rowIDs[1].push(document.Id);
-
-      // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-      dataBlob['ID2:' + document.Id] = document;
-    }
-
-    var getSectionData = (dataBlob, sectionID) => {
-      return dataBlob[sectionID];
-    }
-
-    var getRowData = (dataBlob, sectionID, rowID) => {
-      return dataBlob[sectionID + ':' + rowID];
-    }
-    let ds = new ListView.DataSource({
-      getSectionData: getSectionData,
-      getRowData: getRowData,
-      rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2
-    })
-
-
-    let dataSource = documentlist.catId in documentlists ? ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) : ds.cloneWithRows([])
     var additionalStyle = {};
-
+    let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
+    var sortBarTitle = `Folders`
+    let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
     return (
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
         {this._renderSortBar(sortBarTitle) }
