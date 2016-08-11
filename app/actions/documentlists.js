@@ -21,6 +21,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
         else {
           var prevState = getState();
           var items,
+            totalDocuments,
             dataBlob = {},
             sectionIDs = [],
             rowIDs = [],
@@ -31,21 +32,20 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             i,
             j;
 
+          totalDocuments = json.ResponseData.TotalDocuments;
           if (actionType == types.RECEIVE_DOCUMENTS) {
             items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
           }
           else {
             items = [...json.ResponseData.DocumentsList]
           }
-
-
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
           var sortBarTitle = `Folders`
 
-          dataBlob["ID1"] = `Folders (${folders.length})`
-          dataBlob["ID2"] = `Files (${documents.length})`
+          dataBlob["ID1"] = "Folders"//`Folders (${folders.length})`
+          dataBlob["ID2"] = `Files (${totalDocuments})`
 
           sectionIDs[0] = "ID1";
           sectionIDs[1] = "ID2";
@@ -110,7 +110,7 @@ export function fetchTableIfNeeded(documentlist: Object) {
   return (dispatch, getState) => {
     const {documentlists} = getState()
     if (shouldFetchDocuments(documentlists, documentlist)) {
-      const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken,documentlists, documentlist)
+      const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlists, documentlist)
       return dispatch(fetchDocumentsTable(nextUrl, documentlist, types.RECEIVE_DOCUMENTS))
     }
   }
@@ -140,7 +140,7 @@ function getNextUrl(env: string, sessionToken: string, documentlists: Object, do
   return activeDocumentsList.nextUrl
 }
 
-function changeDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource:Object) {
+function changeDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
   return {
     type: types.CHANGE_DOCUMENTS_LIST,
     nextUrl,
@@ -152,7 +152,7 @@ function changeDocumentsList(documents: Object, nextUrl: string, documentlist: O
   }
 }
 
-function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource:Object) {
+function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
 
   return {
     type: types.RECEIVE_DOCUMENTS,
@@ -163,7 +163,7 @@ function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: 
   }
 }
 
-function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource:Object) {
+function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
 
   return {
     type: types.REFRESH_DOCUMENTS_LIST,

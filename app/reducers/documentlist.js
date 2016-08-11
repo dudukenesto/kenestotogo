@@ -5,8 +5,8 @@ export default function documentlist(state = {
   name: "All Documents",
   catId: constans.ALL_DOCUMENTS,
   fId: "",
-  sortDirection:constans.ASCENDING,
-  sortBy:constans.ASSET_NAME
+  sortDirection: constans.ASCENDING,
+  sortBy: constans.ASSET_NAME
 
 }, action) {
   switch (action.type) {

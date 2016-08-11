@@ -7,7 +7,7 @@ function documentlist(state = {
   nextUrl: false,
   errorMessage: '',
   hasError: false,
-  dataSource:{}
+  dataSource: {}
 }, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:

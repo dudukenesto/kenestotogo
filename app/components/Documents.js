@@ -194,7 +194,7 @@ class Documents extends Component {
     var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].fId : "";
 
 
-var nextDocumentlist = {
+    var nextDocumentlist = {
       name: name,
       catId: catId,
       fId: fid,
@@ -203,7 +203,7 @@ var nextDocumentlist = {
     }
 
     dispatch(updateDocumentList(catId, name, fid, documentlist.sortDirection, documentlist.sortBy))
-    
+
     //dispatch(changeTable(nextDocumentlist));
   }
 
@@ -225,7 +225,8 @@ var nextDocumentlist = {
     console.log("visibleRows: " + JSON.stringify(visibleRows))
     console.log("changedRows: " + JSON.stringify(changedRows))
   }
-  _renderSortBar(title) {
+  
+  _renderSortBar() {
     const {dispatch, documentlist, documentlists} = this.props
 
     const sortBy = constans.ASSET_NAME;
@@ -259,10 +260,6 @@ var nextDocumentlist = {
               <View></View>
             )
         }
-
-        <View>
-          <Text>{title}</Text>
-        </View>
       </View>
     )
   }
@@ -339,11 +336,10 @@ var nextDocumentlist = {
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
     var additionalStyle = {};
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
-    var sortBarTitle = `Folders`
     let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
     return (
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
-        {this._renderSortBar(sortBarTitle) }
+        {this._renderSortBar() }
         <View style={styles.separator} />
 
         { isFetching &&
