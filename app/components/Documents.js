@@ -266,9 +266,7 @@ class Documents extends Component {
   }
 
   _renderSectionHeader(sectionData, sectionID) {
-    if (sectionID == 'ID1')
-      return false;
-
+   
     return (
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionLabel}>{sectionData}</Text>
