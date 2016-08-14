@@ -22,8 +22,6 @@ function mapStateToProps(state) {
   const { documentlists, documentlist } = state
   const {env, sessionToken } = state.accessReducer; 
 
-   console.log("mapStateToProps"+sessionToken)
-
   return {
     documentlist,
     documentlists,

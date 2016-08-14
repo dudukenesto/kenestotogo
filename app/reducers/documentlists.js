@@ -66,6 +66,13 @@ export default function documentlists(state = {}, action) {
         [action.catId]: documentlist(state[action.catId], action),
       })
 
+    case types.REQUEST_CREATE_FOLDER : {
+       return {
+        ...state,
+        creatingFolder : action.creatingFolder
+      }
+    }
+
     default:
       return state
   }

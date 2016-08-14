@@ -10,6 +10,7 @@ import NavigationRootContainer from '../containers/navRootContainer'
 import PlusMenu from './PlusMenu'
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import CreateFolder from './CreateFolder'
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -28,6 +29,11 @@ let styles = StyleSheet.create({
   plusMenu: {
     height: 160
   },
+    createFolder: {
+    height: 160, 
+    width: 160
+  },
+
    btnModal: {
     position: "absolute",
     top: 100,
@@ -35,13 +41,6 @@ let styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
 })
-//  {title: 'Menu', icon: require('../assets/menu-icon2.png'), show: 'always'},
-let toolbarActions = [
-    {title: 'Search', icon: require('../assets/search100.png'), show: 'always'},
-   {title: 'Filter', icon: require('../assets/menudots.png'), show: 'always'}
-]
-
-
 export default class Main extends React.Component {
 
 
@@ -79,10 +78,17 @@ constructor (props) {
   }
 
   openMenuModal(){
-      this.refs.modalPlusMenu.open();
+    this.refs.modalPlusMenu.open();
+  }
+
+  openCreateFolder(){
+    this.refs.CreateFolder.open();
+  }
+
+  closeCreateFolder(){
+     this.refs.CreateFolder.close();
   }
   
-
 
     render(){
 
@@ -91,14 +97,13 @@ constructor (props) {
              <View style={styles.container}> 
                 <Icon.ToolbarAndroid 
                     style={styles.toolbar}
-                    actions={toolbarActions}
                     onActionSelected={this.onActionSelected}
                     titleColor='#fff'
                     backgroundColor='#888'
                     title={'Kenesto hello'}
                     navIconName='menu'
                     iconColor='orange'
-                    onIconClicked = {this.onNavIconClicked}
+                    onIconClicked = {this.onNavIconClicked.bind(this)}
                     actions={[
                             {title: 'Search', iconName: 'search',iconSize: 30, show: 'always', iconColor: '#000'  },
                             {title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' }
@@ -107,7 +112,15 @@ constructor (props) {
                 />
                 <NavigationRootContainer />
                 <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
-                    <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.openMenuModal.bind(this)} />
+                    <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.openCreateFolder.bind(this)} 
+                       openCreateFolder = {this.openCreateFolder.bind(this)} 
+                        closeCreateFolder={this.closeCreateFolder.bind(this)}/>
+                </Modal>
+                 <Modal style={[styles.modal, styles.createFolder]} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
+                    <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.closeCreateFolder.bind(this)} 
+                     closeCreateFolder={this.closeCreateFolder.bind(this)}
+                     
+                     />
                 </Modal>
 
             </View>

@@ -24,8 +24,8 @@ export default class PlusMenu extends React.Component{
     }
 
     addFolder(){
-        alert('fdfdfd');
         this.props.closeMenuModal();
+        this.props.openCreateFolder();
     }
     
 
