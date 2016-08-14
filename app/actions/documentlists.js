@@ -1,5 +1,5 @@
 import * as types from '../constants/ActionTypes'
-import {constructRetrieveDocumentsUrl} from '../utils/documentsUtils'
+import {constructRetrieveDocumentsUrl, getCreateFolderUrl} from '../utils/documentsUtils'
 import _ from "lodash";
 let React = require('react-native')
 let {
@@ -169,10 +169,19 @@ function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: 
     type: types.REFRESH_DOCUMENTS_LIST,
     nextUrl,
     catId: documentlist.catId,
-    documents,
-    dataSource
+    documents, 
+    creatingFolder: false
   }
 }
+function UpdateCreateingFolderState(creating : boolean) {
+
+  return {
+    type : types.REQUEST_CREATE_FOLDER,
+    creatingFolder : creating
+  }
+}
+
+
 
 function failedToFetchDocumentsList(documentlist: Object, url: string, errorMessage: string) {
   return {
@@ -199,3 +208,69 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
   return false
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////// begin dudu //////////////////////////////
+
+// export function createFolder(folderName: string){
+//    return (dispatch, getState) => {
+
+ 
+      
+//     const {sessionToken, env} = getState().accessReducer; 
+//     const {folderId} = getState().documentlist.fId; 
+//     const createFolderUrl = getCreateFolderUrl(env, sessionToken, folderId, folderName);
+//    // dispatch(UpdateCreateingFolderState(true));
+//      return fetch(createFolderUrl)
+//         .then((response) => response.json())
+//         .catch((error) => {
+//             dispatch(SubmitError('Add folder failed'));
+//         })
+//          .then( (responseData) => {
+//            var newfolderId = responseData.ResponseData.Id;
+
+//             dispatch(SubmitError('Add folder failed'));
+
+//           //   dispatch(refreshDocumentsTable(getState().documentlist.documentlist))
+//          })
+//       //    .catch((error) => {
+//       //   //Actions.error({data: 'get documents faliled failed'})
+//       //   Alert('Failed to create folder')
+//       // })
+
+      
+
+//   }
+// }
+
+///////////////////////// end dudu //////////////////////////////
