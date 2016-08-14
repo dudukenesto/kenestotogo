@@ -93,6 +93,12 @@ export default function documentlists(state = {}, action) {
         creatingFolder : action.creatingFolder
       }
     }
+     case types.TEST : {
+       return {
+        ...state,
+        creatingFolder : false
+      }
+    }
     case types.SUBMIT_ERROR:
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action)
