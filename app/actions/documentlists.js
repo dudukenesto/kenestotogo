@@ -44,7 +44,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
           var sortBarTitle = `Folders`
 
-          dataBlob["ID1"] = "Folders"//`Folders (${folders.length})`
+          dataBlob["ID1"] = `Folders (${folders.length})`
           dataBlob["ID2"] = `Files (${totalDocuments})`
 
           sectionIDs[0] = "ID1";
