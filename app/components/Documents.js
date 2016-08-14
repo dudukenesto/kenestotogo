@@ -18,12 +18,8 @@ import {View,
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import * as constans from '../constants/GlobalConstans'
-<<<<<<< HEAD
 import Modal from 'react-native-modalbox';
-//var Modal   = require('react-native-modalbox');
-=======
 import Button from "react-native-button";
->>>>>>> refs/remotes/origin/dev
 import InteractionManager from 'InteractionManager'
 
 let deviceWidth = Dimensions.get('window').width
