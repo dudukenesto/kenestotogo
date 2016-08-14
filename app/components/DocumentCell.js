@@ -42,16 +42,19 @@ var DocumentCell = React.createClass({
     
     var imageSource = require('../assets/thumbnail_img.png'); 
            
-    if (this.props.document.HasThumbnail)
-      imageSource ={uri: this.props.document.ThumbnailUrl}
-      
-      var elementIcon;
+    var elementIcon;
+    if (this.props.document.HasThumbnail){
+      elementIcon = <Image source = {{uri: this.props.document.ThumbnailUrl}} style={styles.cellImage} />
+    }
+    else {
       if (this.props.document.FamilyCode == 'FOLDER'){
         elementIcon = <Icon name="folder" style={styles.icon} />
       }
       else {
-        elementIcon = <Image source = {imageSource} style={styles.cellImage} />
+        elementIcon = <Icon name="description" style={styles.icon} />
       }
+    }
+      
       function menuPressed(){
         alert('menu pressed...');
       }
