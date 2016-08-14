@@ -15,7 +15,7 @@ class App extends React.Component {
                 open= {false}
                 content={<TabView loggedUser = {this.props.loggedUser}/>}
                 tapToClose={true}
-                openDrawerOffset={0.2}
+                openDrawerOffset={0.15}
                 panCloseMask={0.2}
                 negotiatePan={true}
                 tweenHandler={(ratio) => ({
