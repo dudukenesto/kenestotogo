@@ -209,68 +209,105 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
 }
 
 
+function SubmitError( errorMessage: string) {
+  return {
+    type: types.SUBMIT_ERROR,
+    errorMessage: ""
+  }
+}
+
+
+function submitTest( errorMessage: string) {
+  return {
+    type: types.TEST
+  }
+}
+
+
+
+export function createFolder(folderName: string){
+  return (dispatch, getState) => {
+
+     const {sessionToken, env} = getState().accessReducer; 
+    const {folderId} = getState().documentlist.fId; 
+    var documentlist =  getState().documentlist;
+    const createFolderUrl = getCreateFolderUrl(env, sessionToken, folderId, folderName);
+    return fetch(createFolderUrl)
+      .then(response => response.json())
+      .then(json => {
+    
+        // alert(json.ResponseStatus);
+         if (json.ResponseStatus == "FAILED") {
+           dispatch(submitTest())
+         }
+         else {
+                  dispatch(submitTest())
+          }
+      })
+      .catch((error) => {
+        console.log("error:" + JSON.stringify(error))
+          dispatch(submitTest())
+      })
+  }
+}
+
+
+// export function createFolder2(folderName: string){
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-///////////////////////// begin dudu //////////////////////////////
-
-// export function createFolder(folderName: string){
 //    return (dispatch, getState) => {
-
- 
-      
+//   // dispatch(requestDocumentsList(getState().documentlist))
+// debugger
 //     const {sessionToken, env} = getState().accessReducer; 
 //     const {folderId} = getState().documentlist.fId; 
+
 //     const createFolderUrl = getCreateFolderUrl(env, sessionToken, folderId, folderName);
-//    // dispatch(UpdateCreateingFolderState(true));
+//  //   dispatch(UpdateCreateingFolderState(true));
 //      return fetch(createFolderUrl)
-//         .then((response) => response.json())
-//         .catch((error) => {
-//             dispatch(SubmitError('Add folder failed'));
-//         })
-//          .then( (responseData) => {
-//            var newfolderId = responseData.ResponseData.Id;
 
-//             dispatch(SubmitError('Add folder failed'));
-
-//           //   dispatch(refreshDocumentsTable(getState().documentlist.documentlist))
-//          })
-//       //    .catch((error) => {
-//       //   //Actions.error({data: 'get documents faliled failed'})
-//       //   Alert('Failed to create folder')
-//       // })
-
+//      .then(response => response.json())
+//       .then(json => {
       
+//         if (json.ResponseData.ResponseStatus == "FAILED") {
+//           dispatch(SubmitError("test wrror"))
+//         }
+//         else
+//         {
+//             dispatch(SubmitError("test wrror"))
+//         }
+        
 
-//   }
+//       })
+//       .catch((error) => {
+      
+//         dispatch(SubmitError("test wrror"))
+//       })
+
+
+//         dispatch(SubmitError("test wrror"))
+//     }
 // }
+      //  else
+      //    dispatch(refreshDocumentslist(getState().documentlist.documentlist())
 
-///////////////////////// end dudu //////////////////////////////
+
+        // .then((response) => response.json())
+        // .catch((error) => {
+        //     dispatch(SubmitError('Add folder failed'));
+        // })
+        //  .then( json => {
+        //    var newfolderId = json.responseData.ResponseData.Id;
+
+         
+        //      dispatch(refreshDocumentsTable(getState().documentlist.documentlist))
+        //  }
+         
+        //  )
+      //    .catch((error) => {
+      //   //Actions.error({data: 'get documents faliled failed'})
+      //   Alert('Failed to create folder')
+      // })
+
+
