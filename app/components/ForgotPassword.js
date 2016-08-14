@@ -18,41 +18,87 @@ Email.getValidationErrorMessage = function (value, path, context) {
   return 'Email Address (Username) is not valid';
 };
 
+var _ = require('lodash');
+const formStylesheet = _.cloneDeep(Form.stylesheet);
 var User = Tcomb.struct({      
   username: Email,  //required email
 });
 var options = {
+    stylesheet: formStylesheet,
     fields: {
-    username: {
-    placeholder: 'Username',
-    label: ' ',
-    autoFocus: true
+        username: {
+            placeholder: 'email address',
+            label: ' ',
+            autoFocus: true,
+            placeholderTextColor: '#ccc',
+            underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
+        }
     }
- }
 };
+
+formStylesheet.textbox.normal = {
+    height: 50,            
+    fontSize: 17,
+}
+formStylesheet.textbox.error = {
+    height: 50,            
+    fontSize: 17,
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#F5FCFF",
+        backgroundColor: "#fff",
     },
-    buttons: {
-         flex: 1,
-        flexDirection: "row",
-        justifyContent: 'space-around',
+    titleContainer: {        
+        backgroundColor: "#F5FCFF",
+        alignItems: "center",
+        padding: 14,
+        borderBottomWidth: 2,
+        borderBottomColor: "#e6e6e6",
+        marginBottom: 14,
    },
-   input:{
-       padding:4,
-       height:40,
-       borderColor:'gray',
-       borderWidth:1,
-       borderRadius:6,
-       margin:5,
-       width:200,
-       alignSelf:'center'
-   }
+   title: {
+       color: "#000",
+       fontSize: 20,
+   },
+   form: {
+        padding: 40,
+   },
+   instructions: {
+        textAlign: "center",
+        fontSize: 17,
+        marginBottom: 32,
+   },
+    buttonsContainer: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        marginTop: 30,
+   },
+   singleBtnContainer: {
+        width: 135,
+        justifyContent: "space-around",
+        height: 50,
+        backgroundColor: "#F5F6F8",
+        borderWidth: 0.5,
+        borderColor: "#BEBDBD"
+   },
+   button: {
+        color: "#666666",
+        fontWeight: "normal",
+        fontSize: 18, 
+   },
+   messageContainer: {
+       flex: 1, 
+       justifyContent: "center",
+   },
+   message: {
+       textAlign: "center",
+        fontSize: 17,
+   },
+      
   
 });
 
@@ -110,33 +156,41 @@ const styles = StyleSheet.create({
     _renderForgotPassword(){
             
         if (!this.props.passwordSent) {
-            return(  <View>
-                        <View style={styles.container}>
-                            <Text>Forgot Password</Text>
+            return(  <View style={{flex: 1}}>
+                        <View style={styles.titleContainer}>
+                            <Text style={styles.title}>Forgot Password</Text>
+                        </View>
+                        <View style={styles.form}>
                             {this._renderProgressBar()}
-                            <Text>Enter your email address to request a password reset</Text>
-                       </View>
-                        <Form
-                            ref="form"
-                            type={User}
-                            value={this.state.value}
-                            onChange={this.onChange.bind(this)}
-                            options={options}
-                        />
-                        <View style={styles.buttons}>
-                            <Button onPress={ () => this.props._goBack() }>Cancel</Button>
-                            <Button onPress={this._makeForgotPassword.bind(this)}>Reset Password</Button>
+                            <Text style={styles.instructions}>Enter your email address to request a password reset</Text>
+                       
+                            <Form
+                                ref="form"
+                                type={User}
+                                value={this.state.value}
+                                onChange={this.onChange.bind(this)}
+                                options={options}
+                            />
+                            <View style={styles.buttonsContainer}>
+                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={ () => this.props._goBack() }>Cancel</Button>
+                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={this._makeForgotPassword.bind(this)}>Request</Button>
+                            </View>
                         </View>
                     </View>)
         }
         else
         {
-        return( <View>
-                <View style={styles.container}>
-                    <Text>Email was sent successfully</Text>
-                    <Text> Please check your email for further instructions...</Text>
-                </View>
-                <Button onPress={ () => this.props._goBack()}>Back to login screen</Button>
+        return( <View style={{flex: 1}}>
+                    <View style={styles.titleContainer}>
+                            <Text style={styles.title}>Forgot Password</Text>
+                        </View>
+                    <View style={styles.messageContainer}>
+                        <Text style={styles.message}>Email was sent successfully.</Text>
+                        <Text style={styles.message}>Please check your email for further instructions...</Text>
+                    </View>
+                    <View style={[styles.buttonsContainer, {justifyContent: "center"}]}>
+                        <Button containerStyle={[styles.singleBtnContainer, {width: 200}]} style={styles.button} onPress={ () => this.props._goBack()}>Back to login screen</Button>
+                    </View>
             </View>)
         }
     }

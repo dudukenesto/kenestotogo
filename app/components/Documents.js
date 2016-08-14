@@ -18,6 +18,7 @@ import {View,
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import * as constans from '../constants/GlobalConstans'
+import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
 
@@ -285,6 +286,11 @@ class Documents extends Component {
     }
   }
 
+  openModal(){
+  //this.refs.modal3.open();
+  this.context.kModal.open();
+}
+
 
   _renderTableContent(dataSource, isFetching) {
     const {documentlist, documentlists} = this.props
@@ -338,6 +344,7 @@ class Documents extends Component {
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
     let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
     return (
+
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
         {this._renderSortBar() }
         <View style={styles.separator} />
@@ -350,15 +357,14 @@ class Documents extends Component {
 
         {this._renderTableContent(dataSource, isFetching) }
         <ActionButton buttonColor="rgba(231,76,60,1)">
-          <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => this._onRefresh('info', 'wawa ziba and his group') }>
-            <Icon name="person" style={styles.actionButtonIcon} />
+          <ActionButton.Item buttonColor='#9b59b6' title="open modal" onPress={() => this.openModal()}>
+            <Icon name="https" style={styles.actionButtonIcon} />
           </ActionButton.Item>
           <ActionButton.Item buttonColor='#3498db' title="Upload" onPress={() => Actions.animated() }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
+            <Icon name="file-upload" style={styles.actionButtonIcon} />
           </ActionButton.Item>
-
           <ActionButton.Item buttonColor='#1abc9c' title="New Folder" onPress={() => Actions.createFolder({ env: this.state.env, currentFolderId: this.state.folderId, sessionToken: this.props.sessionToken, afterCreateCallback: this._onRefresh, updateLoading: this.updateLoadingState }) }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
+            <Icon name="send" style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>
       </ViewContainer>
@@ -383,6 +389,9 @@ var NoDocuments = React.createClass({
     );
   }
 });
+
+
+
 
 var styles = StyleSheet.create({
   container: {
@@ -454,6 +463,25 @@ var styles = StyleSheet.create({
     color: '#2f2f2f',
     textAlign: 'center'
   },
+    modal: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  modal2: {
+    height: 230,
+    backgroundColor: "#3B5998"
+  },
+
+  modal3: {
+    height: 300,
+    width: 300
+  },
 });
+
+Documents.contextTypes = {
+    kModal:  React.PropTypes.object
+};
+
 
 export default Documents

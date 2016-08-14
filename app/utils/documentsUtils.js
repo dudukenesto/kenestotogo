@@ -19,3 +19,11 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
 
 }
 
+export function getCreateFolderUrl(env, sessionToken, fId, folderName){
+    var urls = _.find(config.urls, { 'env': env });
+    var apiBaseUrl = urls.ApiBaseUrl;
+    if (urls == null)
+        return null;
+
+   return `${apiBaseUrl}/KDocuments.svc/CreateFolder?t=${sessionToken}&pid=${fId}&fn=${folderName}&folderDescription=''`;
+}

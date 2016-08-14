@@ -18,6 +18,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   spinner: {
+    alignSelf: "center",
     width: 30,
     height: 30,
   },
