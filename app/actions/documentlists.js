@@ -170,6 +170,7 @@ function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: 
     nextUrl,
     catId: documentlist.catId,
     documents, 
+    dataSource,
     creatingFolder: false
   }
 }
