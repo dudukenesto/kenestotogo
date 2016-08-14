@@ -52,6 +52,9 @@ var DocumentCell = React.createClass({
       else {
         elementIcon = <Image source = {imageSource} style={styles.cellImage} />
       }
+      function menuPressed(){
+        alert('menu pressed...');
+      }
 
     
     return (
@@ -72,6 +75,11 @@ var DocumentCell = React.createClass({
                 Modified blah-blah-blah
               </Text>
             </View>
+            <TouchableElement onPress={menuPressed}>
+              <View style={styles.iconContainer}>
+                <Icon name="more-vert" style={styles.icon} />
+              </View>
+            </TouchableElement>
           </View>
         </TouchableElement>
       </View>
@@ -82,6 +90,7 @@ var DocumentCell = React.createClass({
 var styles = StyleSheet.create({
   textContainer: {
     flex: 1,
+    marginLeft: 10,
   },
   documentTitle: {
     //flex: 1,
@@ -101,11 +110,10 @@ var styles = StyleSheet.create({
     
   },
   iconContainer: {
-    height: 55,
-    width: 55,
-    marginRight: 10,
+    height: 57,
+    width: 57,
     alignItems: 'center',
-    justifyContent: "center"
+    justifyContent: "center",
   },
   cellImage: {
     height: 55,

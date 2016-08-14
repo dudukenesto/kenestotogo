@@ -391,7 +391,6 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    marginTop: -16
   },
   centerText: {
     alignItems: 'center',
@@ -408,9 +407,8 @@ var styles = StyleSheet.create({
     marginVertical: 20,
   },
   rowSeparator: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: "#eee",
     height: 1,
-    marginLeft: 4,
   },
   rowSeparatorHide: {
     opacity: 0.0,
@@ -436,11 +434,10 @@ var styles = StyleSheet.create({
     color: '#2f2f2f',
   },
   sectionHeader: {
-    marginTop: 15,
     padding: 15,
     paddingLeft: 20,
     backgroundColor: '#F5F6F8',
-    alignSelf: 'stretch',
+    alignSelf: 'stretch',    
   },
   sortContainer: {
     padding: 0,
@@ -448,6 +445,7 @@ var styles = StyleSheet.create({
     flex: 0,
     flexDirection: "row-reverse",
 
+    // height: 0
   },
   statusBar: {
     marginTop: 15,
