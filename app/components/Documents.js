@@ -347,11 +347,7 @@ class Documents extends Component {
         {this._renderSortBar() }
         <View style={styles.separator} />
 
-        { isFetching &&
-          <View style={styles.progressbar}>
-            <ActivityIndicator styleAttr='Small' />
-          </View>
-        }
+       
 
         {this._renderTableContent(dataSource, isFetching) }
         <ActionButton buttonColor="rgba(231,76,60,1)">
@@ -395,7 +391,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    marginTop: 0
+    marginTop: -16
   },
   centerText: {
     alignItems: 'center',
@@ -442,14 +438,16 @@ var styles = StyleSheet.create({
   sectionHeader: {
     marginTop: 15,
     padding: 15,
-    backgroundColor: '#eeeeee',
-    alignSelf: 'stretch'
+    paddingLeft: 20,
+    backgroundColor: '#F5F6F8',
+    alignSelf: 'stretch',
   },
   sortContainer: {
     padding: 0,
     backgroundColor: '#eeeeee',
     flex: 0,
     flexDirection: "row-reverse",
+
   },
   statusBar: {
     marginTop: 15,
@@ -459,7 +457,7 @@ var styles = StyleSheet.create({
   },
   sectionLabel: {
     color: '#2f2f2f',
-    textAlign: 'center'
+    textAlign: 'left'
   },
     modal: {
     justifyContent: 'center',

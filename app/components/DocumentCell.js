@@ -27,6 +27,8 @@ var {
   View
 } = ReactNative;
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
 //var getTextFromScore = require('./getTextFromScore');
@@ -42,9 +44,14 @@ var DocumentCell = React.createClass({
            
     if (this.props.document.HasThumbnail)
       imageSource ={uri: this.props.document.ThumbnailUrl}
-
-    if (this.props.document.FamilyCode == 'FOLDER')
-      imageSource = require('../assets/folder_icon.png'); 
+      
+      var elementIcon;
+      if (this.props.document.FamilyCode == 'FOLDER'){
+        elementIcon = <Icon name="folder" style={styles.icon} />
+      }
+      else {
+        elementIcon = <Image source = {imageSource} style={styles.cellImage} />
+      }
 
     
     return (
@@ -54,20 +61,15 @@ var DocumentCell = React.createClass({
           onShowUnderlay={this.props.onHighlight}
           onHideUnderlay={this.props.onUnhighlight}>
           <View style={styles.row}>
-            <Image
-            //  source={{uri: 'thumbnail_img'}}
-             source = {imageSource}
-              style={styles.cellImage}
-            />
+            <View style={styles.iconContainer}>
+              {elementIcon}
+            </View>
             <View style={styles.textContainer}>
               <Text style={styles.documentTitle} numberOfLines={2}>
                 {this.props.document.Name}
               </Text>
               <Text style={styles.documentYear} numberOfLines={1}>
-                Somthing about the year of the document
-                <Text style={{ color: '#999999'} }>
-                  Some text here
-                </Text>
+                Modified blah-blah-blah
               </Text>
             </View>
           </View>
@@ -82,8 +84,8 @@ var styles = StyleSheet.create({
     flex: 1,
   },
   documentTitle: {
-    flex: 1,
-    fontSize: 16,
+    //flex: 1,
+    fontSize: 14,
     fontWeight: '500',
     marginBottom: 2,
   },
@@ -96,12 +98,23 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
     padding: 5,
+    
+  },
+  iconContainer: {
+    height: 55,
+    width: 55,
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: "center"
   },
   cellImage: {
-    backgroundColor: '#dddddd',
-    height: 93,
-    marginRight: 10,
-    width: 90,
+    height: 55,
+    width: 55,
+  },
+  icon: {
+    fontSize: 22,
+    color: '#888',    
+    
   },
   cellBorder: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
