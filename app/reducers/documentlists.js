@@ -4,39 +4,61 @@ let React = require('react-native')
 function documentlist(state = {
   isFetching: false,
   items: [],
-  nextUrl: false
+  nextUrl: false,
+  errorMessage: '',
+  hasError: false,
+  dataSource: {}
 }, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
       return {
         ...state,
         isFetching: false,
-        items: [...state.items, ...action.documents],
-        nextUrl: action.nextUrl
+        items: [...action.documents],
+        dataSource: action.dataSource,
+        nextUrl: action.nextUrl,
+        hasError: false,
+        errorMessage: ''
       }
 
     case types.REQUEST_DOCUMENTS:
       return {
         ...state,
         isFetching: true,
-        nextUrl: null
+        nextUrl: null,
+        hasError: false,
+        errorMessage: ''
+      }
+    case types.SUBMIT_ERROR:
+      return {
+        ...state,
+        isFetching: false,
+        hasError: true,
+        errorMessage: action.errorMessage,
+        nextUrl: action.nextUrl
       }
 
     case types.REFRESH_DOCUMENTS_LIST:
       return {
         isFetching: false,
         items: [...action.documents],
-        nextUrl: action.nextUrl
+        dataSource: action.dataSource,
+        nextUrl: action.nextUrl,
+        hasError: false,
+        errorMessage: ''
       }
 
     case types.CHANGE_DOCUMENTS_LIST:
       return {
         isFetching: false,
         items: [...action.documents],
+        dataSource: action.dataSource,
         nextUrl: action.nextUrl,
         name: action.name,
         catId: action.catId,
-        fId: action.fId
+        fId: action.fId,
+        hasError: false,
+        errorMessage: ''
       }
 
     default:
@@ -65,14 +87,16 @@ export default function documentlists(state = {}, action) {
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action),
       })
-
     case types.REQUEST_CREATE_FOLDER : {
        return {
         ...state,
         creatingFolder : action.creatingFolder
       }
     }
-
+    case types.SUBMIT_ERROR:
+      return Object.assign({}, state, {
+        [action.catId]: documentlist(state[action.catId], action)
+      })
     default:
       return state
   }

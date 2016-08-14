@@ -14,10 +14,16 @@ import {View,
   RefreshControl
 } from 'react-native'
 
+
+
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import * as constans from '../constants/GlobalConstans'
+<<<<<<< HEAD
 import Modal from 'react-native-modalbox';
 //var Modal   = require('react-native-modalbox');
+=======
+import Button from "react-native-button";
+>>>>>>> refs/remotes/origin/dev
 import InteractionManager from 'InteractionManager'
 
 let deviceWidth = Dimensions.get('window').width
@@ -34,7 +40,7 @@ import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
-import Button from './Button'
+
 
 // const Documents = ({_goBack}) => (
 //   <View style={styles.container}>
@@ -54,10 +60,11 @@ class Documents extends Component {
     this.selectItem = this.selectItem.bind(this)
     this._onRefresh = this._onRefresh.bind(this)
     this._onGoBack = this._onGoBack.bind(this)
+    this._onSort = this._onSort.bind(this)
+    this._onChangeVisibleRows = this._onChangeVisibleRows.bind(this)
   }
 
-  getCategoryName(categoryType)
-  {
+  getCategoryName(categoryType) {
     switch (categoryType) {
       case constans.ALL_DOCUMENTS:
         return "All Documents"
@@ -66,8 +73,17 @@ class Documents extends Component {
     }
   }
 
- getBaseCatId(categoryType)
-  {
+  getSortByName(sortBy) {
+    switch (sortBy) {
+      case constans.ASSET_NAME:
+        return "Name"
+      case constans.MODIFICATION_DATE:
+        return "Modification Date"
+      default:
+        return "";
+    }
+  }
+  getBaseCatId(categoryType) {
     switch (categoryType) {
       case constans.ALL_DOCUMENTS:
         return "All Documents"
@@ -75,32 +91,36 @@ class Documents extends Component {
         return "";
     }
   }
+
   componentWillMount() {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
+    const {dispatch, documentlist} = this.props
+    dispatch(fetchTableIfNeeded(documentlist))
   }
 
   componentWillReceiveProps(nextProps) {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
+    const {dispatch, documentlist, documentlists} = this.props
     if (documentlist.catId !== nextProps.documentlist.catId) {
-      dispatch(changeTable(env, sessionToken, nextProps.documentlist));
+      //dispatch(changeTable(nextProps.documentlist));
     }
   }
 
+  componentDidUpdate() {
+    this._showStatusBar()
+  }
   onEndReached() {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
+    const {dispatch, documentlist} = this.props
+    dispatch(fetchTableIfNeeded(documentlist))
   }
 
 
   selectItem(document) {
-    const {dispatch, env, sessionToken, documentlist} = this.props
+    const {dispatch, documentlist} = this.props
 
     if (document.FamilyCode == 'FOLDER') {
       var newId;
       var newName = document.Name;
       var fId = document.Id;
- 
+
       if (documentlist.catId.indexOf(splitChars) >= 0) {
         var dtlStr = documentlist.catId.split(splitChars);
         var newId = `${dtlStr[0]}${splitChars}${document.Id}`//i.e all_docuemnts|{folderID}
@@ -110,13 +130,21 @@ class Documents extends Component {
       }
 
 
-      var folderT = new Object(); 
-        folderT.catId = newId;
-        folderT.name = newName;
-        folderT.fId = fId;
-        this.foldersTrail.push(folderT);
+      var folderT = new Object();
+      folderT.catId = newId;
+      folderT.name = newName;
+      folderT.fId = fId;
+      this.foldersTrail.push(folderT);
 
-      dispatch(updateDocumentList(newId, newName, fId))
+      dispatch(updateDocumentList(newId, newName, fId, documentlist.sortDirection, documentlist.sortBy))
+      var nextDocumentlist = {
+        name: newName,
+        catId: newId,
+        fId: fId,
+        sortDirection: constans.ASCENDING,
+        sortBy: constans.ASSET_NAME
+      }
+      dispatch(changeTable(nextDocumentlist));
     }
     else {
 
@@ -152,67 +180,130 @@ class Documents extends Component {
   }
 
 
+
   _onGoBack() {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-    var baseCatId ;
-     if (documentlist.catId.indexOf(splitChars) >= 0) {
-        var dtlStr = documentlist.catId.split(splitChars);
-        var baseCatId = dtlStr[0];
-      }
-      else
-      {
-        baseCatId = documentlist.catId;
-      }
-     
+    const {dispatch, documentlist, documentlists} = this.props
+    var baseCatId;
+    if (documentlist.catId.indexOf(splitChars) >= 0) {
+      var dtlStr = documentlist.catId.split(splitChars);
+      var baseCatId = dtlStr[0];
+    }
+    else {
+      baseCatId = documentlist.catId;
+    }
+
     this.foldersTrail.pop();
-      
-    var catId = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].catId: baseCatId;
-    var name = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].name: this.getCategoryName(baseCatId);
-     var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].fId: "";
-    
-    dispatch(updateDocumentList(catId, name, fid))
+
+    var catId = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].catId : baseCatId;
+    var name = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(baseCatId);
+    var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].fId : "";
+
+
+    var nextDocumentlist = {
+      name: name,
+      catId: catId,
+      fId: fid,
+      sortDirection: documentlist.sortDirection,
+      sortBy: documentlist.sortBy
+    }
+
+    dispatch(updateDocumentList(catId, name, fid, documentlist.sortDirection, documentlist.sortBy))
+
+    //dispatch(changeTable(nextDocumentlist));
   }
 
   _onRefresh(type, message) {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(refreshTable(env, sessionToken, documentlist))
+    const {dispatch, documentlist} = this.props
+    dispatch(refreshTable(documentlist))
   }
 
-  _renderBreadCrums() {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
+  _onSort(sortDirection, sortBy) {
+    const {dispatch, documentlist} = this.props
 
+    documentlist.sortDirection = sortDirection;
+    documentlist.sortBy;
+    //dispatch(updateDocumentList(documentlist.catId, documentlist.name, documentlist.fid, sortDirection, sortBy))
+    dispatch(refreshTable(documentlist));
+  }
+
+  _onChangeVisibleRows(visibleRows, changedRows) {
+    console.log("visibleRows: " + JSON.stringify(visibleRows))
+    console.log("changedRows: " + JSON.stringify(changedRows))
+  }
+  
+  _renderSortBar() {
+    const {dispatch, documentlist, documentlists} = this.props
+
+    const sortBy = constans.ASSET_NAME;
+    const sortDirection = documentlist.sortDirection == null || documentlist.sortDirection == "" ? constans.ASCENDING : documentlist.sortDirection;
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
+    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
+    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+
     const showBreadCrums = this.foldersTrail.length > 0 ? true : false;
+    var parentName = this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
 
-    if (!isFetching && showBreadCrums) {
+    return (
+      <View style={styles.sortContainer}>
 
-      var parentName =  this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length-1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
-      return (
-        <View>
-          <TouchableOpacity style={styles.backButton} onPress={this._onGoBack.bind(this) }>
-            <Text style={styles.backLabel}>Go to {parentName} Page</Text>
-          </TouchableOpacity>
-        </View>)
-    }
-    else {
-      return null;
-    }
+        {
+          (sortDirection == constans.ASCENDING)
+            ? (
+              <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING, sortBy) }/>
+            ) :
+            (
+              <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING, sortBy) }/>
+            )
+        }
+        <Text>{this.getSortByName(sortBy) }</Text>
+        {
+          (!isFetching && showBreadCrums)
+            ? (
+              <Icon name="arrow-back" style={styles.arrowButtonIcon} onPress={this._onGoBack.bind(this) }/>
+            )
+            : (
+              <View></View>
+            )
+        }
+      </View>
+    )
   }
 
   _renderSectionHeader(sectionData, sectionID) {
+    if (sectionID == 'ID1')
+      return false;
 
     return (
-
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionLabel}>{sectionData}</Text>
       </View>
     )
   }
+
+  _showStatusBar() {
+    const {documentlist, documentlists} = this.props
+    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
+    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+
+    if (hasError && this.refs.masterView != undefined) {
+      this.refs.masterView.showMessage("error", errorMessage);
+    }
+  }
+
+  openModal(){
+  //this.refs.modal3.open();
+  this.context.kModal.open();
+}
+
+
   _renderTableContent(dataSource, isFetching) {
-    if (dataSource.getRowCount() === 0) {
+    const {documentlist, documentlists} = this.props
+    const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
+
+    if (itemsLength == 0) {
       return (<NoDocuments
         filter={this.state.filter}
-        isLoading={isFetching}
+        isFetching={isFetching}
         onRefresh={this._onRefresh.bind(this) }
         />)
     }
@@ -249,88 +340,17 @@ class Documents extends Component {
     }
   }
 
-
-openModal(){
-  //this.refs.modal3.open();
-  this.context.kModal.open();
-}
-
-
-
   render() {
     const {dispatch, documentlists, documentlist } = this.props
 
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
-
-    var items = documentlist.catId in documentlists ? documentlists[documentlist.catId].items : [],
-      length = items.length,
-      dataBlob = {},
-      sectionIDs = [],
-      rowIDs = [],
-      foldersSection,
-      docuemntsSection,
-      folders,
-      documents,
-      i,
-      j;
-
-
-    dataBlob["ID1"] = "Folders";
-    dataBlob["ID2"] = "Documents";
-
-    sectionIDs[0] = "ID1";
-    sectionIDs[1] = "ID2";
-
-    folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
-    documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
-
-    // console.log("Folders:"+JSON.stringify(folders))
-
-    // console.log("documents:"+JSON.stringify(documents))
-
-    rowIDs[0] = [];
-    for (j = 0; j < folders.length; j++) {
-      folder = folders[j];
-      // Add Unique Row ID to RowID Array for Section
-      rowIDs[0].push(folder.Id);
-
-      // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-      dataBlob['ID1:' + folder.Id] = folder;
-    }
-
-    rowIDs[1] = [];
-    for (j = 0; j < documents.length; j++) {
-      document = documents[j];
-      // Add Unique Row ID to RowID Array for Section
-      rowIDs[1].push(document.Id);
-
-      // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-      dataBlob['ID2:' + document.Id] = document;
-    }
-
-    var getSectionData = (dataBlob, sectionID) => {
-      return dataBlob[sectionID];
-    }
-
-    var getRowData = (dataBlob, sectionID, rowID) => {
-      return dataBlob[sectionID + ':' + rowID];
-    }
-    let ds = new ListView.DataSource({
-      getSectionData: getSectionData,
-      getRowData: getRowData,
-      rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2
-    })
-
-
-    let dataSource = documentlist.catId in documentlists ? ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) : ds.cloneWithRows([])
     var additionalStyle = {};
-
+    let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
+    let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
     return (
-      <ViewContainer  ref="masterView" style={[styles.container, additionalStyle]}>
 
-       
-        {this._renderBreadCrums() }
+      <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
+        {this._renderSortBar() }
         <View style={styles.separator} />
 
         { isFetching &&
@@ -347,13 +367,10 @@ openModal(){
           <ActionButton.Item buttonColor='#3498db' title="Upload" onPress={() => Actions.animated() }>
             <Icon name="file-upload" style={styles.actionButtonIcon} />
           </ActionButton.Item>
-
           <ActionButton.Item buttonColor='#1abc9c' title="New Folder" onPress={() => Actions.createFolder({ env: this.state.env, currentFolderId: this.state.folderId, sessionToken: this.props.sessionToken, afterCreateCallback: this._onRefresh, updateLoading: this.updateLoadingState }) }>
             <Icon name="send" style={styles.actionButtonIcon} />
           </ActionButton.Item>
         </ActionButton>
-
-        
       </ViewContainer>
     )
   }
@@ -363,13 +380,9 @@ openModal(){
 
 var NoDocuments = React.createClass({
   render: function () {
-    var text = '';
-    if (this.props.filter) {
-      text = `No results for "${this.props.filter}"`;
-    } else if (!this.props.isLoading) {
-      // If we're looking at the latest documents, aren't currently loading, and
-      // still have no results, show a message
-      text = 'No documents found';
+    var text = 'No documents found';
+    if (this.props.isFetching) {
+      return false;
     }
 
     return (
@@ -388,7 +401,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    marginTop: 40
+    marginTop: 0
   },
   centerText: {
     alignItems: 'center',
@@ -427,10 +440,27 @@ var styles = StyleSheet.create({
     height: 22,
     color: 'white',
   },
+  arrowButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: '#2f2f2f',
+  },
   sectionHeader: {
     marginTop: 15,
     padding: 15,
     backgroundColor: '#eeeeee',
+    alignSelf: 'stretch'
+  },
+  sortContainer: {
+    padding: 0,
+    backgroundColor: '#eeeeee',
+    flex: 0,
+    flexDirection: "row-reverse",
+  },
+  statusBar: {
+    marginTop: 15,
+    padding: 15,
+    backgroundColor: 'red',
     alignSelf: 'stretch'
   },
   sectionLabel: {

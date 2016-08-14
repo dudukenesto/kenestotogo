@@ -1,94 +1,169 @@
 import * as types from '../constants/ActionTypes'
 import {constructRetrieveDocumentsUrl, getCreateFolderUrl} from '../utils/documentsUtils'
+import _ from "lodash";
 let React = require('react-native')
 let {
-  Alert
+  Alert,
+  ListView
 } = React
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
+  console.log("fetchDocumentsTable: " + url)
   return (dispatch, getState) => {
-    dispatch(requestDocumentsTable(documentlist))
-    console.log("fetchDocumentsTable:"+url)
+    dispatch(requestDocumentsList(documentlist))
     return fetch(url)
       .then(response => response.json())
       .then(json => {
         const nextUrl = json.ResponseData.next_href
+        if (json.ResponseData.ResponseStatus == "FAILED") {
+          dispatch(failedToFetchDocumentsList(documentlist, url, json.ResponseData.ErrorMessage))
+        }
+        else {
+          var prevState = getState();
+          var items,
+            totalDocuments,
+            dataBlob = {},
+            sectionIDs = [],
+            rowIDs = [],
+            foldersSection,
+            docuemntsSection,
+            folders,
+            documents,
+            i,
+            j;
 
-        switch (actionType) {
-          case types.CHANGE_DOCUMENTS_LIST:
-            dispatch(changeDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
-            break
-          case types.RECEIVE_DOCUMENTS:
-            dispatch(receiveDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
-            break
-          case types.REFRESH_DOCUMENTS_LIST:
-            dispatch(refreshDocumentsTable(json.ResponseData.DocumentsList, nextUrl, documentlist))
-            break
+          totalDocuments = json.ResponseData.TotalDocuments;
+          if (actionType == types.RECEIVE_DOCUMENTS) {
+            items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
+          }
+          else {
+            items = [...json.ResponseData.DocumentsList]
+          }
+          folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
+          documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
+
+          var sortBarTitle = `Folders`
+
+          dataBlob["ID1"] = "Folders"//`Folders (${folders.length})`
+          dataBlob["ID2"] = `Files (${totalDocuments})`
+
+          sectionIDs[0] = "ID1";
+          sectionIDs[1] = "ID2";
+
+          rowIDs[0] = [];
+          for (j = 0; j < folders.length; j++) {
+            folder = folders[j];
+            // Add Unique Row ID to RowID Array for Section
+            rowIDs[0].push(folder.Id);
+
+            // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+            dataBlob['ID1:' + folder.Id] = folder;
+          }
+
+          rowIDs[1] = [];
+          for (j = 0; j < documents.length; j++) {
+            document = documents[j];
+            // Add Unique Row ID to RowID Array for Section
+            rowIDs[1].push(document.Id);
+
+            // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+            dataBlob['ID2:' + document.Id] = document;
+          }
+
+          var getSectionData = (dataBlob, sectionID) => {
+            return dataBlob[sectionID];
+          }
+
+          var getRowData = (dataBlob, sectionID, rowID) => {
+            return dataBlob[sectionID + ':' + rowID];
+          }
+
+          let ds = new ListView.DataSource({
+            getSectionData: getSectionData,
+            getRowData: getRowData,
+            rowHasChanged: (row1, row2) => row1 !== row2,
+            sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+          })
+          let dataSource = ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs)
+
+          switch (actionType) {
+            case types.CHANGE_DOCUMENTS_LIST:
+              dispatch(changeDocumentsList(items, nextUrl, documentlist, dataSource))
+              break
+            case types.RECEIVE_DOCUMENTS:
+              dispatch(receiveDocumentsList(items, nextUrl, documentlist, dataSource))
+              break
+            case types.REFRESH_DOCUMENTS_LIST:
+              dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
+              break
+          }
         }
       })
       .catch((error) => {
-        //Actions.error({data: 'get documents faliled failed'})
-        Alert('Failed to get documents')
+        console.log("error:" + JSON.stringify(error))
+        dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
       })
   }
 }
 
-export function fetchTableIfNeeded(env:string, sessionToken:string, documentlist: Object) {
+export function fetchTableIfNeeded(documentlist: Object) {
   return (dispatch, getState) => {
     const {documentlists} = getState()
     if (shouldFetchDocuments(documentlists, documentlist)) {
-      const nextUrl = getNextUrl(env, sessionToken, documentlists, documentlist)
+      const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlists, documentlist)
       return dispatch(fetchDocumentsTable(nextUrl, documentlist, types.RECEIVE_DOCUMENTS))
     }
   }
 }
 
-export function changeTable(env:string, sessionToken:string, documentlist:Object) {
+export function changeTable(documentlist: Object) {
   return (dispatch, getState) => {
     const {documentlists} = getState()
-    const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
+    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
     return dispatch(fetchDocumentsTable(url, documentlist, types.CHANGE_DOCUMENTS_LIST))
   }
 }
 
-export function refreshTable(env:string, sessionToken:string, documentlist:Object) {
+export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
-    const url = constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
+    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
 
-function getNextUrl(env:string, sessionToken:string ,documentlists:Object, documentlist:Object) {
+function getNextUrl(env: string, sessionToken: string, documentlists: Object, documentlist: Object) {
 
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
-    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId)
+    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
   }
   return activeDocumentsList.nextUrl
 }
 
-function changeDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
+function changeDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
   return {
     type: types.CHANGE_DOCUMENTS_LIST,
     nextUrl,
     name: documentlist.name,
     catId: documentlist.catId,
     fId: documentlist.fId,
-    documents
+    documents,
+    dataSource
   }
 }
 
-function receiveDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
+function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
 
   return {
     type: types.RECEIVE_DOCUMENTS,
     nextUrl,
     catId: documentlist.catId,
-    documents
+    documents,
+    dataSource
   }
 }
 
-function refreshDocumentsTable(documents:Object, nextUrl:string, documentlist:Object) {
+function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
 
   return {
     type: types.REFRESH_DOCUMENTS_LIST,
@@ -107,15 +182,24 @@ function UpdateCreateingFolderState(creating : boolean) {
 }
 
 
-function requestDocumentsTable(documentlist:Object) {
-  console.log(requestDocumentsTable+types.REQUEST_DOCUMENTS)
+
+function failedToFetchDocumentsList(documentlist: Object, url: string, errorMessage: string) {
+  return {
+    type: types.SUBMIT_ERROR,
+    catId: documentlist.catId,
+    errorMessage: errorMessage,
+    nextUrl: url
+  }
+}
+
+function requestDocumentsList(documentlist: Object) {
   return {
     type: types.REQUEST_DOCUMENTS,
     catId: documentlist.catId
   }
 }
 
-function shouldFetchDocuments(documentlists:Object, documentlist:Object) {
+function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
     return true
