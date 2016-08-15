@@ -403,25 +403,12 @@ var styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#eeeeee',
   },
-  scrollSpinner: {
-    marginVertical: 20,
-  },
   rowSeparator: {
     backgroundColor: "#eee",
     height: 1,
   },
   rowSeparatorHide: {
     opacity: 0.0,
-  },
-  backButton: {
-    marginTop: 15,
-    padding: 15,
-    backgroundColor: '#3C5773',
-    alignSelf: 'stretch'
-  },
-  backLabel: {
-    color: '#F4F4E9',
-    textAlign: 'center'
   },
   actionButtonIcon: {
     fontSize: 20,
@@ -447,29 +434,9 @@ var styles = StyleSheet.create({
 
     // height: 0
   },
-  statusBar: {
-    marginTop: 15,
-    padding: 15,
-    backgroundColor: 'red',
-    alignSelf: 'stretch'
-  },
   sectionLabel: {
     color: '#2f2f2f',
     textAlign: 'left'
-  },
-    modal: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  modal2: {
-    height: 230,
-    backgroundColor: "#3B5998"
-  },
-
-  modal3: {
-    height: 300,
-    width: 300
   },
 });
 

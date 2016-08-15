@@ -44,7 +44,7 @@ var DocumentCell = React.createClass({
            
     var elementIcon;
     if (this.props.document.HasThumbnail){
-      elementIcon = <Image source = {{uri: this.props.document.ThumbnailUrl}} style={styles.cellImage} />
+      elementIcon = <Image source = {{uri: this.props.document.ThumbnailUrl}} style={styles.previewThumbnail} />
     }
     else {
       if (this.props.document.FamilyCode == 'FOLDER'){
@@ -118,7 +118,7 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: "center",
   },
-  cellImage: {
+  previewThumbnail: {
     height: 55,
     width: 55,
   },
@@ -126,11 +126,6 @@ var styles = StyleSheet.create({
     fontSize: 22,
     color: '#888',    
     
-  },
-  cellBorder: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    height: StyleSheet.hairlineWidth,
-    marginLeft: 4,
   },
   
 });
