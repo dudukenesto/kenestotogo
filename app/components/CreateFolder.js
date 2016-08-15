@@ -11,31 +11,75 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
 var styles = StyleSheet.create({
-
-    displayIcon: {
-        fontSize: 30,
-        height: 30,
-        color: 'blue',
-  },
-   content:{
+    container: {
+        flex: 1,
+        alignItems: "center",
+        backgroundColor:"white",
+        padding: 15,
+    },
+    titleContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 10,
+    },
+    title: {
+        fontSize: 20,
+        color: "#000",
+        alignSelf: "center",
+    },
+    nameContainer: {
+        flex: 1,
         flexDirection:'row',
+        alignItems: "center",
+    },
+    icon: {
+        color: '#000',
+        fontSize: 32,
+        height: 30,
+        position: "absolute",
+        top: 18
     },
     textEdit: {
-        height: 40, 
-        width: 100,
-        borderColor: 'grey', 
-        backgroundColor: 'white',
- 
-        borderWidth: 1
-  },
-   modal: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  InProggress: {
-    height: 500, 
-    width: 500
-  },
+        flex: 1,
+        color: "#000",
+        height: 50,            
+        fontSize: 17,
+        paddingLeft: 40,
+        paddingBottom: 15,
+    },
+    buttonsContainer: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        marginTop: 20, 
+        // alignItems: "stretch",
+        alignSelf: "stretch",   
+    },
+    singleBtnContainer: {
+        // flex: 1,
+        width: 140,
+        // margin: 10,
+        // padding: 10,
+        justifyContent: "center",
+        height: 50,
+        backgroundColor: "#F5F6F8",
+        borderWidth: 0.5,
+        borderColor: "#BEBDBD"
+   },
+   button: {
+        color: "#666666",
+        fontWeight: "normal",
+        fontSize: 18, 
+   },
+    modal: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    InProggress: {
+        height: 500, 
+        width: 500
+    },
 });
 
 class CreateFolder extends React.Component {
@@ -92,26 +136,29 @@ class CreateFolder extends React.Component {
 
         return (
            
-                <View style={{ 
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor:"white" }}>
-                    <Text>Create new folder</Text>
-                    <View style={styles.content}>
-                         <Icon name="folder" style={styles.displayIcon} />
-                          <TextInput
+                <View style={styles.container}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.title}>Create new folder</Text>
+                    </View>
+                    <View style={styles.nameContainer}>
+                        <Icon name="folder" style={styles.icon} />
+                        <TextInput
                             ref="folderName"
                             value={this.state.folderName} 
                             onChangeText={folderName => this.setState({folderName})}
                             style={styles.textEdit}
-                            placeholder="Folder Name"
-                           
+                            placeholder="Folder Name"    
+                            placeholderTextColor={"#ccc"}
+                            selectionColor={"orange"}
+                            underlineColorAndroid={"#ccc"}                       
                             />
                     </View>
-                    <View style={styles.content}>
-                        <Button onPress={this.create.bind(this)}>Create</Button>
-                        <Button onPress={this.props.closeCreateFolder.bind(this)}>Close</Button>
-                    </View>
+                    
+                        <View style={styles.buttonsContainer}>
+                            <Button onPress={this.create.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
+                            <Button onPress={this.props.closeCreateFolder.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Close</Button>
+                        </View>
+                        
                 </View>
         );
     }
