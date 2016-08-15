@@ -1,10 +1,12 @@
 import React from "react"; 
 import {View, Text,TextInput, StyleSheet, Animated, Dimensions} from "react-native";
 import Button from "react-native-button";
-
+import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
 import * as documentsActions from '../actions/documentlists'
+import {createFolder} from '../actions/documentlists'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
@@ -26,6 +28,14 @@ var styles = StyleSheet.create({
  
         borderWidth: 1
   },
+   modal: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  InProggress: {
+    height: 500, 
+    width: 500
+  },
 });
 
 class CreateFolder extends React.Component {
@@ -39,21 +49,50 @@ class CreateFolder extends React.Component {
     }
 
     componentDidMount() {
-     
-        this.refs.folderName.focus();
+  //      if (!this.props.creatingFolder)
+  //          this.refs.folderName.focus();
+    }
+
+    componentWillReceiveProps(nextprops){
+
+       
+
+        if (nextprops.creatingFolder == 2)
+        {
+            this.props.closeCreateFolder();
+            dispatch(documentsActions.UpdateCreateingFolderState(0));
+           
+        }
     }
 
     create(){
-        this.props.dispatch(this.props.createFolder(this.state.folderName))
+        this.props.dispatch(createFolder(this.state.folderName)); 
+
     }
 
      
 
     render(){
+
+        if (this.props.creatingFolder == 1){
+
+           
+            return(         
+                    <View style={{  
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor:"white" }}>
+                      <Text>Creating a folder...</Text> 
+                   <ProgressBar isLoading={true}/>
+                   
+                </View>
+          
+            )
+        }
+
         return (
            
-                <View style={{  width:250,
-                                height:250,
+                <View style={{ 
                                 justifyContent: "center",
                                 alignItems: "center",
                                 backgroundColor:"white" }}>
@@ -84,17 +123,19 @@ function mapStateToProps(state) {
   
 
   return {
-    folderId : state.documentlist.fId
+    folderId : state.documentlist.fId,
+    creatingFolder : state.documentlists.creatingFolder
   }
 }
 
-function  matchDispatchToProps(dispatch) {
-    return bindActionCreators({
-       createFolder : documentsActions.createFolder, 
-        dispatch,
+// function  matchDispatchToProps(dispatch) {
+//     return bindActionCreators({
+//        createFolder : documentsActions.createFolder, 
        
-    }, dispatch)
+//         dispatch,
+       
+//     }, dispatch)
     
-}
+// }
 
-export default connect(mapStateToProps,matchDispatchToProps)(CreateFolder)
+export default connect(mapStateToProps)(CreateFolder)

@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2016 by original authors @ fontello.com</metadata>
+<defs>
+<font id="fontello" horiz-adv-x="1000" >
+<font-face font-family="fontello" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="moneybox" unicode="&#xe800;" d="M526 365c0-32-26-58-59-58s-58 26-58 58c0 33 26 59 58 59s59-27 59-59z m452 485v-933h-94v-67h-83v67h-528v-67h-83v67h-95v111h-73v189h73v331h-64v189h64v113l883 0 0 0z m-294-486c0 119-97 217-217 217-119 0-216-98-216-217 0-120 97-217 216-217 120 0 217 98 217 217z m176-182l-33 211c17 11 28 30 28 52 0 34-28 62-63 62-34 0-62-28-62-62 0-22 11-41 28-52l-33-211h135z m-276 231l40 21c10-21 16-45 16-70 0-28-7-54-19-77l-41 25-13-21 41-26c-29-41-75-69-128-73v50h-25v-50c-58 5-107 37-135 84l42 22-11 22-43-22c-8 21-13 43-13 66 0 29 8 57 21 81l38-23 13 21-38 23c29 40 74 66 126 70v-44h25v44c56-4 104-35 132-80l-40-20 12-23z m-36-48c0 45-36 81-81 81-44 0-80-36-80-81 0-44 36-80 80-80 45 0 81 36 81 80z" horiz-adv-x="1000" />
+</font>
+</defs>
+</svg>
