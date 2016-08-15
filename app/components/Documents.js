@@ -17,6 +17,8 @@ import {View,
 
 
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { createIconSetFromFontello } from  'react-native-vector-icons'
+import fontelloConfig from '../assets/icons/config.json';
 import * as constans from '../constants/GlobalConstans'
 import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
@@ -28,6 +30,8 @@ let deviceHeight = Dimensions.get('window').height
 var dismissKeyboard = require('dismissKeyboard');
 var DocumentCell = require('../components/DocumentCell');
 const splitChars = '|';
+
+const KenestoIcon = createIconSetFromFontello(fontelloConfig);
 
 import _ from "lodash";
 import {fetchTableIfNeeded, refreshTable, changeTable} from '../actions/documentlists'
@@ -350,16 +354,7 @@ class Documents extends Component {
        
 
         {this._renderTableContent(dataSource, isFetching) }
-        <ActionButton buttonColor="rgba(231,76,60,1)">
-          <ActionButton.Item buttonColor='#9b59b6' title="open modal" onPress={() => this.openModal()}>
-            <Icon name="https" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title="Upload" onPress={() => Actions.animated() }>
-            <Icon name="file-upload" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#1abc9c' title="New Folder" onPress={() => Actions.createFolder({ env: this.state.env, currentFolderId: this.state.folderId, sessionToken: this.props.sessionToken, afterCreateCallback: this._onRefresh, updateLoading: this.updateLoadingState }) }>
-            <Icon name="send" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
+        <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.openModal()}>
         </ActionButton>
       </ViewContainer>
     )

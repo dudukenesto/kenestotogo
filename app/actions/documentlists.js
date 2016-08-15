@@ -171,10 +171,9 @@ function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: 
     catId: documentlist.catId,
     documents, 
     dataSource,
-    creatingFolder: false
   }
 }
-function UpdateCreateingFolderState(creating : boolean) {
+function UpdateCreateingFolderState(creating : int) {
 
   return {
     type : types.REQUEST_CREATE_FOLDER,
@@ -217,98 +216,34 @@ function SubmitError( errorMessage: string) {
   }
 }
 
-
-function submitTest( errorMessage: string) {
-  return {
-    type: types.TEST
-  }
-}
-
-
-
 export function createFolder(folderName: string){
-  return (dispatch, getState) => {
 
-     const {sessionToken, env} = getState().accessReducer; 
-    const {folderId} = getState().documentlist.fId; 
-    var documentlist =  getState().documentlist;
-    const createFolderUrl = getCreateFolderUrl(env, sessionToken, folderId, folderName);
+return (dispatch, getState) => {
+   var documentlist =  getState().documentlist;
+    const {sessionToken, env} = getState().accessReducer; 
+    const {folderId} = documentlist.fId; 
+    const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName);
+    dispatch(UpdateCreateingFolderState(1))
     return fetch(createFolderUrl)
       .then(response => response.json())
       .then(json => {
-    
-        // alert(json.ResponseStatus);
-         if (json.ResponseStatus == "FAILED") {
-           dispatch(submitTest())
-         }
-         else {
-                  dispatch(submitTest())
-          }
+        if (json.ResponseData.ResponseStatus == "FAILED") {
+         // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
+           dispatch(SubmitError(json.ResponseData.ErrorMessage))
+           dispatch(UpdateCreateingFolderState(0))
+        }
+        else {
+             dispatch(UpdateCreateingFolderState(2))
+            dispatch(refreshTable(documentlist))    
+           
+        }
       })
       .catch((error) => {
-        console.log("error:" + JSON.stringify(error))
-          dispatch(submitTest())
+         dispatch(SubmitError("Failed to retrieve documents"))
+         dispatch(UpdateCreateingFolderState(0))
       })
   }
 }
 
-
-// export function createFolder2(folderName: string){
-
-
-
-
-//    return (dispatch, getState) => {
-//   // dispatch(requestDocumentsList(getState().documentlist))
-// debugger
-//     const {sessionToken, env} = getState().accessReducer; 
-//     const {folderId} = getState().documentlist.fId; 
-
-//     const createFolderUrl = getCreateFolderUrl(env, sessionToken, folderId, folderName);
-//  //   dispatch(UpdateCreateingFolderState(true));
-//      return fetch(createFolderUrl)
-
-//      .then(response => response.json())
-//       .then(json => {
-      
-//         if (json.ResponseData.ResponseStatus == "FAILED") {
-//           dispatch(SubmitError("test wrror"))
-//         }
-//         else
-//         {
-//             dispatch(SubmitError("test wrror"))
-//         }
-        
-
-//       })
-//       .catch((error) => {
-      
-//         dispatch(SubmitError("test wrror"))
-//       })
-
-
-//         dispatch(SubmitError("test wrror"))
-//     }
-// }
-      //  else
-      //    dispatch(refreshDocumentslist(getState().documentlist.documentlist())
-
-
-        // .then((response) => response.json())
-        // .catch((error) => {
-        //     dispatch(SubmitError('Add folder failed'));
-        // })
-        //  .then( json => {
-        //    var newfolderId = json.responseData.ResponseData.Id;
-
-         
-        //      dispatch(refreshDocumentsTable(getState().documentlist.documentlist))
-        //  }
-         
-        //  )
-      //    .catch((error) => {
-      //   //Actions.error({data: 'get documents faliled failed'})
-      //   Alert('Failed to create folder')
-      // })
 
 
