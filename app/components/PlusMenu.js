@@ -12,7 +12,7 @@ let styles = StyleSheet.create({
         flex: 1,
         flexWrap: "wrap",
         flexDirection: 'row',
-        paddingTop: 40,
+        paddingTop: 35,
     },
     actionButtonIcon: {
         fontSize: 45,

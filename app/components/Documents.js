@@ -431,7 +431,8 @@ var styles = StyleSheet.create({
     backgroundColor: '#eeeeee',
     flex: 0,
     flexDirection: "row-reverse",
-
+    
+// TO REMOVE!!!
     // height: 0
   },
   sectionLabel: {
