@@ -32,23 +32,37 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             i,
             j;
 
-          totalDocuments = json.ResponseData.TotalDocuments;
+          totalDocuments = 10//json.ResponseData.TotalFiles;
+          totalFolders = 10//json.ResponseData.TotalFiles;
           if (actionType == types.RECEIVE_DOCUMENTS) {
             items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
           }
           else {
             items = [...json.ResponseData.DocumentsList]
           }
+          
+          console.log("fetchDocumentsTable: " + JSON.stringify(items))
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
           var sortBarTitle = `Folders`
-
-          dataBlob["ID1"] = `Folders (${folders.length})`
-          dataBlob["ID2"] = `Files (${totalDocuments})`
-
-          sectionIDs[0] = "ID1";
-          sectionIDs[1] = "ID2";
+          if(totalFolders && totalDocuments)
+          {
+            dataBlob["ID1"] = `Folders (${totalFolders})`
+            dataBlob["ID2"] = `Files (${totalDocuments})`
+            sectionIDs[0] = "ID1";
+            sectionIDs[1] = "ID2";
+          }
+          else if(totalFolders)
+          {
+             dataBlob["ID1"] = `Folders (${totalFolders})`
+              sectionIDs[0] = "ID1";
+          }
+          else if(totalDocuments)
+          {
+             dataBlob["ID1"] = `Files (${totalDocuments})`
+             sectionIDs[0] = "ID1";
+          }
 
           rowIDs[0] = [];
           for (j = 0; j < folders.length; j++) {
