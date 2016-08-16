@@ -21,7 +21,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
         else {
           var prevState = getState();
           var items,
-            totalDocuments,
+            totalFiles,
             dataBlob = {},
             sectionIDs = [],
             rowIDs = [],
@@ -32,8 +32,8 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             i,
             j;
 
-          totalDocuments = 10//json.ResponseData.TotalFiles;
-          totalFolders = 10//json.ResponseData.TotalFiles;
+          totalFiles = json.ResponseData.TotalFiles;
+          totalFolders = json.ResponseData.TotalFolders;
           if (actionType == types.RECEIVE_DOCUMENTS) {
             items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
           }
@@ -41,15 +41,14 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             items = [...json.ResponseData.DocumentsList]
           }
           
-          console.log("fetchDocumentsTable: " + JSON.stringify(items))
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
           var sortBarTitle = `Folders`
-          if(totalFolders && totalDocuments)
+          if(totalFolders && totalFiles)
           {
             dataBlob["ID1"] = `Folders (${totalFolders})`
-            dataBlob["ID2"] = `Files (${totalDocuments})`
+            dataBlob["ID2"] = `Files (${totalFiles})`
             sectionIDs[0] = "ID1";
             sectionIDs[1] = "ID2";
           }
@@ -58,9 +57,9 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
              dataBlob["ID1"] = `Folders (${totalFolders})`
               sectionIDs[0] = "ID1";
           }
-          else if(totalDocuments)
+          else if(totalFiles)
           {
-             dataBlob["ID1"] = `Files (${totalDocuments})`
+             dataBlob["ID1"] = `Files (${totalFiles})`
              sectionIDs[0] = "ID1";
           }
 
