@@ -119,7 +119,7 @@ var styles = StyleSheet.create({
     justifyContent: "center",
   },
   previewThumbnail: {
-    height: 55,
+    height: 40,
     width: 55,
   },
   icon: {

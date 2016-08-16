@@ -30,11 +30,11 @@ let styles = StyleSheet.create({
 
 
   plusMenu: {
-    height: 160
+    height: 150
   },
     createFolder: {
-    height: 160, 
-    width: 160
+    height: 280, 
+    width: 320 
   },
 
    btnModal: {
@@ -90,6 +90,7 @@ constructor (props) {
 
   openCreateFolder(){
     this.refs.CreateFolder.open();
+ 
   }
 
   closeCreateFolder(){
@@ -127,7 +128,6 @@ constructor (props) {
                  <Modal style={[styles.modal, styles.createFolder]} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
                     <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.closeCreateFolder.bind(this)} 
                      closeCreateFolder={this.closeCreateFolder.bind(this)}
-                     
                      />
                 </Modal>
 

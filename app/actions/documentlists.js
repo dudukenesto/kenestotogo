@@ -164,10 +164,9 @@ function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: 
     catId: documentlist.catId,
     documents, 
     dataSource,
-    creatingFolder: false
   }
 }
-function UpdateCreateingFolderState(creating : boolean) {
+function UpdateCreateingFolderState(creating : int) {
 
   return {
     type : types.REQUEST_CREATE_FOLDER,
@@ -210,39 +209,31 @@ function SubmitError( errorMessage: string) {
   }
 }
 
-
-function submitTest( errorMessage: string) {
-  return {
-    type: types.TEST
-  }
-}
-
-
-
 export function createFolder(folderName: string){
-  return (dispatch, getState) => {
 
-     const {sessionToken, env} = getState().accessReducer; 
-    const {folderId} = getState().documentlist.fId; 
-    var documentlist =  getState().documentlist;
-    const createFolderUrl = getCreateFolderUrl(env, sessionToken, folderId, folderName);
+return (dispatch, getState) => {
+   var documentlist =  getState().documentlist;
+    const {sessionToken, env} = getState().accessReducer; 
+    const {folderId} = documentlist.fId; 
+    const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName);
+    dispatch(UpdateCreateingFolderState(1))
     return fetch(createFolderUrl)
       .then(response => response.json())
       .then(json => {
-    
-        // alert(json.ResponseStatus);
-         if (json.ResponseStatus == "FAILED") {
-           dispatch(submitTest())
-         }
-         else {
-                  dispatch(submitTest())
-          }
+        if (json.ResponseData.ResponseStatus == "FAILED") {
+         // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
+           dispatch(SubmitError(json.ResponseData.ErrorMessage))
+           dispatch(UpdateCreateingFolderState(0))
+        }
+        else {
+             //dispatch(UpdateCreateingFolderState(2))
+            dispatch(refreshTable(documentlist))    
+           
+        }
       })
       .catch((error) => {
-        console.log("error:" + JSON.stringify(error))
-          dispatch(submitTest())
+         dispatch(SubmitError("Failed to retrieve documents"))
+         dispatch(UpdateCreateingFolderState(0))
       })
   }
 }
-
-
