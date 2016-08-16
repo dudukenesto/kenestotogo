@@ -246,7 +246,7 @@ return (dispatch, getState) => {
            dispatch(UpdateCreateingFolderState(0))
         }
         else {
-             dispatch(UpdateCreateingFolderState(2))
+             //dispatch(UpdateCreateingFolderState(2))
             dispatch(refreshTable(documentlist))    
            
         }
