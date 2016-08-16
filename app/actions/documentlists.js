@@ -21,7 +21,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
         else {
           var prevState = getState();
           var items,
-            totalDocuments,
+            totalFiles,
             dataBlob = {},
             sectionIDs = [],
             rowIDs = [],
@@ -32,23 +32,36 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             i,
             j;
 
-          totalDocuments = json.ResponseData.TotalDocuments;
+          totalFiles = json.ResponseData.TotalFiles;
+          totalFolders = json.ResponseData.TotalFolders;
           if (actionType == types.RECEIVE_DOCUMENTS) {
             items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
           }
           else {
             items = [...json.ResponseData.DocumentsList]
           }
+          
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
           var sortBarTitle = `Folders`
-
-          dataBlob["ID1"] = `Folders (${folders.length})`
-          dataBlob["ID2"] = `Files (${totalDocuments})`
-
-          sectionIDs[0] = "ID1";
-          sectionIDs[1] = "ID2";
+          if(totalFolders && totalFiles)
+          {
+            dataBlob["ID1"] = `Folders (${totalFolders})`
+            dataBlob["ID2"] = `Files (${totalFiles})`
+            sectionIDs[0] = "ID1";
+            sectionIDs[1] = "ID2";
+          }
+          else if(totalFolders)
+          {
+             dataBlob["ID1"] = `Folders (${totalFolders})`
+              sectionIDs[0] = "ID1";
+          }
+          else if(totalFiles)
+          {
+             dataBlob["ID1"] = `Files (${totalFiles})`
+             sectionIDs[0] = "ID1";
+          }
 
           rowIDs[0] = [];
           for (j = 0; j < folders.length; j++) {
@@ -235,6 +248,7 @@ return (dispatch, getState) => {
         else {
              dispatch(UpdateCreateingFolderState(2))
              dispatch(refreshTable(documentlist))    
+
            
         }
       })

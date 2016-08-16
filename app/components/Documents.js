@@ -351,11 +351,7 @@ class Documents extends Component {
         {this._renderSortBar() }
         <View style={styles.separator} />
 
-        { isFetching &&
-          <View style={styles.progressbar}>
-            <ActivityIndicator styleAttr='Small' />
-          </View>
-        }
+       
 
         {this._renderTableContent(dataSource, isFetching) }
         <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.openModal()}>
@@ -390,7 +386,6 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    marginTop: 0
   },
   centerText: {
     alignItems: 'center',
@@ -403,26 +398,12 @@ var styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#eeeeee',
   },
-  scrollSpinner: {
-    marginVertical: 20,
-  },
   rowSeparator: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: "#eee",
     height: 1,
-    marginLeft: 4,
   },
   rowSeparatorHide: {
     opacity: 0.0,
-  },
-  backButton: {
-    marginTop: 15,
-    padding: 15,
-    backgroundColor: '#3C5773',
-    alignSelf: 'stretch'
-  },
-  backLabel: {
-    color: '#F4F4E9',
-    textAlign: 'center'
   },
   actionButtonIcon: {
     fontSize: 20,
@@ -435,40 +416,23 @@ var styles = StyleSheet.create({
     color: '#2f2f2f',
   },
   sectionHeader: {
-    marginTop: 15,
     padding: 15,
-    backgroundColor: '#eeeeee',
-    alignSelf: 'stretch'
+    paddingLeft: 20,
+    backgroundColor: '#F5F6F8',
+    alignSelf: 'stretch',    
   },
   sortContainer: {
     padding: 0,
     backgroundColor: '#eeeeee',
     flex: 0,
     flexDirection: "row-reverse",
-  },
-  statusBar: {
-    marginTop: 15,
-    padding: 15,
-    backgroundColor: 'red',
-    alignSelf: 'stretch'
+    
+// TO REMOVE!!!
+    // height: 0
   },
   sectionLabel: {
     color: '#2f2f2f',
-    textAlign: 'center'
-  },
-    modal: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  modal2: {
-    height: 230,
-    backgroundColor: "#3B5998"
-  },
-
-  modal3: {
-    height: 300,
-    width: 300
+    textAlign: 'left'
   },
 });
 
