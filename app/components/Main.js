@@ -11,6 +11,9 @@ import PlusMenu from './PlusMenu'
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
+import {connect} from 'react-redux'
+import * as documentsActions from '../actions/documentlists'
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -27,7 +30,7 @@ let styles = StyleSheet.create({
 
 
   plusMenu: {
-    height: 150
+    height: 160
   },
     createFolder: {
     height: 280, 
@@ -41,7 +44,7 @@ let styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
 })
-export default class Main extends React.Component {
+class Main extends React.Component {
 
 
 
@@ -87,7 +90,10 @@ constructor (props) {
   }
 
   closeCreateFolder(){
+
+    //alert(documentsActions.UpdateCreateingFolderState)
      this.refs.CreateFolder.close();
+     this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
   }
   
 
@@ -128,6 +134,22 @@ constructor (props) {
     
     }
 }
+
+ function mapStateToProps(state) {
+ 
+  const { documentlists, documentlist } = state
+  const {env, sessionToken } = state.accessReducer; 
+  return {
+    documentlist,
+    documentlists,
+    env,
+    sessionToken
+    
+  }
+}
+
+export default connect(mapStateToProps)(Main)
+
 
 Main.childContextTypes = {
     kModal:  React.PropTypes.object
