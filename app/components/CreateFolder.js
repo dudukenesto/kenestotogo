@@ -60,7 +60,7 @@ class CreateFolder extends React.Component {
         if (nextprops.creatingFolder == 2)
         {
             this.props.closeCreateFolder();
-            dispatch(documentsActions.UpdateCreateingFolderState(0));
+            
            
         }
     }
@@ -127,15 +127,5 @@ function mapStateToProps(state) {
     creatingFolder : state.documentlists.creatingFolder
   }
 }
-
-// function  matchDispatchToProps(dispatch) {
-//     return bindActionCreators({
-//        createFolder : documentsActions.createFolder, 
-       
-//         dispatch,
-       
-//     }, dispatch)
-    
-// }
 
 export default connect(mapStateToProps)(CreateFolder)

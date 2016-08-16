@@ -81,6 +81,7 @@ export default function documentlists(state = {}, action) {
     case types.REFRESH_DOCUMENTS_LIST:
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action),
+        
       })
 
     case types.CHANGE_DOCUMENTS_LIST:
@@ -91,12 +92,6 @@ export default function documentlists(state = {}, action) {
        return {
         ...state,
         creatingFolder : action.creatingFolder
-      }
-    }
-     case types.TEST : {
-       return {
-        ...state,
-        creatingFolder : false
       }
     }
     case types.SUBMIT_ERROR:
