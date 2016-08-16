@@ -98,10 +98,7 @@ class Document extends React.Component{
     return(
     
       <View style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <Text style={styles.title}>{this.documentProps.title}</Text>
-          <Button onPress={ () => this.props._goBack() } label='Go Back' />
-        </View>
+        <Text style={styles.title}>{this.documentProps.name}</Text>
         <WebView
           style={styles.webview_body}
           source={{ uri: this.state.viewerUrl }}

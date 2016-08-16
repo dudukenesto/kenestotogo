@@ -28,3 +28,18 @@ export function getCreateFolderUrl(env, sessionToken, fId, folderName){
 
    return `${apiBaseUrl}/KDocuments.svc/CreateFolder?t=${sessionToken}&pid=${folderId}&fn=${folderName}&folderDescription=''`;
 }
+
+
+export function getDocumentsContext(props) {
+  const {navReducer} = props
+  var currRoute = navReducer.routes[navReducer.index];
+  console.log("getDocumentsContext:" + JSON.stringify(currRoute))
+  return (
+    {
+      name: currRoute.data.name,
+      catId: currRoute.data.catId,
+      fId: currRoute.data.fId,
+      sortDirection: currRoute.data.sortDirection,
+      sortBy: currRoute.data.sortBy
+    })
+}

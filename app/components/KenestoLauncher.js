@@ -7,6 +7,7 @@ import ModalPicker from 'react-native-modal-picker'
 import ProggressBar from "../components/ProgressBar";
 import * as routes from '../constants/routes'
 import * as actions from '../actions/Access'
+import * as constans from '../constants/GlobalConstans'
 
 const styles = StyleSheet.create({
     container: {
@@ -46,13 +47,19 @@ class KenestoLauncher extends React.Component {
       
     }
 
-    componentWillReceiveProps(nextProps){
-        if (nextProps.isLoggedIn)
-        {
-            this.props._handleNavigate(routes.documentsRoute);
-        } 
-            
-    }
+      componentWillReceiveProps(nextProps) {
+          if (nextProps.isLoggedIn) {
+              var data = {
+                  key : "documents",
+                  name: "All Documents",
+                  catId: constans.ALL_DOCUMENTS,
+                  fId: "",
+                  sortDirection: constans.ASCENDING,
+                  sortBy: constans.ASSET_NAME
+              }
+              this.props._handleNavigate(routes.documentsRoute(data));
+          }
+      }
 
 
 

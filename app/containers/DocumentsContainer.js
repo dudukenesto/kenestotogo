@@ -19,9 +19,11 @@ class DocumentsContainer extends Component {
 
 function mapStateToProps(state) {
  
-  const { documentlists, documentlist } = state
+  const { documentlists, documentlist,navReducer } = state
   const {env, sessionToken } = state.accessReducer; 
+  
   return {
+    navReducer,
     documentlist,
     documentlists,
     env,

@@ -11,6 +11,9 @@ import PlusMenu from './PlusMenu'
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
+import {connect} from 'react-redux'
+import {pop} from '../actions/navActions'
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -41,7 +44,7 @@ let styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
 })
-export default class Main extends React.Component {
+class Main extends React.Component {
 
 
 
@@ -61,7 +64,11 @@ constructor (props) {
          this.refs.modalPlusMenu.open();
               break;
              case 1:
-          alert(1);
+               const {dispatch} = this.props
+                dispatch(pop())
+              break;
+            case 2:
+          alert(2);
               break;
       
           default:
@@ -103,9 +110,10 @@ constructor (props) {
                     title={'Kenesto hello'}
                     navIconName='menu'
                     iconColor='orange'
-                    onIconClicked = {this.onNavIconClicked.bind(this)}
+                   onIconClicked = {this.onNavIconClicked.bind(this)}
                     actions={[
                             {title: 'Search', iconName: 'search',iconSize: 30, show: 'always', iconColor: '#000'  },
+                             {title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' },
                             {title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' }
                             ]}
                     overflowIconName="more"
@@ -136,3 +144,18 @@ Main.childContextTypes = {
 Main.contextTypes = {
     drawer: React.PropTypes.object
 };
+
+function mapStateToProps(state) {
+ 
+  const { documentlists, documentlist } = state
+  const {env, sessionToken } = state.accessReducer; 
+  return {
+    documentlist,
+    documentlists,
+    env,
+    sessionToken
+    
+  }
+}
+
+export default connect(mapStateToProps)(Main)
