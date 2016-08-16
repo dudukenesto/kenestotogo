@@ -12,7 +12,7 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
 import {connect} from 'react-redux'
-import {pop} from '../actions/navActions'
+import * as documentsActions from '../actions/documentlists'
 
 let styles = StyleSheet.create({
   container: {
@@ -30,7 +30,7 @@ let styles = StyleSheet.create({
 
 
   plusMenu: {
-    height: 150
+    height: 160
   },
     createFolder: {
     height: 280, 
@@ -64,11 +64,7 @@ constructor (props) {
          this.refs.modalPlusMenu.open();
               break;
              case 1:
-               const {dispatch} = this.props
-                dispatch(pop())
-              break;
-            case 2:
-          alert(2);
+          alert(1);
               break;
       
           default:
@@ -94,7 +90,10 @@ constructor (props) {
   }
 
   closeCreateFolder(){
+
+    //alert(documentsActions.UpdateCreateingFolderState)
      this.refs.CreateFolder.close();
+     this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
   }
   
 
@@ -111,10 +110,9 @@ constructor (props) {
                     title={'Kenesto hello'}
                     navIconName='menu'
                     iconColor='orange'
-                   onIconClicked = {this.onNavIconClicked.bind(this)}
+                    onIconClicked = {this.onNavIconClicked.bind(this)}
                     actions={[
                             {title: 'Search', iconName: 'search',iconSize: 30, show: 'always', iconColor: '#000'  },
-                             {title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' },
                             {title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' }
                             ]}
                     overflowIconName="more"
@@ -137,15 +135,7 @@ constructor (props) {
     }
 }
 
-Main.childContextTypes = {
-    kModal:  React.PropTypes.object
-}
-
-Main.contextTypes = {
-    drawer: React.PropTypes.object
-};
-
-function mapStateToProps(state) {
+ function mapStateToProps(state) {
  
   const { documentlists, documentlist } = state
   const {env, sessionToken } = state.accessReducer; 
@@ -159,3 +149,12 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(Main)
+
+
+Main.childContextTypes = {
+    kModal:  React.PropTypes.object
+}
+
+Main.contextTypes = {
+    drawer: React.PropTypes.object
+};

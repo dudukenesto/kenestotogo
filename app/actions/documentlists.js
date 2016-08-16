@@ -166,7 +166,7 @@ function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: 
     dataSource,
   }
 }
-function UpdateCreateingFolderState(creating : int) {
+export function UpdateCreateingFolderState(creating : int) {
 
   return {
     type : types.REQUEST_CREATE_FOLDER,
@@ -226,8 +226,9 @@ return (dispatch, getState) => {
            dispatch(UpdateCreateingFolderState(0))
         }
         else {
-             //dispatch(UpdateCreateingFolderState(2))
-            dispatch(refreshTable(documentlist))    
+             dispatch(UpdateCreateingFolderState(2))
+             dispatch(refreshTable(documentlist))    
+
            
         }
       })
