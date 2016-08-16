@@ -212,7 +212,7 @@ function SubmitError( errorMessage: string) {
 export function createFolder(folderName: string){
 
 return (dispatch, getState) => {
-   var documentlist =  getState().documentlist;
+   var documentlist = getDocumentsContext(getState());
     const {sessionToken, env} = getState().accessReducer; 
     const {folderId} = documentlist.fId; 
     const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName);
