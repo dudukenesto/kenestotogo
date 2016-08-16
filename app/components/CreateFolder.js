@@ -53,14 +53,10 @@ var styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-between',
         marginTop: 20, 
-        // alignItems: "stretch",
         alignSelf: "stretch",   
     },
     singleBtnContainer: {
-        // flex: 1,
         width: 140,
-        // margin: 10,
-        // padding: 10,
         justifyContent: "center",
         height: 50,
         backgroundColor: "#F5F6F8",
@@ -72,14 +68,19 @@ var styles = StyleSheet.create({
         fontWeight: "normal",
         fontSize: 18, 
    },
-    modal: {
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    InProggress: {
-        height: 500, 
-        width: 500
-    },
+   creatingFolder: {
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor:"white",
+   },
+    // modal: {
+    //     justifyContent: 'center',
+    //     alignItems: 'center'
+    // },
+    // InProggress: {
+    //     height: 500, 
+    //     width: 500
+    // },
 });
 
 class CreateFolder extends React.Component {
@@ -122,10 +123,7 @@ class CreateFolder extends React.Component {
 
            
             return(         
-                    <View style={{  
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor:"white" }}>
+                    <View style={styles.creatingFolder}>
                       <Text>Creating a folder...</Text> 
                    <ProgressBar isLoading={true}/>
                    
