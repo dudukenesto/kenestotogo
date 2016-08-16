@@ -27,6 +27,8 @@ var {
   View
 } = ReactNative;
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
 //var getTextFromScore = require('./getTextFromScore');
@@ -40,11 +42,22 @@ var DocumentCell = React.createClass({
     
     var imageSource = require('../assets/thumbnail_img.png'); 
            
-    if (this.props.document.HasThumbnail)
-      imageSource ={uri: this.props.document.ThumbnailUrl}
-
-    if (this.props.document.FamilyCode == 'FOLDER')
-      imageSource = require('../assets/folder_icon.png'); 
+    var elementIcon;
+    if (this.props.document.HasThumbnail){
+      elementIcon = <Image source = {{uri: this.props.document.ThumbnailUrl}} style={styles.previewThumbnail} />
+    }
+    else {
+      if (this.props.document.FamilyCode == 'FOLDER'){
+        elementIcon = <Icon name="folder" style={styles.icon} />
+      }
+      else {
+        elementIcon = <Icon name="description" style={styles.icon} />
+      }
+    }
+      
+      function menuPressed(){
+        alert('menu pressed...');
+      }
 
     
     return (
@@ -54,22 +67,22 @@ var DocumentCell = React.createClass({
           onShowUnderlay={this.props.onHighlight}
           onHideUnderlay={this.props.onUnhighlight}>
           <View style={styles.row}>
-            <Image
-            //  source={{uri: 'thumbnail_img'}}
-             source = {imageSource}
-              style={styles.cellImage}
-            />
+            <View style={styles.iconContainer}>
+              {elementIcon}
+            </View>
             <View style={styles.textContainer}>
               <Text style={styles.documentTitle} numberOfLines={2}>
                 {this.props.document.Name}
               </Text>
               <Text style={styles.documentYear} numberOfLines={1}>
-                Somthing about the year of the document
-                <Text style={{ color: '#999999'} }>
-                  Some text here
-                </Text>
+                Modified blah-blah-blah
               </Text>
             </View>
+            <TouchableElement onPress={menuPressed}>
+              <View style={styles.iconContainer}>
+                <Icon name="more-vert" style={styles.icon} />
+              </View>
+            </TouchableElement>
           </View>
         </TouchableElement>
       </View>
@@ -80,10 +93,11 @@ var DocumentCell = React.createClass({
 var styles = StyleSheet.create({
   textContainer: {
     flex: 1,
+    marginLeft: 10,
   },
   documentTitle: {
-    flex: 1,
-    fontSize: 16,
+    //flex: 1,
+    fontSize: 14,
     fontWeight: '500',
     marginBottom: 2,
   },
@@ -96,17 +110,22 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
     padding: 5,
+    
   },
-  cellImage: {
-    backgroundColor: '#dddddd',
-    height: 93,
-    marginRight: 10,
-    width: 90,
+  iconContainer: {
+    height: 57,
+    width: 57,
+    alignItems: 'center',
+    justifyContent: "center",
   },
-  cellBorder: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    height: StyleSheet.hairlineWidth,
-    marginLeft: 4,
+  previewThumbnail: {
+    height: 40,
+    width: 55,
+  },
+  icon: {
+    fontSize: 22,
+    color: '#888',    
+    
   },
   
 });

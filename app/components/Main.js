@@ -27,7 +27,7 @@ let styles = StyleSheet.create({
 
 
   plusMenu: {
-    height: 160
+    height: 150
   },
     createFolder: {
     height: 280, 
