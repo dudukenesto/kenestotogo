@@ -223,11 +223,12 @@ class Documents extends Component {
     const {documentlists} = this.props
     var documentlist = getDocumentsContext(this.props);
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
-    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+    // const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+    const errorMessage = "Luk, I am your father!";
 
-    if (hasError && this.refs.masterView != undefined) {
-      this.refs.masterView.showMessage("error", errorMessage);
-    }
+    // if (hasError && this.refs.masterView != undefined) {
+      this.refs.masterView.showMessage("success", errorMessage);
+    // }
   }
 
   openModal(){

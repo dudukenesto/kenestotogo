@@ -27,8 +27,11 @@ MessageBarManager.registerMessageBar(this.refs.alert);
         title: title,
         message: message,
         alertType: type,
-        viewTopOffset: 20,
-        messageStyle:  {textAlign: 'center'}
+        position: 'bottom',
+        messageStyle:  {textAlign: 'center', color: '#fff', margin: 5},
+        stylesheetSuccess: {backgroundColor: '#3290F1', strokeColor: '#3290F1'},
+        stylesheetWarning: {backgroundColor: '#F2B702', strokeColor: '#F2B702'},
+        stylesheetError: {backgroundColor: '#DE4040', strokeColor: '#DE4040'},
         // See Properties section for full customization
         // Or check `index.ios.js` or `index.android.js` for a complete example
 });
