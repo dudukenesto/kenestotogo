@@ -318,8 +318,12 @@ var NoDocuments = React.createClass({
 
     return (
       <View style={[styles.container, styles.centerText]}>
-        <Text style={styles.noDocumentsText}>{text}</Text>
-        <Button onPress={this.props.onRefresh}>refresh</Button>
+        <View style={styles.textContainer}>
+          <Text style={styles.noDocumentsText}>{text}</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
+        </View>        
       </View>
     );
   }
@@ -333,12 +337,19 @@ var styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  textContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  buttonContainer: {
+    flex: 1,
+  },
   centerText: {
     alignItems: 'center',
   },
   noDocumentsText: {
-    marginTop: 80,
     color: '#888888',
+    fontSize: 16
   },
   separator: {
     height: 1,
@@ -380,6 +391,20 @@ var styles = StyleSheet.create({
     color: '#2f2f2f',
     textAlign: 'left'
   },
+  singleBtnContainer: {
+        width: 140,
+        marginTop: 15,
+        justifyContent: "center",
+        height: 50,
+        backgroundColor: "#F5F6F8",
+        borderWidth: 0.5,
+        borderColor: "#BEBDBD"
+   },
+   button: {
+        color: "#666666",
+        fontWeight: "normal",
+        fontSize: 18, 
+   },
 });
 
 Documents.contextTypes = {
