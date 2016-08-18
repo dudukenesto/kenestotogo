@@ -32,8 +32,13 @@ export function getCreateFolderUrl(env, sessionToken, fId, folderName){
 
 export function getDocumentsContext(props) {
   const {navReducer} = props
+  console.log("getDocumentsContext:" + JSON.stringify(navReducer))
+  if(navReducer == undefined ||  navReducer.index == 0)
+  {
+    return ({})
+  }
+  
   var currRoute = navReducer.routes[navReducer.index];
-  console.log("getDocumentsContext:" + JSON.stringify(currRoute))
   return (
     {
       name: currRoute.data.name,

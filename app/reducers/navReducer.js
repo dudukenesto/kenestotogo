@@ -1,4 +1,4 @@
-import { PUSH_ROUTE, POP_ROUTE } from '../constants/ActionTypes'
+import { PUSH_ROUTE, POP_ROUTE,UPDATE_ROUTE } from '../constants/ActionTypes'
 import { NavigationExperimental } from 'react-native'
 const {
  StateUtils: NavigationStateUtils
@@ -23,6 +23,11 @@ function navigationState (state = initialState, action) {
     case POP_ROUTE:
       if (state.index === 0 || state.routes.length === 1) return state
       return NavigationStateUtils.pop(state)
+    case UPDATE_ROUTE:
+      state.routes[state.index].data = action.routeData;
+     return {
+        ...state
+      }
     default:
       return state
   }
