@@ -35,6 +35,10 @@ let styles = StyleSheet.create({
     height: 150
   },
 
+  createFolder: {
+    height: 280,
+    width: 320
+  },
 
   btnModal: {
     position: "absolute",
