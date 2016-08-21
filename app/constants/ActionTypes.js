@@ -1,6 +1,6 @@
 export const PUSH_ROUTE = 'PUSH_ROUTE'
 export const POP_ROUTE = 'POP_ROUTE'
-export const UPDATE_ROUTE = 'UPDATE_ROUTE'
+export const UPDATE_ROUTE_DATA = 'UPDATE_ROUTE_DATA'
 export const CHANGE_TAB = 'CHANGE_TAB'
 export const AUTHENTICATE = 'AUTHENTICATE'
 export const SetEnv = 'SetEnv'

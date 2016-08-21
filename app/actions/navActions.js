@@ -1,4 +1,4 @@
-import { POP_ROUTE, PUSH_ROUTE, CHANGE_TAB,UPDATE_ROUTE } from '../constants/ActionTypes'
+import { POP_ROUTE, PUSH_ROUTE, CHANGE_TAB,UPDATE_ROUTE_DATA } from '../constants/ActionTypes'
 
 export function push (route) {
   return {
@@ -13,9 +13,9 @@ export function pop () {
   }
 }
 
-export function updateRoute (routeData) {
+export function updateRouteData (routeData) {
   return {
-    type: UPDATE_ROUTE,
+    type: UPDATE_ROUTE_DATA,
     routeData
   }
 }
