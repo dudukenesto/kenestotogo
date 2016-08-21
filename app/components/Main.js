@@ -17,6 +17,7 @@ import * as documentsActions from '../actions/documentlists'
 import {pop, updateRouteData} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
+import Error from './Error'
 
 let styles = StyleSheet.create({
   container: {
@@ -34,7 +35,10 @@ let styles = StyleSheet.create({
   plusMenu: {
     height: 150
   },
-
+ error: {
+    height: 280,
+    width: 320
+  },
   createFolder: {
     height: 280,
     width: 320
@@ -114,6 +118,14 @@ class Main extends React.Component {
     dispatch(documentsActions.refreshTable(routeData));
   }
 
+  closeModal(ref: string){
+    this.refs[ref].close(); 
+  }
+
+  openModal(ref: string){
+    this.refs[ref].open();
+  }
+
   onNavIconClicked() {
     this.context.drawer.open();
   }
@@ -156,7 +168,7 @@ class Main extends React.Component {
                 <NavigationRootContainer />
                 <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
                     <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.openCreateFolder.bind(this)} 
-                       openCreateFolder = {this.openCreateFolder.bind(this)} 
+                       openCreateFolder = {this.openCreateFolder.bind(this)}  createError={()=> this.openModal("error")}
                         closeCreateFolder={this.closeCreateFolder.bind(this)}/>
                 </Modal>
                  
@@ -165,7 +177,9 @@ class Main extends React.Component {
                      closeCreateFolder={this.closeCreateFolder.bind(this)} setCreateFolderStyle={this.setProcessingStyle.bind(this)}
                      />
                 </Modal>
-
+                 <Modal style={[styles.modal, styles.error]} position={"bottom"}  ref={"error"} isDisabled={false}>
+                    <Error closeModal = {() => this.closeModal("error")} openModal = {() => this.openModal("error")} />
+                </Modal>
             </View>
         )
     }

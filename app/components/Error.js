@@ -1,65 +1,168 @@
-import React from "react";
-import {View, Text, StyleSheet, Animated, Dimensions} from "react-native";
+import React from "react"; 
+import {View, Text,TextInput, StyleSheet, Animated, Dimensions} from "react-native";
 import Button from "react-native-button";
-import PlusMenu from "./PlusMenu"
+import Modal from 'react-native-modalbox';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import ProgressBar from './ProgressBar'
+import config from '../utils/app.config';
+import * as documentsActions from '../actions/documentlists'
+import {createFolder} from '../actions/documentlists'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
 
-var {
-  height: deviceHeight
-} = Dimensions.get("window");
+var styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: "center",
+        backgroundColor:"white",
+        padding: 15,
+    },
+    titleContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 10,
+    },
+    title: {
+        fontSize: 20,
+        color: "#000",
+        alignSelf: "center",
+    },
+    nameContainer: {
+        flex: 1,
+        flexDirection:'row',
+        alignItems: "center",
+    },
+    icon: {
+        color: '#000',
+        fontSize: 32,
+        height: 30,
+        position: "absolute",
+        top: 18
+    },
+    textEdit: {
+        flex: 1,
+        color: "#000",
+        height: 50,            
+        fontSize: 17,
+        // paddingLeft: 40,
+        paddingBottom: 15,
+    },
+    buttonsContainer: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        marginTop: 20, 
+        alignSelf: "stretch",   
+    },
+    singleBtnContainer: {
+        width: 140,
+        justifyContent: "center",
+        height: 50,
+        backgroundColor: "#F5F6F8",
+        borderWidth: 0.5,
+        borderColor: "#BEBDBD"
+   },
+    button: {
+        color: "#666666",
+        fontWeight: "normal",
+        fontSize: 18, 
+   },
+    creatingFolder: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor:"white",
+   },
+    processingMessage: {
+        fontSize: 16,
+        marginRight: 40
+    },
+    // modal: {
+    //     justifyContent: 'center',
+    //     alignItems: 'center'
+    // },
+    // InProggress: {
+    //     height: 500, 
+    //     width: 500
+    // },
+});
 
-let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column'
-  },
-  toolbar: {
-    backgroundColor: '#3a3f41',
-    height: 50,
-  },
-      modal: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  modal2: {
-    height: 230,
-    backgroundColor: "#3B5998"
-  },
-
-  modal3: {
-    height: 300,
-    width: 300
-  }
-})
-
-export default class extends React.Component {
+class CreateFolder extends React.Component {
     constructor(props){
         super (props);
 
         this.state = {
-            offset: new Animated.Value(-deviceHeight)
+           
+            folderName: '',
         };
     }
 
     componentDidMount() {
-        Animated.timing(this.state.offset, {
-            duration: 150,
-            toValue: 0
-        }).start();
+  //      if (!this.props.creatingFolder)
+  //          this.refs.folderName.focus();
     }
 
-    closeModal() {
-        Animated.timing(this.state.offset, {
-            duration: 150,
-            toValue: -deviceHeight
-        }).start(this.props._goBack());
+    componentWillReceiveProps(nextprops){
+        // alert(nextprops.creatingFolder)
+
+       
+        if (nextprops.creatingFolder == 2)
+        {
+            this.props.closeCreateFolder();
+            this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
+           
+        }
     }
+
+    create(){
+       
+        this.props.dispatch(createFolder(this.state.folderName)); 
+        this.props.setCreateFolderStyle();
+    }
+
+     
 
     render(){
+
         return (
-         <Modal style={[styles.modal, styles.modal3]} position={"center"} ref={"modelError"} isDisabled={false}>
-                   <PlusMenu />
-         </Modal>
+           
+                <View style={styles.container}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.title}>Error</Text>
+                    </View>
+                    <View style={styles.nameContainer}>
+                         <Text style={styles.textEdit}>Error</Text>
+                    </View>
+                    
+                        <View style={styles.buttonsContainer}>
+                            <Button onPress={this.props.closeModal} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
+                        </View>
+                        
+                </View>
         );
     }
 }
+
+
+ 
+function mapStateToProps(state) {    
+  
+
+  return {
+    folderId : state.documentlist.fId,
+    creatingFolder : state.documentlists.creatingFolder
+  }
+}
+
+// function  matchDispatchToProps(dispatch) {
+//     return bindActionCreators({
+//        createFolder : documentsActions.createFolder, 
+       
+//         dispatch,
+       
+//     }, dispatch)
+    
+// }
+
+export default connect(mapStateToProps)(CreateFolder)
