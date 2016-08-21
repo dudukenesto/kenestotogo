@@ -45,7 +45,7 @@ var styles = StyleSheet.create({
         color: "#000",
         height: 50,            
         fontSize: 17,
-        paddingLeft: 40,
+        // paddingLeft: 40,
         paddingBottom: 15,
     },
     buttonsContainer: {
@@ -63,16 +63,21 @@ var styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor: "#BEBDBD"
    },
-   button: {
+    button: {
         color: "#666666",
         fontWeight: "normal",
         fontSize: 18, 
    },
-   creatingFolder: {
+    creatingFolder: {
+        flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
         backgroundColor:"white",
    },
+    processingMessage: {
+        fontSize: 16,
+        marginRight: 40
+    },
     // modal: {
     //     justifyContent: 'center',
     //     alignItems: 'center'
@@ -99,20 +104,21 @@ class CreateFolder extends React.Component {
     }
 
     componentWillReceiveProps(nextprops){
+        // alert(nextprops.creatingFolder)
 
        
-
         if (nextprops.creatingFolder == 2)
         {
             this.props.closeCreateFolder();
-            
+            this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
            
         }
     }
 
     create(){
+       
         this.props.dispatch(createFolder(this.state.folderName)); 
-
+        this.props.setCreateFolderStyle();
     }
 
      
@@ -120,14 +126,11 @@ class CreateFolder extends React.Component {
     render(){
 
         if (this.props.creatingFolder == 1){
-
-           
             return(         
                     <View style={styles.creatingFolder}>
-                      <Text>Creating a folder...</Text> 
-                   <ProgressBar isLoading={true}/>
-                   
-                </View>
+                        <Text style={styles.processingMessage}>Creating a new folder</Text> 
+                        <ProgressBar isLoading={true}/>
+                    </View>
           
             )
         }
@@ -136,10 +139,9 @@ class CreateFolder extends React.Component {
            
                 <View style={styles.container}>
                     <View style={styles.titleContainer}>
-                        <Text style={styles.title}>Create new folder</Text>
+                        <Text style={styles.title}>Create a new folder</Text>
                     </View>
                     <View style={styles.nameContainer}>
-                        <Icon name="folder" style={styles.icon} />
                         <TextInput
                             ref="folderName"
                             value={this.state.folderName} 
@@ -154,7 +156,7 @@ class CreateFolder extends React.Component {
                     
                         <View style={styles.buttonsContainer}>
                             <Button onPress={this.create.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
-                            <Button onPress={this.props.closeCreateFolder.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Close</Button>
+                            <Button onPress={this.props.closeCreateFolder.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
                         </View>
                         
                 </View>
@@ -163,7 +165,7 @@ class CreateFolder extends React.Component {
 }
 
 
-
+ 
 function mapStateToProps(state) {    
   
 
@@ -172,5 +174,15 @@ function mapStateToProps(state) {
     creatingFolder : state.documentlists.creatingFolder
   }
 }
+
+// function  matchDispatchToProps(dispatch) {
+//     return bindActionCreators({
+//        createFolder : documentsActions.createFolder, 
+       
+//         dispatch,
+       
+//     }, dispatch)
+    
+// }
 
 export default connect(mapStateToProps)(CreateFolder)

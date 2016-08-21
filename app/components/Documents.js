@@ -31,7 +31,7 @@ var dismissKeyboard = require('dismissKeyboard');
 var DocumentCell = require('../components/DocumentCell');
 const splitChars = '|';
 
-const KenestoIcon = createIconSetFromFontello(fontelloConfig);
+
 
 import _ from "lodash";
 import {fetchTableIfNeeded, refreshTable, changeTable} from '../actions/documentlists'
@@ -40,7 +40,7 @@ import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
-
+import {FloatingButtonAndroid} from "react-native-android-kit";
 
 // const Documents = ({_goBack}) => (
 //   <View style={styles.container}>
@@ -338,6 +338,19 @@ class Documents extends Component {
     }
   }
 
+ coloredFab() {
+  return new ButtonBuilder()
+    .withStyle({
+      shadowRadius: 1,
+      shadowOffset: { width: 0, height: 0.5 },
+      shadowOpacity: 0.4,
+      shadowColor: 'black',
+      elevation: 4,
+    })
+    .withFab(true)
+    .withRippleLocation('center');
+}
+
   render() {
     const {dispatch, documentlists, documentlist } = this.props
 
@@ -354,8 +367,10 @@ class Documents extends Component {
        
 
         {this._renderTableContent(dataSource, isFetching) }
-        <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.openModal()}>
+        <ActionButton buttonColor="rgba(231,76,60,1)" type={"float"} onPress={() => this.openModal()}>
         </ActionButton>
+
+        
       </ViewContainer>
     )
   }

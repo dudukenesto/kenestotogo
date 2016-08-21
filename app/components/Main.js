@@ -12,7 +12,8 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
 import {connect} from 'react-redux'
-import * as documentsActions from '../actions/documentlists'
+import {pop} from '../actions/navActions'
+import KenestoToolbar from './KenestoToolbar'
 
 let styles = StyleSheet.create({
   container: {
@@ -27,23 +28,27 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-
-
   plusMenu: {
-    height: 160
+    height: 150
   },
-    createFolder: {
+  createFolder: {
     height: 280, 
     width: 320 
   },
-
    btnModal: {
     position: "absolute",
     top: 100,
     right: 0,
     backgroundColor: "transparent"
   },
+  ifProcessing: {
+    height: 90, 
+    width: 320,
+    justifyContent: 'center',
+    alignItems: 'center', 
+  }
 })
+
 class Main extends React.Component {
 
 
@@ -54,7 +59,9 @@ class Main extends React.Component {
 
 constructor (props) {
     super(props)
-        this.state = {};
+        this.state = {
+          ifCreatingFolder: false,
+        };
          this.onActionSelected = this.onActionSelected.bind(this)
   }
 
@@ -64,7 +71,11 @@ constructor (props) {
          this.refs.modalPlusMenu.open();
               break;
              case 1:
-          alert(1);
+               const {dispatch} = this.props
+                dispatch(pop())
+              break;
+            case 2:
+          alert(2);
               break;
       
           default:
@@ -90,42 +101,36 @@ constructor (props) {
   }
 
   closeCreateFolder(){
-
-    //alert(documentsActions.UpdateCreateingFolderState)
+    // alert(3)
      this.refs.CreateFolder.close();
-     this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
+     this.setState({ifCreatingFolder: false})
   }
   
-
+  setProcessingStyle(){
+    this.setState({ifCreatingFolder: true})
+  }
     render(){
 
-          var BContent = <Text style={styles.text}>error message</Text>  
+          var BContent = <Text style={styles.text}>error message</Text> 
+          var modalStyle = this.state.ifCreatingFolder? styles.ifProcessing : [styles.modal, styles.createFolder]
         return(
              <View style={styles.container}> 
-                <Icon.ToolbarAndroid 
-                    style={styles.toolbar}
-                    onActionSelected={this.onActionSelected}
-                    titleColor='#fff'
-                    backgroundColor='#888'
-                    title={'Kenesto hello'}
-                    navIconName='menu'
-                    iconColor='orange'
-                    onIconClicked = {this.onNavIconClicked.bind(this)}
-                    actions={[
-                            {title: 'Search', iconName: 'search',iconSize: 30, show: 'always', iconColor: '#000'  },
-                            {title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' }
-                            ]}
-                    overflowIconName="more"
-                />
+               
+
+                <KenestoToolbar  onActionSelected={this.onActionSelected}
+                                  onIconClicked = {this.onNavIconClicked.bind(this)}
+                 />
+                
                 <NavigationRootContainer />
                 <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
                     <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.openCreateFolder.bind(this)} 
                        openCreateFolder = {this.openCreateFolder.bind(this)} 
                         closeCreateFolder={this.closeCreateFolder.bind(this)}/>
                 </Modal>
-                 <Modal style={[styles.modal, styles.createFolder]} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
+                 
+                <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
                     <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.closeCreateFolder.bind(this)} 
-                     closeCreateFolder={this.closeCreateFolder.bind(this)}
+                     closeCreateFolder={this.closeCreateFolder.bind(this)} setCreateFolderStyle={this.setProcessingStyle.bind(this)}
                      />
                 </Modal>
 
@@ -135,7 +140,15 @@ constructor (props) {
     }
 }
 
- function mapStateToProps(state) {
+Main.childContextTypes = {
+    kModal:  React.PropTypes.object
+}
+
+Main.contextTypes = {
+    drawer: React.PropTypes.object
+};
+
+function mapStateToProps(state) {
  
   const { documentlists, documentlist } = state
   const {env, sessionToken } = state.accessReducer; 
@@ -149,12 +162,3 @@ constructor (props) {
 }
 
 export default connect(mapStateToProps)(Main)
-
-
-Main.childContextTypes = {
-    kModal:  React.PropTypes.object
-}
-
-Main.contextTypes = {
-    drawer: React.PropTypes.object
-};
