@@ -16,7 +16,7 @@ import KenestoToolbar from './KenestoToolbar'
 import * as documentsActions from '../actions/documentlists'
 import {pop, updateRouteData} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
-
+import {getDocumentsContext} from '../utils/documentsUtils'
 
 let styles = StyleSheet.create({
   container: {

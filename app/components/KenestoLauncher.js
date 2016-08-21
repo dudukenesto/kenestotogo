@@ -3,6 +3,7 @@ import {View, Text, TextInput, StyleSheet, AsyncStorage, TouchableHighlight, Pix
 import Button from "react-native-button";
 import config from '../utils/app.config';
 import {clearCredentials, setCredentials, getCredentials} from '../utils/accessUtils';
+
 import ModalPicker from 'react-native-modal-picker'
 import ProggressBar from "../components/ProgressBar";
 import * as routes from '../constants/routes'
