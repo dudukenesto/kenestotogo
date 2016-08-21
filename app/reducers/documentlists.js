@@ -48,19 +48,6 @@ function documentlist(state = {
         errorMessage: ''
       }
 
-    case types.CHANGE_DOCUMENTS_LIST:
-      return {
-        isFetching: false,
-        items: [...action.documents],
-        dataSource: action.dataSource,
-        nextUrl: action.nextUrl,
-        name: action.name,
-        catId: action.catId,
-        fId: action.fId,
-        hasError: false,
-        errorMessage: ''
-      }
-
     default:
       return state
   }
@@ -82,11 +69,6 @@ export default function documentlists(state = {}, action) {
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action),
         
-      })
-
-    case types.CHANGE_DOCUMENTS_LIST:
-      return Object.assign({}, state, {
-        [action.catId]: documentlist(state[action.catId], action),
       })
     case types.REQUEST_CREATE_FOLDER : {
        return {

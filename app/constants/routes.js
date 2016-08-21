@@ -1,9 +1,14 @@
-export const documentsRoute = {
-  type: 'push',
-  route: {
-    key: 'documents',
-    title: 'documents'
-  }
+export function documentsRoute(data) {
+  return (
+    {
+      type: 'push',
+      route: {
+        key: data.key,
+        title: 'documents',
+        data: data
+      }
+    }
+  )
 }
 
 export const loginRoute = {
@@ -28,7 +33,7 @@ export function documentRoute(data) {
     {
       type: 'push',
       route: {
-        key: 'document',
+        key: "document",
         data:data
       }
     }

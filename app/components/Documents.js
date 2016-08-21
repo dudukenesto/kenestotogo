@@ -34,13 +34,16 @@ const splitChars = '|';
 
 
 import _ from "lodash";
-import {fetchTableIfNeeded, refreshTable, changeTable} from '../actions/documentlists'
-import {updateDocumentList} from '../actions/documentlist'
+import {fetchTableIfNeeded, refreshTable} from '../actions/documentlists'
 import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
+<<<<<<< HEAD
 import {FloatingButtonAndroid} from "react-native-android-kit";
+=======
+import {getDocumentsContext} from '../utils/documentsUtils'
+>>>>>>> refs/remotes/origin/dev
 
 // const Documents = ({_goBack}) => (
 //   <View style={styles.container}>
@@ -52,16 +55,16 @@ import {FloatingButtonAndroid} from "react-native-android-kit";
 class Documents extends Component {
   constructor(props) {
     super(props)
+    this.documentsProps = this.props.data
+  
     this.state = {
       isFetchingTail: false
     }
-    this.foldersTrail = [];
+    
     this.onEndReached = this.onEndReached.bind(this)
     this.selectItem = this.selectItem.bind(this)
     this._onRefresh = this._onRefresh.bind(this)
-    this._onGoBack = this._onGoBack.bind(this)
     this._onSort = this._onSort.bind(this)
-    this._onChangeVisibleRows = this._onChangeVisibleRows.bind(this)
   }
 
   getCategoryName(categoryType) {
@@ -93,29 +96,24 @@ class Documents extends Component {
   }
 
   componentWillMount() {
-    const {dispatch, documentlist} = this.props
-    dispatch(fetchTableIfNeeded(documentlist))
+    const {dispatch} = this.props
+    dispatch(fetchTableIfNeeded())
   }
 
-  componentWillReceiveProps(nextProps) {
-    const {dispatch, documentlist, documentlists} = this.props
-    if (documentlist.catId !== nextProps.documentlist.catId) {
-      //dispatch(changeTable(nextProps.documentlist));
-    }
-  }
+
 
   componentDidUpdate() {
     this._showStatusBar()
   }
   onEndReached() {
-    const {dispatch, documentlist} = this.props
-    dispatch(fetchTableIfNeeded(documentlist))
+    const {dispatch} = this.props
+    dispatch(fetchTableIfNeeded())
   }
 
 
   selectItem(document) {
-    const {dispatch, documentlist} = this.props
-
+    const {dispatch} = this.props
+    var documentlist = getDocumentsContext(this.props);
     if (document.FamilyCode == 'FOLDER') {
       var newId;
       var newName = document.Name;
@@ -129,35 +127,31 @@ class Documents extends Component {
         var newId = `${documentlist.catId}${splitChars}${document.Id}`
       }
 
-
-      var folderT = new Object();
-      folderT.catId = newId;
-      folderT.name = newName;
-      folderT.fId = fId;
-      this.foldersTrail.push(folderT);
-
-      dispatch(updateDocumentList(newId, newName, fId, documentlist.sortDirection, documentlist.sortBy))
-      var nextDocumentlist = {
+      var data = {
+        key : "documents|"+fId,
         name: newName,
         catId: newId,
         fId: fId,
         sortDirection: constans.ASCENDING,
         sortBy: constans.ASSET_NAME
       }
-      dispatch(changeTable(nextDocumentlist));
+      this.props._handleNavigate(routes.documentsRoute(data));
+
     }
     else {
-
-      var data = {
-        title: document.Name,
-        id: document.Id,
+       var data = {
+        key: "document",
+        name: document.Name,
+        documentId: document.Id,
+        catId: documentlist.catId,
+        fId: documentlist.fId,
         viewerUrl: document.ViewerUrl
       }
       this.props._handleNavigate(routes.documentRoute(data));
     }
 
   }
-
+ 
   onSearchChange(event) {
     var filter = event.nativeEvent.text.toLowerCase();
 
@@ -181,92 +175,18 @@ class Documents extends Component {
 
 
 
-  _onGoBack() {
-    const {dispatch, documentlist, documentlists} = this.props
-    var baseCatId;
-    if (documentlist.catId.indexOf(splitChars) >= 0) {
-      var dtlStr = documentlist.catId.split(splitChars);
-      var baseCatId = dtlStr[0];
-    }
-    else {
-      baseCatId = documentlist.catId;
-    }
-
-    this.foldersTrail.pop();
-
-    var catId = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].catId : baseCatId;
-    var name = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(baseCatId);
-    var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length - 1].fId : "";
-
-
-    var nextDocumentlist = {
-      name: name,
-      catId: catId,
-      fId: fid,
-      sortDirection: documentlist.sortDirection,
-      sortBy: documentlist.sortBy
-    }
-
-    dispatch(updateDocumentList(catId, name, fid, documentlist.sortDirection, documentlist.sortBy))
-
-    //dispatch(changeTable(nextDocumentlist));
-  }
-
   _onRefresh(type, message) {
-    const {dispatch, documentlist} = this.props
+    const {dispatch} = this.props
+    var documentlist = getDocumentsContext(this.props);
     dispatch(refreshTable(documentlist))
   }
 
   _onSort(sortDirection, sortBy) {
-    const {dispatch, documentlist} = this.props
-
+    const {dispatch} = this.props
+    var documentlist = getDocumentsContext(this.props);
     documentlist.sortDirection = sortDirection;
     documentlist.sortBy;
-    //dispatch(updateDocumentList(documentlist.catId, documentlist.name, documentlist.fid, sortDirection, sortBy))
     dispatch(refreshTable(documentlist));
-  }
-
-  _onChangeVisibleRows(visibleRows, changedRows) {
-    console.log("visibleRows: " + JSON.stringify(visibleRows))
-    console.log("changedRows: " + JSON.stringify(changedRows))
-  }
-  
-  _renderSortBar() {
-    const {dispatch, documentlist, documentlists} = this.props
-
-    const sortBy = constans.ASSET_NAME;
-    const sortDirection = documentlist.sortDirection == null || documentlist.sortDirection == "" ? constans.ASCENDING : documentlist.sortDirection;
-    const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
-    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
-    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
-
-    const showBreadCrums = this.foldersTrail.length > 0 ? true : false;
-    var parentName = this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length - 1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
-
-    return (
-      <View style={styles.sortContainer}>
-
-        {
-          (sortDirection == constans.ASCENDING)
-            ? (
-              <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING, sortBy) }/>
-            ) :
-            (
-              <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING, sortBy) }/>
-            )
-        }
-        <Text>{this.getSortByName(sortBy) }</Text>
-        {
-          (!isFetching && showBreadCrums)
-            ? (
-              <Icon name="arrow-back" style={styles.arrowButtonIcon} onPress={this._onGoBack.bind(this) }/>
-            )
-            : (
-              <View></View>
-            )
-        }
-      </View>
-    )
   }
 
   _renderSectionHeader(sectionData, sectionID) {
@@ -279,12 +199,14 @@ class Documents extends Component {
   }
 
   _showStatusBar() {
-    const {documentlist, documentlists} = this.props
+    const {documentlists} = this.props
+    var documentlist = getDocumentsContext(this.props);
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
     const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+    
 
     if (hasError && this.refs.masterView != undefined) {
-      this.refs.masterView.showMessage("error", errorMessage);
+      this.refs.masterView.showMessage("success", errorMessage);
     }
   }
 
@@ -295,7 +217,8 @@ class Documents extends Component {
 
 
   _renderTableContent(dataSource, isFetching) {
-    const {documentlist, documentlists} = this.props
+    const {documentlists} = this.props
+    var documentlist = getDocumentsContext(this.props);
     const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
 
     if (itemsLength == 0) {
@@ -352,8 +275,10 @@ class Documents extends Component {
 }
 
   render() {
-    const {dispatch, documentlists, documentlist } = this.props
-
+    console.log("render")
+    const {dispatch, documentlists,navReducer } = this.props
+    var currRoute = navReducer.routes[navReducer.index];
+    var documentlist = getDocumentsContext(this.props);
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
     var additionalStyle = {};
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
@@ -361,10 +286,7 @@ class Documents extends Component {
     return (
 
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
-        {this._renderSortBar() }
         <View style={styles.separator} />
-
-       
 
         {this._renderTableContent(dataSource, isFetching) }
         <ActionButton buttonColor="rgba(231,76,60,1)" type={"float"} onPress={() => this.openModal()}>
@@ -387,8 +309,12 @@ var NoDocuments = React.createClass({
 
     return (
       <View style={[styles.container, styles.centerText]}>
-        <Text style={styles.noDocumentsText}>{text}</Text>
-        <Button onPress={this.props.onRefresh}>refresh</Button>
+        <View style={styles.textContainer}>
+          <Text style={styles.noDocumentsText}>{text}</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
+        </View>        
       </View>
     );
   }
@@ -402,12 +328,19 @@ var styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  textContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  buttonContainer: {
+    flex: 1,
+  },
   centerText: {
     alignItems: 'center',
   },
   noDocumentsText: {
-    marginTop: 80,
     color: '#888888',
+    fontSize: 16
   },
   separator: {
     height: 1,
@@ -449,6 +382,20 @@ var styles = StyleSheet.create({
     color: '#2f2f2f',
     textAlign: 'left'
   },
+  singleBtnContainer: {
+        width: 140,
+        marginTop: 15,
+        justifyContent: "center",
+        height: 50,
+        backgroundColor: "#F5F6F8",
+        borderWidth: 0.5,
+        borderColor: "#BEBDBD"
+   },
+   button: {
+        color: "#666666",
+        fontWeight: "normal",
+        fontSize: 18, 
+   },
 });
 
 Documents.contextTypes = {
