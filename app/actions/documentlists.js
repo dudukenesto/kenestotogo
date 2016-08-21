@@ -1,5 +1,5 @@
 import * as types from '../constants/ActionTypes'
-import {constructRetrieveDocumentsUrl, getCreateFolderUrl} from '../utils/documentsUtils'
+import {constructRetrieveDocumentsUrl, getCreateFolderUrl,getDocumentsContext} from '../utils/documentsUtils'
 import _ from "lodash";
 let React = require('react-native')
 let {
@@ -100,9 +100,6 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
           let dataSource = ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs)
 
           switch (actionType) {
-            case types.CHANGE_DOCUMENTS_LIST:
-              dispatch(changeDocumentsList(items, nextUrl, documentlist, dataSource))
-              break
             case types.RECEIVE_DOCUMENTS:
               dispatch(receiveDocumentsList(items, nextUrl, documentlist, dataSource))
               break
@@ -119,8 +116,9 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
   }
 }
 
-export function fetchTableIfNeeded(documentlist: Object) {
+export function fetchTableIfNeeded() {
   return (dispatch, getState) => {
+    var documentlist = getDocumentsContext(getState());
     const {documentlists} = getState()
     if (shouldFetchDocuments(documentlists, documentlist)) {
       const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlists, documentlist)
@@ -129,13 +127,6 @@ export function fetchTableIfNeeded(documentlist: Object) {
   }
 }
 
-export function changeTable(documentlist: Object) {
-  return (dispatch, getState) => {
-    const {documentlists} = getState()
-    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
-    return dispatch(fetchDocumentsTable(url, documentlist, types.CHANGE_DOCUMENTS_LIST))
-  }
-}
 
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
@@ -153,17 +144,6 @@ function getNextUrl(env: string, sessionToken: string, documentlists: Object, do
   return activeDocumentsList.nextUrl
 }
 
-function changeDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
-  return {
-    type: types.CHANGE_DOCUMENTS_LIST,
-    nextUrl,
-    name: documentlist.name,
-    catId: documentlist.catId,
-    fId: documentlist.fId,
-    documents,
-    dataSource
-  }
-}
 
 function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
 
@@ -232,7 +212,7 @@ function SubmitError( errorMessage: string) {
 export function createFolder(folderName: string){
 
 return (dispatch, getState) => {
-   var documentlist =  getState().documentlist;
+   var documentlist = getDocumentsContext(getState());
     const {sessionToken, env} = getState().accessReducer; 
     const {folderId} = documentlist.fId; 
     const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName);
@@ -258,6 +238,3 @@ return (dispatch, getState) => {
       })
   }
 }
-
-
-

@@ -34,6 +34,7 @@ class NavRoot extends Component {
 
   
     const { route } = props.scene
+  
     if (route.key === 'KenestoLauncher')
     {
       return <LauncherContainer _handleNavigate={this._handleNavigate.bind(this)}/>
@@ -53,16 +54,16 @@ class NavRoot extends Component {
       return <LoginContainer _handleNavigate={this._handleNavigate.bind(this)} />
     }
 
-     if (route.key === 'documents') {
-      return <DocumentsContainer _goBack={this._handleBackAction.bind(this)} _handleNavigate={this._handleNavigate.bind(this)}/>
+     if (route.key != "" && route.key != undefined && (route.key.indexOf('documents') > -1)) {
+      return <DocumentsContainer _goBack={this._handleBackAction.bind(this)} _handleNavigate={this._handleNavigate.bind(this) } data={route.data}/>
     }
 
      if (route.key === 'document') {
-      return <Document _goBack={this._handleBackAction.bind(this)} data={route.data}/>
+      return <Document _goBack={this._handleBackAction.bind(this)} data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
   }
   _handleBackAction () {
-    if (this.props.navigation.index === 0) {
+    if (this.props.navigation.index < 2) {
       return false
     }
     this.props.popRoute()

@@ -45,7 +45,7 @@ var styles = StyleSheet.create({
         color: "#000",
         height: 50,            
         fontSize: 17,
-        paddingLeft: 40,
+        // paddingLeft: 40,
         paddingBottom: 15,
     },
     buttonsContainer: {
@@ -136,10 +136,9 @@ class CreateFolder extends React.Component {
            
                 <View style={styles.container}>
                     <View style={styles.titleContainer}>
-                        <Text style={styles.title}>Create new folder</Text>
+                        <Text style={styles.title}>Create a new folder</Text>
                     </View>
                     <View style={styles.nameContainer}>
-                        <Icon name="folder" style={styles.icon} />
                         <TextInput
                             ref="folderName"
                             value={this.state.folderName} 
@@ -154,7 +153,7 @@ class CreateFolder extends React.Component {
                     
                         <View style={styles.buttonsContainer}>
                             <Button onPress={this.create.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
-                            <Button onPress={this.props.closeCreateFolder.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Close</Button>
+                            <Button onPress={this.props.closeCreateFolder.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
                         </View>
                         
                 </View>

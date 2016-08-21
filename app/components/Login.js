@@ -271,7 +271,15 @@ const styles = StyleSheet.create({
      componentWillReceiveProps(nextProps){
         if (nextProps.isLoggedIn)
         {
-            this.props._handleNavigate(routes.documentsRoute);
+             var data = {
+                  key : "documents",
+                  name: "All Documents",
+                  catId: constans.ALL_DOCUMENTS,
+                  fId: "",
+                  sortDirection: constans.ASCENDING,
+                  sortBy: constans.ASSET_NAME
+              }
+              this.props._handleNavigate(routes.documentsRoute(data));
         } 
             
     }
