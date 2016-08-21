@@ -62,8 +62,8 @@ class KenestoToolbar extends React.Component {
         <Icon.ToolbarAndroid 
                     style={styles.toolbar}
                     onActionSelected={this.props.onActionSelected}
-                    titleColor='#fff'
-                    backgroundColor='#888'
+                    titleColor='#333'
+                    backgroundColor='#eee'
                     title={'Kenesto hello'}
                     navIconName='menu'
                     iconColor='orange'

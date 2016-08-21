@@ -70,9 +70,11 @@ class Main extends React.Component {
     const {dispatch, navReducer} = this.props
     switch (position) {
       case 0:
-        this.refs.modalPlusMenu.open();
+      alert(1)
+        // this.refs.modalPlusMenu.open();
         break;
       case 1:
+      alert(3)
         if (navReducer.index > 1) {
           dispatch(pop())
         }
@@ -81,6 +83,7 @@ class Main extends React.Component {
         }
         break;
       case 2:
+      alert(5)
         if (navReducer.index > 1) {
           this.onSort();
         }
