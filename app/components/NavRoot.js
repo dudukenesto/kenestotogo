@@ -63,7 +63,7 @@ class NavRoot extends Component {
     }
   }
   _handleBackAction () {
-    if (this.props.navigation.index === 0) {
+    if (this.props.navigation.index < 2) {
       return false
     }
     this.props.popRoute()

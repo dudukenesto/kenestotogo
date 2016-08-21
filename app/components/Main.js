@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
 import {connect} from 'react-redux'
 import * as documentsActions from '../actions/documentlists'
-import {pop, updateRoute} from '../actions/navActions'
+import {pop, updateRouteData} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 
@@ -62,16 +62,23 @@ class Main extends React.Component {
   }
 
   onActionSelected(position) {
+    const {dispatch, navReducer} = this.props
     switch (position) {
       case 0:
         this.refs.modalPlusMenu.open();
         break;
       case 1:
-        const {dispatch} = this.props
-        dispatch(pop())
+        if (navReducer.index > 1) {
+          dispatch(pop())
+        }
+        else {
+          this.onSort();
+        }
         break;
       case 2:
-        this.onSort();
+        if (navReducer.index > 1) {
+          this.onSort();
+        }
         break;
       default:
         break;
@@ -91,7 +98,7 @@ class Main extends React.Component {
         sortBy: currRouteData.sortBy
       }
 
-    dispatch(updateRoute(routeData));
+    dispatch(updateRouteData(routeData));
     dispatch(documentsActions.refreshTable(routeData));
   }
 
@@ -120,30 +127,38 @@ class Main extends React.Component {
   }
 
   getToolbarActions() {
-
+    const {navReducer} = this.props
     var documentlist = getDocumentsContext(this.props);
     // const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
+    var toolbarActions = [];
     switch (sortDirection) {
       case constans.ASCENDING:
-        return ([{ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' },
-          { title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' },
-          { title: 'Arrowdownward', iconName: 'arrow-downward', show: 'always', iconColor: '#000' },
-          { title: 'Filter', iconNFame: 'more-vert', show: 'always', iconColor: '#000' }])
+        toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
+        if (navReducer.index > 1) {
+          toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
+        }
+        toolbarActions.push({ title: 'Arrowdownward', iconName: 'arrow-downward', show: 'always', iconColor: '#000' });
+        toolbarActions.push({ title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' })
         break;
       case constans.DESCENDING:
-        return ([{ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' },
-          { title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' },
-          { title: 'arrowUpward', iconName: 'arrow-upward', show: 'always', iconColor: '#000' },
-          { title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' }])
+        toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
+        if (navReducer.index > 1) {
+          toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
+        }
+        toolbarActions.push({ title: 'arrowUpward', iconName: 'arrow-upward', show: 'always', iconColor: '#000' });
+        toolbarActions.push({ title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' })
+        break;
       default:
-        return ([{ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' },
-          { title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' },
-          { title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' }])
+        toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
+        if (navReducer.index > 1) {
+          toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
+        }
         break;
     }
-
+    return toolbarActions;
   }
+
   render() {
 
 
