@@ -90,9 +90,9 @@ constructor (props) {
           sortDirection: sortDirection,
           sortBy: currRouteData.sortBy
         }
-     
-     dispatch(documentsActions.refreshTable(routeData));
-     dispatch(updateRoute(routeData));
+      
+      dispatch(updateRoute(routeData));
+      dispatch(documentsActions.refreshTable(routeData));
   }
 
   onNavIconClicked(){

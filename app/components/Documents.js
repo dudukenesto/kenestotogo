@@ -185,31 +185,6 @@ class Documents extends Component {
     dispatch(refreshTable(documentlist));
   }
 
-  _renderSortBar() {
-    const {dispatch, documentlists} = this.props
-    var documentlist = getDocumentsContext(this.props);
-    const sortBy = constans.ASSET_NAME;
-    const sortDirection = documentlist.sortDirection == null || documentlist.sortDirection == "" ? constans.ASCENDING : documentlist.sortDirection;
-    const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
-    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
-    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
-
-    return (
-      <View style={styles.sortContainer}>
-
-        {
-          (sortDirection == constans.ASCENDING)
-            ? (
-              <Icon name="arrow-downward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.DESCENDING, sortBy) }/>
-            ) :
-            (
-              <Icon name="arrow-upward" style={styles.arrowButtonIcon} onPress= {() => this._onSort(constans.ASCENDING, sortBy) }/>
-            )
-        }
-      </View>
-    )
-  }
-
   _renderSectionHeader(sectionData, sectionID) {
    
     return (
@@ -293,10 +268,7 @@ class Documents extends Component {
     return (
 
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
-        {this._renderSortBar() }
         <View style={styles.separator} />
-
-       
 
         {this._renderTableContent(dataSource, isFetching) }
         <ActionButton buttonColor="rgba(231,76,60,1)" onPress={() => this.openModal()}>
