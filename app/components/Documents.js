@@ -39,11 +39,8 @@ import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
-<<<<<<< HEAD
-import {FloatingButtonAndroid} from "react-native-android-kit";
-=======
+
 import {getDocumentsContext} from '../utils/documentsUtils'
->>>>>>> refs/remotes/origin/dev
 
 // const Documents = ({_goBack}) => (
 //   <View style={styles.container}>

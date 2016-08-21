@@ -12,15 +12,11 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
 import {connect} from 'react-redux'
-<<<<<<< HEAD
-import {pop} from '../actions/navActions'
 import KenestoToolbar from './KenestoToolbar'
-=======
 import * as documentsActions from '../actions/documentlists'
 import {pop, updateRouteData} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
-import {getDocumentsContext} from '../utils/documentsUtils'
->>>>>>> refs/remotes/origin/dev
+
 
 let styles = StyleSheet.create({
   container: {
@@ -38,19 +34,9 @@ let styles = StyleSheet.create({
   plusMenu: {
     height: 150
   },
-  createFolder: {
-<<<<<<< HEAD
-    height: 280, 
-    width: 320 
-  },
-   btnModal: {
-=======
-    height: 280,
-    width: 320
-  },
+
 
   btnModal: {
->>>>>>> refs/remotes/origin/dev
     position: "absolute",
     top: 100,
     right: 0,
@@ -74,31 +60,10 @@ class Main extends React.Component {
 
   constructor(props) {
     super(props)
-<<<<<<< HEAD
         this.state = {
           ifCreatingFolder: false,
         };
          this.onActionSelected = this.onActionSelected.bind(this)
-  }
-
-  onActionSelected(position){
-      switch (position) {
-          case 0:
-         this.refs.modalPlusMenu.open();
-              break;
-             case 1:
-               const {dispatch} = this.props
-                dispatch(pop())
-              break;
-            case 2:
-          alert(2);
-              break;
-      
-          default:
-              break;
-=======
-    this.state = {};
-    this.onActionSelected = this.onActionSelected.bind(this)
   }
 
   onActionSelected(position) {
@@ -136,7 +101,6 @@ class Main extends React.Component {
         fId: currRouteData.fId,
         sortDirection: sortDirection,
         sortBy: currRouteData.sortBy
->>>>>>> refs/remotes/origin/dev
       }
 
     dispatch(updateRouteData(routeData));
@@ -160,7 +124,6 @@ class Main extends React.Component {
 
   }
 
-<<<<<<< HEAD
   closeCreateFolder(){
     // alert(3)
      this.refs.CreateFolder.close();
@@ -180,6 +143,7 @@ class Main extends React.Component {
 
                 <KenestoToolbar  onActionSelected={this.onActionSelected}
                                   onIconClicked = {this.onNavIconClicked.bind(this)}
+                                  navReducer={this.props.navReducer} 
                  />
                 
                 <NavigationRootContainer />
@@ -197,86 +161,11 @@ class Main extends React.Component {
 
             </View>
         )
-    
-=======
-  closeCreateFolder() {
-
-    //alert(documentsActions.UpdateCreateingFolderState)
-    this.refs.CreateFolder.close();
-    this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
-  }
-
-  getToolbarActions() {
-    const {navReducer} = this.props
-    var documentlist = getDocumentsContext(this.props);
-    // const sortBy = documentlist.sortBy;
-    const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
-    var toolbarActions = [];
-    switch (sortDirection) {
-      case constans.ASCENDING:
-        toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-        if (navReducer.index > 1) {
-          toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
-        }
-        toolbarActions.push({ title: 'Arrowdownward', iconName: 'arrow-downward', show: 'always', iconColor: '#000' });
-        toolbarActions.push({ title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' })
-        break;
-      case constans.DESCENDING:
-        toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-        if (navReducer.index > 1) {
-          toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
-        }
-        toolbarActions.push({ title: 'arrowUpward', iconName: 'arrow-upward', show: 'always', iconColor: '#000' });
-        toolbarActions.push({ title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' })
-        break;
-      default:
-        toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-        if (navReducer.index > 1) {
-          toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
-        }
-        break;
->>>>>>> refs/remotes/origin/dev
     }
-    return toolbarActions;
-  }
 
-  render() {
-
-
-    var BContent = <Text style={styles.text}>error message</Text>
-    return (
-      <View style={styles.container}>
-        <Icon.ToolbarAndroid
-          style={styles.toolbar}
-          onActionSelected={this.onActionSelected}
-          titleColor='#fff'
-          backgroundColor='#888'
-          title={'Kenesto hello'}
-          navIconName='menu'
-          iconColor='orange'
-          onIconClicked = {this.onNavIconClicked.bind(this) }
-          actions={this.getToolbarActions() }
-          overflowIconName="more"
-          />
-        <NavigationRootContainer />
-        <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
-          <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.openCreateFolder.bind(this) }
-            openCreateFolder = {this.openCreateFolder.bind(this) }
-            closeCreateFolder={this.closeCreateFolder.bind(this) }/>
-        </Modal>
-        <Modal style={[styles.modal, styles.createFolder]} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
-          <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.closeCreateFolder.bind(this) }
-            closeCreateFolder={this.closeCreateFolder.bind(this) }
-            />
-        </Modal>
-
-      </View>
-    )
-
-  }
 }
 
-<<<<<<< HEAD
+
 Main.childContextTypes = {
     kModal:  React.PropTypes.object
 }
@@ -286,15 +175,9 @@ Main.contextTypes = {
 };
 
 function mapStateToProps(state) {
- 
-  const { documentlists, documentlist } = state
-  const {env, sessionToken } = state.accessReducer; 
-=======
-function mapStateToProps(state) {
 
   const { documentlists, navReducer} = state
   const {env, sessionToken } = state.accessReducer;
->>>>>>> refs/remotes/origin/dev
   return {
     documentlists,
     navReducer,
@@ -304,17 +187,5 @@ function mapStateToProps(state) {
   }
 }
 
-<<<<<<< HEAD
-export default connect(mapStateToProps)(Main)
-=======
 export default connect(mapStateToProps)(Main)
 
-
-Main.childContextTypes = {
-  kModal: React.PropTypes.object
-}
-
-Main.contextTypes = {
-  drawer: React.PropTypes.object
-};
->>>>>>> refs/remotes/origin/dev
