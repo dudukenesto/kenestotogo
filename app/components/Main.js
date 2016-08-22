@@ -17,6 +17,7 @@ import {pop, updateRouteData} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -79,6 +80,9 @@ class Main extends React.Component {
         if (navReducer.index > 1) {
           this.onSort();
         }
+        else {
+          this.refs.MenuContext.openMenu('sortMenu');
+        }
         break;
       default:
         break;
@@ -98,7 +102,6 @@ class Main extends React.Component {
         sortBy: currRouteData.sortBy
       }
 
-    dispatch(updateRouteData(routeData));
     dispatch(documentsActions.refreshTable(routeData));
   }
 
@@ -131,11 +134,13 @@ class Main extends React.Component {
     var documentlist = getDocumentsContext(this.props);
     // const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
+    var showBackArrow = navReducer.routes.length > 1 && ((navReducer.routes[1].key === 'login' && navReducer.index > 2) || (navReducer.routes[1].key.indexOf('documents') > -1 && navReducer.index > 1))?true:false;
+
     var toolbarActions = [];
     switch (sortDirection) {
       case constans.ASCENDING:
         toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-        if (navReducer.index > 1) {
+        if (showBackArrow) {
           toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
         }
         toolbarActions.push({ title: 'Arrowdownward', iconName: 'arrow-downward', show: 'always', iconColor: '#000' });
@@ -143,7 +148,7 @@ class Main extends React.Component {
         break;
       case constans.DESCENDING:
         toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-        if (navReducer.index > 1) {
+        if (showBackArrow) {
           toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
         }
         toolbarActions.push({ title: 'arrowUpward', iconName: 'arrow-upward', show: 'always', iconColor: '#000' });
@@ -151,7 +156,7 @@ class Main extends React.Component {
         break;
       default:
         toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-        if (navReducer.index > 1) {
+        if (showBackArrow) {
           toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
         }
         break;
@@ -165,6 +170,8 @@ class Main extends React.Component {
     var BContent = <Text style={styles.text}>error message</Text>
     return (
       <View style={styles.container}>
+
+
         <Icon.ToolbarAndroid
           style={styles.toolbar}
           onActionSelected={this.onActionSelected}
