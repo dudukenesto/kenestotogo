@@ -174,6 +174,7 @@ class Main extends React.Component {
                 <View style={{flex: 1}}><TextInput /></View>
                 <Icon name="search" />
               </View>) : <View />;
+          var toolbarStyle = this.state.isSearchBoxOpen == true? {height: 0} : {}
           
             return(
              <View style={styles.container}> 
@@ -182,6 +183,7 @@ class Main extends React.Component {
                 <KenestoToolbar  onActionSelected={this.onActionSelected}
                                   onIconClicked = {this.onNavIconClicked.bind(this)}
                                   navReducer={this.props.navReducer} 
+                                  style = {toolbarStyle}
                  />
                  {searchBox}
                 

@@ -57,10 +57,9 @@ class KenestoToolbar extends React.Component {
 
     
   render() {
-  
     return (
         <Icon.ToolbarAndroid 
-                    style={styles.toolbar}
+                    style={[styles.toolbar, this.props.style]}
                     onActionSelected={this.props.onActionSelected}
                     titleColor='#333'
                     backgroundColor='#eee'
