@@ -61,7 +61,6 @@ let styles = StyleSheet.create({
     flexDirection: "row",
     height: 50,
     marginBottom: 3,
-    // flex: 1,
   },
 })
 
@@ -77,7 +76,6 @@ class Main extends React.Component {
     super(props)
         this.state = {
           ifCreatingFolder: false,
-          isSearchBoxOpen: false,
         };
          this.onActionSelected = this.onActionSelected.bind(this)
   }
@@ -86,23 +84,15 @@ class Main extends React.Component {
     const {dispatch, navReducer} = this.props
     switch (position) {
       case 0:
-      this.showSearchBox();
         // this.refs.modalPlusMenu.open();
         break;
       case 1:
-      alert(3)
         if (navReducer.index > 1) {
           dispatch(pop())
         }
-        else {
-          this.onSort();
-        }
         break;
       case 2:
-      alert(5)
-        if (navReducer.index > 1) {
-          this.onSort();
-        }
+        this.onSort();
         break;
       default:
         break;
@@ -161,19 +151,10 @@ class Main extends React.Component {
     this.setState({ifCreatingFolder: true})
   }
   
-  showSearchBox(){
-    this.setState({isSearchBoxOpen: true});
-    // alert(this.state.isSearchBoxOpen);
-  }
     render(){
 
           var BContent = <Text style={styles.text}>error message</Text> 
           var modalStyle = this.state.ifCreatingFolder? styles.ifProcessing : [styles.modal, styles.createFolder]
-          var searchBox = this.state.isSearchBoxOpen == true? (<View style={styles.searchBoxContainer}> 
-                <Icon name="arrow-back" />
-                <View style={{flex: 1}}><TextInput /></View>
-                <Icon name="search" />
-              </View>) : <View />;
           var toolbarStyle = this.state.isSearchBoxOpen == true? {height: 0} : {}
           
             return(
@@ -185,7 +166,6 @@ class Main extends React.Component {
                                   navReducer={this.props.navReducer} 
                                   style = {toolbarStyle}
                  />
-                 {searchBox}
                 
                 <NavigationRootContainer />
                 <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
@@ -203,12 +183,9 @@ class Main extends React.Component {
                     <Error closeModal = {() => this.closeModal("error")} openModal = {() => this.openModal("error")} />
                 </Modal>
               </View>
-            )   
-        
+            )    
     }
-
 }
-
 
 Main.childContextTypes = {
     kModal:  React.PropTypes.object
