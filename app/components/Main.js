@@ -2,6 +2,7 @@ import React from 'react'
 import {
   View,
   Text,
+  TextInput,
   StyleSheet,
   ToolbarAndroid
 } from 'react-native'
@@ -55,7 +56,13 @@ let styles = StyleSheet.create({
     width: 320,
     justifyContent: 'center',
     alignItems: 'center', 
-  }
+  },
+  searchBoxContainer: {
+    flexDirection: "row",
+    height: 50,
+    marginBottom: 3,
+    // flex: 1,
+  },
 })
 
 class Main extends React.Component {
@@ -70,6 +77,7 @@ class Main extends React.Component {
     super(props)
         this.state = {
           ifCreatingFolder: false,
+          isSearchBoxOpen: false,
         };
          this.onActionSelected = this.onActionSelected.bind(this)
   }
@@ -78,7 +86,7 @@ class Main extends React.Component {
     const {dispatch, navReducer} = this.props
     switch (position) {
       case 0:
-      alert(1)
+      this.showSearchBox();
         // this.refs.modalPlusMenu.open();
         break;
       case 1:
@@ -152,11 +160,22 @@ class Main extends React.Component {
   setProcessingStyle(){
     this.setState({ifCreatingFolder: true})
   }
+  
+  showSearchBox(){
+    this.setState({isSearchBoxOpen: true});
+    // alert(this.state.isSearchBoxOpen);
+  }
     render(){
 
           var BContent = <Text style={styles.text}>error message</Text> 
           var modalStyle = this.state.ifCreatingFolder? styles.ifProcessing : [styles.modal, styles.createFolder]
-        return(
+          var searchBox = this.state.isSearchBoxOpen == true? (<View style={styles.searchBoxContainer}> 
+                <Icon name="arrow-back" />
+                <View style={{flex: 1}}><TextInput /></View>
+                <Icon name="search" />
+              </View>) : <View />;
+          
+            return(
              <View style={styles.container}> 
                
 
@@ -164,6 +183,7 @@ class Main extends React.Component {
                                   onIconClicked = {this.onNavIconClicked.bind(this)}
                                   navReducer={this.props.navReducer} 
                  />
+                 {searchBox}
                 
                 <NavigationRootContainer />
                 <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
@@ -180,8 +200,9 @@ class Main extends React.Component {
                  <Modal style={[styles.modal, styles.error]} position={"bottom"}  ref={"error"} isDisabled={false}>
                     <Error closeModal = {() => this.closeModal("error")} openModal = {() => this.openModal("error")} />
                 </Modal>
-            </View>
-        )
+              </View>
+            )   
+        
     }
 
 }
