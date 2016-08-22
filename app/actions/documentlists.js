@@ -1,4 +1,5 @@
 import * as types from '../constants/ActionTypes'
+import * as navActions from '../actions/navActions'
 import {constructRetrieveDocumentsUrl, getCreateFolderUrl,getDocumentsContext} from '../utils/documentsUtils'
 import _ from "lodash";
 let React = require('react-native')
@@ -131,6 +132,7 @@ export function fetchTableIfNeeded() {
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
+     dispatch(navActions.updateRouteData(documentlist))
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
@@ -173,8 +175,6 @@ export function UpdateCreateingFolderState(creating : int) {
     creatingFolder : creating
   }
 }
-
-
 
 function failedToFetchDocumentsList(documentlist: Object, url: string, errorMessage: string) {
   return {

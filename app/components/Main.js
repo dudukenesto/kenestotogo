@@ -20,6 +20,7 @@ import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
 
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -112,7 +113,6 @@ class Main extends React.Component {
         sortBy: currRouteData.sortBy
       }
 
-    dispatch(updateRouteData(routeData));
     dispatch(documentsActions.refreshTable(routeData));
   }
 
@@ -146,9 +146,11 @@ class Main extends React.Component {
      this.refs.CreateFolder.close();
      this.setState({ifCreatingFolder: false})
   }
+
   
   setProcessingStyle(){
     this.setState({ifCreatingFolder: true})
+
   }
   
     render(){
@@ -186,6 +188,7 @@ class Main extends React.Component {
             )    
     }
 }
+
 
 Main.childContextTypes = {
     kModal:  React.PropTypes.object

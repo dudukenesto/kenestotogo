@@ -7,6 +7,7 @@ import ProggressBar from "../components/ProgressBar";
 import * as routes from '../constants/routes';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import * as constans from '../constants/GlobalConstans'
 
 var stricturiEncode = require('strict-uri-encode');
 
