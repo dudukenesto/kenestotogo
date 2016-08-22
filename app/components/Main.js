@@ -81,7 +81,7 @@ class Main extends React.Component {
          this.onActionSelected = this.onActionSelected.bind(this)
   }
 
-  onActionSelected(position) {
+  onActionSelected(position, value) {
     const {dispatch, navReducer} = this.props
     switch (position) {
       case 0:
@@ -94,12 +94,27 @@ class Main extends React.Component {
         break;
       case 2:
         this.onSort();
+      case 3:
+        this.onSortBy(value);
         break;
       default:
         break;
     }
   }
-
+  onSortBy(sortBy) {
+    const {dispatch} = this.props
+    var currRouteData = getDocumentsContext(this.props);
+    var routeData =
+      {
+        name: currRouteData.name,
+        catId: currRouteData.catId,
+        fId: currRouteData.fId,
+        sortDirection: currRouteData.sortDirection,
+        sortBy: sortBy
+      }
+    dispatch(documentsActions.refreshTable(routeData));
+  }
+  
   onSort() {
     const {dispatch} = this.props
     var currRouteData = getDocumentsContext(this.props);
