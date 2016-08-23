@@ -229,6 +229,7 @@ class Main extends React.Component {
                                   onPressPopupMenu={this.onPressPopupMenu}
                                   onIconClicked = {this.onNavIconClicked.bind(this)}
                                   navReducer={this.props.navReducer} 
+                                  isPopupMenuOpen={this.state.isPopupMenuOpen}
                  />
                 
                 <NavigationRootContainer />

@@ -26,7 +26,7 @@ let styles = StyleSheet.create({
   },
   iconStyle: {
     fontSize: 24,
-    margin: 5,
+    margin: 3,
     color: "#000",
   },
   folderName: {
@@ -48,6 +48,36 @@ let styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
   },
+  popupInactive: {
+    borderWidth: 1,
+    borderRightColor: "transparent",
+    borderColor: "#ccc",
+    // marginRight: -1
+  },
+  popupActive: {
+    borderColor: "#666",
+    borderRightColor: "#666",
+    
+  },
+  sortingInactive: {
+    borderWidth: 1,
+    borderLeftColor: "transparent",
+    borderColor: "#ccc",
+    // marginLeft: -1
+  },
+  sortingActive: {
+    
+  },
+  buttonsInactive: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  buttonsActive: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "transparent",
+  }
 })
 
 
@@ -156,12 +186,21 @@ class KenestoToolbar extends Component {
         </View>
         <View style={{ flexDirection: "row" }}>
           <Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
-          <Icon name="more-vert" style={[styles.iconStyle]} onPress={this.onPressPopupMenu.bind(this) } />
-          {sortDirection == constans.ASCENDING ?
-            <Icon name="keyboard-arrow-up" style={[styles.iconStyle, { alignSelf: "flex-end" }]}  onPress={this.onSort.bind(this) }/>
-            :
-            <Icon name="keyboard-arrow-down" style={[styles.iconStyle, { alignSelf: "flex-end" }]} onPress={this.onSort.bind(this) }/>
-          }
+          
+          
+          <View style={[this.props.isPopupMenuOpen? styles.buttonsActive : styles.buttonsInactive]}>
+            <View style={[styles.popupInactive, this.props.isPopupMenuOpen? styles.popupActive : {}]}>
+              <Icon name="more-vert" style={[styles.iconStyle]} onPress={this.onPressPopupMenu.bind(this) } />
+            </View>
+            
+            <View style={styles.sortingInactive}>
+              {sortDirection == constans.ASCENDING ?
+                <Icon name="keyboard-arrow-up" style={[styles.iconStyle, { alignSelf: "flex-end" }]}  onPress={this.onSort.bind(this) }/>
+                :
+                <Icon name="keyboard-arrow-down" style={[styles.iconStyle, { alignSelf: "flex-end" }]} onPress={this.onSort.bind(this) }/>
+              }
+            </View>
+          </View>
         </View>
 
           
