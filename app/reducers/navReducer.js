@@ -34,7 +34,8 @@ function navigationState (state = initialState, action) {
         ...state, 
         HasInfo: true, 
         GlobalInfoTitle: action.infoTitle, 
-        GlobalInfoDetails: action.infoDetails
+        GlobalInfoDetails: action.infoDetails,
+        GlobalInfoOkAction: action.okAction
 
       }
       case CLEAR_INFO: 
@@ -55,6 +56,9 @@ function navigationState (state = initialState, action) {
       return {
         ...state, 
         HasError: false, 
+         GlobalInfoTitle:null, 
+        GlobalInfoDetails: null,
+        GlobalInfoOkAction: null
 
       }
     default:

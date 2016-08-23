@@ -35,11 +35,12 @@ export function clearError(){
   }
 }
 
-export function emitInfo(infoTitle: string, infoDetails: string){
+export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object){
   return {
     type: SUBMIT_INFO, 
     infoTitle: infoTitle, 
-    infoDetails: infoDetails
+    infoDetails: infoDetails,
+    okAction: okAction
   }
   
 }

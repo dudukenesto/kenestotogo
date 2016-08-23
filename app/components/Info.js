@@ -92,9 +92,11 @@ class Info extends React.Component {
     }
 
 
-    clearError(){
-     
+    handleOk(){
+        debugger
         this.props.closeModal();
+        if (this.props.okAction != null && typeof this.props.okAction != 'undefined')
+            this.props.okAction();
     }
 
     componentDidMount(){
@@ -115,7 +117,7 @@ class Info extends React.Component {
                     </View>
                     
                         <View style={styles.buttonsContainer}>
-                            <Button onPress={this.props.closeModal} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
+                            <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
                         </View>
                         
                 </View>
@@ -131,7 +133,8 @@ function mapStateToProps(state) {
   return {
       hasInfo : state.navReducer.HasInfo, 
       infoTitle : state.navReducer.GlobalInfoTitle, 
-      infoDetails: state.navReducer.GlobalInfoDetails
+      infoDetails: state.navReducer.GlobalInfoDetails, 
+      okAction: state.navReducer.GlobalInfoOkAction
   }
 }
 
