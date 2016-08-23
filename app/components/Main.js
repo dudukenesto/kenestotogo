@@ -4,7 +4,8 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  ToolbarAndroid
+  ToolbarAndroid,
+  TouchableWithoutFeedback
 } from 'react-native'
 
 import NavigationRootContainer from '../containers/navRootContainer'
@@ -24,7 +25,7 @@ import Error from './Error'
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   toolbar: {
     backgroundColor: '#3a3f41',
@@ -63,6 +64,27 @@ let styles = StyleSheet.create({
     height: 50,
     marginBottom: 3,
   },
+  popupMenuContainer: {  
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  },
+  popupMenu: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  popupMenuContent: {
+    borderWidth: 0.5,
+    borderColor: "#bbb",
+    backgroundColor: "#fff",
+    marginTop: 50,
+    marginRight: 50,
+    width: 200,
+    height: 100,
+    
+  },
 })
 
 class Main extends React.Component {
@@ -77,10 +99,24 @@ class Main extends React.Component {
     super(props)
         this.state = {
           ifCreatingFolder: false,
+          isPopupMenuOpen: false
         };
-         this.onActionSelected = this.onActionSelected.bind(this)
+         this.onActionSelected = this.onActionSelected.bind(this);
+         this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
   }
 
+  onPressPopupMenu() {
+    this.setState({
+      isPopupMenuOpen: true
+    })
+  }
+  
+  hidePopupMenu() {
+    this.setState({
+      isPopupMenuOpen: false
+    });
+  }
+  
   onActionSelected(position, value) {
     const {dispatch, navReducer} = this.props
     switch (position) {
@@ -167,21 +203,21 @@ class Main extends React.Component {
     this.setState({ifCreatingFolder: true})
 
   }
-  
+    
     render(){
 
           var BContent = <Text style={styles.text}>error message</Text> 
-          var modalStyle = this.state.ifCreatingFolder? styles.ifProcessing : [styles.modal, styles.createFolder]
-          var toolbarStyle = this.state.isSearchBoxOpen == true? {height: 0} : {}
+          var modalStyle = this.state.ifCreatingFolder? styles.ifProcessing : [styles.modal, styles.createFolder]         
+          
+          var showPopupMenu = this.state.isPopupMenuOpen;
           
             return(
              <View style={styles.container}> 
-               
-
-                <KenestoToolbar  onActionSelected={this.onActionSelected}
+             
+                <KenestoToolbar   onActionSelected={this.onActionSelected}
+                                  onPressPopupMenu={this.onPressPopupMenu}
                                   onIconClicked = {this.onNavIconClicked.bind(this)}
                                   navReducer={this.props.navReducer} 
-                                  style = {toolbarStyle}
                  />
                 
                 <NavigationRootContainer />
@@ -199,6 +235,24 @@ class Main extends React.Component {
                  <Modal style={[styles.modal, styles.error]} position={"bottom"}  ref={"error"} isDisabled={false}>
                     <Error closeModal = {() => this.closeModal("error")} openModal = {() => this.openModal("error")} />
                 </Modal>
+                
+                
+                 {showPopupMenu ?
+                   <View style={styles.popupMenuContainer}>
+                     <TouchableWithoutFeedback onPress={this.hidePopupMenu.bind(this) } >
+                       <View style={styles.popupMenu}>
+                         <View style={styles.popupMenuContent}>
+                           <Text>Popup Menu</Text>
+                         </View>
+                       </View>
+                     </TouchableWithoutFeedback>
+                   </View>
+                   :
+                   <View></View>
+                 }
+          
+          
+          
               </View>
             )    
     }

@@ -4,12 +4,6 @@ import {getDocumentsContext} from '../utils/documentsUtils'
 import * as constans from '../constants/GlobalConstans'
 import * as documentsActions from '../actions/documentlists'
 import {pop, updateRouteData} from '../actions/navActions'
-import Menu, {
-  MenuContext,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger
-} from 'react-native-popup-menu';
 
 import {
   View,
@@ -54,42 +48,6 @@ let styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
   },
-
-
-  MenuContextContainer: {
-    height: 70,
-    flex: 1,
-    flexDirection: "column",
-    
-    
-    // borderWidth:1,
-  },
-  topbar: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    // backgroundColor: 'black',
-    paddingHorizontal: 5,
-    paddingVertical: 10
-  },
-  menuTrigger: {
-    flexDirection: 'row',
-    paddingHorizontal: 10
-  },
-  menuTriggerText: {
-    color: 'lightgrey',
-    fontWeight: '600',
-    fontSize: 20
-  },
-  disabled: {
-    color: '#ccc'
-  },
-  divider: {
-    marginVertical: 5,
-    marginHorizontal: 2,
-    borderBottomWidth: 1,
-    borderColor: '#ccc'
-  },
-
 })
 
 
@@ -119,7 +77,11 @@ class KenestoToolbar extends Component {
   }
 
   onPressPopupMenu() {
-    this.refs.MenuContext.openMenu('sortMenu');
+    this.props.onPressPopupMenu();
+  }
+  
+  hidePopupMenu() {
+    this.props.hidePopupMenu();
   }
 
   hideSearchBox() {
@@ -202,7 +164,7 @@ class KenestoToolbar extends Component {
           }
         </View>
 
-
+          
 
       </View>
     )
@@ -222,29 +184,9 @@ class KenestoToolbar extends Component {
     }
     else {
       return (<View>
-
+      
         {this.renderIconsSet() }
-        <View style={styles.MenuContextContainer}>
-          <MenuContext ref="MenuContext" >
-            <View style={styles.topbar}>
-              <Menu  name="sortMenu">
-                <MenuTrigger style={styles.menuTrigger}/>
-                <MenuOptions style={styles.menuOptions}>
-                  <MenuOption value={constans.ASSET_NAME} disabled={sortBy == constans.ASSET_NAME?true:false} onSelect={(value) => this.onSortBy(value) }>
-                    <Text style={sortBy != constans.ASSET_NAME? {}:styles.disabled}>Sort by Name</Text>
-                  </MenuOption>
-                  <View style={styles.divider}/>
-                  <MenuOption value={constans.MODIFICATION_DATE} disabled={sortBy == constans.MODIFICATION_DATE?true:false} onSelect={(value) => this.onSortBy(value) }>
-                    <Text style={sortBy != constans.MODIFICATION_DATE? {}:styles.disabled}>Sort by Date</Text>
-                  </MenuOption>
-                </MenuOptions>
-              </Menu>
-            </View>
-          </MenuContext>
-        </View>
-
-
-
+        
       </View>)
     }
 
