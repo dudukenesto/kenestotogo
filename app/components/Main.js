@@ -19,6 +19,7 @@ import {pop, updateRouteData} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
+import Info from './Info'
 
 
 let styles = StyleSheet.create({
@@ -70,7 +71,8 @@ class Main extends React.Component {
 
 
   getChildContext() {
-    return { kModal: this.refs.modalPlusMenu };
+    return { kModal: this.refs.modalPlusMenu
+            , errorModal: this.refs.errorModal };
   }
 
   constructor(props) {
@@ -167,6 +169,22 @@ class Main extends React.Component {
     this.setState({ifCreatingFolder: true})
 
   }
+
+
+  componentDidMount(){
+      // if (this.props.navReducer.HasError){
+      //     this.openModal(this.refs["errorModal"]);
+      // }
+  }
+
+  componentWillReceiveProps(nextprops){
+         if (nextprops.navReducer.HasError){
+          this.openModal("errorModal");
+      }
+       if (nextprops.navReducer.HasInfo){
+          this.openModal("infoModal");
+      }
+    }
   
     render(){
 
@@ -187,7 +205,7 @@ class Main extends React.Component {
                 <NavigationRootContainer />
                 <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
                     <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.openCreateFolder.bind(this)} 
-                       openCreateFolder = {this.openCreateFolder.bind(this)}  createError={()=> this.openModal("error")}
+                       openCreateFolder = {this.openCreateFolder.bind(this)}  createError={()=> this.openModal("errorModal")}
                         closeCreateFolder={this.closeCreateFolder.bind(this)}/>
                 </Modal>
                  
@@ -196,9 +214,13 @@ class Main extends React.Component {
                      closeCreateFolder={this.closeCreateFolder.bind(this)} setCreateFolderStyle={this.setProcessingStyle.bind(this)}
                      />
                 </Modal>
-                 <Modal style={[styles.modal, styles.error]} position={"bottom"}  ref={"error"} isDisabled={false}>
-                    <Error closeModal = {() => this.closeModal("error")} openModal = {() => this.openModal("error")} />
+                 <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
+                    <Error closeModal = {() => this.closeModal("errorModal")} openModal = {() => this.openModal("errorModal")}/>
                 </Modal>
+                <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}>
+                    <Info closeModal = {() => this.closeModal("infoModal")} openModal = {() => this.openModal("infoModal")}/>
+                </Modal>
+                
               </View>
             )    
     }
@@ -206,7 +228,8 @@ class Main extends React.Component {
 
 
 Main.childContextTypes = {
-    kModal:  React.PropTypes.object
+    kModal:  React.PropTypes.object, 
+    errorModal: React.PropTypes.object, 
 }
 
 Main.contextTypes = {

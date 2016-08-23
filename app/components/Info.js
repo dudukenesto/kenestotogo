@@ -80,22 +80,26 @@ var styles = StyleSheet.create({
     },
 });
 
-class Error extends React.Component {
+class Info extends React.Component {
     constructor(props){
         super (props);
+
+        this.state = {
+           
+            infoTitle: this.props.infoTitle,
+            infoDetails: this.props.infoDetails
+        };
     }
 
 
-
     clearError(){
-      
+     
         this.props.closeModal();
     }
 
     componentDidMount(){
-        this.props.dispatch(navActions.clearError());
+          this.props.dispatch(navActions.clearInfo());
     }
-
      
 
     render(){
@@ -104,14 +108,14 @@ class Error extends React.Component {
            
                 <View style={styles.container}>
                     <View style={styles.titleContainer}>
-                        <Text style={styles.title}>{this.props.errorTitle}</Text>
+                        <Text style={styles.title}>{this.state.infoTitle}</Text>
                     </View>
                     <View style={styles.nameContainer}>
-                         <Text style={styles.textEdit}>{this.props.errorDetails}</Text>
+                         <Text style={styles.textEdit}>{this.state.infoDetails}</Text>
                     </View>
                     
                         <View style={styles.buttonsContainer}>
-                            <Button onPress={this.clearError.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
+                            <Button onPress={this.props.closeModal} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
                         </View>
                         
                 </View>
@@ -125,11 +129,11 @@ function mapStateToProps(state) {
   
 
   return {
-      hasError : state.navReducer.HasError, 
-      errorTitle : state.navReducer.GlobalErrorTitle, 
-      errorDetails: state.navReducer.GlobalErrorDetails
+      hasInfo : state.navReducer.HasInfo, 
+      infoTitle : state.navReducer.GlobalInfoTitle, 
+      infoDetails: state.navReducer.GlobalInfoDetails
   }
 }
 
 
-export default connect(mapStateToProps)(Error)
+export default connect(mapStateToProps)(Info)
