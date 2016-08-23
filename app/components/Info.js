@@ -93,7 +93,7 @@ class Info extends React.Component {
 
 
     handleOk(){
-        debugger
+        
         this.props.closeModal();
         if (this.props.okAction != null && typeof this.props.okAction != 'undefined')
             this.props.okAction();

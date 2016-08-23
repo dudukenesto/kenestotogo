@@ -26,8 +26,10 @@ let styles = StyleSheet.create({
   },
   iconStyle: {
     fontSize: 24,
-    margin: 3,
+    padding: 3,
     color: "#000",
+    textAlign: "center",
+    textAlignVertical: "center",
   },
   folderName: {
     justifyContent: "flex-start",
@@ -49,24 +51,18 @@ let styles = StyleSheet.create({
     flexDirection: "row",
   },
   popupInactive: {
-    borderWidth: 1,
-    borderRightColor: "transparent",
-    borderColor: "#ccc",
-    // marginRight: -1
+    marginRight: 1
   },
   popupActive: {
-    borderColor: "#666",
-    borderRightColor: "#666",
-    
+    borderWidth: 1,
+    borderColor: "#999",
+    borderRightColor: "#999",
+    marginRight: -1
   },
   sortingInactive: {
     borderWidth: 1,
     borderLeftColor: "transparent",
     borderColor: "#ccc",
-    // marginLeft: -1
-  },
-  sortingActive: {
-    
   },
   buttonsInactive: {
     flexDirection: "row",
@@ -75,8 +71,6 @@ let styles = StyleSheet.create({
   },
   buttonsActive: {
     flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "transparent",
   }
 })
 
@@ -193,7 +187,7 @@ class KenestoToolbar extends Component {
               <Icon name="more-vert" style={[styles.iconStyle]} onPress={this.onPressPopupMenu.bind(this) } />
             </View>
             
-            <View style={styles.sortingInactive}>
+            <View style={this.props.isPopupMenuOpen ? styles.sortingInactive : {}}>
               {sortDirection == constans.ASCENDING ?
                 <Icon name="keyboard-arrow-up" style={[styles.iconStyle, { alignSelf: "flex-end" }]}  onPress={this.onSort.bind(this) }/>
                 :

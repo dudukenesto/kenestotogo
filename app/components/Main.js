@@ -77,11 +77,11 @@ let styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   popupMenuContent: {
-    borderWidth: 0.5,
-    borderColor: "#bbb",
+    borderWidth: 1,
+    borderColor: "#999",
     backgroundColor: "#fff",
-    marginTop: 50,
-    marginRight: 50,
+    marginTop: 40,
+    marginRight: 36,
     width: 200,
     height: 100,
     
