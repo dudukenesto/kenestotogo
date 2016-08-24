@@ -57,7 +57,8 @@ let styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#999",
     borderRightColor: "#999",
-    marginRight: -1
+    marginRight: -1,
+    backgroundColor: "#fff"
   },
   sortingInactive: {
     borderWidth: 1,
