@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
 
     componentWillReceiveProps(nextprops){
         if (nextprops.passwordSent){
-            this.props.dispatch(navActions.emitInfo("Password reset email sent", "Follow the instructions in the email to rest your password", () => this.props._goBack())); 
+            this.props.dispatch(navActions.emitInfo("Password reset email sent", "Follow the instructions in the email to reset your password", () => this.props._goBack())); 
          //   this.props._goBack();
         }
     }
