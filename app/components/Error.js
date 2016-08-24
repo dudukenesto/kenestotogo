@@ -19,7 +19,8 @@ var styles = StyleSheet.create({
     },
     titleContainer: {
         flex: 1,
-        justifyContent: "center",
+        flexDirection: "row",
+        // justifyContent: "center",
         alignItems: "center",
         marginTop: 10,
     },
@@ -35,23 +36,21 @@ var styles = StyleSheet.create({
     },
     icon: {
         color: '#000',
-        fontSize: 32,
-        height: 30,
-        position: "absolute",
-        top: 18
+        fontSize: 20,
+        marginRight: 5,
     },
     textEdit: {
         flex: 1,
         color: "#000",
         height: 50,            
         fontSize: 17,
-        // paddingLeft: 40,
+        textAlign: "center",
         paddingBottom: 15,
     },
     buttonsContainer: {
         flex: 1,
         flexDirection: "row",
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         marginTop: 20, 
         alignSelf: "stretch",   
     },
@@ -104,15 +103,17 @@ class Error extends React.Component {
            
                 <View style={styles.container}>
                     <View style={styles.titleContainer}>
+                        <Icon name="error" style={styles.icon} />
                         <Text style={styles.title}>{this.props.errorTitle}</Text>
                     </View>
+                    
                     <View style={styles.nameContainer}>
-                         <Text style={styles.textEdit}>{this.props.errorDetails}</Text>
+                        <Text style={styles.textEdit}>{this.props.errorDetails}</Text>
                     </View>
                     
-                        <View style={styles.buttonsContainer}>
-                            <Button onPress={this.clearError.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
-                        </View>
+                    <View style={styles.buttonsContainer}>
+                        <Button onPress={this.clearError.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
+                    </View>
                         
                 </View>
         );
