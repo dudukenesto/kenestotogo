@@ -1,14 +1,14 @@
 import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
   SUBMIT_INFO, CLEAR_INFO } from '../constants/ActionTypes'
 
-export function push(route) {
+export function push (route) {
   return {
     type: PUSH_ROUTE,
     route
   }
 }
 
-export function pop() {
+export function pop () {
   return {
     type: POP_ROUTE
   }
@@ -37,44 +37,45 @@ export function navigateReset(key,routes, index) {
   }
 }
 
-export function updateRouteData(routeData) {
+export function updateRouteData (routeData) {
   return {
     type: UPDATE_ROUTE_DATA,
     routeData
   }
 }
-export function emitError(errorTitle: string, errorDetails: string) {
+export function emitError(errorTitle: string, errorDetails: string, okAction: Object = null){
   return {
-    type: SUBMIT_ERROR,
-    errorTitle: errorTitle,
-    errorDetails: errorDetails
+    type: SUBMIT_ERROR, 
+    errorTitle: errorTitle, 
+    errorDetails: errorDetails,
+    errorOkAction: okAction
   }
-
+  
 }
 
-export function clearError() {
+export function clearError(){
   return {
     type: CLEAR_ERROR
   }
 }
 
-export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object) {
+export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object = null){
   return {
-    type: SUBMIT_INFO,
-    infoTitle: infoTitle,
+    type: SUBMIT_INFO, 
+    infoTitle: infoTitle, 
     infoDetails: infoDetails,
-    okAction: okAction
+    infoOkAction: okAction
   }
-
+  
 }
 
-export function clearInfo() {
+export function clearInfo(){
   return {
     type: CLEAR_INFO
-  }
+}
 
 }
-export function changeTab(index) {
+export function changeTab (index) {
   return {
     type: CHANGE_TAB,
     index

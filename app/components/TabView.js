@@ -180,8 +180,9 @@ SelectItem(menuitem : Object){
 
         if (menuitem.Index == 6)
         {
-            dispatch(accessActions.logOut());
             this.props.closeDrawer()
+            dispatch(accessActions.logOut());
+            return;
         }
     
         this.loadMenu(menuitem.Index);

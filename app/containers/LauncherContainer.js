@@ -27,24 +27,12 @@ class LauncherContainer extends Component {
 
 function mapStateToProps(state) {
 
-  const {isLoggedIn, env  } = state.accessReducer; 
+  const {isFetching, env  } = state.accessReducer; 
   return {
-    isLoggedIn, 
+    isFetching,
     env
   }
 }
 
-function  matchDispatchToProps(dispatch) {
 
-    return bindActionCreators({
-        updateLoginInfo : accessActions.updateLoginInfo, 
-        setEnv: accessActions.setEnv, 
-        login : accessActions.login, 
-        updateIsFetching: accessActions.updateIsFetching,
-        dispatch,
-       
-    }, dispatch)
-    
-}
-
-export default connect(mapStateToProps,matchDispatchToProps)(LauncherContainer)
+export default connect(mapStateToProps)(LauncherContainer)

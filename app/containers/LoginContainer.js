@@ -30,15 +30,4 @@ function mapStateToProps(state) {
   }
 }
 
-function  matchDispatchToProps(dispatch) {
-
-    return bindActionCreators({
-        updateLoginInfo : accessActions.updateLoginInfo, 
-        login : accessActions.login, 
-        dispatch,
-       
-    }, dispatch)
-    
-}
-
-export default connect(mapStateToProps,matchDispatchToProps)(LoginContainer)
+export default connect(mapStateToProps)(LoginContainer)

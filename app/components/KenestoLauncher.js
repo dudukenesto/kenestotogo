@@ -48,31 +48,37 @@ class KenestoLauncher extends React.Component {
       
     }
 
-      componentWillReceiveProps(nextProps) {
-          if (nextProps.isLoggedIn) {
-              var data = {
-                  key : "documents",
-                  name: "All Documents",
-                  catId: constans.ALL_DOCUMENTS,
-                  fId: "",
-                  sortDirection: constans.ASCENDING,
-                  sortBy: constans.ASSET_NAME
-              }
-              this.props._handleNavigate(routes.documentsRoute(data));
-          }
-      }
+    //   componentWillReceiveProps(nextProps) {
+    //       alert(nextProps.isLoggedIn)
+    //       if (nextProps.isLoggedIn) {
+    //           var data = {
+    //               key : "documents",
+    //               name: "All Documents",
+    //               catId: constans.ALL_DOCUMENTS,
+    //               fId: "",
+    //               sortDirection: constans.ASCENDING,
+    //               sortBy: constans.ASSET_NAME
+    //           }
+    //           this.props._handleNavigate(routes.documentsRoute(data));
+    //       }
+    //   }
 
 
 
 
    componentWillMount(){
 
-        var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: this.props.login, updateIsFetching : this.props.updateIsFetching});
 
+
+        var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: actions.login, updateIsFetching : actions.updateIsFetching});
+        
     
          creadetiails.then(function(storedCredentials) {
+
+        
             if (storedCredentials.hasCredentials)
             {
+              //  alert(this.props.isFetching)
                storedCredentials.props.dispatch(storedCredentials.props.login(storedCredentials.storedUserName, storedCredentials.storedPassword, storedCredentials.env));
             }
             else{
@@ -105,7 +111,7 @@ class KenestoLauncher extends React.Component {
                 <ModalPicker
                     data={data}
                     initValue="Select Environment"
-                    onChange={(option)=>{ this.props.dispatch(this.props.setEnv(option.key))}}
+                    onChange={(option)=>{ this.props.dispatch(actions.setEnv(option.key))}}
                     selectStyle={{backgroundColor:"white", borderColor:"#888", borderWidth:2/PixelRatio.get()}}
                     selectTextStyle={{color:"#ff6a00"}}
                     sectionStyle={{height:130}}
@@ -123,7 +129,7 @@ class KenestoLauncher extends React.Component {
     
    
     render(){
-            if ( (this.props.isLoggedIn == null || this.props.isLoggedIn == false) && this.props.isFetching)
+            if (this.props.isFetching)
             return(
                     <View {...this.props}  style={styles.container}>
                 <Text>Welcome to Kenesto</Text>

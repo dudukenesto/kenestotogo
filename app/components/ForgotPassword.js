@@ -137,17 +137,8 @@ const styles = StyleSheet.create({
 
     }
 
-    componentWillReceiveProps(nextprops){
-        if (nextprops.passwordSent){
-            this.props.dispatch(navActions.emitInfo("Password reset email sent", "Follow the instructions in the email to rest your password", () => this.props._goBack())); 
-         //   this.props._goBack();
-        }
-    }
-    
-
-
     _renderProgressBar(){
-        if (this.state.isLoading){
+        if (this.props.isFetching){
             return(
             <ProggressBar isLoading={true} />
             )
@@ -161,8 +152,11 @@ const styles = StyleSheet.create({
         
         }
 
-    _renderForgotPassword(){
-            return(  <View style={{flex: 1}}>
+    render(){
+        return (
+            
+          <View style={[styles.container, this.props.style]}>
+            <View style={{flex: 1}}>
                         <View style={styles.titleContainer}>
                             <Text style={styles.title}>Forgot Password</Text>
                         </View>
@@ -183,19 +177,6 @@ const styles = StyleSheet.create({
                             </View>
                         </View>
                     </View>
-                )
-        }
-  
-        
-
-
-
-
-    render(){
-        return (
-            
-          <View style={[styles.container, this.props.style]}>
-            {this._renderForgotPassword()}
           </View>
        
         );

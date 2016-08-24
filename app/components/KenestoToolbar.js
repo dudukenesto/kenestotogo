@@ -22,7 +22,7 @@ let styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 5,
+    padding: 9,
   },
   iconStyle: {
     fontSize: 24,
@@ -30,6 +30,23 @@ let styles = StyleSheet.create({
     color: "#000",
     textAlign: "center",
     textAlignVertical: "center",
+  },
+  iconDisabled: {
+    color: "#ccc",
+  },
+  arrowUp: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingLeft: 5,
+    paddingRight: 5,
+    marginBottom: -10,
+    fontSize: 20,
+  },
+  arrowDown: {
+    paddingTop: 0,
+    paddingBottom: 0,
+    fontSize: 20,
+    marginBottom: -2,
   },
   folderName: {
     justifyContent: "flex-start",
@@ -57,7 +74,8 @@ let styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#999",
     borderRightColor: "#999",
-    marginRight: -1
+    marginRight: -1,
+    backgroundColor: "#fff"
   },
   sortingInactive: {
     borderWidth: 1,
@@ -182,26 +200,32 @@ class KenestoToolbar extends Component {
         </View>
         {isDocumentsTollbar ?
           <View style={{ flexDirection: "row" }}>
-            <Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
-            <View style={[this.props.isPopupMenuOpen ? styles.buttonsActive : styles.buttonsInactive]}>
-              <View style={[styles.popupInactive, this.props.isPopupMenuOpen ? styles.popupActive : {}]}>
-                <Icon name="more-vert" style={[styles.iconStyle]} onPress={this.onPressPopupMenu.bind(this) } />
-              </View>
+          <Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
 
-              <View style={this.props.isPopupMenuOpen ? styles.sortingInactive : {}}>
-                {sortDirection == constans.ASCENDING ?
-                  <Icon name="keyboard-arrow-up" style={[styles.iconStyle, { alignSelf: "flex-end" }]}  onPress={this.onSort.bind(this) }/>
-                  :
-                  <Icon name="keyboard-arrow-down" style={[styles.iconStyle, { alignSelf: "flex-end" }]} onPress={this.onSort.bind(this) }/>
-                }
-              </View>
+
+          <View style={[this.props.isPopupMenuOpen ? styles.buttonsActive : styles.buttonsInactive]}>
+            <View style={[styles.popupInactive, this.props.isPopupMenuOpen ? styles.popupActive : {}]}>
+              <Icon name="more-vert" style={[styles.iconStyle]} onPress={this.onPressPopupMenu.bind(this) } />
             </View>
 
+            <View style={this.props.isPopupMenuOpen ? styles.sortingInactive : {}}>
+              {sortDirection == constans.ASCENDING ?
+                <View>
+                  <Icon name="keyboard-arrow-up" style={[styles.iconStyle, styles.arrowUp]}  onPress={this.onSort.bind(this) }/>
+                  <Icon name="keyboard-arrow-down" style={[styles.iconStyle, styles.arrowDown, styles.iconDisabled]} onPress={this.onSort.bind(this) }/>
+                </View>
+                :
+                <View>
+                  <Icon name="keyboard-arrow-up" style={[styles.iconStyle, styles.arrowUp, styles.iconDisabled]}  onPress={this.onSort.bind(this) }/>
+                  <Icon name="keyboard-arrow-down" style={[styles.iconStyle, styles.arrowDown]} onPress={this.onSort.bind(this) }/>
+                </View>
+              }
+            </View>
           </View>
+        </View>
           :
           <View></View>
         }
-
       </View>
     )
   }
