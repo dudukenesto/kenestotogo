@@ -3,6 +3,7 @@ import React from "react";
 import {View, Text, StyleSheet, AsyncStorage, ListView, Image } from "react-native";
 import Button from "react-native-button";
 import LeftMenuItem from './LeftMenuItem';
+import {clearCredentials} from '../utils/accessUtils';
  
 
 const styles = StyleSheet.create({
@@ -174,7 +175,8 @@ class TabView extends React.Component {
 
 
 SelectItem(menuitem : Object){
-
+        if (menuitem.Index == 6)
+            clearCredentials();
         this.loadMenu(menuitem.Index);
        
     }

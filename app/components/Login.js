@@ -338,4 +338,10 @@ const styles = StyleSheet.create({
     }
 }
 
+
+Login.contextTypes = {
+    errorModal:  React.PropTypes.object
+};
+
+
 module.exports = Login;

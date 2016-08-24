@@ -1,4 +1,5 @@
-import { PUSH_ROUTE, POP_ROUTE,UPDATE_ROUTE_DATA } from '../constants/ActionTypes'
+import { PUSH_ROUTE, POP_ROUTE,UPDATE_ROUTE_DATA , SUBMIT_ERROR, CLEAR_ERROR,
+  SUBMIT_INFO,CLEAR_INFO } from '../constants/ActionTypes'
 import { NavigationExperimental } from 'react-native'
 const {
  StateUtils: NavigationStateUtils
@@ -27,6 +28,38 @@ function navigationState (state = initialState, action) {
       state.routes[state.index].data = action.routeData;
      return {
         ...state
+      }
+      case SUBMIT_INFO: 
+      return {
+        ...state, 
+        HasInfo: true, 
+        GlobalInfoTitle: action.infoTitle, 
+        GlobalInfoDetails: action.infoDetails,
+        GlobalInfoOkAction: action.okAction
+
+      }
+      case CLEAR_INFO: 
+      return {
+        ...state, 
+        HasInfo: false, 
+
+      }
+        case SUBMIT_ERROR: 
+      return {
+        ...state, 
+        HasError: true, 
+        GlobalErrorTitle: action.errorTitle, 
+        GlobalErrorDetails: action.errorDetails
+
+      }
+      case CLEAR_ERROR: 
+      return {
+        ...state, 
+        HasError: false, 
+         GlobalInfoTitle:null, 
+        GlobalInfoDetails: null,
+        GlobalInfoOkAction: null
+
       }
     default:
       return state
