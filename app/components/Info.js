@@ -15,13 +15,12 @@ var styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         backgroundColor:"white",
-        padding: 15,
+        padding: 20,
     },
     titleContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 10,
     },
     title: {
         fontSize: 20,
@@ -45,15 +44,14 @@ var styles = StyleSheet.create({
         color: "#000",
         height: 50,            
         fontSize: 17,
-        // paddingLeft: 40,
+        paddingLeft: 40,
         paddingBottom: 15,
+        textAlign: "center"
     },
     buttonsContainer: {
         flex: 1,
-        flexDirection: "row",
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         marginTop: 20, 
-        alignSelf: "stretch",   
     },
     singleBtnContainer: {
         width: 140,
@@ -118,7 +116,7 @@ class Info extends React.Component {
                     </View>
                     
                         <View style={styles.buttonsContainer}>
-                            <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
+                            <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Done</Button>
                         </View>
                         
                 </View>
