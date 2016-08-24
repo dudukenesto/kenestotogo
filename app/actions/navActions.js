@@ -20,11 +20,12 @@ export function updateRouteData (routeData) {
     routeData
   }
 }
-export function emitError(errorTitle: string, errorDetails: string){
+export function emitError(errorTitle: string, errorDetails: string, okAction: Object = null){
   return {
     type: SUBMIT_ERROR, 
     errorTitle: errorTitle, 
-    errorDetails: errorDetails
+    errorDetails: errorDetails,
+    errorOkAction: okAction
   }
   
 }
@@ -35,12 +36,12 @@ export function clearError(){
   }
 }
 
-export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object){
+export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object = null){
   return {
     type: SUBMIT_INFO, 
     infoTitle: infoTitle, 
     infoDetails: infoDetails,
-    okAction: okAction
+    infoOkAction: okAction
   }
   
 }

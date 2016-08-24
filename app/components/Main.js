@@ -81,10 +81,29 @@ let styles = StyleSheet.create({
     borderColor: "#999",
     backgroundColor: "#fff",
     marginTop: 40,
-    marginRight: 36,
-    width: 200,
-    height: 100,
-    
+    marginRight: 40,
+    width: 170,    
+  },
+  optionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  inactiveOption: {
+    color: "#ccc",
+  },
+  activeOption: {
+    color: "#000",
+  },
+  iconStyle: {
+    fontSize: 22,
+    color: "#000",
+    textAlign: "center",
+    textAlignVertical: "center",
+    marginRight: 15,
+  },
+  disabledIcon: {
+    color: "#ccc"
   },
 })
 
@@ -131,7 +150,8 @@ class Main extends React.Component {
         }
         break;
       case 2:
-        this.onSort();
+        this.onSortDirection();
+         break;
       case 3:
         this.onSortBy(value);
         break;
@@ -151,9 +171,10 @@ class Main extends React.Component {
         sortBy: sortBy
       }
     dispatch(documentsActions.refreshTable(routeData));
+    this.hidePopupMenu();
   }
   
-  onSort() {
+  onSortDirection() {
     const {dispatch} = this.props
     var currRouteData = getDocumentsContext(this.props);
     var sortDirection = currRouteData.sortDirection == constans.ASCENDING ? constans.DESCENDING : constans.ASCENDING;
@@ -195,7 +216,6 @@ class Main extends React.Component {
   }
 
   closeCreateFolder(){
-    // alert(3)
      this.refs.CreateFolder.close();
      this.setState({ifCreatingFolder: false})
   }
@@ -206,14 +226,14 @@ class Main extends React.Component {
 
   }
 
-  componentWillReceiveProps(nextprops){
-         if (nextprops.navReducer.HasError){
-          this.openModal("errorModal");
-      }
-       if (nextprops.navReducer.HasInfo){
-          this.openModal("infoModal");
-      }
+  componentWillReceiveProps(nextprops) {
+    if (nextprops.navReducer.HasError) {
+      this.openModal("errorModal");
     }
+    if (nextprops.navReducer.HasInfo) {
+      this.openModal("infoModal");
+    }
+  }
 
     render(){
 
@@ -221,6 +241,8 @@ class Main extends React.Component {
           var modalStyle = this.state.ifCreatingFolder? styles.ifProcessing : [styles.modal, styles.createFolder]         
           
           var showPopupMenu = this.state.isPopupMenuOpen;
+          var documentlist = getDocumentsContext(this.props);
+          const sortBy = documentlist.sortBy;
           
             return(
              <View style={styles.container}> 
@@ -256,7 +278,25 @@ class Main extends React.Component {
                      <TouchableWithoutFeedback onPress={this.hidePopupMenu.bind(this) } >
                        <View style={styles.popupMenu}>
                          <View style={styles.popupMenuContent}>
-                           <Text>Popup Menu</Text>
+                         
+                            <View>
+                              <TouchableWithoutFeedback onPress={(value) => this.onSortBy(constans.ASSET_NAME)} disabled={sortBy == constans.ASSET_NAME}>
+                                <View style={styles.optionContainer}>
+                                  <Icon name="sort-by-alpha" style={[styles.iconStyle, sortBy != constans.ASSET_NAME? {} : styles.disabledIcon]} />
+                                  <Text style={sortBy != constans.ASSET_NAME? styles.activeOption : styles.inactiveOption}>Sort by Name</Text>
+                                </View>
+                              </TouchableWithoutFeedback>
+                            </View>
+                            
+                            <View>
+                              <TouchableWithoutFeedback onPress={(value) => this.onSortBy(constans.MODIFICATION_DATE)} disabled={sortBy == constans.MODIFICATION_DATE}>
+                                <View style={styles.optionContainer}>
+                                  <Icon name="date-range" style={[styles.iconStyle, sortBy != constans.MODIFICATION_DATE? {} : styles.disabledIcon]} />
+                                  <Text style={sortBy != constans.MODIFICATION_DATE? styles.activeOption : styles.inactiveOption}>Sort by Date</Text>
+                                </View>
+                              </TouchableWithoutFeedback>
+                            </View>
+                           
                          </View>
                        </View>
                      </TouchableWithoutFeedback>
@@ -285,6 +325,7 @@ function mapStateToProps(state) {
 
   const { documentlists, navReducer} = state
   const {env, sessionToken } = state.accessReducer;
+  //alert(sessionToken);
   return {
     documentlists,
     navReducer,

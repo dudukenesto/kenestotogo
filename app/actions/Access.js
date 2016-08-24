@@ -1,6 +1,8 @@
 import * as types from '../constants/ActionTypes';
 import {getAuthUrl, getLoginUrl, getForgotPasswordUrl, clearCredentials, setCredentials} from '../utils/accessUtils';
-import { push, pop } from './navActions'
+import { push, pop, emitInfo, emitError} from './navActions'
+import * as routes from '../constants/routes'
+import * as constans from '../constants/GlobalConstans'
 var stricturiEncode = require('strict-uri-encode');
 
 export function updateIsFetching(isFetching: boolean){
@@ -57,14 +59,6 @@ function SubmitSuccess(message : string) {
     }
 }
 
-function SubmitError(message : string) {
-    return {
-        type: types.SUBMIT_ERROR, 
-        errorMessage: message, 
-        hasError: true,
-        isFetching : false, 
-    }
-}
 
 function DoNothing(message : string) {
     return {
@@ -80,38 +74,35 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
              env = stateEnv;
         }
 
+         dispatch(updateIsFetching(true)); 
+
         var forgotPasswordUrl = getForgotPasswordUrl(env, username);
-        fetch(forgotPasswordUrl)
+        return fetch(forgotPasswordUrl)
         .then((response) => response.json())
         .catch((error) => {
-            return dispatch(SubmitError('Fialed to reset password'))
-            //this._updateIsLoading(false);
-           //  Actions.error({data: 'Failed to reset password'})
+             dispatch(emitError('Fialed to reset password'))
         })
         .then( (responseData) => {
-        
             if (responseData.ForgotPasswordResult.ResponseStatus == "FAILED")
             {
-                 return dispatch(SubmitError(responseData.ForgotPasswordResult.ErrorMessage));
-                 
-                 //this._updateIsLoading(false);
-                 //Actions.error({data: responseData.ForgotPasswordResult.ErrorMessage}); 
+                 dispatch(updateIsFetching(false)); 
+                 dispatch(emitError("Reset password failed", responseData.ForgotPasswordResult.ErrorMessage))
             }
-
-            return dispatch(PasswordSent(true));
-           // this._updateIsLoading(false);
-            //this.setState({responseStatus: responseData.ForgotPasswordResult.ResponseStatus}); 
+            else{
+                   dispatch(updateIsFetching(false)); 
+                   dispatch(emitInfo("Password reset email sent", "Follow the instructions in the email to rest your password",() => dispatch(pop())))
+            }
+         
         }).done();
 
-          return dispatch(updateIsFetching(true)); 
+        
     }
 }
 
 export function login(userId : string, password: string, env: string = 'dev')  {
-
     return (dispatch, getstate) => {
 
-
+     dispatch(updateIsFetching(true)); 
 
         if (env == null)
         {
@@ -124,11 +115,10 @@ export function login(userId : string, password: string, env: string = 'dev')  {
         var authUrl = getAuthUrl(env,userId, password);
 
 
-        fetch(authUrl)
+        return fetch(authUrl)
             .then((response) => response.json())
             .catch((error) => {
-                 console.log('Failed to Login')
-                return dispatch(SubmitError('Failed to Login')); 
+                 dispatch(emitError('Failed to Login')); 
            
             })
             .then( (responseData) => {
@@ -136,7 +126,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                 {
 
                     clearCredentials();
-                    return dispatch(updateIsFetching(false)); 
+                    dispatch(updateIsFetching(false)); 
                 }
   
                 else{
@@ -146,14 +136,24 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                 
                        fetch(loginUrl).then((response) => response.json())
                         .catch((error) => {
-                             console.log('Failed to Login')
-                              return dispatch(SubmitError('Failed to Login')); 
+                             dispatch(emitError('Failed to Login')); 
                         })
                         .then( (responseData) => {
                             setCredentials(userId, password, env);
                             var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
 
-                            return dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env));
+                              dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env));
+                               var data = {
+                                                key : "documents",
+                                                name: "All Documents",
+                                                catId: constans.ALL_DOCUMENTS,
+                                                fId: "",
+                                                sortDirection: constans.ASCENDING,
+                                                sortBy: constans.ASSET_NAME
+                                            }
+                                var rr = routes.documentsRoute(data)
+                        
+                              dispatch(push(rr.route));
                          
 
                         })
@@ -161,7 +161,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
             
         })
 
-           return dispatch(updateIsFetching(true)); 
+          
 
     }
 }

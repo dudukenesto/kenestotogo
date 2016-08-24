@@ -115,7 +115,6 @@ class Documents extends Component {
       var newId;
       var newName = document.Name;
       var fId = document.Id;
-
       if (documentlist.catId.indexOf(splitChars) >= 0) {
         var dtlStr = documentlist.catId.split(splitChars);
         var newId = `${dtlStr[0]}${splitChars}${document.Id}`//i.e all_docuemnts|{folderID}
