@@ -1,6 +1,6 @@
 import * as types from '../constants/ActionTypes';
 import {getAuthUrl, getLoginUrl, getForgotPasswordUrl, clearCredentials, setCredentials} from '../utils/accessUtils';
-import { push, pop, emitInfo, emitError} from './navActions'
+import { push, pop, emitInfo, emitError, navigateReset} from './navActions'
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
 var stricturiEncode = require('strict-uri-encode');
@@ -96,6 +96,13 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
         }).done();
 
         
+    }
+}
+
+export function logOut() {
+    return (dispatch, getstate) => {
+        clearCredentials();
+        return dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
     }
 }
 

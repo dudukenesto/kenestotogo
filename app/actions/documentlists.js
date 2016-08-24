@@ -202,13 +202,6 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
 }
 
 
-function SubmitError( errorMessage: string) {
-  return {
-    type: types.SUBMIT_ERROR,
-    errorMessage: ""
-  }
-}
-
 export function createFolder(folderName: string){
 
 return (dispatch, getState) => {

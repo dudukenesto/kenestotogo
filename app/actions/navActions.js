@@ -1,4 +1,4 @@
-import { POP_ROUTE, PUSH_ROUTE, CHANGE_TAB,UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR, 
+import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
   SUBMIT_INFO, CLEAR_INFO } from '../constants/ActionTypes'
 
 export function push (route) {
@@ -11,6 +11,29 @@ export function push (route) {
 export function pop () {
   return {
     type: POP_ROUTE
+  }
+}
+
+export function navigateJumpToKey(key) {
+  return {
+    type: NAV_JUMP_TO_KEY,
+    key
+  }
+}
+
+export function navigateJumpToIndex(index) {
+  return {
+    type: NAV_JUMP_TO_INDEX,
+    index
+  }
+}
+
+export function navigateReset(key,routes, index) {
+  return {
+    type: NAV_RESET,
+    key,
+    index,
+    routes
   }
 }
 
