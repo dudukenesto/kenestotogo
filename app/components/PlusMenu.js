@@ -7,6 +7,10 @@ import {
 import Button from './Button'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
+import fontelloConfig from '../assets/icons/config.json';
+import { createIconSetFromFontello } from  'react-native-vector-icons'
+const KenestoIcon = createIconSetFromFontello(fontelloConfig);
+
 let styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -38,7 +42,8 @@ export default class PlusMenu extends React.Component{
     }
 
     addFolder(){
-        this.props.closeMenuModal();
+        this.props.closeMenuModal("modalPlusMenu");
+       // this.props.createError();
         this.props.openCreateFolder();
     }
     

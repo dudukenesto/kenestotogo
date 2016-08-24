@@ -63,16 +63,21 @@ var styles = StyleSheet.create({
         borderWidth: 0.5,
         borderColor: "#BEBDBD"
    },
-   button: {
+    button: {
         color: "#666666",
         fontWeight: "normal",
         fontSize: 18, 
    },
-   creatingFolder: {
+    creatingFolder: {
+        flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
         backgroundColor:"white",
    },
+    processingMessage: {
+        fontSize: 16,
+        marginRight: 40
+    },
     // modal: {
     //     justifyContent: 'center',
     //     alignItems: 'center'
@@ -99,20 +104,21 @@ class CreateFolder extends React.Component {
     }
 
     componentWillReceiveProps(nextprops){
+        // alert(nextprops.creatingFolder)
 
        
-
         if (nextprops.creatingFolder == 2)
         {
             this.props.closeCreateFolder();
-            
+            this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
            
         }
     }
 
     create(){
+       
         this.props.dispatch(createFolder(this.state.folderName)); 
-
+        this.props.setCreateFolderStyle();
     }
 
      
@@ -120,14 +126,11 @@ class CreateFolder extends React.Component {
     render(){
 
         if (this.props.creatingFolder == 1){
-
-           
             return(         
                     <View style={styles.creatingFolder}>
-                      <Text>Creating a folder...</Text> 
-                   <ProgressBar isLoading={true}/>
-                   
-                </View>
+                        <Text style={styles.processingMessage}>Creating a new folder</Text> 
+                        <ProgressBar isLoading={true}/>
+                    </View>
           
             )
         }
@@ -162,7 +165,7 @@ class CreateFolder extends React.Component {
 }
 
 
-
+ 
 function mapStateToProps(state) {    
   
 
@@ -171,5 +174,15 @@ function mapStateToProps(state) {
     creatingFolder : state.documentlists.creatingFolder
   }
 }
+
+// function  matchDispatchToProps(dispatch) {
+//     return bindActionCreators({
+//        createFolder : documentsActions.createFolder, 
+       
+//         dispatch,
+       
+//     }, dispatch)
+    
+// }
 
 export default connect(mapStateToProps)(CreateFolder)

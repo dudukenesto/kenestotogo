@@ -7,6 +7,7 @@ import ProggressBar from "../components/ProgressBar";
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as accessActions from '../actions/Access'
+import * as navActions from '../actions/navActions'
 
 var stricturiEncode = require('strict-uri-encode');
 
@@ -132,8 +133,15 @@ const styles = StyleSheet.create({
             return false; // value here is an instance of Person
         }
 
-        this.props.dispatch(this.props.ActivateForgotPassword(username));
+        this.props.dispatch(accessActions.ActivateForgotPassword(username));
 
+    }
+
+    componentWillReceiveProps(nextprops){
+        if (nextprops.passwordSent){
+            this.props.dispatch(navActions.emitInfo("Password reset email sent", "Follow the instructions in the email to rest your password", () => this.props._goBack())); 
+         //   this.props._goBack();
+        }
     }
     
 
@@ -152,10 +160,8 @@ const styles = StyleSheet.create({
             }
         
         }
-   
+
     _renderForgotPassword(){
-            
-        if (!this.props.passwordSent) {
             return(  <View style={{flex: 1}}>
                         <View style={styles.titleContainer}>
                             <Text style={styles.title}>Forgot Password</Text>
@@ -172,28 +178,18 @@ const styles = StyleSheet.create({
                                 options={options}
                             />
                             <View style={styles.buttonsContainer}>
-                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={ () => this.props._goBack() }>Cancel</Button>
+                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={() => this.props._goBack()}>Cancel</Button>
                                 <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={this._makeForgotPassword.bind(this)}>Request</Button>
                             </View>
                         </View>
-                    </View>)
-        }
-        else
-        {
-        return( <View style={{flex: 1}}>
-                    <View style={styles.titleContainer}>
-                            <Text style={styles.title}>Forgot Password</Text>
-                        </View>
-                    <View style={styles.messageContainer}>
-                        <Text style={styles.message}>Email was sent successfully.</Text>
-                        <Text style={styles.message}>Please check your email for further instructions...</Text>
                     </View>
-                    <View style={[styles.buttonsContainer, {justifyContent: "center"}]}>
-                        <Button containerStyle={[styles.singleBtnContainer, {width: 200}]} style={styles.button} onPress={ () => this.props._goBack()}>Back to login screen</Button>
-                    </View>
-            </View>)
+                )
         }
-    }
+  
+        
+
+
+
 
     render(){
         return (
@@ -207,29 +203,19 @@ const styles = StyleSheet.create({
 }
 
 function mapStateToProps(state) {
-  const {isLoggedIn, env, hasError, errorMessage, isFetching, passwordSent  } = state.accessReducer; 
+  const {isLoggedIn, env, hasError, errorMessage, isFetching, passwordSent} = state.accessReducer; 
+  const accessReducer = state.accessReducer;
 
   return {
     isLoggedIn, 
     env, 
     isFetching,
     hasError,
-    passwordSent
+    passwordSent,
   }
 }
 
-function  matchDispatchToProps(dispatch) {
-
-    return bindActionCreators({
-        updateLoginInfo : accessActions.updateLoginInfo, 
-        login : accessActions.login, 
-        ActivateForgotPassword : accessActions.ActivateForgotPassword,
-        dispatch,
-       
-    }, dispatch)
-    
-}
 
 
 
-export default connect(mapStateToProps,matchDispatchToProps)(ForgotPassword)
+export default connect(mapStateToProps)(ForgotPassword)

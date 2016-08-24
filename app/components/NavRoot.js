@@ -46,7 +46,7 @@ class NavRoot extends Component {
     }
 
     if (route.key === 'forgotPassword') {
-      return <ForgotPassword userName={route.userName} _goBack={this._handleBackAction.bind(this) } />
+      return <ForgotPassword userName={route.userName} _goBack={this._handleBackAction.bind(this) }  />
     }
 
     if (route.key === 'login') {
@@ -63,6 +63,11 @@ class NavRoot extends Component {
   }
 
   _handleBackAction() {
+
+    if (this.props.navigation.routes[this.props.navigation.routes.length-1].key == 'forgotPassword'){
+        this.props.popRoute()
+         return true
+    }
     if (this.props.navigation.routes.length > 1 && ((this.props.navigation.routes[1].key === 'login' && this.props.navigation.index > 2) || (this.props.navigation.routes[1].key.indexOf('documents') > -1 && this.props.navigation.index > 1))) {
       this.props.popRoute()
       return true

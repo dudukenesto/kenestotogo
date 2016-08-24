@@ -32,7 +32,9 @@ export function getCreateFolderUrl(env, sessionToken, fId, folderName){
 
 export function getDocumentsContext(props) {
   const {navReducer} = props
-  if(navReducer == undefined ||  navReducer.index == 0 || typeof navReducer.routes[navReducer.index].data == 'undefined')
+  //console.log("getDocumentsContext:" + JSON.stringify(navReducer))
+  if(navReducer == undefined ||  navReducer.index == 0 || typeof navReducer.routes[navReducer.index].data == 'undefined'  )
+
   {
     return ({})
   }
