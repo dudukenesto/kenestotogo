@@ -6,14 +6,19 @@ import Main from '../components/Main';
 
 
 class App extends React.Component {
+
+closeDrawer(){
+    this._drawer.close()
+  };
+
     render(){
        // const children = this.props.navigationState.children;
         return (
             <Drawer
-                ref="navigation"
+                ref={(ref) => this._drawer = ref}
                 type="overlay"
                 open= {false}
-                content={<TabView loggedUser = {this.props.loggedUser}/>}
+                content={<TabView loggedUser = {this.props.loggedUser} closeDrawer={this.closeDrawer.bind(this)} />}
                 tapToClose={true}
                 openDrawerOffset={0.15}
                 panCloseMask={0.2}

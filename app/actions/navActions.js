@@ -1,57 +1,80 @@
-import { POP_ROUTE, PUSH_ROUTE, CHANGE_TAB,UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR, 
+import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
   SUBMIT_INFO, CLEAR_INFO } from '../constants/ActionTypes'
 
-export function push (route) {
+export function push(route) {
   return {
     type: PUSH_ROUTE,
     route
   }
 }
 
-export function pop () {
+export function pop() {
   return {
     type: POP_ROUTE
   }
 }
 
-export function updateRouteData (routeData) {
+export function navigateJumpToKey(key) {
+  return {
+    type: NAV_JUMP_TO_KEY,
+    key
+  }
+}
+
+export function navigateJumpToIndex(index) {
+  return {
+    type: NAV_JUMP_TO_INDEX,
+    index
+  }
+}
+
+export function navigateReset(key,routes, index) {
+  return {
+    type: NAV_RESET,
+    key,
+    index,
+    routes
+  }
+}
+
+export function updateRouteData(routeData) {
   return {
     type: UPDATE_ROUTE_DATA,
     routeData
   }
 }
-export function emitError(errorTitle: string, errorDetails: string){
+export function emitError(errorTitle: string, errorDetails: string) {
   return {
-    type: SUBMIT_ERROR, 
-    errorTitle: errorTitle, 
+    type: SUBMIT_ERROR,
+    errorTitle: errorTitle,
     errorDetails: errorDetails
   }
-  
+
 }
 
-export function clearError(){
+export function clearError() {
   return {
     type: CLEAR_ERROR
   }
 }
 
-export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object){
+export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object) {
   return {
-    type: SUBMIT_INFO, 
-    infoTitle: infoTitle, 
+    type: SUBMIT_INFO,
+    infoTitle: infoTitle,
     infoDetails: infoDetails,
     okAction: okAction
   }
-  
+
 }
 
-export function clearInfo(){
+export function clearInfo() {
   return {
     type: CLEAR_INFO
-}
+  }
 
 }
-export function changeTab (index) {
+export function changeTab(index) {
   return {
     type: CHANGE_TAB,
     index

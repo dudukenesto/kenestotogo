@@ -1,167 +1,171 @@
 import * as types from '../constants/ActionTypes';
 import {getAuthUrl, getLoginUrl, getForgotPasswordUrl, clearCredentials, setCredentials} from '../utils/accessUtils';
-import { push, pop } from './navActions'
+import {push, pop, navigateReset  } from './navActions'
+
+
 var stricturiEncode = require('strict-uri-encode');
 
-export function updateIsFetching(isFetching: boolean){
+export function updateIsFetching(isFetching: boolean) {
     return {
-        type: types.UPDATE_IS_FETCHING, 
+        type: types.UPDATE_IS_FETCHING,
         isFetching
     }
 }
 
-export function setEnv(env: string){
+export function setEnv(env: string) {
     return {
-        type: types.SetEnv, 
+        type: types.SetEnv,
         env
     }
 }
 
-export function updateLoginInfo(isLoggedIn : boolean, sessionToken: string, env: string) {
-    
+export function updateLoginInfo(isLoggedIn: boolean, sessionToken: string, env: string) {
+
     return {
-        type: types.UPDATE_LOGIN_INFO, 
-        isLoggedIn: isLoggedIn, 
-        sessionToken : sessionToken, 
-        env : env
+        type: types.UPDATE_LOGIN_INFO,
+        isLoggedIn: isLoggedIn,
+        sessionToken: sessionToken,
+        env: env
     }
 }
 
-function Authenticate(userId : string, password: string) {
+function Authenticate(userId: string, password: string) {
     return {
-        type: types.AUTHENTICATE,  
+        type: types.AUTHENTICATE,
         password
     }
 }
 
 function PasswordSent(sent: boolean) {
     return {
-        type: types.PASSWORD_SENT,  
+        type: types.PASSWORD_SENT,
         sent
     }
 }
 
 
-function GetSessionToken(accessToken : string) {
+function GetSessionToken(accessToken: string) {
     return {
-        type: types.AUTHENTICATE, 
+        type: types.AUTHENTICATE,
         accessToken
     }
 }
 
-function SubmitSuccess(message : string) {
+function SubmitSuccess(message: string) {
     return {
-        type: types.SUBMIT_SUCCESS, 
-        message: message, 
-        isFetching : false
+        type: types.SUBMIT_SUCCESS,
+        message: message,
+        isFetching: false
     }
 }
 
-function SubmitError(message : string) {
+function SubmitError(message: string) {
     return {
-        type: types.SUBMIT_ERROR, 
-        errorMessage: message, 
+        type: types.SUBMIT_ERROR,
+        errorMessage: message,
         hasError: true,
-        isFetching : false, 
+        isFetching: false,
     }
 }
 
-function DoNothing(message : string) {
+function DoNothing(message: string) {
     return {
         type: types.DO_NOTHING
     }
 }
 
-export function ActivateForgotPassword(username : string, env : string = 'dev') {
-     return (dispatch, getstate) => {
-        if (env == null)
-        {
-             const {stateEnv} = getState(); 
-             env = stateEnv;
+export function ActivateForgotPassword(username: string, env: string = 'dev') {
+    return (dispatch, getstate) => {
+        if (env == null) {
+            const {stateEnv} = getState();
+            env = stateEnv;
         }
 
         var forgotPasswordUrl = getForgotPasswordUrl(env, username);
         fetch(forgotPasswordUrl)
-        .then((response) => response.json())
-        .catch((error) => {
-            return dispatch(SubmitError('Fialed to reset password'))
-            //this._updateIsLoading(false);
-           //  Actions.error({data: 'Failed to reset password'})
-        })
-        .then( (responseData) => {
-        
-            if (responseData.ForgotPasswordResult.ResponseStatus == "FAILED")
-            {
-                 return dispatch(SubmitError(responseData.ForgotPasswordResult.ErrorMessage));
-                 
-                 //this._updateIsLoading(false);
-                 //Actions.error({data: responseData.ForgotPasswordResult.ErrorMessage}); 
-            }
+            .then((response) => response.json())
+            .catch((error) => {
+                return dispatch(SubmitError('Fialed to reset password'))
+                //this._updateIsLoading(false);
+                //  Actions.error({data: 'Failed to reset password'})
+            })
+            .then((responseData) => {
 
-            return dispatch(PasswordSent(true));
-           // this._updateIsLoading(false);
-            //this.setState({responseStatus: responseData.ForgotPasswordResult.ResponseStatus}); 
-        }).done();
+                if (responseData.ForgotPasswordResult.ResponseStatus == "FAILED") {
+                    return dispatch(SubmitError(responseData.ForgotPasswordResult.ErrorMessage));
 
-          return dispatch(updateIsFetching(true)); 
+                    //this._updateIsLoading(false);
+                    //Actions.error({data: responseData.ForgotPasswordResult.ErrorMessage}); 
+                }
+
+                return dispatch(PasswordSent(true));
+                // this._updateIsLoading(false);
+                //this.setState({responseStatus: responseData.ForgotPasswordResult.ResponseStatus}); 
+            }).done();
+
+        return dispatch(updateIsFetching(true));
     }
 }
 
-export function login(userId : string, password: string, env: string = 'dev')  {
+export function logOut() {
+    return (dispatch, getstate) => {
+        clearCredentials();
+        return dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
+    }
+}
+export function login(userId: string, password: string, env: string = 'dev') {
 
     return (dispatch, getstate) => {
 
 
 
-        if (env == null)
-        {
-             const {stateEnv} = getState(); 
-             env = stateEnv;
+        if (env == null) {
+            const {stateEnv} = getState();
+            env = stateEnv;
         }
 
-      
-   
-        var authUrl = getAuthUrl(env,userId, password);
+
+
+        var authUrl = getAuthUrl(env, userId, password);
 
 
         fetch(authUrl)
             .then((response) => response.json())
             .catch((error) => {
-                 console.log('Failed to Login')
-                return dispatch(SubmitError('Failed to Login')); 
-           
+                console.log('Failed to Login')
+                return dispatch(SubmitError('Failed to Login'));
+
             })
-            .then( (responseData) => {
-                if (responseData.AuthenticateJsonResult.ResponseStatus == "FAILED")
-                {
+            .then((responseData) => {
+                if (responseData.AuthenticateJsonResult.ResponseStatus == "FAILED") {
 
                     clearCredentials();
-                    return dispatch(updateIsFetching(false)); 
+                    return dispatch(updateIsFetching(false));
                 }
-  
-                else{
-                        var organizationId = responseData.AuthenticateJsonResult.Organizations[0].OrganizationIdentifier; 
-                        var token = responseData.AuthenticateJsonResult.Token;
-                        const loginUrl = getLoginUrl(env, organizationId, token);
-                
-                       fetch(loginUrl).then((response) => response.json())
+
+                else {
+                    var organizationId = responseData.AuthenticateJsonResult.Organizations[0].OrganizationIdentifier;
+                    var token = responseData.AuthenticateJsonResult.Token;
+                    const loginUrl = getLoginUrl(env, organizationId, token);
+
+                    fetch(loginUrl).then((response) => response.json())
                         .catch((error) => {
-                             console.log('Failed to Login')
-                              return dispatch(SubmitError('Failed to Login')); 
+                            console.log('Failed to Login')
+                            return dispatch(SubmitError('Failed to Login'));
                         })
-                        .then( (responseData) => {
+                        .then((responseData) => {
                             setCredentials(userId, password, env);
-                            var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
+                            var sessionToken = typeof (responseData.LoginJsonResult) != 'undefined' ? responseData.LoginJsonResult.Token : "";
 
                             return dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env));
-                         
+
 
                         })
                 }
-            
-        })
 
-           return dispatch(updateIsFetching(true)); 
+            })
+
+        return dispatch(updateIsFetching(true));
 
     }
 }

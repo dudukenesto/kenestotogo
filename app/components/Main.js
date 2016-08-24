@@ -180,7 +180,7 @@ class Main extends React.Component {
   onNavIconClicked() {
     this.context.drawer.open();
   }
-
+  
   closeMenuModal() {
     this.refs.modalPlusMenu.close();
   }
@@ -216,22 +216,25 @@ class Main extends React.Component {
     }
 
     render(){
-
+          const {navReducer} = this.props
           var BContent = <Text style={styles.text}>error message</Text> 
           var modalStyle = this.state.ifCreatingFolder? styles.ifProcessing : [styles.modal, styles.createFolder]         
-          
+
           var showPopupMenu = this.state.isPopupMenuOpen;
-          
-            return(
-             <View style={styles.container}> 
-             
+          var showKenestoToolbar = navReducer.routes[navReducer.index].key === 'login' || navReducer.routes[navReducer.index].key === 'forgotPassword' || navReducer.routes[navReducer.index].key === 'KenestoLauncher' ? false : true;
+
+          return (
+            <View style={styles.container}>
+              {showKenestoToolbar ?
                 <KenestoToolbar   onActionSelected={this.onActionSelected}
-                                  onPressPopupMenu={this.onPressPopupMenu}
-                                  onIconClicked = {this.onNavIconClicked.bind(this)}
-                                  navReducer={this.props.navReducer} 
-                                  isPopupMenuOpen={this.state.isPopupMenuOpen}
-                 />
-                
+                  onPressPopupMenu={this.onPressPopupMenu}
+                  onIconClicked = {this.onNavIconClicked.bind(this) }
+                  navReducer={this.props.navReducer}
+                  isPopupMenuOpen={this.state.isPopupMenuOpen}
+                  />
+                :
+                <View></View>
+              }
                 <NavigationRootContainer />
                 <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
                     <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this)} openMenuModal = {this.openCreateFolder.bind(this)} 
