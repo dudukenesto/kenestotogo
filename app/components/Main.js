@@ -285,6 +285,7 @@ function mapStateToProps(state) {
 
   const { documentlists, navReducer} = state
   const {env, sessionToken } = state.accessReducer;
+  //alert(sessionToken);
   return {
     documentlists,
     navReducer,

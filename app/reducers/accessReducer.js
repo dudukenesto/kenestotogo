@@ -1,6 +1,6 @@
 import * as types from '../constants/ActionTypes'
 
-function accessReducer (state = { isLoggedIn : false, token: "" , env : 'dev', isFetching : true}, action) {
+function accessReducer (state = { isLoggedIn : false, token: "" , env : 'dev', isFetching : false}, action) {
   switch (action.type) {
     case types.UPDATE_IS_FETCHING: 
         return {

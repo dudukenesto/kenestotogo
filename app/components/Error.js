@@ -83,13 +83,21 @@ var styles = StyleSheet.create({
 class Error extends React.Component {
     constructor(props){
         super (props);
+
+         this.state = {
+           
+            errorTitle: this.props.errorTitle,
+            errorDetails: this.props.errorDetails
+        };
     }
 
 
 
-    clearError(){
+    handleOk(){
       
         this.props.closeModal();
+        if (this.props.okAction != null && typeof this.props.okAction != 'undefined')
+            this.props.okAction();
     }
 
     componentDidMount(){
@@ -104,14 +112,14 @@ class Error extends React.Component {
            
                 <View style={styles.container}>
                     <View style={styles.titleContainer}>
-                        <Text style={styles.title}>{this.props.errorTitle}</Text>
+                        <Text style={styles.title}>{this.state.errorTitle}</Text>
                     </View>
                     <View style={styles.nameContainer}>
-                         <Text style={styles.textEdit}>{this.props.errorDetails}</Text>
+                         <Text style={styles.textEdit}>{this.state.errorDetails}</Text>
                     </View>
                     
                         <View style={styles.buttonsContainer}>
-                            <Button onPress={this.clearError.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
+                            <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
                         </View>
                         
                 </View>

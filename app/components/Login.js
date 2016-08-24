@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {View, Text, TextInput, StyleSheet, TouchableHighlight, AsyncStorage, Image, } from "react-native";
+import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image, } from "react-native";
 import Button from "react-native-button";
 import Tcomb from "tcomb-form-native";
 import config from '../utils/app.config';
@@ -8,7 +8,7 @@ import * as routes from '../constants/routes';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import * as constans from '../constants/GlobalConstans'
-
+import * as accessActions from '../actions/Access'
 var stricturiEncode = require('strict-uri-encode');
 
 var Form = Tcomb.form.Form;
@@ -269,21 +269,21 @@ const styles = StyleSheet.create({
         this.props._handleNavigate(forgotPasswordRoute)
    }
 
-     componentWillReceiveProps(nextProps){
-        if (nextProps.isLoggedIn)
-        {
-             var data = {
-                  key : "documents",
-                  name: "All Documents",
-                  catId: constans.ALL_DOCUMENTS,
-                  fId: "",
-                  sortDirection: constans.ASCENDING,
-                  sortBy: constans.ASSET_NAME
-              }
-              this.props._handleNavigate(routes.documentsRoute(data));
-        } 
+    //  componentWillReceiveProps(nextProps){
+    //     if (nextProps.isLoggedIn)
+    //     {
+    //          var data = {
+    //               key : "documents",
+    //               name: "All Documents",
+    //               catId: constans.ALL_DOCUMENTS,
+    //               fId: "",
+    //               sortDirection: constans.ASCENDING,
+    //               sortBy: constans.ASSET_NAME
+    //           }
+    //           this.props._handleNavigate(routes.documentsRoute(data));
+    //     } 
             
-    }
+    // }
 
 
 
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
         }
         // kukudssss1111
 
-       this.props.dispatch(this.props.login(this.state.value.username, this.state.value.password, this.props.env))
+       this.props.dispatch(accessActions.login(this.state.value.username, this.state.value.password, this.props.env))
    }
 
    //aaaaaaa
@@ -317,11 +317,11 @@ const styles = StyleSheet.create({
                     
                     <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
 
-                    <TouchableHighlight
+                    <TouchableWithoutFeedback
                         onPress={ this.NavigateToForgotPassword.bind(this)}
                         >
-                        <Text style={styles.forgotPwd}>Forgot Your Password?</Text>
-                    </TouchableHighlight>
+                        <View ><Text style={styles.forgotPwd}>Forgot Your Password?</Text></View>
+                    </TouchableWithoutFeedback>
                 </View>
             </View>
               )

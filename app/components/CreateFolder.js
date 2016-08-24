@@ -106,7 +106,6 @@ class CreateFolder extends React.Component {
     componentWillReceiveProps(nextprops){
         // alert(nextprops.creatingFolder)
 
-       
         if (nextprops.creatingFolder == 2)
         {
             this.props.closeCreateFolder();
