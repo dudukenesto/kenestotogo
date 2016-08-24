@@ -22,7 +22,7 @@ let styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 5,
+    padding: 9,
   },
   iconStyle: {
     fontSize: 24,
