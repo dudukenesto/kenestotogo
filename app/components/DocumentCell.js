@@ -28,6 +28,9 @@ var {
 } = ReactNative;
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import fontelloConfig from '../assets/icons/config.json';
+import { createIconSetFromFontello } from  'react-native-vector-icons'
+const KenestoIcon = createIconSetFromFontello(fontelloConfig);
 
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
@@ -41,7 +44,7 @@ var DocumentCell = React.createClass({
     }
     
     var imageSource = require('../assets/thumbnail_img.png'); 
-           
+          
     var elementIcon;
     if (this.props.document.HasThumbnail){
       elementIcon = <Image source = {{uri: this.props.document.ThumbnailUrl}} style={styles.previewThumbnail} />
@@ -51,7 +54,7 @@ var DocumentCell = React.createClass({
         elementIcon = <Icon name="folder" style={styles.icon} />
       }
       else {
-        elementIcon = <Icon name="description" style={styles.icon} />
+        elementIcon = <KenestoIcon name={this.props.document.IconName} style={styles.icon} />
       }
     }
       

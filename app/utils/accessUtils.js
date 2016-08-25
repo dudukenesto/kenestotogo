@@ -24,6 +24,17 @@ export function getAuthUrl(env: string,username: string, password: string){
 
 }
 
+export function getEnvIp(env: string){
+
+    var urls = _.find(config.urls, {'env' : env});
+
+    if (urls == null)
+        return null;
+
+    return urls.Ip;
+
+}
+
 export function getForgotPasswordUrl(env: string,username: string){
     var urls = _.find(config.urls, {'env' : env});
 

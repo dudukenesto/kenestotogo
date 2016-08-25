@@ -158,7 +158,8 @@ class Documents extends Component {
         documentId: document.Id,
         catId: documentlist.catId,
         fId: documentlist.fId,
-        viewerUrl: document.ViewerUrl
+        viewerUrl: document.ViewerUrl, 
+        env: this.props.env
       }
       this.props._handleNavigate(routes.documentRoute(data));
     }

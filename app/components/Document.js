@@ -11,7 +11,7 @@ var {
   WebView
 } = ReactNative;
 import Button from './Button'
-import _ from "lodash";
+import {getEnvIp} from '../utils/accessUtils'
 var HEADER = '#3b5998';
 var BGWASH = 'rgba(255,255,255,0.8)';
 var DISABLED_WASH = 'rgba(255,255,255,0.25)';
@@ -93,15 +93,20 @@ class Document extends React.Component{
        
       // </View>
       // </ViewTransformer>
+
   
   render(){
+
+   var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env));
     return(
+
+    
     
       <View style={{ flex: 1 }}>
-        <Text style={styles.title}>{this.documentProps.name}</Text>
+        <Text style={styles.title}>{this.props.data.name}</Text>
         <WebView
           style={styles.webview_body}
-          source={{ uri: this.state.viewerUrl }}
+          source={{ uri: url }}
           onLoadEnd={this.onLoadEnd.bind(this) }
           javaScriptEnabled={true}
           domStorageEnabled={true}
