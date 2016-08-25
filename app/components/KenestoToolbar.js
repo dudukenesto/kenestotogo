@@ -54,7 +54,8 @@ let styles = StyleSheet.create({
     paddingLeft: 10,
   },
   searchBoxContainer: {
-    padding: 5,
+    paddingLeft: 9,
+    paddingRight: 9,
     flexDirection: "row",
     height: 50,
     alignItems: "center",
