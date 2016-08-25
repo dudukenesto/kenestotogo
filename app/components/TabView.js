@@ -3,8 +3,9 @@ import React from "react";
 import {View, Text, StyleSheet, AsyncStorage, ListView, Image } from "react-native";
 import Button from "react-native-button";
 import LeftMenuItem from './LeftMenuItem';
-import {clearCredentials} from '../utils/accessUtils';
- 
+import {updateRouteData} from '../actions/navActions'
+import * as accessActions from '../actions/Access'
+import {connect} from 'react-redux'
 
 const styles = StyleSheet.create({
     screenContainer: {
@@ -139,7 +140,7 @@ class TabView extends React.Component {
     
     render(){
         const drawer = this.context.drawer;
-         
+
         return (
             <View style={styles.screenContainer}>
                 <View style={[styles.headerContainer, this.props.sceneStyle]}>
@@ -175,8 +176,15 @@ class TabView extends React.Component {
 
 
 SelectItem(menuitem : Object){
+        const {dispatch, navReducer, closeDrawer} = this.props
+
         if (menuitem.Index == 6)
-            clearCredentials();
+        {
+            this.props.closeDrawer()
+            dispatch(accessActions.logOut());
+            return;
+        }
+    
         this.loadMenu(menuitem.Index);
        
     }
@@ -216,8 +224,19 @@ renderSeparator( sectionID: number | string,
 
 }
 
+function mapStateToProps(state) {
+  const { documentlists, navReducer} = state
+  const {env, sessionToken } = state.accessReducer;
+  return {
+    documentlists,
+    navReducer,
+    env,
+    sessionToken
 
-module.exports = TabView;
+  }
+}
+
+export default connect(mapStateToProps)(TabView)
 
 // TabView.contextTypes = {
 //     drawer: React.PropTypes.object

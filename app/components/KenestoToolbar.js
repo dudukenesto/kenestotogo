@@ -181,7 +181,9 @@ class KenestoToolbar extends Component {
     var documentlist = getDocumentsContext(this.props);
     // const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
-    var showGoBack = navReducer.routes.length > 1 && ((navReducer.routes[1].key === 'login' && navReducer.index > 2) || (navReducer.routes[1].key.indexOf('documents') > -1 && navReducer.index > 1)) ? true : false; //navReducer.index > 1?true:false;
+    var title = navReducer.routes[navReducer.index].data.name;
+    var showGoBack = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1 && navReducer.routes[navReducer.index].data.fId != "") || navReducer.routes[navReducer.index].key === 'document' ? true : false;
+    var isDocumentsTollbar = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1) ? true : false;
 
     return (
       <View style= {styles.toolbar} >
@@ -194,9 +196,10 @@ class KenestoToolbar extends Component {
 
         </View>
         <View style={styles.folderName}>
-          <Text style={{ fontSize: 20 }}>Folder Name</Text>
+          <Text style={{ fontSize: 20 }}>{title}</Text>
         </View>
-        <View style={{ flexDirection: "row" }}>
+        {isDocumentsTollbar ?
+          <View style={{ flexDirection: "row" }}>
           <Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
 
 
@@ -220,9 +223,9 @@ class KenestoToolbar extends Component {
             </View>
           </View>
         </View>
-
-
-
+          :
+          <View></View>
+        }
       </View>
     )
   }
