@@ -1,8 +1,10 @@
 import * as types from '../constants/ActionTypes';
 import {getAuthUrl, getLoginUrl, getForgotPasswordUrl, clearCredentials, setCredentials} from '../utils/accessUtils';
 import { push, pop, emitInfo, emitError, navigateReset} from './navActions'
+
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
+import {clearDocumentlists} from '../actions/documentlists'
 var stricturiEncode = require('strict-uri-encode');
 
 export function updateIsFetching(isFetching: boolean){
@@ -102,7 +104,9 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
 export function logOut() {
     return (dispatch, getstate) => {
         clearCredentials();
-        return dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
+        dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
+        dispatch(clearDocumentlists());
+
     }
 }
 

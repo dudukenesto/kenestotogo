@@ -94,16 +94,33 @@ class Documents extends Component {
 
   componentWillMount() {
     const {dispatch} = this.props
+    console.log("documents componentWillMount")
     dispatch(fetchTableIfNeeded())
   }
 
 
-
+// shouldComponentUpdate(nextProps, nextState) {
+//  console.log("nextProps: "+JSON.stringify(nextProps) + "," +JSON.stringify(nextState))
+//   var documentlist = getDocumentsContext(this.props);
+// if( nextProps.data.catId ==undefined ||  nextProps.data.catId == '' || nextProps.data.catId != documentlist.catId)
+// {
+// alert(nextProps.data.catId)
+//   return true;
+// }
+// else
+// {
+//   alert(nextProps.data.catId)
+  
+// }
+  
+}
   componentDidUpdate() {
     this._showStatusBar()
   }
+ 
   onEndReached() {
     const {dispatch} = this.props
+    console.log("documents onEndReached")
     dispatch(fetchTableIfNeeded())
   }
 
@@ -271,10 +288,12 @@ class Documents extends Component {
 }
 
   render() {
-    console.log("render")
+    
     const {dispatch, documentlists,navReducer } = this.props
-    var currRoute = navReducer.routes[navReducer.index];
+    
+    //var currRoute = navReducer.routes[navReducer.index];
     var documentlist = getDocumentsContext(this.props);
+    console.log("render documents page: " +JSON.stringify(documentlist))
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
     var additionalStyle = {};
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
