@@ -213,14 +213,13 @@ return (dispatch, getState) => {
     return fetch(createFolderUrl)
       .then(response => response.json())
       .then(json => {
-        json.ResponseData.ResponseStatus = "FAILED"
         if (json.ResponseData.ResponseStatus == "FAILED") {
          // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
            
 
            dispatch(UpdateCreateingFolderState(2))
 
-           dispatch(navActions.emitError('Error creating new folder','error details'))
+           dispatch(navActions.emitError("Error creating new folder"))
         }
         else {
              dispatch(UpdateCreateingFolderState(2))
