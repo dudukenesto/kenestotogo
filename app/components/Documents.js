@@ -99,21 +99,6 @@ class Documents extends Component {
   }
 
 
-// shouldComponentUpdate(nextProps, nextState) {
-//  console.log("nextProps: "+JSON.stringify(nextProps) + "," +JSON.stringify(nextState))
-//   var documentlist = getDocumentsContext(this.props);
-// if( nextProps.data.catId ==undefined ||  nextProps.data.catId == '' || nextProps.data.catId != documentlist.catId)
-// {
-// alert(nextProps.data.catId)
-//   return true;
-// }
-// else
-// {
-//   alert(nextProps.data.catId)
-  
-// }
-  
-}
   componentDidUpdate() {
     this._showStatusBar()
   }
