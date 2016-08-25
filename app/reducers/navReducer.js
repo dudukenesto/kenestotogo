@@ -8,6 +8,7 @@ const {
 const initialState = {
   index: 0,
   key: 'root',
+  lastActionType:"",
   routes: [
     {
       key: 'KenestoLauncher',
@@ -20,15 +21,19 @@ function navigationState(state = initialState, action) {
   switch (action.type) {
     case PUSH_ROUTE:
       if (state.routes[state.index].key === (action.route && action.route.key)) return state
+      state.lastActionType = PUSH_ROUTE;
       return NavigationStateUtils.push(state, action.route)
     case POP_ROUTE:
       if (state.index === 0 || state.routes.length === 1) return state
+      state.lastActionType = POP_ROUTE;
       return NavigationStateUtils.pop(state)
 
     case NAV_JUMP_TO_KEY:
+     state.lastActionType = NAV_JUMP_TO_KEY;
       return NavigationStateUtils.jumpTo(state, action.key)
 
     case NAV_JUMP_TO_INDEX:
+      state.lastActionType = NAV_JUMP_TO_INDEX;
       return NavigationStateUtils.jumpToIndex(state, action.index)
 
     case NAV_RESET:
@@ -36,13 +41,15 @@ function navigationState(state = initialState, action) {
 			  ...state,
         key: action.key,
         index: action.index,
-        routes: action.routes
+        routes: action.routes,
+        lastActionType:NAV_RESET
       }
 
     case UPDATE_ROUTE_DATA:
       state.routes[state.index].data = action.routeData;
       return {
-        ...state
+        ...state,
+        lastActionType:UPDATE_ROUTE_DATA
       }
     case SUBMIT_INFO:
       return {
