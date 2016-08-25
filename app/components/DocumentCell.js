@@ -41,7 +41,7 @@ var DocumentCell = React.createClass({
     }
     
     var imageSource = require('../assets/thumbnail_img.png'); 
-           
+          
     var elementIcon;
     if (this.props.document.HasThumbnail){
       elementIcon = <Image source = {{uri: this.props.document.ThumbnailUrl}} style={styles.previewThumbnail} />
@@ -51,6 +51,7 @@ var DocumentCell = React.createClass({
         elementIcon = <Icon name="folder" style={styles.icon} />
       }
       else {
+        debugger;
         elementIcon = <Icon name="description" style={styles.icon} />
       }
     }
