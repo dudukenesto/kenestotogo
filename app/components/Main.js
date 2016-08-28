@@ -124,6 +124,8 @@ class Main extends React.Component {
         };
          this.onActionSelected = this.onActionSelected.bind(this);
          this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
+        const {dispatch} = this.props
+        dispatch(documentsActions.clearDocumentlists());
   }
 
   onPressPopupMenu() {
