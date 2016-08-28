@@ -1,6 +1,7 @@
 import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
 import {constructRetrieveDocumentsUrl, getCreateFolderUrl,getDocumentsContext} from '../utils/documentsUtils'
+import * as routes from '../constants/routes'
 import _ from "lodash";
 let React = require('react-native')
 let {
@@ -17,7 +18,9 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
       .then(json => {
         const nextUrl = json.ResponseData.next_href
         if (json.ResponseData.ResponseStatus == "FAILED") {
-          dispatch(failedToFetchDocumentsList(documentlist, url, json.ResponseData.ErrorMessage))
+          //dispatch(failedToFetchDocumentsList(documentlist, url, json.ResponseData.ErrorMessage))
+           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,'error details'))
+           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
         }
         else {
           var prevState = getState();
@@ -33,8 +36,9 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             i,
             j;
 
-          totalFiles = json.ResponseData.TotalFiles;
-          totalFolders = json.ResponseData.TotalFolders;
+         var totalFiles = json.ResponseData.TotalFiles;
+         var totalFolders = json.ResponseData.TotalFolders;
+         
           if (actionType == types.RECEIVE_DOCUMENTS) {
             items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
           }
@@ -46,43 +50,62 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
           var sortBarTitle = `Folders`
-          if(totalFolders && totalFiles)
+          if(totalFolders > 0 && totalFiles > 0)
           {
             dataBlob["ID1"] = `Folders (${totalFolders})`
             dataBlob["ID2"] = `Files (${totalFiles})`
             sectionIDs[0] = "ID1";
             sectionIDs[1] = "ID2";
+            rowIDs[0] = [];
+            for (j = 0; j < folders.length; j++) {
+              folder = folders[j];
+              // Add Unique Row ID to RowID Array for Section
+              rowIDs[0].push(folder.Id);
+
+              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+              dataBlob['ID1:' + folder.Id] = folder;
+            }
+
+            rowIDs[1] = [];
+            for (j = 0; j < documents.length; j++) {
+              document = documents[j];
+              // Add Unique Row ID to RowID Array for Section
+              rowIDs[1].push(document.Id);
+
+              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+              dataBlob['ID2:' + document.Id] = document;
+            }
           }
-          else if(totalFolders)
+          else if(totalFolders > 0)
           {
              dataBlob["ID1"] = `Folders (${totalFolders})`
-              sectionIDs[0] = "ID1";
+            sectionIDs[0] = "ID1";
+              rowIDs[0] = [];
+              for (j = 0; j < folders.length; j++) {
+                folder = folders[j];
+                // Add Unique Row ID to RowID Array for Section
+                rowIDs[0].push(folder.Id);
+
+                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                dataBlob['ID1:' + folder.Id] = folder;
+              }
           }
-          else if(totalFiles)
+          else if(totalFiles > 0)
           {
              dataBlob["ID1"] = `Files (${totalFiles})`
              sectionIDs[0] = "ID1";
+              rowIDs[0] = [];
+              for (j = 0; j < documents.length; j++) {
+                document = documents[j];
+                // Add Unique Row ID to RowID Array for Section
+                rowIDs[0].push(document.Id);
+
+                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                dataBlob['ID1:' + document.Id] = document;
+              }
           }
 
-          rowIDs[0] = [];
-          for (j = 0; j < folders.length; j++) {
-            folder = folders[j];
-            // Add Unique Row ID to RowID Array for Section
-            rowIDs[0].push(folder.Id);
 
-            // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-            dataBlob['ID1:' + folder.Id] = folder;
-          }
-
-          rowIDs[1] = [];
-          for (j = 0; j < documents.length; j++) {
-            document = documents[j];
-            // Add Unique Row ID to RowID Array for Section
-            rowIDs[1].push(document.Id);
-
-            // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-            dataBlob['ID2:' + document.Id] = document;
-          }
 
           var getSectionData = (dataBlob, sectionID) => {
             return dataBlob[sectionID];
@@ -112,15 +135,21 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
       })
       .catch((error) => {
         console.log("error:" + JSON.stringify(error))
-        dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
+        //dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
+        dispatch(navActions.emitError("Failed to retrieve documents",""))
+
+
       })
   }
 }
 
+
 export function fetchTableIfNeeded() {
   return (dispatch, getState) => {
+   
     var documentlist = getDocumentsContext(getState());
     const {documentlists} = getState()
+     console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
     if (shouldFetchDocuments(documentlists, documentlist)) {
       const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlists, documentlist)
       return dispatch(fetchDocumentsTable(nextUrl, documentlist, types.RECEIVE_DOCUMENTS))
@@ -137,6 +166,11 @@ export function refreshTable(documentlist: Object) {
   }
 }
 
+export function clearDocumentlists() {
+  return {
+    type: types.CLEAR_DOCUMENTS
+  }
+}
 function getNextUrl(env: string, sessionToken: string, documentlists: Object, documentlist: Object) {
 
   const activeDocumentsList = documentlists[documentlist.catId]
@@ -213,14 +247,13 @@ return (dispatch, getState) => {
     return fetch(createFolderUrl)
       .then(response => response.json())
       .then(json => {
-        json.ResponseData.ResponseStatus = "FAILED"
         if (json.ResponseData.ResponseStatus == "FAILED") {
          // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
            
 
            dispatch(UpdateCreateingFolderState(2))
 
-           dispatch(navActions.emitError('Error creating new folder','error details'))
+           dispatch(navActions.emitError("Error creating new folder"))
         }
         else {
              dispatch(UpdateCreateingFolderState(2))

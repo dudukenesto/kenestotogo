@@ -38,6 +38,7 @@ var getImageSource = require('./GetImageSource');
 
 var DocumentCell = React.createClass({
   render: function() {
+   
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
@@ -54,7 +55,10 @@ var DocumentCell = React.createClass({
         elementIcon = <Icon name="folder" style={styles.icon} />
       }
       else {
-        elementIcon = <KenestoIcon name={this.props.document.IconName} style={styles.icon} />
+        if (typeof this.props.document.IconName != 'undefined')
+          elementIcon = <KenestoIcon name={this.props.document.IconName} style={styles.icon} />
+        else
+          elementIcon = <Icon name="description" style={styles.icon} />
       }
     }
       

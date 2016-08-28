@@ -6,5 +6,13 @@ let {
   Alert
 } = React
 
-
+export function updateDocumentList(documentList) {
+  return {
+    type: types.UPDATE_DOCUMENTS_LIST,
+    name: documentList.name,
+    catId: documentList.catId,
+    fId:  documentList.fId,
+    sortDirection: documentList.sortDirection,
+    sortBy: documentList.sortBy
+  }
 }
