@@ -15,7 +15,7 @@ import {View,
 } from 'react-native'
 
 
-
+import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import fontelloConfig from '../assets/icons/config.json';
@@ -61,7 +61,7 @@ class Documents extends Component {
     this.onEndReached = this.onEndReached.bind(this)
     this.selectItem = this.selectItem.bind(this)
     this._onRefresh = this._onRefresh.bind(this)
-    this._onSort = this._onSort.bind(this)
+    // this._onSort = this._onSort.bind(this)
   }
 
   getCategoryName(categoryType) {
@@ -180,13 +180,13 @@ class Documents extends Component {
     dispatch(refreshTable(documentlist))
   }
 
-  _onSort(sortDirection, sortBy) {
-    const {dispatch} = this.props
-    var documentlist = getDocumentsContext(this.props);
-    documentlist.sortDirection = sortDirection;
-    documentlist.sortBy;
-    dispatch(refreshTable(documentlist));
-  }
+  // _onSort(sortDirection, sortBy) {
+  //   const {dispatch} = this.props
+  //   var documentlist = getDocumentsContext(this.props);
+  //   documentlist.sortDirection = sortDirection;
+  //   documentlist.sortBy;
+  //   dispatch(refreshTable(documentlist));
+  // }
 
   _renderSectionHeader(sectionData, sectionID) {
    
@@ -305,9 +305,16 @@ var NoDocuments = React.createClass({
   render: function () {
     var text = 'No documents found';
     if (this.props.isFetching) {
-      return false;
+      return (
+        <View style={[styles.container, styles.centerText]}>
+          <View style={styles.textContainer}>
+            <Text>Please wait...</Text>
+            <ProggressBar isLoading={true} />
+          </View>
+        </View>)
     }
-
+    else
+    {
     return (
       <View style={[styles.container, styles.centerText]}>
         <View style={styles.textContainer}>
@@ -318,6 +325,7 @@ var NoDocuments = React.createClass({
         </View>        
       </View>
     );
+  }
   }
 });
 
@@ -393,7 +401,7 @@ var styles = StyleSheet.create({
         color: "#666666",
         fontWeight: "normal",
         fontSize: 18, 
-   },
+   }
 });
 
 Documents.contextTypes = {
