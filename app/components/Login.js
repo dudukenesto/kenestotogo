@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image, KeyboardAvoidingView, ScrollView} from "react-native";
+import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image} from "react-native";
 import Button from "react-native-button";
 import Tcomb from "tcomb-form-native";
 import config from '../utils/app.config';
@@ -286,9 +286,8 @@ const styles = StyleSheet.create({
 
                             
             return(
-                <View style={[this.props.style, styles.formContainer]}>
-                    <KeyboardAvoidingView behavior={"padding"} style={{flex: 1}}>
-                    
+                <KeyboardAwareScrollView style={{flex:1}}>
+                    <View style={{height: 420}}>
                         {this._renderProgressBar()}
                         <View style={styles.logoContainer}><Image source={require('../assets/kenesto_logo.png')} style={styles.logo}></Image></View>
                         <View style={styles.form}><Form
@@ -301,15 +300,14 @@ const styles = StyleSheet.create({
                             
                             <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
 
-                            <TouchableWithoutFeedback
-                                onPress={ this.NavigateToForgotPassword.bind(this)}
-                                >
-                                <View ><Text style={styles.forgotPwd}>Forgot Your Password?</Text></View>
+                            <TouchableWithoutFeedback onPress={ this.NavigateToForgotPassword.bind(this)} >
+                                <View>
+                                    <Text style={styles.forgotPwd}>Forgot Your Password?</Text>
+                                </View>
                             </TouchableWithoutFeedback>
-                        </View>
-                       
-                    </KeyboardAvoidingView>                
-                </View>
+                        </View>     
+                    </View>                
+                </KeyboardAwareScrollView>
               )
     }
 
