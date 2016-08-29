@@ -68,27 +68,29 @@ export default function documentlists(state = {}, action) {
     case types.REFRESH_DOCUMENTS_LIST:
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action),
-        
+
       })
-    case types.REQUEST_CREATE_FOLDER : {
-       return {
+    case types.REQUEST_CREATE_FOLDER: {
+      return {
         ...state,
-        creatingFolder : action.creatingFolder
+        creatingFolder: action.creatingFolder
       }
     }
+
     case types.SUBMIT_ERROR:
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action)
       })
+
     case types.CLEAR_DOCUMENTS:
-      return  {
-          isFetching: false,
-          items: [],
-          nextUrl: false,
-          errorMessage: '',
-          hasError: false,
-          dataSource: {}
-      }   
+      return {
+        isFetching: false,
+        items: [],
+        nextUrl: false,
+        errorMessage: '',
+        hasError: false,
+        dataSource: {}
+      }
     default:
       return state
   }

@@ -21,7 +21,7 @@ import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
 import Info from './Info'
-
+import Confirm from './Confirm'
 
 let styles = StyleSheet.create({
   container: {
@@ -235,6 +235,9 @@ class Main extends React.Component {
     if (nextprops.navReducer.HasInfo) {
       this.openModal("infoModal");
     }
+    if (nextprops.navReducer.HasConfirm) {
+      this.openModal("confirmModal");
+    }
   }
 
     render(){
@@ -277,6 +280,9 @@ class Main extends React.Component {
                 </Modal>
                 <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}>
                     <Info closeModal = {() => this.closeModal("infoModal")} openModal = {() => this.openModal("infoModal")}/>
+                </Modal>
+                <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"confirmModal"} isDisabled={false}>
+                    <Confirm closeModal = {() => this.closeModal("confirmModal")} openModal = {() => this.openModal("confirmModal")}/>
                 </Modal>
                        
                  {showPopupMenu ?

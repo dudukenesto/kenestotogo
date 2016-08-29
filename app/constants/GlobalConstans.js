@@ -1,4 +1,8 @@
 export const ALL_DOCUMENTS = 'ALL_DOCUMENTS'
+export const MY_DOCUMENTS = 'MY_DOCUMENTS'
+export const DOCUMENTS_SHARE_WITH_ME = 'DOCUMENTS_SHARE_WITH_ME'
+export const CHECKED_OUT_DOCUMENTS = 'CHECKED_OUT_DOCUMENTS'
+export const ARCHIVED_DOCUMENTS = 'ARCHIVED_DOCUMENTS'
 export const ASCENDING = 'asc'
 export const DESCENDING = 'desc'
 export const ASSET_NAME = 'asset_name'

@@ -1,5 +1,5 @@
 import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO } from '../constants/ActionTypes'
+  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM} from '../constants/ActionTypes'
 
 export function push (route) {
   return {
@@ -43,6 +43,7 @@ export function updateRouteData (routeData) {
     routeData
   }
 }
+
 export function emitError(errorTitle: string, errorDetails: string, okAction: Object = null){
   return {
     type: SUBMIT_ERROR, 
@@ -52,10 +53,24 @@ export function emitError(errorTitle: string, errorDetails: string, okAction: Ob
   }
   
 }
-
 export function clearError(){
   return {
     type: CLEAR_ERROR
+  }
+}
+
+export function emitConfirm(confirmTitle: string, confirmDetails: string, okAction: Object = null){
+  return {
+    type: SUBMIT_CONFIRM, 
+    confirmTitle: confirmTitle, 
+    confirmDetails: confirmDetails,
+    confirmOkAction: okAction
+  }
+  
+}
+export function clearConfirm(){
+  return {
+    type: CLEAR_CONFIRM
   }
 }
 

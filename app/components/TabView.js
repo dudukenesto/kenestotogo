@@ -3,7 +3,8 @@ import React from "react";
 import {View, Text, StyleSheet, AsyncStorage, ListView, Image } from "react-native";
 import Button from "react-native-button";
 import LeftMenuItem from './LeftMenuItem';
-import {updateRouteData} from '../actions/navActions'
+import {updateRouteData, emitConfirm} from '../actions/navActions'
+
 import * as accessActions from '../actions/Access'
 import {connect} from 'react-redux'
 
@@ -181,7 +182,7 @@ SelectItem(menuitem : Object){
         if (menuitem.Index == 6)
         {
             this.props.closeDrawer()
-            dispatch(accessActions.logOut());
+            dispatch(emitConfirm("Log Out", "Are you sure you want to Log Out?",() => dispatch(accessActions.logOut())))
             return;
         }
     
