@@ -102,18 +102,20 @@ class Document extends React.Component{
 
     
     
-      <View style={{ flex: 1 }}>
-        <Text style={styles.title}>{this.props.data.name}</Text>
-        <WebView
-          style={styles.webview_body}
-          source={{ uri: url }}
-          onLoadEnd={this.onLoadEnd.bind(this) }
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          startInLoadingState={true}
-          scalesPageToFit={true}
-          renderLoading={this.renderLoading}
-          />
+      <View style={{ flex: 1}}>
+        
+          <View style={{flex: 1, backgroundColor: 'transparent', }}>
+            <WebView
+              style={styles.webview_body}
+              source={{ uri: url }}
+              onLoadEnd={this.onLoadEnd.bind(this) }
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              startInLoadingState={true}
+              scalesPageToFit={true}
+              renderLoading={this.renderLoading}
+              />
+          </View>
 
       </View>
 
@@ -230,7 +232,10 @@ var styles = StyleSheet.create({
         justifyContent: 'center'
     },
     webview_body: {
-        flex: 9
+        flex: 1,
+        backgroundColor: 'transparent',
+        // width: 300,
+        // height: 400,
     },
     
     page_title: {
