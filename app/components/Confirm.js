@@ -17,7 +17,7 @@ var styles = StyleSheet.create({
         padding: 20,
     },
     titleContainer: {
-        flex: 1,
+        flex: 3,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -25,22 +25,16 @@ var styles = StyleSheet.create({
         fontSize: 20,
         color: "#000",
         alignSelf: "center",
+        color: "#FA8302",
     },
-    nameContainer: {
-        flex: 1,
+    messageContainer: {
+        flex: 2,
         flexDirection:'row',
         alignItems: "center",
     },
-    icon: {
-        color: '#000',
-        fontSize: 32,
-        height: 30,
-        position: "absolute",
-        top: 18
-    },
-    textEdit: {
+    messageText: {
         flex: 1,
-        color: "#000",
+        color: "#888",
         height: 50,            
         fontSize: 17,
         paddingLeft: 40,
@@ -48,10 +42,12 @@ var styles = StyleSheet.create({
         textAlign: "center"
     },
     buttonsContainer: {
-        flex: 1,
+        flex: 2,
         flexDirection: "row",
-        justifyContent: 'space-between',
+        alignItems: "flex-end",
         marginTop: 30,
+        justifyContent: 'space-between',
+        alignSelf: "stretch", 
    },
    singleBtnContainer: {
         width: 135,
@@ -66,16 +62,6 @@ var styles = StyleSheet.create({
         fontWeight: "normal",
         fontSize: 18, 
    },
-    creatingFolder: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor:"white",
-   },
-    processingMessage: {
-        fontSize: 16,
-        marginRight: 40
-    },
 });
 
 class Confirm extends React.Component {
@@ -111,8 +97,8 @@ class Confirm extends React.Component {
                     <View style={styles.titleContainer}>
                         <Text style={styles.title}>{this.state.confirmTitle}</Text>
                     </View>
-                    <View style={styles.nameContainer}>
-                         <Text style={styles.textEdit}>{this.state.confirmDetails}</Text>
+                    <View style={styles.messageContainer}>
+                         <Text style={styles.messageText}>{this.state.confirmDetails}</Text>
                     </View>
                       <View style={styles.buttonsContainer}>
                         <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Ok</Button>
