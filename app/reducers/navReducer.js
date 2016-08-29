@@ -1,5 +1,5 @@
 import { PUSH_ROUTE, POP_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO } from '../constants/ActionTypes'
+  SUBMIT_INFO, CLEAR_INFO,SUBMIT_CONFIRM, CLEAR_CONFIRM} from '../constants/ActionTypes'
 import { NavigationExperimental } from 'react-native'
 const {
   StateUtils: NavigationStateUtils
@@ -64,7 +64,6 @@ function navigationState(state = initialState, action) {
       return {
         ...state,
         HasInfo: false,
-
       }
     case SUBMIT_ERROR:
       return {
@@ -73,6 +72,20 @@ function navigationState(state = initialState, action) {
         GlobalErrorTitle: action.errorTitle, 
         GlobalErrorDetails: action.errorDetails,
         GlobalErrorOkAction: action.errorOkAction
+      }
+
+    case SUBMIT_CONFIRM:
+      return {
+        ...state, 
+        HasConfirm: true, 
+        GlobalConfirmTitle: action.confirmTitle, 
+        GlobalConfirmDetails: action.confirmDetails,
+        GlobalConfirmOkAction: action.confirmOkAction
+      }
+    case CLEAR_CONFIRM:
+      return {
+        ...state,
+        HasConfirm: false,
       }
     case CLEAR_ERROR:
       return {
