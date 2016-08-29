@@ -56,9 +56,9 @@ var DocumentCell = React.createClass({
       }
       else {
         if (typeof this.props.document.IconName != 'undefined')
-          elementIcon = <KenestoIcon name={this.props.document.IconName} style={styles.icon} />
+          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={this.props.document.IconName} style={styles.icon} /></View>
         else
-          elementIcon = <Icon name="description" style={styles.icon} />
+          elementIcon = <View style={styles.iconFiletype}><Icon name="description" style={styles.icon} /></View>
       }
     }
       
@@ -87,7 +87,7 @@ var DocumentCell = React.createClass({
             </View>
             <TouchableElement onPress={menuPressed}>
               <View style={styles.iconContainer}>
-                <Icon name="more-vert" style={styles.icon} />
+                <Icon name="more-vert" style={styles.moreMenu} />
               </View>
             </TouchableElement>
           </View>
@@ -100,7 +100,7 @@ var DocumentCell = React.createClass({
 var styles = StyleSheet.create({
   textContainer: {
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 7,
   },
   documentTitle: {
     //flex: 1,
@@ -116,24 +116,38 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     flexDirection: 'row',
-    padding: 5,
-    
+    padding: 5,    
   },
   iconContainer: {
     height: 57,
     width: 57,
     alignItems: 'center',
     justifyContent: "center",
+    marginLeft: 10
   },
   previewThumbnail: {
     height: 40,
     width: 55,
+    borderWidth: 0.5,
+    borderColor: "#999"
   },
   icon: {
-    fontSize: 22,
+    fontSize: 16,
     color: '#888',    
     
   },
+  iconFiletype: {
+    height: 40,
+    width: 55,
+    alignItems: 'center',
+    justifyContent: "center",
+    borderWidth: 0.5,
+    borderColor: "#999"
+  },
+  moreMenu: {
+    fontSize: 22,
+    color: '#888', 
+  }
   
 });
 
