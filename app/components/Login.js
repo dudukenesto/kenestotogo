@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image, } from "react-native";
+import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image, KeyboardAvoidingView, ScrollView} from "react-native";
 import Button from "react-native-button";
 import Tcomb from "tcomb-form-native";
 import config from '../utils/app.config';
@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import * as constans from '../constants/GlobalConstans'
 import * as accessActions from '../actions/Access'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 var stricturiEncode = require('strict-uri-encode');
 
 var Form = Tcomb.form.Form;
@@ -284,26 +285,31 @@ const styles = StyleSheet.create({
 };
 
                             
-            return(<View style={[this.props.style, styles.formContainer]}>
-                {this._renderProgressBar()}
-                <View style={styles.logoContainer}><Image source={require('../assets/kenesto_logo.png')} style={styles.logo}></Image></View>
-                <View style={styles.form}><Form
-                            ref="form"
-                            type={User}
-                            value={this.state.value}
-                            onChange={this.onChange.bind(this)}
-                            options={options}
-                        />
+            return(
+                <View style={[this.props.style, styles.formContainer]}>
+                    <KeyboardAvoidingView behavior={"padding"} style={{flex: 1}}>
                     
-                    <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
+                        {this._renderProgressBar()}
+                        <View style={styles.logoContainer}><Image source={require('../assets/kenesto_logo.png')} style={styles.logo}></Image></View>
+                        <View style={styles.form}><Form
+                                    ref="form"
+                                    type={User}
+                                    value={this.state.value}
+                                    onChange={this.onChange.bind(this)}
+                                    options={options}
+                                />
+                            
+                            <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
 
-                    <TouchableWithoutFeedback
-                        onPress={ this.NavigateToForgotPassword.bind(this)}
-                        >
-                        <View ><Text style={styles.forgotPwd}>Forgot Your Password?</Text></View>
-                    </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback
+                                onPress={ this.NavigateToForgotPassword.bind(this)}
+                                >
+                                <View ><Text style={styles.forgotPwd}>Forgot Your Password?</Text></View>
+                            </TouchableWithoutFeedback>
+                        </View>
+                       
+                    </KeyboardAvoidingView>                
                 </View>
-            </View>
               )
     }
 
