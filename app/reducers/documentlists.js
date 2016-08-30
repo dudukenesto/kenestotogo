@@ -1,5 +1,5 @@
 import * as types from '../constants/ActionTypes'
-
+import {getDocumentsTitle} from '../utils/documentsUtils'
 let React = require('react-native')
 function documentlist(state = {
   isFetching: false,

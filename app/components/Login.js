@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
     //     {
     //          var data = {
     //               key : "documents",
-    //               name: "All Documents",
-    //               catId: constans.ALL_DOCUMENTS,
+    //               name: "My Documents",
+    //               catId: constans.MY_DOCUMENTS,
     //               fId: "",
     //               sortDirection: constans.ASCENDING,
     //               sortBy: constans.ASSET_NAME

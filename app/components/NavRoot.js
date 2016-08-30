@@ -61,35 +61,59 @@ class NavRoot extends Component {
       return <Document _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
   }
+  _isMenuModalOpen() {
+    return this.props.isMenuModalOpen();
+  }
+  _isDrawerOpen() {
+    return this.props.isDrawerOpen();
+  }
 
+ _closeDrawer() {
+    this.props.closeDrawer();
+    
+  }
+  _closeMenuModal() {
+    this.props.closeMenuModal();
+  }
+  
   _handleBackAction() {
-
-    if (this.props.navigation.routes[this.props.navigation.routes.length-1].key == 'forgotPassword'){
-        this.props.popRoute()
-         return true
+    if (this._isMenuModalOpen()) {
+      this._closeMenuModal();
+      return true;
     }
-   
-    if ((this.props.navigation.routes[this.props.navigation.index].key.indexOf('documents') > -1 && this.props.navigation.routes[this.props.navigation.index].data.fId != "") || this.props.navigation.routes[this.props.navigation.index].key === 'document') {
-      this.props.popRoute()
-      return true
+    else if(this._isDrawerOpen())
+    {
+      this._closeDrawer();
+      return true;
     }
     else {
-      return false
+      if (this.props.navigation.routes[this.props.navigation.routes.length - 1].key == 'forgotPassword') {
+        this.props.popRoute()
+        return true
+      }
+
+      if ((this.props.navigation.routes[this.props.navigation.index].key.indexOf('documents') > -1 && this.props.navigation.routes[this.props.navigation.index].data.fId != "") || this.props.navigation.routes[this.props.navigation.index].key === 'document') {
+        this.props.popRoute()
+        return true
+      }
+      else {
+        return false
+      }
     }
 
   }
 
   _handleNavigate(action) {
-    switch (action && action.type) {
-      case 'push':
-        this.props.pushRoute(action.route)
-        return true
-      case 'back':
-      case 'pop':
-        return this._handleBackAction()
-      default:
-        return false
-    }
+      switch (action && action.type) {
+        case 'push':
+          this.props.pushRoute(action.route)
+          return true
+        case 'back':
+        case 'pop':
+          return this._handleBackAction()
+        default:
+          return false
+      }
   }
   render() {
     return (
