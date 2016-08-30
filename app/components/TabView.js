@@ -1,6 +1,6 @@
 
 import React from "react";
-import {View, Text, StyleSheet, AsyncStorage, ListView, Image } from "react-native";
+import {View, ScrollView, Text, StyleSheet, AsyncStorage, ListView, Image } from "react-native";
 import Button from "react-native-button";
 import LeftMenuItem from './LeftMenuItem';
 import {updateRouteData, emitConfirm} from '../actions/navActions'
@@ -154,7 +154,7 @@ class TabView extends React.Component {
                     </View>
                                         
                 </View>
-                <View>
+                <ScrollView showsVerticalScrollIndicator={false}>
                     <ListView 
                         ref="MenuList"
                         renderSeparator={this.renderSeparator.bind(this)}
@@ -168,7 +168,7 @@ class TabView extends React.Component {
                         showsVerticalScrollIndicator={false}
                     />
                 
-                </View>
+                </ScrollView>
             </View>
             
         );
