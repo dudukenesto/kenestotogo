@@ -1,5 +1,5 @@
 import React from "react";
-import {View, Text, TextInput, StyleSheet} from "react-native";
+import {View, Text, TextInput, StyleSheet, ScrollView} from "react-native";
 import Tcomb from "tcomb-form-native";
 import Button from "react-native-button";
 import config from '../utils/app.config';
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
 
     render(){
         return (
-            
+         <ScrollView style={{flex:1, backgroundColor: "#fff"}} showsVerticalScrollIndicator={false}>   
           <View style={[styles.container, this.props.style]}>
             <View style={{flex: 1}}>
                         <View style={styles.titleContainer}>
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
                         </View>
                     </View>
           </View>
-       
+       </ScrollView>
         );
     }
 }
