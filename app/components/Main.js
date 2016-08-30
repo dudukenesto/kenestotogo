@@ -163,8 +163,8 @@ class Main extends React.Component {
     }
   }
   onSortBy(sortBy) {
-    const {dispatch} = this.props
-    var currRouteData = getDocumentsContext(this.props);
+    const {dispatch, navReducer} = this.props
+    var currRouteData = getDocumentsContext(navReducer);
     var routeData =
       {
         name: currRouteData.name,
@@ -178,8 +178,8 @@ class Main extends React.Component {
   }
 
   onSortDirection() {
-    const {dispatch} = this.props
-    var currRouteData = getDocumentsContext(this.props);
+    const {dispatch, navReducer} = this.props
+    var currRouteData = getDocumentsContext(navReducer);
     var sortDirection = currRouteData.sortDirection == constans.ASCENDING ? constans.DESCENDING : constans.ASCENDING;
     var routeData =
       {
@@ -262,7 +262,7 @@ class Main extends React.Component {
 
     var showPopupMenu = this.state.isPopupMenuOpen;
     var showKenestoToolbar = navReducer.routes[navReducer.index].key === 'login' || navReducer.routes[navReducer.index].key === 'forgotPassword' || navReducer.routes[navReducer.index].key === 'KenestoLauncher' ? false : true;
-    var documentlist = getDocumentsContext(this.props);
+    var documentlist = getDocumentsContext(navReducer);
     const sortBy = documentlist.sortBy;
 
     return (

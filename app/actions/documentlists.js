@@ -147,7 +147,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 export function fetchTableIfNeeded() {
   return (dispatch, getState) => {
    
-    var documentlist = getDocumentsContext(getState());
+    var documentlist = getDocumentsContext(getState().navReducer);
     const {documentlists} = getState()
      console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
     if (shouldFetchDocuments(documentlists, documentlist)) {
@@ -239,7 +239,7 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
 export function createFolder(folderName: string){
 
 return (dispatch, getState) => {
-   var documentlist = getDocumentsContext(getState());
+   var documentlist = getDocumentsContext(getState().navReducer);
     const {sessionToken, env} = getState().accessReducer; 
     const folderId = documentlist.fId; 
     const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName);

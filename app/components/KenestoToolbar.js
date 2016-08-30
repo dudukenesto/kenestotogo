@@ -135,7 +135,7 @@ class KenestoToolbar extends Component {
 
   // getToolbarActions() {
   //   const {navReducer} = this.props
-  //   var documentlist = getDocumentsContext(this.props);
+  //   var documentlist = getDocumentsContext(this.props.navReducer);
   //   // const sortBy = documentlist.sortBy;
   //   const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
   //   var toolbarActions = [];
@@ -179,7 +179,7 @@ class KenestoToolbar extends Component {
 
   renderIconsSet() {
     const {navReducer} = this.props
-    var documentlist = getDocumentsContext(this.props);
+    var documentlist = getDocumentsContext(navReducer);
     // const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
     var title = navReducer.routes[navReducer.index].data.name;
@@ -233,7 +233,7 @@ class KenestoToolbar extends Component {
 
   render() {
     const {navReducer} = this.props
-    var documentlist = getDocumentsContext(this.props);
+    var documentlist = getDocumentsContext(navReducer);
     const sortBy = documentlist.sortBy;
     
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
