@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
                             
             return(
                 <KeyboardAwareScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
-                    <View style={{height: 420}}>
+                    <View style={{height: 460}}>
                         {this._renderProgressBar()}
                         <View style={styles.logoContainer}><Image source={require('../assets/kenesto_logo.png')} style={styles.logo}></Image></View>
                         <View style={styles.form}><Form
