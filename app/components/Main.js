@@ -23,6 +23,8 @@ import Error from './Error'
 import Info from './Info'
 import Confirm from './Confirm'
 
+var Orientation = require('react-native-orientation'); 
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -120,7 +122,8 @@ class Main extends React.Component {
     super(props)
         this.state = {
           ifCreatingFolder: false,
-          isPopupMenuOpen: false
+          isPopupMenuOpen: false,
+          orientation: 'unknown',
         };
          this.onActionSelected = this.onActionSelected.bind(this);
          this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
@@ -237,6 +240,19 @@ class Main extends React.Component {
     if (nextprops.navReducer.HasConfirm) {
       this.openModal("confirmModal");
     }
+  }
+  
+  _orientationDidChange(orientation) {
+    if (orientation == 'LANDSCAPE') {
+      this.setState({orientation: 'horizontal'})
+    } else {
+      this.setState({orientation: 'vertical'})
+    }
+  }
+
+  
+  componentDidMount() {
+    Orientation.addOrientationListener(this._orientationDidChange.bind(this));
   }
 
     render(){

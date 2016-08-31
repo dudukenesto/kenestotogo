@@ -12,6 +12,7 @@ import com.github.xinthink.rnmk.ReactMaterialKitPackage;
 import java.util.Arrays;
 import java.util.List;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.github.yamill.orientation.OrientationPackage;
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage()
         , new VectorIconsPackage()
         , new ReactMaterialKitPackage()
+        , new OrientationPackage()
       );
     }
   };
