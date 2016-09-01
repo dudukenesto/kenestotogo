@@ -17,6 +17,12 @@ let styles = StyleSheet.create({
         flexWrap: "wrap",
         flexDirection: 'row',
         paddingTop: 35,
+               
+        // FOR LANDSCAPE ORIENTATION:
+        
+        // alignSelf: 'stretch',
+        // justifyContent: 'space-between',
+        // paddingHorizontal: 20,        
     },
     actionButtonIcon: {
         fontSize: 45,
