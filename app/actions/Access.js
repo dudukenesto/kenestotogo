@@ -165,8 +165,8 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                                                 sortBy: constans.ASSET_NAME
                                             }
                                 var rr = routes.documentsRoute(data)
-                        
-                              dispatch(push(rr.route));
+                            dispatch(clearDocumentlists());
+                            dispatch(push(rr.route));
                          
 
                         })

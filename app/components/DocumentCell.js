@@ -27,6 +27,7 @@ var {
   View
 } = ReactNative;
 
+var moment = require('moment');
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
@@ -65,8 +66,6 @@ var DocumentCell = React.createClass({
       function menuPressed(){
         alert('menu pressed...');
       }
-
-    
     return (
       <View>
         <TouchableElement
@@ -82,7 +81,8 @@ var DocumentCell = React.createClass({
                 {this.props.document.Name}
               </Text>
               <Text style={styles.documentYear} numberOfLines={1}>
-                Modified blah-blah-blah
+                {  "Modified "+ moment(this.props.document.ModificationDate).format('MMM DD, YYYY')}
+                
               </Text>
             </View>
             <TouchableElement onPress={menuPressed}>
