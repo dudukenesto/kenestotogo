@@ -4,7 +4,8 @@ import {View, ScrollView, Text, StyleSheet, AsyncStorage, ListView, Image } from
 import Button from "react-native-button";
 import LeftMenuItem from './LeftMenuItem';
 import {updateRouteData, emitConfirm} from '../actions/navActions'
-
+import * as constans from '../constants/GlobalConstans'
+import {getDocumentsTitle} from '../utils/documentsUtils'
 import * as accessActions from '../actions/Access'
 import {connect} from 'react-redux'
 
@@ -75,7 +76,7 @@ class TabView extends React.Component {
         var menuItems = [
             {
                 Index: 0,
-                itemTitle : 'My Documents', 
+                itemTitle : getDocumentsTitle(constans.MY_DOCUMENTS), 
                 itemCount : 60, 
                 itemIcon: 'folder',
                 selected: true,
@@ -83,7 +84,7 @@ class TabView extends React.Component {
             },
             {
                 Index: 1,
-                itemTitle : 'Shared with me', 
+                itemTitle : getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME), 
                 itemCount : 140, 
                 itemIcon: 'folder',
                 selected: false,
@@ -91,7 +92,7 @@ class TabView extends React.Component {
             },
             {
                 Index: 2,
-                itemTitle : 'All Documents', 
+                itemTitle : getDocumentsTitle(constans.ALL_DOCUMENTS), 
                 itemCount :20, 
                 itemIcon: 'folder',
                 selected: false,
@@ -99,7 +100,7 @@ class TabView extends React.Component {
             },
             {
                 Index: 3,
-                itemTitle : 'Checked-out Documents', 
+                itemTitle : getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS), 
                 itemCount : 42, 
                 itemIcon: 'android',
                 selected: false,
@@ -107,7 +108,7 @@ class TabView extends React.Component {
             },
              {
                 Index: 4,
-                itemTitle : 'Archived Documents', 
+                itemTitle : getDocumentsTitle(constans.ARCHIVED_DOCUMENTS), 
                 itemCount : 18, 
                 itemIcon: 'restore',
                 selected: false,

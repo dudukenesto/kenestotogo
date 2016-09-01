@@ -7,6 +7,11 @@ import Main from '../components/Main';
 
 class App extends React.Component {
 
+isDrawerOpen()
+{
+
+ return this._drawer._open;
+}
 closeDrawer(){
     this._drawer.close()
   };
@@ -26,7 +31,7 @@ closeDrawer(){
                 tweenHandler={(ratio) => ({
                  main: { opacity:Math.max(0.54,1-ratio) }
                 })}>
-                   <Main />
+                   <Main closeDrawer={this.closeDrawer.bind(this)} isDrawerOpen={this.isDrawerOpen.bind(this)} />
             </Drawer>
         );
     }

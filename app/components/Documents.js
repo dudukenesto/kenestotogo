@@ -40,7 +40,7 @@ import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
 
-import {getDocumentsContext} from '../utils/documentsUtils'
+import {getDocumentsContext,getDocumentsTitle} from '../utils/documentsUtils'
 
 // const Documents = ({_goBack}) => (
 //   <View style={styles.container}>
@@ -64,14 +64,6 @@ class Documents extends Component {
     // this._onSort = this._onSort.bind(this)
   }
 
-  getCategoryName(categoryType) {
-    switch (categoryType) {
-      case constans.ALL_DOCUMENTS:
-        return "All Documents"
-      default:
-        return "";
-    }
-  }
 
   getSortByName(sortBy) {
     switch (sortBy) {
@@ -83,14 +75,7 @@ class Documents extends Component {
         return "";
     }
   }
-  getBaseCatId(categoryType) {
-    switch (categoryType) {
-      case constans.ALL_DOCUMENTS:
-        return "All Documents"
-      default:
-        return "";
-    }
-  }
+ 
 
   componentWillMount() {
     const {dispatch} = this.props
@@ -111,8 +96,8 @@ class Documents extends Component {
 
 
   selectItem(document) {
-    const {dispatch} = this.props
-    var documentlist = getDocumentsContext(this.props);
+    const {dispatch, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
     if (document.FamilyCode == 'FOLDER') {
       var newId;
       var newName = document.Name;
@@ -175,8 +160,8 @@ class Documents extends Component {
 
 
   _onRefresh(type, message) {
-    const {dispatch} = this.props
-    var documentlist = getDocumentsContext(this.props);
+    const {dispatch,navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
     dispatch(refreshTable(documentlist))
   }
 
@@ -198,8 +183,8 @@ class Documents extends Component {
   }
 
   _showStatusBar() {
-    const {documentlists} = this.props
-    var documentlist = getDocumentsContext(this.props);
+    const {documentlists, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
     const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
     
@@ -216,8 +201,8 @@ class Documents extends Component {
 
 
   _renderTableContent(dataSource, isFetching) {
-    const {documentlists} = this.props
-    var documentlist = getDocumentsContext(this.props);
+    const {documentlists, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
     const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
 
     if (itemsLength == 0) {
@@ -275,10 +260,10 @@ class Documents extends Component {
 
   render() {
     
-    const {dispatch, documentlists,navReducer } = this.props
+    const {dispatch, documentlists, navReducer } = this.props
     
     //var currRoute = navReducer.routes[navReducer.index];
-    var documentlist = getDocumentsContext(this.props);
+    var documentlist = getDocumentsContext(navReducer);
     console.log("render documents page: " +JSON.stringify(documentlist))
     const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
     var additionalStyle = {};

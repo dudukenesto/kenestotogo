@@ -5,6 +5,8 @@ import { push, pop, emitInfo, emitError, navigateReset} from './navActions'
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
 import {clearDocumentlists} from '../actions/documentlists'
+import {getDocumentsTitle} from '../utils/documentsUtils'
+
 var stricturiEncode = require('strict-uri-encode');
 
 export function updateIsFetching(isFetching: boolean){
@@ -156,8 +158,8 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                               dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env));
                                var data = {
                                                 key : "documents",
-                                                name: "All Documents",
-                                                catId: constans.ALL_DOCUMENTS,
+                                                name: getDocumentsTitle(constans.MY_DOCUMENTS),
+                                                catId: constans.MY_DOCUMENTS,
                                                 fId: "",
                                                 sortDirection: constans.ASCENDING,
                                                 sortBy: constans.ASSET_NAME
