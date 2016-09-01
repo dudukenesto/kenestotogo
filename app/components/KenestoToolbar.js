@@ -197,7 +197,7 @@ class KenestoToolbar extends Component {
 
         </View>
         <View style={styles.folderName}>
-          <Text style={{ fontSize: 20 }}>{title}</Text>
+          <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
         </View>
         {isDocumentsTollbar ?
           <View style={{ flexDirection: "row" }}>
