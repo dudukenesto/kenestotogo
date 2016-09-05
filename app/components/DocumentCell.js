@@ -29,11 +29,11 @@ var {
 
 var moment = require('moment');
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import fontelloConfig from '../assets/icons/config.json';
+import MartialExtendedConf from '../assets/icons/kenestoconfig.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {updateSelectedId} from '../actions/documentlists'
 import {connect} from 'react-redux'
-const KenestoIcon = createIconSetFromFontello(fontelloConfig);
+const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
