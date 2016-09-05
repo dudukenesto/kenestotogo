@@ -2,9 +2,11 @@
 #
 .DS_Store
 
+
 # Xcode
 #
 build/
+!*.ttf
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -22,10 +24,6 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
-!build/intermediates
-
-build/intermediates/*
-!build/intermediates/assets
 
 
 
