@@ -23,9 +23,8 @@ DerivedData
 project.xcworkspace
 
 
-build/*
-!build/intermediates
 
+!build/intermediates/assets
 
 
 # Android/IJ
