@@ -22,9 +22,11 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
+!build/intermediates
 
-
+build/intermediates/*
 !build/intermediates/assets
+
 
 
 # Android/IJ
