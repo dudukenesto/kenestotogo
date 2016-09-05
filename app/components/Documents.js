@@ -196,7 +196,8 @@ class Documents extends Component {
 
   openModal(){
   //this.refs.modal3.open();
-  this.context.kModal.open();
+ // alert(this.context.itemMenuContext)
+ this.context.plusMenuContext.open();
 }
 
 
@@ -232,6 +233,7 @@ class Documents extends Component {
               onSelect={this.selectItem.bind(this, document) }
               //onHighlight={this.highlightRowFunc(sectionID, rowID)}
               //onUnhighlight={this.highlightRowFunc(null, null)}
+              dispatch = {this.props.dispatch}
               document={document}/>
             )
           } }
@@ -282,7 +284,10 @@ class Documents extends Component {
       </ViewContainer>
     )
   }
+
 }
+
+
 
 
 
@@ -390,8 +395,7 @@ var styles = StyleSheet.create({
 });
 
 Documents.contextTypes = {
-    kModal:  React.PropTypes.object
+    plusMenuContext:  React.PropTypes.object
 };
-
 
 export default Documents

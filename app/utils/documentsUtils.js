@@ -65,3 +65,14 @@ export function getDocumentsTitle(categoryType: String) {
   }
 }
 
+export function getSelectedDocument(documentlists: Object, navReducer: Object){
+   // debugger
+    var context = getDocumentsContext(navReducer);
+    var catId = context.catId;
+
+    var items = documentlists[catId].items;
+  
+    const selectedId = documentlists.selectedId; 
+    return selectedId == '' || selectedId == null ? null : _.find(items, { 'Id': selectedId }); 
+}
+
