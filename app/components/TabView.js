@@ -81,8 +81,9 @@ class TabView extends React.Component {
     }
 
     loadMenu(selectedIndex = 0) {
-        const {navReducer} = this.props
+        const {navReducer,accessReducer} = this.props
         var documentlist = getDocumentsContext(navReducer);
+        alert("loadMenu")
         switch (documentlist.catId) {
             case constans.MY_DOCUMENTS:
                 selectedIndex = 0;
@@ -107,7 +108,7 @@ class TabView extends React.Component {
             {
                 Index: 0,
                 itemTitle: getDocumentsTitle(constans.MY_DOCUMENTS),
-                itemCount: 60,
+                itemCount: accessReducer.statistics.totalMyDocuments,
                 itemIcon: 'folder',
                 selected: documentlist.catId == constans.MY_DOCUMENTS ? true : false,
                 customStyle: ''
@@ -115,7 +116,7 @@ class TabView extends React.Component {
             {
                 Index: 1,
                 itemTitle: getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME),
-                itemCount: 140,
+                itemCount: accessReducer.statistics.totalSharedWithMe,
                 itemIcon: 'folder',
                 selected: documentlist.catId == constans.DOCUMENTS_SHARE_WITH_ME ? true : false,
                 customStyle: ''
@@ -123,7 +124,7 @@ class TabView extends React.Component {
             {
                 Index: 2,
                 itemTitle: getDocumentsTitle(constans.ALL_DOCUMENTS),
-                itemCount: 20,
+                itemCount: accessReducer.statistics.totalAllDocuments,
                 itemIcon: 'folder',
                 selected: documentlist.catId == constans.ALL_DOCUMENTS ? true : false,
                 customStyle: ''
@@ -131,7 +132,7 @@ class TabView extends React.Component {
             {
                 Index: 3,
                 itemTitle: getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS),
-                itemCount: 42,
+                itemCount: accessReducer.statistics.totalCheckedoutDocuments,
                 itemIcon: 'android',
                 selected: documentlist.catId == constans.CHECKED_OUT_DOCUMENTS ? true : false,
                 customStyle: ''
@@ -139,14 +140,14 @@ class TabView extends React.Component {
             {
                 Index: 4,
                 itemTitle: getDocumentsTitle(constans.ARCHIVED_DOCUMENTS),
-                itemCount: 18,
+                itemCount: accessReducer.statistics.totalArchivedDocuments,
                 itemIcon: 'restore',
                 selected: documentlist.catId == constans.ARCHIVED_DOCUMENTS ? true : false,
                 customStyle: ''
             },
             {
                 Index: 5,
-                itemTitle: 'My usage space',
+                itemTitle: 'My usage space:'+accessReducer.statistics.totalUsageSpace,
                 itemCount: null,
                 itemIcon: 'android',
                 selected: false,

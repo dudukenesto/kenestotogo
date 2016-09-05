@@ -9,7 +9,15 @@ function accessReducer(state =
     email: "",
     firstName: "",
     lastName: "",
-    thumbnailPath: ""
+    thumbnailPath: "",
+    statistics: {
+      totalMyDocuments: 0,
+      totalAllDocuments: 0,
+      totalSharedWithMe: 0,
+      totalCheckedoutDocuments: 0,
+      totalArchivedDocuments: 0,
+      totalUsageSpace: 0,
+    }
   }, action) {
   switch (action.type) {
     case types.UPDATE_IS_FETCHING:
@@ -64,7 +72,20 @@ function accessReducer(state =
       }
 
     }
+    case types.UPDATE_STATISTICS: {
+      return {
+          ...state,
+        statistics: {
+          totalMyDocuments: action.totalMyDocuments,
+          totalAllDocuments: action.totalAllDocuments,
+          totalSharedWithMe: action.totalSharedWithMe,
+          totalCheckedoutDocuments: action.totalCheckedoutDocuments,
+          totalArchivedDocuments: action.totalArchivedDocuments,
+          totalUsageSpace: action.totalUsageSpace,
+        }
+      }
 
+    }
     default:
       return state
   }

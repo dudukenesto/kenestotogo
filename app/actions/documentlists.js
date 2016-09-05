@@ -1,6 +1,7 @@
 import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
-import {constructRetrieveDocumentsUrl, getCreateFolderUrl,getDocumentsContext} from '../utils/documentsUtils'
+import * as Access from '../actions/Access'
+import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,getDocumentsContext} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
 let React = require('react-native')
@@ -131,6 +132,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
               dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
               break
           }
+         
         }
       })
       .catch((error) => {
@@ -156,8 +158,6 @@ export function fetchTableIfNeeded() {
     }
   }
 }
-
-
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
@@ -191,6 +191,7 @@ function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: 
     dataSource
   }
 }
+
 
 function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
 
@@ -258,9 +259,9 @@ return (dispatch, getState) => {
         else {
              dispatch(UpdateCreateingFolderState(2))
              dispatch(refreshTable(documentlist))    
-
-           
+             dispatch(Access.retrieveStatistics());
         }
+        
       })
       .catch((error) => {
          dispatch(navActions.emitError("Error creating new folder"))
