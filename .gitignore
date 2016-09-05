@@ -2,12 +2,6 @@
 #
 .DS_Store
 
-
-
-
-
-
-
 # Xcode
 #
 build/
@@ -32,8 +26,6 @@ project.xcworkspace
 build/*
 !build/intermediates
 
-build/intermediates
-!build/intermediates/assets
 
 
 # Android/IJ
