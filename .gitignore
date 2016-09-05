@@ -21,7 +21,10 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-!build\intermediates\assets\debug\fonts
+
+!build/intermediates/assets/debug/fonts
+
+
 
 # Android/IJ
 #
