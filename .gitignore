@@ -22,6 +22,10 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
+!build/intermediates/assets/debug/fonts
+
+
+
 # Android/IJ
 #
 *.iml

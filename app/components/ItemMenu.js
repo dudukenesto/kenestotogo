@@ -6,9 +6,10 @@ import {
 } from 'react-native'
 import Button from './Button'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-
+import {connect} from 'react-redux'
 import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
+import {getSelectedDocument} from '../utils/documentsUtils'
 const KenestoIcon = createIconSetFromFontello(fontelloConfig);
 
 let styles = StyleSheet.create({
@@ -42,34 +43,30 @@ let styles = StyleSheet.create({
     
 })
 
-export default class PlusMenu extends React.Component{
+export class ItemMenu extends React.Component{
       constructor(props){
         super (props);
     }
 
-    addFolder(){
-        this.props.closeMenuModal("modalPlusMenu");
-       // this.props.createError();
-        this.props.openCreateFolder();
-    }
-    
 
     render(){
+
+        var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
         return(
             <View style={styles.container}>
                 <View style={styles.actionHolder}>
-                    <Icon name="create-new-folder" style={styles.actionButtonIcon} onPress={this.addFolder.bind(this)} />
-                    <Text style={styles.actionName}>New Folder</Text>
+                    <Icon name="create-new-folder" style={styles.actionButtonIcon} />
+                    <Text style={styles.actionName}>hallooo</Text>
                 </View>
                 
                 <View style={styles.actionHolder}>
                     <Icon name="file-upload" style={styles.actionButtonIcon} />
-                    <Text style={styles.actionName}>Upload File</Text>
+                    <Text style={styles.actionName}>kuku</Text>
                 </View>
                 
                 <View style={styles.actionHolder}>
                     <Icon name="photo-camera" style={styles.actionButtonIcon} />
-                    <Text style={styles.actionName}>Scan</Text>
+                    <Text style={styles.actionName}>pupu</Text>
                 </View>                
             </View>
         )
@@ -77,6 +74,20 @@ export default class PlusMenu extends React.Component{
 
 }
 
-PlusMenu.contextTypes = {
-    plusMenuContext:  React.PropTypes.object
+ItemMenu.contextTypes = {
+    itemMenuContext:  React.PropTypes.object
 }
+
+
+function mapStateToProps(state) {
+  const { documentlists, navReducer } = state
+  
+  return {
+      documentlists : documentlists, 
+      navReducer: navReducer
+
+  }
+}
+
+
+export default connect(mapStateToProps)(ItemMenu)

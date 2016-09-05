@@ -29,17 +29,29 @@ var {
 
 var moment = require('moment');
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import fontelloConfig from '../assets/icons/config.json';
+import MartialExtendedConf from '../assets/icons/kenestoconfig.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
-const KenestoIcon = createIconSetFromFontello(fontelloConfig);
+import {updateSelectedId} from '../actions/documentlists'
+import {connect} from 'react-redux'
+const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
 //var getTextFromScore = require('./getTextFromScore');
 
 var DocumentCell = React.createClass({
-  render: function() {
+
+    menuPressed: function (id){
+      var {dispatch} = this.props; 
    
+     dispatch(updateSelectedId(id));
+      this.context.itemMenuContext.open();
+  
+     
+    },
+
+  render: function() {
+
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
@@ -63,11 +75,9 @@ var DocumentCell = React.createClass({
       }
     }
       
-      function menuPressed(){
-        alert('menu pressed...');
-      }
+
     return (
-      <View>
+      <View>  
         <TouchableElement
           onPress={this.props.onSelect}
           onShowUnderlay={this.props.onHighlight}
@@ -85,7 +95,7 @@ var DocumentCell = React.createClass({
                 
               </Text>
             </View>
-            <TouchableElement onPress={menuPressed}>
+            <TouchableElement onPress={ (()=> { this.menuPressed(this.props.document.Id)}).bind(this) }>
               <View style={styles.iconContainer}>
                 <Icon name="more-vert" style={styles.moreMenu} />
               </View>
@@ -151,4 +161,10 @@ var styles = StyleSheet.create({
   
 });
 
-module.exports = DocumentCell;
+DocumentCell.contextTypes = {
+    itemMenuContext:  React.PropTypes.object,
+};
+
+
+
+module.exports = DocumentCell // connect(mapStateToProps)(DocumentCell)
