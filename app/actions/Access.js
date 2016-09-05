@@ -23,13 +23,17 @@ export function setEnv(env: string){
     }
 }
 
-export function updateLoginInfo(isLoggedIn : boolean, sessionToken: string, env: string) {
-    
+export function updateLoginInfo(isLoggedIn: boolean, sessionToken: string, env: string, email: string, firstName: string, lastName: string, thumbnailPath: string) {
+
     return {
-        type: types.UPDATE_LOGIN_INFO, 
-        isLoggedIn: isLoggedIn, 
-        sessionToken : sessionToken, 
-        env : env
+        type: types.UPDATE_LOGIN_INFO,
+        isLoggedIn: isLoggedIn,
+        sessionToken: sessionToken,
+        env: env,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        thumbnailPath: thumbnailPath
     }
 }
 
@@ -155,7 +159,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                             setCredentials(userId, password, env);
                             var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
 
-                              dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env));
+                            dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env, responseData.LoginJsonResult.User.EmailAddress, responseData.LoginJsonResult.User.FirstName, responseData.LoginJsonResult.User.LastName, responseData.LoginJsonResult.User.ThumbnailPath));
                                var data = {
                                                 key : "documents",
                                                 name: getDocumentsTitle(constans.MY_DOCUMENTS),
