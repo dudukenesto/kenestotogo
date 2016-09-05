@@ -96,12 +96,6 @@ project.ext.vectoricons = [
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 
-project.ext.kenestiIcons = [
-    iconFontNames: [ 'fontello.ttf'] // Name of the font files you want to copy
-]
-
-//apply from: "../../app/assets/icons"
-
 
 android {
     compileSdkVersion 23
