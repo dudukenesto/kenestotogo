@@ -2,11 +2,9 @@
 #
 .DS_Store
 
-
 # Xcode
 #
 build/
-!.ttf
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -23,12 +21,6 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-
-
-!fonts/MaterialIcons.ttf
-
-
-
 
 # Android/IJ
 #
