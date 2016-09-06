@@ -4,11 +4,11 @@ import {View, ScrollView, Text, StyleSheet, AsyncStorage, ListView, Image } from
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Button from "react-native-button";
 import LeftMenuItem from './LeftMenuItem';
-import {updateRouteData, emitConfirm} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsTitle, getDocumentsContext} from '../utils/documentsUtils'
 import * as accessActions from '../actions/Access'
 import * as navActions from '../actions/navActions'
+import * as documentsActions from '../actions/documentlists'
 import {connect} from 'react-redux'
 
 const styles = StyleSheet.create({
@@ -83,7 +83,6 @@ class TabView extends React.Component {
     loadMenu(selectedIndex = 0) {
         const {navReducer,accessReducer} = this.props
         var documentlist = getDocumentsContext(navReducer);
-        alert("loadMenu")
         switch (documentlist.catId) {
             case constans.MY_DOCUMENTS:
                 selectedIndex = 0;
@@ -215,6 +214,7 @@ class TabView extends React.Component {
 
 
     SelectItem(menuitem: Object) {
+         this.props.closeDrawer();
         const {dispatch, navReducer, closeDrawer} = this.props
         var routeData =
             {
@@ -224,49 +224,40 @@ class TabView extends React.Component {
                 sortDirection: constans.ASCENDING,
                 sortBy: constans.ASSET_NAME
             }
-
+       
         switch (menuitem.Index) {
             case 0:
                 routeData.catId = constans.MY_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.MY_DOCUMENTS);
-                this.props.closeDrawer()
-                dispatch(navActions.updateRouteData(routeData));
-
-                return;
+                dispatch(documentsActions.refreshTable(routeData));
+                break;
             case 1:
                 routeData.catId = constans.DOCUMENTS_SHARE_WITH_ME;
                 routeData.name = getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME);
-                this.props.closeDrawer()
-                dispatch(navActions.updateRouteData(routeData));
-                return;
+                dispatch(documentsActions.refreshTable(routeData));
+                break;
             case 2:
                 routeData.catId = constans.ALL_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.ALL_DOCUMENTS);
-                this.props.closeDrawer()
-                dispatch(navActions.updateRouteData(routeData));
-                return;
+                 dispatch(documentsActions.refreshTable(routeData));
+                 break;
             case 3:
                 routeData.catId = constans.CHECKED_OUT_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS);
-                this.props.closeDrawer()
-                dispatch(navActions.updateRouteData(routeData));
-                return;
+                 dispatch(documentsActions.refreshTable(routeData));
+                 break;
             case 4:
                 routeData.catId = constans.ARCHIVED_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.ARCHIVED_DOCUMENTS);
-                this.props.closeDrawer()
-                dispatch(navActions.updateRouteData(routeData));
-                return;
+                dispatch(documentsActions.refreshTable(routeData));
+                 break;
             case 6:
-                this.props.closeDrawer()
-                dispatch(emitConfirm("Log Out", "Are you sure you want to Log Out?", () => dispatch(accessActions.logOut())))
-                return;
-
-
+                dispatch(navActions.emitConfirm("Log Out", "Are you sure you want to Log Out?", () => dispatch(accessActions.logOut())))
+                 break;
             default:
                 break;
         }
-        // this.loadMenu(menuitem.Index);
+         
 
     }
 

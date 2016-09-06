@@ -11,7 +11,6 @@ let {
 } = React
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
-  console.log("fetchDocumentsTable: " + url)
   return (dispatch, getState) => {
     dispatch(requestDocumentsList(documentlist))
     return fetch(url)
@@ -160,7 +159,7 @@ export function fetchTableIfNeeded() {
 }
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
-    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
+    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId)
      dispatch(navActions.updateRouteData(documentlist))
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
@@ -175,7 +174,7 @@ function getNextUrl(env: string, sessionToken: string, documentlists: Object, do
 
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
-    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
+    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection,documentlist.catId)
   }
   return activeDocumentsList.nextUrl
 }
