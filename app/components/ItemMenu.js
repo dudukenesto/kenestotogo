@@ -3,7 +3,8 @@ import {
   View,
   Text,
   StyleSheet,
-  Image
+  Image,
+  TouchableHighlight
 } from 'react-native'
 import Button from './Button'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -27,10 +28,6 @@ let styles = StyleSheet.create({
     menuItemsContainer: {
         marginTop: 12
     },
-    actionIcons: {
-        flexDirection: 'row',
-        marginRight: 20,        
-    },    
     actionHolder: {
         flexDirection: "row",
         height: 48,
@@ -68,6 +65,17 @@ let styles = StyleSheet.create({
         justifyContent: "center",
         marginLeft: 10
     },
+    actionIconsContainer: {
+        flexDirection: 'row',
+        marginRight: 10,    
+        alignItems: 'center', 
+    },
+    singleActionIconContainer: {
+        padding: 5,
+        alignItems: 'center',
+        justifyContent: "center",
+        
+    },
     previewThumbnail: {
         height: 40,
         width: 55,
@@ -79,7 +87,8 @@ let styles = StyleSheet.create({
         color: '#888',
     },
     actionIcon: {
-        paddingHorizontal: 10,
+        fontSize: 22,
+        color: '#888'
     },
     iconFiletype: {
         height: 40,
@@ -92,6 +101,14 @@ let styles = StyleSheet.create({
 export class ItemMenu extends React.Component{
       constructor(props){
         super (props);
+    }
+    
+    startDownload(){
+        alert('start Download')
+    }
+    
+    viewDocument(){
+        alert('view Document')
     }
 
 
@@ -132,17 +149,23 @@ export class ItemMenu extends React.Component{
 
                             </Text>
                         </View>
-                        <View style={[styles.iconContainer, styles.actionIcons]}>
-                            <KenestoIcon name="word" style={[styles.icon, styles.actionIcon]} />
-                            <KenestoIcon name="powerpoint" style={styles.icon} />
+                        
+                        <View style={styles.actionIconsContainer}>
+                            <TouchableHighlight onPress={this.startDownload} style={{margin: 8}}>
+                                <View style={styles.singleActionIconContainer}>
+                                    <KenestoIcon name="word" style={styles.actionIcon} />
+                                </View>
+                            </TouchableHighlight>
+                            <TouchableHighlight onPress={this.viewDocument}>
+                                <View style={styles.singleActionIconContainer}>
+                                    <KenestoIcon name="powerpoint" style={styles.actionIcon} />
+                                </View>
+                            </TouchableHighlight>
                         </View>
+                        
                     </View>    
                 </View>
-                
-                
-                
-                
-                
+                          
                 <View style={styles.menuItemsContainer}>  
                     <View style={styles.actionHolder}>
                         <KenestoIcon name="word" style={styles.icon} />
