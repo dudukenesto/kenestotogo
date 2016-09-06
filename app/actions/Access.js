@@ -23,12 +23,13 @@ export function setEnv(env: string){
     }
 }
 
-export function updateLoginInfo(isLoggedIn: boolean, sessionToken: string, env: string, email: string, firstName: string, lastName: string, thumbnailPath: string) {
+export function updateLoginInfo(isLoggedIn: boolean, sessionToken: string, env: string, email: string, firstName: string, lastName: string, thumbnailPath: string, tenantId:number) {
 
     return {
         type: types.UPDATE_LOGIN_INFO,
         isLoggedIn: isLoggedIn,
         sessionToken: sessionToken,
+        tenantId:tenantId,
         env: env,
         email: email,
         firstName: firstName,
@@ -88,7 +89,8 @@ function DoNothing(message : string) {
 export function retrieveStatistics() {
  
   return (dispatch, getState) => {
-    const url = getRetrieveStatisticsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken)
+    const url = getRetrieveStatisticsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, getState().accessReducer.tenantId)
+  
     return fetch(url)
       .then(response => response.json())
       .then(json => {
@@ -200,8 +202,15 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                         .then( (responseData) => {
                             setCredentials(userId, password, env);
                             var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
-
-                            dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env, responseData.LoginJsonResult.User.EmailAddress, responseData.LoginJsonResult.User.FirstName, responseData.LoginJsonResult.User.LastName, responseData.LoginJsonResult.User.ThumbnailPath));
+                            alert(responseData.LoginJsonResult.User.TenantID)
+                            dispatch(updateLoginInfo(true, 
+                                                    stricturiEncode(sessionToken), 
+                                                    env, responseData.LoginJsonResult.User.EmailAddress,
+                                                    responseData.LoginJsonResult.User.FirstName,
+                                                    responseData.LoginJsonResult.User.LastName,
+                                                    responseData.LoginJsonResult.User.ThumbnailPath,
+                                                    responseData.LoginJsonResult.User.TenantID));
+                                                    
                             dispatch(retrieveStatistics());
                             dispatch(clearDocumentlists());
                                var data = {

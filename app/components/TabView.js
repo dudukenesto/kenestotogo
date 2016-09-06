@@ -146,7 +146,7 @@ class TabView extends React.Component {
             },
             {
                 Index: 5,
-                itemTitle: 'My usage space:'+accessReducer.statistics.totalUsageSpace,
+                itemTitle: 'My usage space '+accessReducer.statistics.totalUsageSpace,
                 itemCount: null,
                 itemIcon: 'android',
                 selected: false,
