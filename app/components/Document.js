@@ -20,6 +20,7 @@ var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
 import WebViewBridge from 'react-native-webview-bridge';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 //import ViewTransformer from 'react-native-view-transformer';
 
 
@@ -108,22 +109,56 @@ onBridgeMessage(message){
     }
   }
 
+  zoomIn(){
+      const { webviewbridge } = this.refs;
+     webviewbridge.sendToBridge("zoomIn");
+  }
+   zoomOut(){
+       const { webviewbridge } = this.refs;
+      webviewbridge.sendToBridge("zoomOut");
+
+
+
+    (function () {
+                  if (WebViewBridge) {
+                    WebViewBridge.onMessage = function (message) {
+                      //var xxx = typeof containerElement;
+                       //   $(tbox).text(xxx);
+                        switch (message) {
+                          case "zoomIn":
+                          $(tbox).text(message);
+                         //   containerElement.groupdocsViewer("zoomIn");
+                            break;
+                          case "zoomOut":
+                           $(tbox).text(message);
+                         //   containerElement.groupdocsViewer("zoomOut", 1);
+                            break;
+                        }
+                    }
+                  }
+                  }());
+
+
+
+
+
+  }
   
   render(){
 const injectScript = `
-  (function () {
-                    if (WebViewBridge) {
-                   
-                      WebViewBridge.onMessage = function (message) {
-
-                         $(tbox).text(message);
-                        if (message === "hello from react-native") {
-                          WebViewBridge.send("got the message inside webview");
+       (function () {
+                  if (WebViewBridge) {
+                    WebViewBridge.onMessage = function (message) {
+                        switch (message) {
+                          case "zoomIn":
+                                activateZoomIn();
+                            break;
+                          case "zoomOut":
+                                  activateZoomOut();
+                            break;
                         }
-                      };
-
-                      WebViewBridge.send("hello from webview");
                     }
+                  }
                   }());
 `;
 
@@ -133,7 +168,19 @@ const injectScript = `
     
     
       <View style={{ flex: 1}}>
-        
+          <View>
+          <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomIn.bind(this)()}) } >
+                      <View style={styles.optionContainer}>
+                       <Icon name="zoom-in"  style={styles.moreMenu}/>
+                      </View>
+           </TouchableWithoutFeedback>
+           <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomOut.bind(this)()}) }  >
+                      <View style={styles.optionContainer}>
+                        <Icon name="zoom-out" style={styles.moreMenu} />
+                      </View>
+           </TouchableWithoutFeedback>
+           
+          </View>
           <View style={{flex: 1, backgroundColor: 'transparent', }}>
             <WebViewBridge
               ref="webviewbridge"
@@ -274,7 +321,10 @@ var styles = StyleSheet.create({
     page_title: {
         color: '#FFF'
     },
-   
+    moreMenu: {
+    fontSize: 22,
+    color: '#888', 
+  }
   
 });
 
