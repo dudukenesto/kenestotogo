@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.github.yamill.orientation.OrientationPackage;
+import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -27,7 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
           new OrientationPackage()
         , new VectorIconsPackage()
-        , new ReactMaterialKitPackage()
+        , new ReactMaterialKitPackage(),
+        new WebViewBridgePackage() 
 
       );
     }
