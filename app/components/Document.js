@@ -94,9 +94,38 @@ class Document extends React.Component{
        
       // </View>
       // </ViewTransformer>
+onBridgeMessage(message){
+    const { webviewbridge } = this.refs;
+
+    switch (message) {
+      case "hello from webview":
+        webviewbridge.sendToBridge("hello from react-native");
+        break;
+      case "got the message inside webview":
+      //alert("webview");
+    //    console.log("we have got a message from webview! yeah");
+        break;
+    }
+  }
 
   
   render(){
+const injectScript = `
+  (function () {
+                    if (WebViewBridge) {
+                   
+                      WebViewBridge.onMessage = function (message) {
+
+                         $(tbox).text(message);
+                        if (message === "hello from react-native") {
+                          WebViewBridge.send("got the message inside webview");
+                        }
+                      };
+
+                      WebViewBridge.send("hello from webview");
+                    }
+                  }());
+`;
 
    var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env));
     return(
@@ -106,7 +135,8 @@ class Document extends React.Component{
       <View style={{ flex: 1}}>
         
           <View style={{flex: 1, backgroundColor: 'transparent', }}>
-            <WebView
+            <WebViewBridge
+              ref="webviewbridge"
               style={styles.webview_body}
               source={{ uri: url }}
               onLoadEnd={this.onLoadEnd.bind(this) }
@@ -114,7 +144,9 @@ class Document extends React.Component{
               domStorageEnabled={true}
               startInLoadingState={true}
               scalesPageToFit={true}
+              onBridgeMessage={this.onBridgeMessage.bind(this)}
               renderLoading={this.renderLoading}
+              injectedJavaScript={injectScript}
               />
           </View>
 
