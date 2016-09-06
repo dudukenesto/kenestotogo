@@ -19,7 +19,7 @@ var DISABLED_WASH = 'rgba(255,255,255,0.25)';
 var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
-import WebViewBridge from 'react-native-webview-bridge';
+// import WebViewBridge from 'react-native-webview-bridge';
 //import ViewTransformer from 'react-native-view-transformer';
 
 
