@@ -29,7 +29,7 @@ var {
 
 var moment = require('moment');
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import MartialExtendedConf from '../assets/icons/kenestoconfig.json';
+import MartialExtendedConf from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {updateSelectedId} from '../actions/documentlists'
 import {connect} from 'react-redux'
@@ -65,13 +65,13 @@ var DocumentCell = React.createClass({
     }
     else {
       if (this.props.document.FamilyCode == 'FOLDER'){
-        elementIcon = <Icon name="folder" style={styles.icon} />
+        elementIcon = <KenestoIcon name="folder" style={styles.icon} />
       }
       else {
         if (typeof this.props.document.IconName != 'undefined')
           elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={this.props.document.IconName} style={styles.icon} /></View>
         else
-          elementIcon = <View style={styles.iconFiletype}><Icon name="description" style={styles.icon} /></View>
+          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
       }
     }
       
@@ -139,10 +139,10 @@ var styles = StyleSheet.create({
     height: 40,
     width: 55,
     borderWidth: 0.5,
-    borderColor: "#999"
+    borderColor: "#bbb"
   },
   icon: {
-    fontSize: 16,
+    fontSize: 22,
     color: '#888',    
     
   },
@@ -151,8 +151,8 @@ var styles = StyleSheet.create({
     width: 55,
     alignItems: 'center',
     justifyContent: "center",
-    borderWidth: 0.5,
-    borderColor: "#999"
+    // borderWidth: 0.5,
+    // borderColor: "#999"
   },
   moreMenu: {
     fontSize: 22,

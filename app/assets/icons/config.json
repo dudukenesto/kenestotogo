@@ -356,7 +356,7 @@
     },
     {
       "uid": "afa336a32d8892bf5d1fabb21a092d78",
-      "css": "file-excel",
+      "css": "excel",
       "code": 61979,
       "src": "custom_icons",
       "selected": true,
@@ -365,7 +365,7 @@
         "width": 1000
       },
       "search": [
-        "file-excel"
+        "excel"
       ]
     },
     {
@@ -510,7 +510,7 @@
     },
     {
       "uid": "b78c4405aac17d92091048b47bc969b9",
-      "css": "file-pdf",
+      "css": "pdf",
       "code": 61989,
       "src": "custom_icons",
       "selected": true,
@@ -519,12 +519,12 @@
         "width": 1000
       },
       "search": [
-        "file-pdf"
+        "pdf"
       ]
     },
     {
       "uid": "79b5348219d84cbd160bab397fe28c11",
-      "css": "file-powerpoint",
+      "css": "powerpoint",
       "code": 61991,
       "src": "custom_icons",
       "selected": true,
@@ -533,7 +533,7 @@
         "width": 1000
       },
       "search": [
-        "file-powerpoint"
+        "powerpoint"
       ]
     },
     {
@@ -622,7 +622,7 @@
     },
     {
       "uid": "fecedfe141480309615fe42c35f0f690",
-      "css": "file-word",
+      "css": "word",
       "code": 61996,
       "src": "custom_icons",
       "selected": true,
@@ -631,7 +631,7 @@
         "width": 1000
       },
       "search": [
-        "file-word"
+        "word"
       ]
     },
     {
@@ -1784,7 +1784,7 @@
     },
     {
       "uid": "b8b928ff8e7b18d351da5c6108122716",
-      "css": "zip-box",
+      "css": "zip",
       "code": 62916,
       "src": "custom_icons",
       "selected": true,
@@ -1793,7 +1793,7 @@
         "width": 1000
       },
       "search": [
-        "zip-box"
+        "zip"
       ]
     },
     {

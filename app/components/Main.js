@@ -42,6 +42,9 @@ let styles = StyleSheet.create({
   plusMenu: {
     height: 150
   },
+  itemMenu: {
+    height: 235
+  },
   error: {
     height: 280,
     width: 320
@@ -309,7 +312,7 @@ class Main extends React.Component {
             openCreateFolder = {this.openCreateFolder.bind(this) }  createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) }/>
         </Modal>
-        <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.itemMenu]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
           <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) } 
              createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) }/>
