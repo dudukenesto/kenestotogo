@@ -3,18 +3,46 @@ import _ from 'lodash'
 import stricturiEncode from 'strict-uri-encode'
 import * as constans from '../constants/GlobalConstans'
 
-export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection) {
+export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId) {
   var urls = _.find(config.urls, { 'env': env });
+  const splitChars = '|';
   var apiBaseUrl = urls.ApiBaseUrl;
   var url
   if (urls == null)
     return null;
 
-  if (fId == undefined || fId == "") {
-    return `${apiBaseUrl}/KDocuments.svc/RetrieveDocuments?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}`
+  if (catId.indexOf(splitChars) >= 0) {
+    var dtlStr = catId.split(splitChars);
+    var key = dtlStr[0]
   }
   else {
-    return `${apiBaseUrl}/KDocuments.svc/RetrieveDocuments?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}`
+    var key = catId
+  }
+
+  var functionName = 'RetrieveDocuments';
+  switch (key) {
+    case constans.MY_DOCUMENTS:
+      functionName = 'RetrieveMyDocuments';
+      break;
+    case constans.ALL_DOCUMENTS:
+      functionName = 'RetrieveDocuments';
+      break;
+    case constans.ARCHIVED_DOCUMENTS:
+      functionName = 'RetrieveArchivedDocuments';
+      break;
+    case constans.DOCUMENTS_SHARE_WITH_ME:
+      functionName = 'RetrieveSharedDocuments';
+      break;
+    case constans.CHECKED_OUT_DOCUMENTS:
+      functionName = 'RetrieveCheckedOutDocuments';
+      break;
+  }
+
+  if (fId == undefined || fId == "") {
+    return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}`
+  }
+  else {
+    return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}`
   }
 
 }

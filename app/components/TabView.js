@@ -1,12 +1,14 @@
 
 import React from "react";
 import {View, ScrollView, Text, StyleSheet, AsyncStorage, ListView, Image } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import Button from "react-native-button";
 import LeftMenuItem from './LeftMenuItem';
-import {updateRouteData, emitConfirm} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
-import {getDocumentsTitle} from '../utils/documentsUtils'
+import {getDocumentsTitle, getDocumentsContext} from '../utils/documentsUtils'
 import * as accessActions from '../actions/Access'
+import * as navActions from '../actions/navActions'
+import * as documentsActions from '../actions/documentlists'
 import {connect} from 'react-redux'
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import MartialExtendedConf from '../assets/icons/config.json';
@@ -35,6 +37,10 @@ const styles = StyleSheet.create({
         height: 50,
         width: 50,
         borderRadius: 25,
+    },
+    icon: {
+    fontSize: 40,
+    color: '#888',    
   },
   userIcon: {
       fontSize: 50
@@ -42,177 +48,234 @@ const styles = StyleSheet.create({
     userInfoContainer: {
         flex: 1
     },
-     rowSeparator: {
+    rowSeparator: {
         backgroundColor: 'rgba(0, 0, 0, 0)',
         height: 1,
         marginLeft: 4,
-  },
-  rowSeparatorSelected: {
+    },
+    rowSeparatorSelected: {
         opacity: 1,
-  },
-  rowSeparatorHide: {
+    },
+    rowSeparatorHide: {
         opacity: 0
-  }
+    }
 });
 
 
 
 class TabView extends React.Component {
 
-    constructor(props){
-        super (props);
+    constructor(props) {
+        super(props);
         this.state = {
-                dataSource: new ListView.DataSource({
+            dataSource: new ListView.DataSource({
                 rowHasChanged: (row1, row2) => row1 !== row2,
-        }), 
+            }),
         }
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.loadMenu();
     }
 
+ componentWillReceiveProps(nextProps) {
+   this.loadMenu();
+  }
 
 
-
-    getDataSource(menuItems: Array<any>) : ListView.DataSource  {
+    getDataSource(menuItems: Array<any>): ListView.DataSource {
         return this.state.dataSource.cloneWithRows(menuItems);
     }
 
-   loadMenu(selectedIndex = 0){
+    loadMenu(selectedIndex = 0) {
+        const {navReducer,accessReducer} = this.props
+        var documentlist = getDocumentsContext(navReducer);
+        switch (documentlist.catId) {
+            case constans.MY_DOCUMENTS:
+                selectedIndex = 0;
+                break;
+            case constans.DOCUMENTS_SHARE_WITH_ME:
+                selectedIndex = 1;
+                break;
+            case constans.ALL_DOCUMENTS:
+                selectedIndex = 2;
+                break;
+            case constans.CHECKED_OUT_DOCUMENTS:
+                selectedIndex = 3;
+                break;
+            case constans.ARCHIVED_DOCUMENTS:
+                selectedIndex = 4;
+                break;
+            default:
+                break;
+        }
+
         var menuItems = [
             {
                 Index: 0,
-                itemTitle : getDocumentsTitle(constans.MY_DOCUMENTS), 
-                itemCount : 60, 
+                itemTitle: getDocumentsTitle(constans.MY_DOCUMENTS),
+                itemCount: accessReducer.statistics.totalMyDocuments,
                 itemIcon: 'folder',
-                selected: true,
+                selected: documentlist.catId == constans.MY_DOCUMENTS ? true : false,
                 customStyle: ''
             },
             {
                 Index: 1,
-                itemTitle : getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME), 
-                itemCount : 140, 
+                itemTitle: getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME),
+                itemCount: accessReducer.statistics.totalSharedWithMe,
                 itemIcon: 'folder',
-                selected: false,
+                selected: documentlist.catId == constans.DOCUMENTS_SHARE_WITH_ME ? true : false,
                 customStyle: ''
             },
             {
                 Index: 2,
-                itemTitle : getDocumentsTitle(constans.ALL_DOCUMENTS), 
-                itemCount :20, 
+                itemTitle: getDocumentsTitle(constans.ALL_DOCUMENTS),
+                itemCount: accessReducer.statistics.totalAllDocuments,
                 itemIcon: 'folder',
-                selected: false,
+                selected: documentlist.catId == constans.ALL_DOCUMENTS ? true : false,
                 customStyle: ''
             },
             {
                 Index: 3,
-                itemTitle : getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS), 
-                itemCount : 42, 
+                itemTitle: getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS),
+                itemCount: accessReducer.statistics.totalCheckedoutDocuments,
                 itemIcon: 'android',
-                selected: false,
+                selected: documentlist.catId == constans.CHECKED_OUT_DOCUMENTS ? true : false,
                 customStyle: ''
             },
-             {
+            {
                 Index: 4,
-                itemTitle : getDocumentsTitle(constans.ARCHIVED_DOCUMENTS), 
-                itemCount : 18, 
+                itemTitle: getDocumentsTitle(constans.ARCHIVED_DOCUMENTS),
+                itemCount: accessReducer.statistics.totalArchivedDocuments,
                 itemIcon: 'restore',
-                selected: false,
+                selected: documentlist.catId == constans.ARCHIVED_DOCUMENTS ? true : false,
                 customStyle: ''
             },
             {
                 Index: 5,
-                itemTitle : 'My usage space', 
-                itemCount : null, 
+                itemTitle: 'My usage space '+accessReducer.statistics.totalUsageSpace,
+                itemCount: null,
                 itemIcon: 'android',
                 selected: false,
                 customStyle: ''
             },
             {
                 Index: 6,
-                itemTitle : 'Logout', 
-                itemCount : null, 
+                itemTitle: 'Logout',
+                itemCount: null,
                 itemIcon: 'power-settings-new',
                 selected: false,
-                customStyle: {color: "#FA8302"}
+                customStyle: { color: "#FA8302" }
             }
-        ]; 
+        ];
 
- this.setState({
-          dataSource:  this.getDataSource(menuItems), 
-          selectedItem : selectedIndex 
+        this.setState({
+            dataSource: this.getDataSource(menuItems),
+            selectedItem: selectedIndex
         });
-       
+
     }
 
-    
-    render(){
-        const drawer = this.context.drawer;
-        var userHasAvatar = true;
 
+    render() {
+        const drawer = this.context.drawer;
+         const {accessReducer} = this.props
+         var fullName =  `${accessReducer.firstName} ${accessReducer.lastName}`
+         var email = accessReducer.email;
         return (
             <View style={styles.screenContainer}>
                 <View style={[styles.headerContainer, this.props.sceneStyle]}>
                     <View style={styles.avatarContainer}>
-                        {userHasAvatar ?
-                            <Image source={require('../assets/userpic.jpg')} style={styles.avatar} />
-                            :
-                            <Icon name="account-circle" style={styles.userIcon} />
+                        {accessReducer.thumbnailPath == "" ?
+                        <Icon name="account-circle" style={styles.styles.userIcon} />:
+                        <Image source={{uri: accessReducer.thumbnailPath}} style={styles.avatar} />
                         }
+                        
                     </View>
                     <View  style={styles.userInfoContainer}>
-                        <Text style={{color: '#000'}}>Username</Text>
-                        <Text>{this.props.loggedUser}loggedUser (this.props.loggedUser)</Text>
+                        <Text style={{ color: '#000' }}>{fullName}</Text>
+                        <Text>{email}</Text>
                     </View>
-                                        
+
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <ListView 
+                    <ListView
                         ref="MenuList"
-                        renderSeparator={this.renderSeparator.bind(this)}
+                        renderSeparator={this.renderSeparator.bind(this) }
                         dataSource={this.state.dataSource}
                         renderFooter={null}
-                        renderRow={this.renderRow.bind(this)}
+                        renderRow={this.renderRow.bind(this) }
                         onEndReached={null}
                         automaticallyAdjustContentInsets={false}
                         keyboardDismissMode="on-drag"
                         keyboardShouldPersistTaps={true}
                         showsVerticalScrollIndicator={false}
-                    />
-                
+                        />
+
                 </ScrollView>
             </View>
-            
+
         );
     }
 
 
 
-SelectItem(menuitem : Object){
+    SelectItem(menuitem: Object) {
+         this.props.closeDrawer();
         const {dispatch, navReducer, closeDrawer} = this.props
-
-        if (menuitem.Index == 6)
-        {
-            this.props.closeDrawer()
-            dispatch(emitConfirm("Log Out", "Are you sure you want to Log Out?",() => dispatch(accessActions.logOut())))
-            return;
-        }
-    
-        this.loadMenu(menuitem.Index);
+        var routeData =
+            {
+                name: getDocumentsTitle(constans.MY_DOCUMENTS),
+                catId: constans.MY_DOCUMENTS,
+                fId: "",
+                sortDirection: constans.ASCENDING,
+                sortBy: constans.ASSET_NAME
+            }
        
+        switch (menuitem.Index) {
+            case 0:
+                routeData.catId = constans.MY_DOCUMENTS;
+                routeData.name = getDocumentsTitle(constans.MY_DOCUMENTS);
+                dispatch(documentsActions.refreshTable(routeData));
+                break;
+            case 1:
+                routeData.catId = constans.DOCUMENTS_SHARE_WITH_ME;
+                routeData.name = getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME);
+                dispatch(documentsActions.refreshTable(routeData));
+                break;
+            case 2:
+                routeData.catId = constans.ALL_DOCUMENTS;
+                routeData.name = getDocumentsTitle(constans.ALL_DOCUMENTS);
+                 dispatch(documentsActions.refreshTable(routeData));
+                 break;
+            case 3:
+                routeData.catId = constans.CHECKED_OUT_DOCUMENTS;
+                routeData.name = getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS);
+                 dispatch(documentsActions.refreshTable(routeData));
+                 break;
+            case 4:
+                routeData.catId = constans.ARCHIVED_DOCUMENTS;
+                routeData.name = getDocumentsTitle(constans.ARCHIVED_DOCUMENTS);
+                dispatch(documentsActions.refreshTable(routeData));
+                 break;
+            case 6:
+                dispatch(navActions.emitConfirm("Log Out", "Are you sure you want to Log Out?", () => dispatch(accessActions.logOut())))
+                 break;
+            default:
+                break;
+        }        
     }
 
 
-renderSeparator( sectionID: number | string,
-    rowID: number | string,
-    adjacentRowHighlighted: boolean){
+    renderSeparator(sectionID: number | string,
+        rowID: number | string,
+        adjacentRowHighlighted: boolean) {
         var style = styles.rowSeparator;
         if (adjacentRowHighlighted) {
             style = [style, styles.rowSeparatorHide];
         }
         return (
-        <View key={'SEP_' + sectionID + '_' + rowID}  style={style}/>
+            <View key={'SEP_' + sectionID + '_' + rowID}  style={style}/>
         );
     }
 
@@ -220,34 +283,29 @@ renderSeparator( sectionID: number | string,
     renderRow(listItem: Object,
         sectionID: number | string,
         rowID: number | string,
-        highlightRowFunc: (sectionID: ?number | string, rowID: ?number | string) => void){
-     
-    return (
-        <LeftMenuItem
+        highlightRowFunc: (sectionID: ?number | string, rowID: ?number | string) => void) {
+
+        return (
+            <LeftMenuItem
                 key={listItem.Id}
-                onSelect={() => this.SelectItem(listItem)}
-                onHighlight={() => highlightRowFunc(sectionID, rowID)}
-                onUnhighlight={() => highlightRowFunc(null, null)}
+                onSelect={() => this.SelectItem(listItem) }
+                onHighlight={() => highlightRowFunc(sectionID, rowID) }
+                onUnhighlight={() => highlightRowFunc(null, null) }
                 listItem={listItem}
                 IsSelected = {listItem.Index == this.state.selectedItem}
-            />
-    );
-     
+                />
+        );
     }
-
-
 }
 
 function mapStateToProps(state) {
-  const { documentlists, navReducer} = state
-  const {env, sessionToken } = state.accessReducer;
-  return {
-    documentlists,
-    navReducer,
-    env,
-    sessionToken
+    const { documentlists, navReducer, accessReducer} = state
 
-  }
+    return {
+        documentlists,
+        navReducer,
+        accessReducer
+    }
 }
 
 export default connect(mapStateToProps)(TabView)

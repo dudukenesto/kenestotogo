@@ -54,6 +54,17 @@ export function getLoginUrl(env: string, orgId: string, token : Object){
 
 }
 
+
+export function getRetrieveStatisticsUrl(env: string, sessionToken: string, tenantId: string) {
+  var urls = _.find(config.urls, { 'env': env });
+  var apiBaseUrl = urls.ApiBaseUrl;
+  var url
+  if (urls == null)
+    return null;
+  
+  return `${apiBaseUrl}/KDocuments.svc/RetrieveStatistics?t=${sessionToken}&tid=${tenantId}`
+}
+
 export function clearCredentials()
 {
         AsyncStorage.multiRemove(["kenestoU","kenestoP", "env"]); 

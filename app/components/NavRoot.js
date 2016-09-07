@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Home from './Home'
 import About from './About'
 import ForgotPassword from './ForgotPassword'
+import AddPeopleContainer from '../containers/AddPeopleContainer'
 import Documents from './Documents'
 import Document from './Document'
 import LoginContainer from '../containers/LoginContainer'
@@ -59,6 +60,9 @@ class NavRoot extends Component {
 
     if (route.key === 'document') {
       return <Document _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
+    }
+    if (route.key === 'addPeople') {
+      return <AddPeopleContainer _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
   }
   _isMenuModalOpen() {

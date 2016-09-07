@@ -1,6 +1,7 @@
 import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
-import {constructRetrieveDocumentsUrl, getCreateFolderUrl,getDocumentsContext} from '../utils/documentsUtils'
+import * as Access from '../actions/Access'
+import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,getDocumentsContext} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
 let React = require('react-native')
@@ -10,7 +11,6 @@ let {
 } = React
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
-  console.log("fetchDocumentsTable: " + url)
   return (dispatch, getState) => {
     dispatch(requestDocumentsList(documentlist))
     return fetch(url)
@@ -131,6 +131,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
               dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
               break
           }
+         
         }
       })
       .catch((error) => {
@@ -156,11 +157,9 @@ export function fetchTableIfNeeded() {
     }
   }
 }
-
-
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
-    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
+    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId)
      dispatch(navActions.updateRouteData(documentlist))
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
@@ -175,7 +174,7 @@ function getNextUrl(env: string, sessionToken: string, documentlists: Object, do
 
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
-    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection)
+    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection,documentlist.catId)
   }
   return activeDocumentsList.nextUrl
 }
@@ -191,6 +190,7 @@ function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: 
     dataSource
   }
 }
+
 
 function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
 
@@ -265,9 +265,9 @@ return (dispatch, getState) => {
         else {
              dispatch(UpdateCreateingFolderState(2))
              dispatch(refreshTable(documentlist))    
-
-           
+             dispatch(Access.retrieveStatistics());
         }
+        
       })
       .catch((error) => {
          dispatch(navActions.emitError("Error creating new folder"))
