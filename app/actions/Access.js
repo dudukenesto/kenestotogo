@@ -1,5 +1,5 @@
 import * as types from '../constants/ActionTypes';
-import {getAuthUrl, getLoginUrl, getForgotPasswordUrl, clearCredentials, setCredentials} from '../utils/accessUtils';
+import {getAuthUrl, getLoginUrl, getForgotPasswordUrl, clearCredentials, setCredentials, getRetrieveStatisticsUrl} from '../utils/accessUtils';
 import { push, pop, emitInfo, emitError, navigateReset} from './navActions'
 
 import * as routes from '../constants/routes'
@@ -23,16 +23,32 @@ export function setEnv(env: string){
     }
 }
 
-export function updateLoginInfo(isLoggedIn : boolean, sessionToken: string, env: string) {
-    
+export function updateLoginInfo(isLoggedIn: boolean, sessionToken: string, env: string, email: string, firstName: string, lastName: string, thumbnailPath: string, tenantId:number) {
+
     return {
-        type: types.UPDATE_LOGIN_INFO, 
-        isLoggedIn: isLoggedIn, 
-        sessionToken : sessionToken, 
-        env : env
+        type: types.UPDATE_LOGIN_INFO,
+        isLoggedIn: isLoggedIn,
+        sessionToken: sessionToken,
+        tenantId:tenantId,
+        env: env,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        thumbnailPath: thumbnailPath
     }
 }
 
+function updateStatistics(totalMyDocuments: number, totalAllDocuments: number, totalSharedWithMe: number, totalCheckedoutDocuments: number, totalArchivedDocuments: number, totalUsageSpace: number) {
+  return {
+    type: types.UPDATE_STATISTICS,
+    totalMyDocuments,
+    totalAllDocuments,
+    totalSharedWithMe,
+    totalCheckedoutDocuments,
+    totalArchivedDocuments,
+    totalUsageSpace
+  }
+}
 function Authenticate(userId : string, password: string) {
     return {
         type: types.AUTHENTICATE,  
@@ -68,6 +84,38 @@ function DoNothing(message : string) {
     return {
         type: types.DO_NOTHING
     }
+}
+
+export function retrieveStatistics() {
+ 
+  return (dispatch, getState) => {
+    const url = getRetrieveStatisticsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, getState().accessReducer.tenantId)
+  
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        
+        if (json.ResponseData.ResponseStatus == "FAILED") {
+           dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
+           dispatch(emitError(json.ResponseData.ErrorMessage,""))
+        }
+        else {
+         var totalMyDocuments = json.ResponseData.TotalMyDocuments;
+         var totalAllDocuments = json.ResponseData.TotalAllDocuments;
+         var totalSharedWithMe = json.ResponseData.TotalSharedWithMe;
+         var totalCheckedoutDocuments = json.ResponseData.TotalCheckedoutDocuments;
+         var totalArchivedDocuments = json.ResponseData.TotalArchivedDocuments;
+         var totalUsageSpace = json.ResponseData.TotalUsageSpace;
+         dispatch(updateStatistics(totalMyDocuments, totalAllDocuments, totalSharedWithMe, totalCheckedoutDocuments,totalArchivedDocuments,totalUsageSpace))
+        }
+      })
+      .catch((error) => {
+        console.log("error:" + JSON.stringify(error))
+        dispatch(emitError("Failed to retrieve statistics",""))
+
+
+      })
+  }
 }
 
 export function ActivateForgotPassword(username : string, env : string = 'dev') {
@@ -154,8 +202,16 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                         .then( (responseData) => {
                             setCredentials(userId, password, env);
                             var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
-
-                              dispatch(updateLoginInfo(true, stricturiEncode(sessionToken), env));
+                            dispatch(updateLoginInfo(true, 
+                                                    stricturiEncode(sessionToken), 
+                                                    env, responseData.LoginJsonResult.User.EmailAddress,
+                                                    responseData.LoginJsonResult.User.FirstName,
+                                                    responseData.LoginJsonResult.User.LastName,
+                                                    responseData.LoginJsonResult.User.ThumbnailPath,
+                                                    responseData.LoginJsonResult.User.TenantID));
+                                                    
+                            dispatch(retrieveStatistics());
+                            dispatch(clearDocumentlists());
                                var data = {
                                                 key : "documents",
                                                 name: getDocumentsTitle(constans.MY_DOCUMENTS),
@@ -165,7 +221,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                                                 sortBy: constans.ASSET_NAME
                                             }
                                 var rr = routes.documentsRoute(data)
-                            dispatch(clearDocumentlists());
+                            
                             dispatch(push(rr.route));
                          
 
