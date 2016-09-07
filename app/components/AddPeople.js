@@ -11,7 +11,6 @@ var {
 } = ReactNative;
 import Button from './Button'
 import ProggressBar from "../components/ProgressBar";
-import TagInput from 'react-native-tag-input';
 var HEADER = '#3b5998';
 var BGWASH = 'rgba(255,255,255,0.8)';
 var DISABLED_WASH = 'rgba(255,255,255,0.25)';
@@ -45,9 +44,6 @@ class AddPeople extends React.Component{
     return(
       <View style={{ flex: 1}}>
         <Text>AddPeople</Text>
-        <TagInput
-  value={this.state.isLoading}
-  onChange={(emails) => this.onEmailChange(isLoading)} />
 
       </View>
     )

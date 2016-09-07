@@ -13,7 +13,6 @@ import {connect} from 'react-redux'
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import MartialExtendedConf from '../assets/icons/config.json';
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
-import Icon from 'react-native-vector-icons/MaterialIcons'
 
 const styles = StyleSheet.create({
     screenContainer: {
@@ -187,7 +186,7 @@ class TabView extends React.Component {
                 <View style={[styles.headerContainer, this.props.sceneStyle]}>
                     <View style={styles.avatarContainer}>
                         {accessReducer.thumbnailPath == "" ?
-                            <Icon name="account-circle" style={styles.styles.userIcon} /> :
+                            <Icon name="account-circle" style={styles.userIcon} /> :
                             <Image source={{ uri: accessReducer.thumbnailPath }} style={styles.avatar} />
                         }
                     </View>

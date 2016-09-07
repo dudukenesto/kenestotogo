@@ -14,6 +14,7 @@ import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import MartialExtendedConf from '../assets/icons/config.json';
+import * as routes from '../constants/routes'
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 var moment = require('moment');
 
@@ -114,7 +115,14 @@ export class ItemMenu extends React.Component{
     }
     
     shareDocument(){
-        alert('share Document')
+        alert('share...')
+    //      var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
+    //      var data = {
+    //     key: "addPeople",
+    //     name: document.Name,
+    //     documentId: document.Id,
+    //   }
+    //   this.props._handleNavigate(routes.addPeopleRoute(data));
     }
     
     renameDocument(){
