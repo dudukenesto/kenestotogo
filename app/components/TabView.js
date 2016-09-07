@@ -179,18 +179,17 @@ class TabView extends React.Component {
 
     render() {
         const drawer = this.context.drawer;
-         const {accessReducer} = this.props
-         var fullName =  `${accessReducer.firstName} ${accessReducer.lastName}`
-         var email = accessReducer.email;
+        const {accessReducer} = this.props
+        var fullName = `${accessReducer.firstName} ${accessReducer.lastName}`
+        var email = accessReducer.email;
         return (
             <View style={styles.screenContainer}>
                 <View style={[styles.headerContainer, this.props.sceneStyle]}>
                     <View style={styles.avatarContainer}>
                         {accessReducer.thumbnailPath == "" ?
-                        <Icon name="account-circle" style={styles.styles.userIcon} />:
-                        <Image source={{uri: accessReducer.thumbnailPath}} style={styles.avatar} />
+                            <Icon name="account-circle" style={styles.styles.userIcon} /> :
+                            <Image source={{ uri: accessReducer.thumbnailPath }} style={styles.avatar} />
                         }
-                        
                     </View>
                     <View  style={styles.userInfoContainer}>
                         <Text style={{ color: '#000' }}>{fullName}</Text>
@@ -211,10 +210,8 @@ class TabView extends React.Component {
                         keyboardShouldPersistTaps={true}
                         showsVerticalScrollIndicator={false}
                         />
-
                 </ScrollView>
             </View>
-
         );
     }
 
