@@ -122,23 +122,17 @@ class Documents extends Component {
 
     }
     else {
-      //  var data = {
-      //   key: "document",
-      //   name: document.Name,
-      //   documentId: document.Id,
-      //   catId: documentlist.catId,
-      //   fId: documentlist.fId,
-      //   viewerUrl: document.ViewerUrl, 
-      //   env: this.props.env
-      // }
-      //this.props._handleNavigate(routes.documentRoute(data));
-
        var data = {
-        key: "addPeople",
+        key: "document",
         name: document.Name,
         documentId: document.Id,
+        catId: documentlist.catId,
+        fId: documentlist.fId,
+        viewerUrl: document.ViewerUrl, 
+        env: this.props.env
       }
-      this.props._handleNavigate(routes.addPeopleRoute(data));
+      this.props._handleNavigate(routes.documentRoute(data));
+
     }
 
   }

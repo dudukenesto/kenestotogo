@@ -29,6 +29,7 @@ export const forgotPasswordRoute = {
 }
 
 
+
 export function documentRoute(data) {
   return (
     {

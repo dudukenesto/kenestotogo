@@ -15,6 +15,7 @@ import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import MartialExtendedConf from '../assets/icons/config.json';
 import * as routes from '../constants/routes'
+import * as navActions from '../actions/navActions'
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 var moment = require('moment');
 
@@ -102,9 +103,13 @@ let styles = StyleSheet.create({
 })
 
 export class ItemMenu extends React.Component{
-      constructor(props){
-        super (props);
-    }
+        constructor(props){
+            super (props);
+            this.state = {
+                document: null
+            }
+        }
+
     
     startDownload(){
         alert('start Download')
@@ -115,14 +120,18 @@ export class ItemMenu extends React.Component{
     }
     
     shareDocument(){
-        alert('share...')
-    //      var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
-    //      var data = {
-    //     key: "addPeople",
-    //     name: document.Name,
-    //     documentId: document.Id,
-    //   }
-    //   this.props._handleNavigate(routes.addPeopleRoute(data));
+     
+       this.props.closeItemMenuModal();
+
+       var data = {
+        key: "addPeople",
+        name: this.state.document.Name,
+        documentId: this.state.document.Id,
+      }
+
+
+      this.props.dispatch(navActions.push(routes.addPeopleRoute(data).route));
+
     }
     
     renameDocument(){
@@ -133,11 +142,15 @@ export class ItemMenu extends React.Component{
         alert('delete Document')
     }
 
+    componentWillMount(){
+        var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
+        this.setState({ document: document});
+    }
+
 
     render(){
 
-        var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
-        
+       
         var elementIcon;
         if (document.HasThumbnail) {
             elementIcon = <Image source = {{ uri: document.ThumbnailUrl }} style={styles.previewThumbnail} />
@@ -189,7 +202,7 @@ export class ItemMenu extends React.Component{
                 </View>
                           
                 <View style={styles.menuItemsContainer}>  
-                    <TouchableHighlight onPress={this.shareDocument} underlayColor="#E9EAEC">
+                    <TouchableHighlight onPress={this.shareDocument.bind(this)} underlayColor="#E9EAEC">
                         <View style={styles.actionHolder}>
                             <KenestoIcon name="word" style={styles.icon} />
                             <Text style={styles.actionName}>Share (share)</Text>

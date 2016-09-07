@@ -224,7 +224,7 @@ class Main extends React.Component {
   }
 
   closeItemMenuModal() {
-    dispatch(documentsActions.updateSelectedId(''));
+    this.props.dispatch(documentsActions.updateSelectedId(''));
     this.refs.modalItemMenu.close();
   }
 
@@ -313,7 +313,7 @@ class Main extends React.Component {
             closeCreateFolder={this.closeCreateFolder.bind(this) }/>
         </Modal>
         <Modal style={[styles.modal, styles.itemMenu]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
-          <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) } 
+          <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) }
              createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) }/>
         </Modal>
@@ -325,7 +325,7 @@ class Main extends React.Component {
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>
         </Modal>
-        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}> 
           <Info closeModal = {() => this.closeModal("infoModal") } openModal = {() => this.openModal("infoModal") }/>
         </Modal>
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"confirmModal"} isDisabled={false}>
