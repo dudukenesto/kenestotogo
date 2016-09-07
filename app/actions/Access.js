@@ -202,7 +202,6 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                         .then( (responseData) => {
                             setCredentials(userId, password, env);
                             var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
-                            alert(responseData.LoginJsonResult.User.TenantID)
                             dispatch(updateLoginInfo(true, 
                                                     stricturiEncode(sessionToken), 
                                                     env, responseData.LoginJsonResult.User.EmailAddress,

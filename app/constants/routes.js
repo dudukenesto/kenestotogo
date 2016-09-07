@@ -28,18 +28,31 @@ export const forgotPasswordRoute = {
   }
 }
 
+
 export function documentRoute(data) {
   return (
     {
       type: 'push',
       route: {
         key: "document",
-        data:data
+        data: data
       }
     }
 
   );
-
- 
 }
+export function addPeopleRoute(data) {
+  return (
+    {
+      type: 'push',
+      route: {
+        key: "addPeople",
+        data: data
+      }
+    }
+
+  )
+};
+
+
 
