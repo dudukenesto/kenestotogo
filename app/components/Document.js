@@ -21,7 +21,7 @@ var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
 import WebViewBridge from 'react-native-webview-bridge';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-//import ViewTransformer from 'react-native-view-transformer';
+
 
 
 

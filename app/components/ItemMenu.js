@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   Image,
-  TouchableHighlight
+  TouchableHighlight,
+  TouchableWithoutFeedback
 } from 'react-native'
 import Button from './Button'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -67,11 +68,11 @@ let styles = StyleSheet.create({
     },
     actionIconsContainer: {
         flexDirection: 'row',
-        marginRight: 10,    
+        marginRight: 5,    
         alignItems: 'center', 
     },
     singleActionIconContainer: {
-        padding: 5,
+        padding: 10,
         alignItems: 'center',
         justifyContent: "center",
         
@@ -88,7 +89,8 @@ let styles = StyleSheet.create({
     },
     actionIcon: {
         fontSize: 22,
-        color: '#888'
+        color: '#888',
+        margin: 0,
     },
     iconFiletype: {
         height: 40,
@@ -109,6 +111,18 @@ export class ItemMenu extends React.Component{
     
     viewDocument(){
         alert('view Document')
+    }
+    
+    shareDocument(){
+        alert('share Document')
+    }
+    
+    renameDocument(){
+        alert('rename Document')
+    }
+    
+    deleteDocument(){
+        alert('delete Document')
     }
 
 
@@ -151,36 +165,42 @@ export class ItemMenu extends React.Component{
                         </View>
                         
                         <View style={styles.actionIconsContainer}>
-                            <TouchableHighlight onPress={this.startDownload} style={{margin: 8}}>
+                            <TouchableWithoutFeedback onPress={this.startDownload}>
                                 <View style={styles.singleActionIconContainer}>
                                     <KenestoIcon name="word" style={styles.actionIcon} />
                                 </View>
-                            </TouchableHighlight>
-                            <TouchableHighlight onPress={this.viewDocument}>
+                            </TouchableWithoutFeedback>
+                            <TouchableWithoutFeedback onPress={this.viewDocument}>
                                 <View style={styles.singleActionIconContainer}>
                                     <KenestoIcon name="powerpoint" style={styles.actionIcon} />
                                 </View>
-                            </TouchableHighlight>
+                            </TouchableWithoutFeedback>
                         </View>
                         
                     </View>    
                 </View>
                           
                 <View style={styles.menuItemsContainer}>  
-                    <View style={styles.actionHolder}>
-                        <KenestoIcon name="word" style={styles.icon} />
-                        <Text style={styles.actionName}>Share (share)</Text>
-                    </View>
-                    
-                    <View style={styles.actionHolder}>
-                        <KenestoIcon name="word" style={styles.icon} />
-                        <Text style={styles.actionName}>Rename (rename-box)</Text>
-                    </View>
-                    
-                    <View style={styles.actionHolder}>
-                        <KenestoIcon name="word" style={styles.icon} />
-                        <Text style={styles.actionName}>Delete (delete)</Text>
-                    </View>    
+                    <TouchableHighlight onPress={this.shareDocument} underlayColor="#E9EAEC">
+                        <View style={styles.actionHolder}>
+                            <KenestoIcon name="word" style={styles.icon} />
+                            <Text style={styles.actionName}>Share (share)</Text>
+                        </View>
+                    </TouchableHighlight>
+                        
+                    <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
+                        <View style={styles.actionHolder}>
+                            <KenestoIcon name="word" style={styles.icon} />
+                            <Text style={styles.actionName}>Rename (rename-box)</Text>
+                        </View>
+                    </TouchableHighlight>
+                        
+                    <TouchableHighlight onPress={this.deleteDocument} underlayColor="#E9EAEC">
+                        <View style={styles.actionHolder}>
+                            <KenestoIcon name="word" style={styles.icon} />
+                            <Text style={styles.actionName}>Delete (delete)</Text>
+                        </View>    
+                    </TouchableHighlight>
                 </View>
             </View>
         )
