@@ -36,6 +36,14 @@ var suggestions = [
     ]
 class AddPeople extends Component {
   
+  constructor(props) {
+    super(props)
+
+        this.state = {
+          showSharingList: true
+        };
+  }
+  
   _onChange(){
     
   }
@@ -46,6 +54,14 @@ class AddPeople extends Component {
   
   _onUpdateTags(){
     
+  }
+  
+  showSharingList(){
+    this.setState({showSharingList: true})
+  }
+  
+  hideSharingList(){
+    this.setState({showSharingList: false})
   }
   
   
@@ -64,8 +80,28 @@ class AddPeople extends Component {
           onUpdateLayout={this._onUpdateLayout.bind(this)}
           onUpdateTags={this._onUpdateTags.bind(this)}
           placeholder="ASD"
+          onHideTagsList={this.showSharingList.bind(this)}
+          onShowTagsList={this.hideSharingList.bind(this)}
         />
+        
+        {this.state.showSharingList==true? 
+          <View style={{}}>
+            <View>
+              <Text>Sharing</Text>
+            </View>
+        
+          <View>
+            <Text>list of people</Text>
+            <Text>list of people</Text>
+            <Text>list of people</Text>
+          </View>
+        </View> : 
+        <View style={{}}></View>
+        }
+        
+      
       </View>
+      
     );
   }
 }

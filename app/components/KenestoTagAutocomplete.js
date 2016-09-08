@@ -132,10 +132,12 @@ export default class KenestoTagAutocomplete extends Component {
   _onBlur() {
     this.blur();
     this.setState({showList: false});
+    this.props.onHideTagsList();
   }
 
   _onFocus() {
     this.setState({showList: true});
+    this.props.onShowTagsList();
   }
 
   _onChangeText(text) {
@@ -228,7 +230,8 @@ export default class KenestoTagAutocomplete extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
+    backgroundColor: "#fff",
   },
   inputContainer: {
     flexDirection:'row', 
