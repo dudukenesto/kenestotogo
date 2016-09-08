@@ -155,7 +155,7 @@ export default class KenestoTagAutocomplete extends Component {
     const { dataSource, listPosition } = this.state;
     const { listStyle } = this.props; 
 
-    if(!this.state.showList) {
+    if(!this.state.showList || this.state.userInput=="") {
       return null;
     }
 
