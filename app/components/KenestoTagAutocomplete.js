@@ -204,7 +204,7 @@ export default class KenestoTagAutocomplete extends Component {
 
     return (
       <View style={[styles.container, containerStyle]}>
-      <Text style={styles.usersTitle}>Add Users</Text>
+      {this.props.title && <Text style={styles.usersTitle}>{this.props.title}</Text>}
         <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this)}>
         
           {this.state.tags.map((tag) => (
@@ -215,6 +215,7 @@ export default class KenestoTagAutocomplete extends Component {
             style={[styles.textinput, textInputStyle]}
             underlineColorAndroid='transparent'
             placeholder={this.state.tags.length > 0 ? '' : this.props.placeholder}
+            placeholderTextColor = {"#bbb"}
             onChangeText={this._onChangeText.bind(this)}
             onFocus={this._onFocus.bind(this)}
             onBlur={this._onBlur.bind(this)}
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection:'row', 
     flexWrap: 'wrap',
-    padding: 2,
+    paddingHorizontal: 30,
     borderColor: '#999',
     borderBottomWidth: 1,
     minHeight:20,
@@ -252,15 +253,16 @@ const styles = StyleSheet.create({
   rowContainer: {
     backgroundColor: 'white',
     justifyContent:'center',
-    padding:10,
+    paddingVertical: 15,
+    paddingLeft: 30
   },
   text: {
-    fontSize: 10,
+    fontSize: 14,
   },
   separator: {
-    height:1,
+    height: 0.5,
     alignSelf: 'stretch',
-    backgroundColor: '#666666',
+    backgroundColor: '#aaa',
   },
   list: {
     // position: 'absolute',
@@ -269,6 +271,8 @@ const styles = StyleSheet.create({
   usersTitle: {
     color: "#000",
     fontSize: 16,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    marginTop: 20,
+    marginLeft: 30,
   },
 });

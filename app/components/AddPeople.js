@@ -79,9 +79,9 @@ class AddPeople extends Component {
           onChange={this._onChange.bind(this)}
           onUpdateLayout={this._onUpdateLayout.bind(this)}
           onUpdateTags={this._onUpdateTags.bind(this)}
-          placeholder="ASD"
           onHideTagsList={this.showSharingList.bind(this)}
           onShowTagsList={this.hideSharingList.bind(this)}
+          title={"Add Users"}
         />
         
         {this.state.showSharingList==true? 
@@ -118,7 +118,7 @@ var styles = StyleSheet.create({
     
   },
   newTagSuggestion: {
-    backgroundColor: "#cfc",
+    
   },
   
   
