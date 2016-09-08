@@ -64,6 +64,9 @@ class AddPeople extends Component {
     this.setState({showSharingList: false})
   }
   
+  submitSelectedTags(){
+    // VALIDATE TAGS, COMBINE this.state.selected WITH PERMISSIONS AND SEND TO SERVER
+  }
   
   render() {
     return (
@@ -81,6 +84,7 @@ class AddPeople extends Component {
           onUpdateTags={this._onUpdateTags.bind(this)}
           onHideTagsList={this.showSharingList.bind(this)}
           onShowTagsList={this.hideSharingList.bind(this)}
+          onSubmit={this.submitSelectedTags.bind(this)}
           title={"Add Users"}
         />
         

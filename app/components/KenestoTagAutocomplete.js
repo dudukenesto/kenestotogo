@@ -14,20 +14,20 @@ import Tag from './Tag';
 
 export default class KenestoTagAutocomplete extends Component {
 
-  static propTypes = {
-    initialTags: React.PropTypes.arrayOf(React.PropTypes.string),
-    suggestions: React.PropTypes.arrayOf(React.PropTypes.string),
-    placeholder: React.PropTypes.string,
-    footerText: React.PropTypes.string,
-    height: React.PropTypes.number,
-    fontSize: React.PropTypes.number,
-    containerStyle: View.propTypes.style,
-    inputContainerStyle: View.propTypes.style,
-    textInputStyle: TextInput.propTypes.style,
-    listStyle: ListView.propTypes.style,
-    onUpdateTags: React.PropTypes.func,
-    onUpdateLayout: React.PropTypes.func,
-  }
+  // static propTypes = {
+  //   initialTags: React.PropTypes.arrayOf(React.PropTypes.string),
+  //   suggestions: React.PropTypes.arrayOf(React.PropTypes.string),
+  //   placeholder: React.PropTypes.string,
+  //   footerText: React.PropTypes.string,
+  //   height: React.PropTypes.number,
+  //   fontSize: React.PropTypes.number,
+  //   containerStyle: View.propTypes.style,
+  //   inputContainerStyle: View.propTypes.style,
+  //   textInputStyle: TextInput.propTypes.style,
+  //   listStyle: ListView.propTypes.style,
+  //   onUpdateTags: React.PropTypes.func,
+  //   onUpdateLayout: React.PropTypes.func,
+  // }
 
   static defaultProps = {
     initialTags: [],
@@ -269,8 +269,8 @@ const styles = StyleSheet.create({
     // height:300
   },
   usersTitle: {
-    color: "#000",
-    fontSize: 16,
+    color: "#999",
+    fontSize: 14,
     backgroundColor: "#fff",
     marginTop: 20,
     marginLeft: 30,

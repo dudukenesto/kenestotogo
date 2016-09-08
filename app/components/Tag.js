@@ -14,8 +14,6 @@ const Tag = ({
 }) => {
     const styles = StyleSheet.create({
         container: {
-            // flexDirection: "row",
-            // justifyContent: 'center',
             backgroundColor: '#eee',
             paddingHorizontal: 10,
             padding: 0,
@@ -34,13 +32,10 @@ const Tag = ({
             color: '#000',
             padding: 0,
             margin: 0
-            // alignSelf: "center"
         },
         userIcon: {
             fontSize: 30,
-            // position: "absolute",
             left: -12,
-            // top: -2
         },
         avatar: {
             height: 30,
@@ -57,18 +52,6 @@ const Tag = ({
             </View>
         </TouchableHighlight>
     );
-}
-
-Tag.propTypes = {
-    text: PropTypes.string,
-    tagContainer: View.propTypes.style,
-    onPress: PropTypes.func,
-}
-
-Tag.defaultProps = {
-    text: 'none',
-    tagContainer: null,
-    onPress: () => { },
 }
 
 export default Tag;
