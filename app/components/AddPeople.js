@@ -87,7 +87,7 @@ class AddPeople extends Component {
           onSubmit={this.submitSelectedTags.bind(this)}
           title={"Add Users"}
           minCharsToStartAutocomplete={1}
-          
+          addNewTagTitle={"Add a new user: "}
         />
         
         {this.state.showSharingList==true? 

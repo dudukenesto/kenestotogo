@@ -33,7 +33,7 @@ export default class KenestoTagAutocomplete extends Component {
     initialTags: [],
     suggestions: [],
     placeholder: 'Select tag or enter tag name...',
-    footerText: 'Add a new tag',
+    addNewTagTitle: 'Add a new tag',
     onUpdateTags: () => {},
     onUpdateLayout: () => {},
     containerStyle: null,
@@ -111,11 +111,12 @@ export default class KenestoTagAutocomplete extends Component {
   _renderFooter() {
     const { userInput, tags } = this.state;
     const shouldRender = ( userInput && !tags.includes(userInput) ) ? true : false;
+    const { addNewTagTitle } = this.props
     if (shouldRender) {
       return (
         <TouchableHighlight onPress={this._addTag.bind(this, userInput)}>
           <View style={styles.tagContainer}>
-            <Text style={styles.text}>{this.props.footerText + ' \"' + userInput + '\"'}</Text>
+            <Text style={styles.text}>{addNewTagTitle + ' \"' + userInput + '\"'}</Text>
           </View>
         </TouchableHighlight>
       )
