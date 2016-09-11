@@ -87,6 +87,7 @@ class AddPeople extends Component {
           onSubmit={this.submitSelectedTags.bind(this)}
           title={"Add Users"}
           minCharsToStartAutocomplete={1}
+          allowAddingNewTags={true}
           addNewTagTitle={"Add a new user: "}
         />
         

@@ -110,7 +110,7 @@ export default class KenestoTagAutocomplete extends Component {
 
   _renderFooter() {
     const { userInput, tags } = this.state;
-    const shouldRender = ( userInput && !tags.includes(userInput) ) ? true : false;
+    const shouldRender = ( userInput && !tags.includes(userInput) && this.props.allowAddingNewTags ) ? true : false;
     const { addNewTagTitle } = this.props
     if (shouldRender) {
       return (
