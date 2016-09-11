@@ -40,6 +40,7 @@ export default class KenestoTagAutocomplete extends Component {
     inputContainerStyle: null,
     textInputStyle: null,
     listStyle: null,
+    minCharsToStartAutocomplete: 0
   }
 
   constructor(props) {
@@ -153,9 +154,9 @@ export default class KenestoTagAutocomplete extends Component {
 
   _getListView() {
     const { dataSource, listPosition } = this.state;
-    const { listStyle } = this.props; 
+    const { listStyle, minCharsToStartAutocomplete } = this.props; 
 
-    if(!this.state.showList || this.state.userInput=="") {
+    if(!this.state.showList || this.state.userInput=="" || this.state.userInput.length < minCharsToStartAutocomplete) {
       return null;
     }
 

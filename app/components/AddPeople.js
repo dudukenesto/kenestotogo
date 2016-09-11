@@ -86,6 +86,8 @@ class AddPeople extends Component {
           onShowTagsList={this.hideSharingList.bind(this)}
           onSubmit={this.submitSelectedTags.bind(this)}
           title={"Add Users"}
+          minCharsToStartAutocomplete={1}
+          
         />
         
         {this.state.showSharingList==true? 
