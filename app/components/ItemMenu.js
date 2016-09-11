@@ -102,7 +102,7 @@ let styles = StyleSheet.create({
   },
 })
 
-export class ItemMenu extends React.Component{
+class ItemMenu extends React.Component{
         constructor(props){
             super (props);
             this.state = {

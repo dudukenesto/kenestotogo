@@ -19,6 +19,7 @@ export const loginRoute = {
   }
 }
 
+
 export const forgotPasswordRoute = {
   type: 'push',
   route: {
@@ -55,5 +56,12 @@ export function addPeopleRoute(data) {
   )
 };
 
+export const scanRoute = {
+  type: 'push',
+  route: {
+    key: 'scan',
+    title: 'scan'
+  }
+}
 
 
