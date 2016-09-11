@@ -75,7 +75,7 @@ export default class KenestoTagAutocomplete extends Component {
 
   clearText() {
     this.setState({userInput: ''});
-    this.refs.textInput.setNativeProps({text: ' '});
+    this.refs.textInput.setNativeProps({text: ''});
   }
 
   _filterList(newTags) {
@@ -143,22 +143,16 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _onChangeText(text) {
-    if(text == ""){
-      // alert('remove previous');
-      this.state.tags.pop();
-      this.clearText();
-    }
-    else {
-      var enteredText = text.substr(1)
-      var filteredList = this.props.suggestions.filter((tag) => {
-        return !this.state.tags.find(t => (t === tag)) && tag.includes(enteredText);
-      })
+    
+    var filteredList = this.props.suggestions.filter((tag) => {
+      return !this.state.tags.find(t => (t === tag)) && tag.includes(text);
+    })
 
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(filteredList),
-        userInput: enteredText,
-      });
-    }
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(filteredList),
+      userInput: text,
+});
+    
     
   }
 
@@ -212,7 +206,7 @@ export default class KenestoTagAutocomplete extends Component {
   render() {
 
     const { placeholder, containerStyle, inputContainerStyle, textInputStyle } = this.props;
-    // alert(this.state.tags[this.state.tags.length-1])
+
     return (
       <View style={[styles.container, containerStyle]}>
       {this.props.title && <Text style={styles.usersTitle}>{this.props.title}</Text>}
@@ -232,7 +226,6 @@ export default class KenestoTagAutocomplete extends Component {
             onBlur={this._onBlur.bind(this)}
             autoCorrect={false}
             autoCapitalize='none'
-            defaultValue={" "}
           />
         </View>
         {this._getListView()}
