@@ -97,6 +97,23 @@ export default class KenestoTagAutocomplete extends Component {
 
     this.props.onChange(newTags);
   }
+  
+  _addNewTag(text){
+    var tag = text;
+      if (this.props.formatNewTag) {
+        tag = this.props.formatNewTag(tag)
+      }
+      
+      if(tag === false){
+        this.clearText();
+        if(this.props.onErrorAddNewTag){
+          this.props.onErrorAddNewTag(text);
+        }
+      }
+      else {
+        this._addTag(tag);
+      }      
+    }
 
   _renderRow(rowData, sectionID, rowID) {
     return (
@@ -114,7 +131,7 @@ export default class KenestoTagAutocomplete extends Component {
     const { addNewTagTitle } = this.props
     if (shouldRender) {
       return (
-        <TouchableHighlight onPress={this._addTag.bind(this, userInput)}>
+        <TouchableHighlight onPress={this._addNewTag.bind(this, userInput)}>
           <View style={styles.tagContainer}>
             <Text style={styles.text}>{addNewTagTitle + ' \"' + userInput + '\"'}</Text>
           </View>

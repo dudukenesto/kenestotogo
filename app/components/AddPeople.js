@@ -64,6 +64,17 @@ class AddPeople extends Component {
     this.setState({showSharingList: false})
   }
   
+  formatNewTag(tag){      
+    // trim spaces, check for email correct format etc. 
+    // If the formatted text is not a correct email - return false
+    tag = tag.trim();
+    return /\S+@\S+\.\S+/.test(tag) ? tag : false;
+  }
+  
+  onErrorAddNewTag(tag){     // show error message/toast
+    alert(tag + ' is not a valid email!')
+  }
+  
   submitSelectedTags(){
     // VALIDATE TAGS, COMBINE this.state.selected WITH PERMISSIONS AND SEND TO SERVER
   }
@@ -89,6 +100,8 @@ class AddPeople extends Component {
           minCharsToStartAutocomplete={1}
           allowAddingNewTags={true}
           addNewTagTitle={"Add a new user: "}
+          formatNewTag={this.formatNewTag.bind(this)}
+          onErrorAddNewTag={this.onErrorAddNewTag.bind(this)}
         />
         
         {this.state.showSharingList==true? 
