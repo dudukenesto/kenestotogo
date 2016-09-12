@@ -105,7 +105,7 @@ export default class KenestoTagAutocomplete extends Component {
       }
       
       if(tag === false){
-        this.clearText();
+        // this.clearText();
         if(this.props.onErrorAddNewTag){
           this.props.onErrorAddNewTag(text);
         }
@@ -116,10 +116,18 @@ export default class KenestoTagAutocomplete extends Component {
     }
 
   _renderRow(rowData, sectionID, rowID) {
+    const {rowContainerStyle, autocompleteTextStyle} = this.props;
+    var autocompleteString = rowData[this.props.autocompleteField] || rowData;
+    var searchedTextLength = this.state.userInput.length;
+    var searchedIndex = autocompleteString.indexOf(this.state.userInput);
+    var textBefore = autocompleteString.substr(0, searchedIndex);
+    var textAfter = autocompleteString.substr(searchedIndex+searchedTextLength);
     return (
       <TouchableHighlight onPress={this._addTag.bind(this, rowData)}>
-        <View style={styles.rowContainer}>
-          <Text style={styles.text}>{rowData}</Text>
+        <View style={[styles.rowContainer, rowContainerStyle]}>
+          <Text style={styles.text}>{textBefore}</Text>
+          <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
+          <Text style={styles.text}>{textAfter}</Text>
         </View>
       </TouchableHighlight>
     )
@@ -128,12 +136,12 @@ export default class KenestoTagAutocomplete extends Component {
   _renderFooter() {
     const { userInput, tags } = this.state;
     const shouldRender = ( userInput && !tags.includes(userInput) && this.props.allowAddingNewTags ) ? true : false;
-    const { addNewTagTitle } = this.props
+    const { addNewTagTitle, newTagStyle, newTagContainerStyle } = this.props
     if (shouldRender) {
       return (
         <TouchableHighlight onPress={this._addNewTag.bind(this, userInput)}>
-          <View style={styles.tagContainer}>
-            <Text style={styles.text}>{addNewTagTitle + ' \"' + userInput + '\"'}</Text>
+          <View style={[styles.newTagContainer, newTagContainerStyle]}>
+            <Text style={[styles.newTagText, newTagStyle]}>{addNewTagTitle + ' \"' + userInput + '\"'}</Text>
           </View>
         </TouchableHighlight>
       )
@@ -191,6 +199,7 @@ export default class KenestoTagAutocomplete extends Component {
         renderRow={this._renderRow.bind(this)}
         renderSeparator={this._renderSeparator.bind(this)}
         renderFooter={this._renderFooter.bind(this)}
+        key={this.state.userInput}
       />        
     )
   }
@@ -226,7 +235,7 @@ export default class KenestoTagAutocomplete extends Component {
 
     return (
       <View style={[styles.container, containerStyle]}>
-      {this.props.title && <Text style={styles.usersTitle}>{this.props.title}</Text>}
+      {this.props.title && <Text style={styles.autocompleteTitle}>{this.props.title}</Text>}
         <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this)}>
         
           {this.state.tags.map((tag) => (
@@ -273,12 +282,12 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   rowContainer: {
+    flexDirection: "row",
     backgroundColor: 'white',
-    justifyContent:'center',
     paddingVertical: 15,
     paddingLeft: 30
   },
-  text: {
+  newTagText: {
     fontSize: 14,
   },
   separator: {
@@ -287,14 +296,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#aaa',
   },
   list: {
-    // position: 'absolute',
-    // height:300
+
   },
-  usersTitle: {
+  searchedText: {
+    color: "#F66400",
+    fontWeight: "bold"
+  },
+  autocompleteTitle: {
     color: "#999",
     fontSize: 14,
     backgroundColor: "#fff",
     marginTop: 20,
     marginLeft: 30,
   },
+  newTagContainer: {},
+  
 });

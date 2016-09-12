@@ -88,8 +88,11 @@ class AddPeople extends Component {
           suggestions={suggestions}
           containerStyle={styles.autocompleteContainer}
           inputContainerStyle={styles.tagsInputContainer}
-          listStyle={styles.newTagSuggestion}
-          tagContainer={styles.tagContainer}
+          listStyle={styles.listStyle}
+          newTagContainerStyle={styles.newTagContainerStyle}
+          newTagStyle={styles.newTagStyle}
+          rowContainerStyle={styles.rowContainerStyle}
+          autocompleteTextStyle={styles.autocompleteTextStyle}
           onChange={this._onChange.bind(this)}
           onUpdateLayout={this._onUpdateLayout.bind(this)}
           onUpdateTags={this._onUpdateTags.bind(this)}
@@ -102,6 +105,7 @@ class AddPeople extends Component {
           addNewTagTitle={"Add a new user: "}
           formatNewTag={this.formatNewTag.bind(this)}
           onErrorAddNewTag={this.onErrorAddNewTag.bind(this)}
+          // autocompleteField={"email"}
         />
         
         {this.state.showSharingList==true? 
@@ -134,14 +138,12 @@ var styles = StyleSheet.create({
   autocompleteContainer: {
     backgroundColor: "#fff"
   },
-  tagsInputContainer: {
-    
-  },
-  newTagSuggestion: {
-    
-  },
-  
-  
+  tagsInputContainer: {},
+  listStyle: {},
+  newTagContainerStyle: {},
+  newTagStyle: {},
+  rowContainerStyle: {},
+  autocompleteTextStyle: {},
 });
 
 module.exports = AddPeople;
