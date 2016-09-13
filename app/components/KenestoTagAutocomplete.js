@@ -139,7 +139,7 @@ export default class KenestoTagAutocomplete extends Component {
     const { addNewTagTitle, newTagStyle, newTagContainerStyle } = this.props
     if (shouldRender) {
       return (
-        <TouchableHighlight onPress={this._addNewTag.bind(this, userInput)}>
+        <TouchableHighlight onPress={this._addNewTag.bind(this, userInput)} underlayColor={"#efefef"}>
           <View style={[styles.newTagContainer, newTagContainerStyle]}>
             <Text style={[styles.newTagText, newTagStyle]}>{addNewTagTitle + ' \"' + userInput + '\"'}</Text>
           </View>

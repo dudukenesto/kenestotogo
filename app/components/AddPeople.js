@@ -2,6 +2,7 @@
 // var React = require('react');
 import React, {Component} from 'react';
 import KenestoTagAutocomplete from './KenestoTagAutocomplete';
+import ViewContainer from '../components/ViewContainer';
 var ReactNative = require('react-native');
 
 var {
@@ -72,7 +73,8 @@ class AddPeople extends Component {
   }
   
   onErrorAddNewTag(tag){     // show error message/toast
-    alert(tag + ' is not a valid email!')
+    var errorMessage = tag + ' is not a valid email!'
+    this.refs.mainContainer.showMessage("info", errorMessage);
   }
   
   submitSelectedTags(){
@@ -81,50 +83,51 @@ class AddPeople extends Component {
   
   render() {
     return (
-      <View style={styles.container}>
-      
-        <KenestoTagAutocomplete
-          ref='tagInput'
-          suggestions={suggestions}
-          containerStyle={styles.autocompleteContainer}
-          inputContainerStyle={styles.tagsInputContainer}
-          listStyle={styles.listStyle}
-          newTagContainerStyle={styles.newTagContainerStyle}
-          newTagStyle={styles.newTagStyle}
-          rowContainerStyle={styles.rowContainerStyle}
-          autocompleteTextStyle={styles.autocompleteTextStyle}
-          onChange={this._onChange.bind(this)}
-          onUpdateLayout={this._onUpdateLayout.bind(this)}
-          onUpdateTags={this._onUpdateTags.bind(this)}
-          onHideTagsList={this.showSharingList.bind(this)}
-          onShowTagsList={this.hideSharingList.bind(this)}
-          onSubmit={this.submitSelectedTags.bind(this)}
-          title={"Add Users"}
-          minCharsToStartAutocomplete={1}
-          allowAddingNewTags={true}
-          addNewTagTitle={"Add a new user: "}
-          formatNewTag={this.formatNewTag.bind(this)}
-          onErrorAddNewTag={this.onErrorAddNewTag.bind(this)}
-          // autocompleteField={"email"}
-        />
+      <ViewContainer ref="mainContainer">
+        <View style={styles.container}>
         
-        {this.state.showSharingList==true? 
-          <View style={{}}>
+          <KenestoTagAutocomplete
+            ref='tagInput'
+            suggestions={suggestions}
+            containerStyle={styles.autocompleteContainer}
+            inputContainerStyle={styles.tagsInputContainer}
+            listStyle={styles.listStyle}
+            newTagContainerStyle={styles.newTagContainerStyle}
+            newTagStyle={styles.newTagStyle}
+            rowContainerStyle={styles.rowContainerStyle}
+            autocompleteTextStyle={styles.autocompleteTextStyle}
+            onChange={this._onChange.bind(this)}
+            onUpdateLayout={this._onUpdateLayout.bind(this)}
+            onUpdateTags={this._onUpdateTags.bind(this)}
+            onHideTagsList={this.showSharingList.bind(this)}
+            onShowTagsList={this.hideSharingList.bind(this)}
+            onSubmit={this.submitSelectedTags.bind(this)}
+            title={"Add Users"}
+            minCharsToStartAutocomplete={1}
+            allowAddingNewTags={true}
+            addNewTagTitle={"Add a new user: "}
+            formatNewTag={this.formatNewTag.bind(this)}
+            onErrorAddNewTag={this.onErrorAddNewTag.bind(this)}
+            // autocompleteField={"email"}
+          />
+          
+          {this.state.showSharingList==true? 
+            <View style={{}}>
+              <View>
+                <Text>Sharing</Text>
+              </View>
+          
             <View>
-              <Text>Sharing</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
             </View>
+          </View> : 
+          <View style={{}}></View>
+          }
         
-          <View>
-            <Text>list of people</Text>
-            <Text>list of people</Text>
-            <Text>list of people</Text>
-          </View>
-        </View> : 
-        <View style={{}}></View>
-        }
-        
-      
-      </View>
+        </View>      
+      </ViewContainer>
       
     );
   }
