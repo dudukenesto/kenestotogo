@@ -15,8 +15,9 @@ const Tag = ({
     const styles = StyleSheet.create({
         container: {
             backgroundColor: '#eee',
-            paddingHorizontal: 10,
-            padding: 0,
+            paddingLeft: 5,
+            paddingRight: 7,
+            paddingVertical: 0,
             margin: 3,
             borderRadius: 15,
             height: 27,
@@ -35,7 +36,13 @@ const Tag = ({
         },
         userIcon: {
             fontSize: 30,
-            left: -12,
+            left: -7,
+        },
+        closeIcon: {
+            fontSize: 17,
+            marginTop: 2,
+            marginRight: -5,
+            padding: 6,
         },
         avatar: {
             height: 30,
@@ -45,10 +52,11 @@ const Tag = ({
     })
 
     return (
-        <TouchableHighlight style={[styles.container, tagContainer]} onPress={onPress}>
+        <TouchableHighlight style={[styles.container, tagContainer]} >
             <View style={styles.innerContainer}>
                 <Icon name="account-circle" style={styles.userIcon} />
                 <Text style={styles.text}>{text}</Text>
+                <Icon name="close" style={styles.closeIcon} onPress={onPress} />
             </View>
         </TouchableHighlight>
     );
