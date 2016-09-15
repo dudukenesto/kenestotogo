@@ -14,7 +14,6 @@
     "react-native-android-kit": "^1.1.2",
     "react-native-button": "^1.6.0",
     "react-native-drawer": "^2.2.6",
-    "react-native-file-opener": "^0.2.0",
     "react-native-fs": "^2.0.1-rc.2",
     "react-native-image-crop-picker": "^0.8.2",
     "react-native-keyboard-aware-scroll-view": "0.2.0",

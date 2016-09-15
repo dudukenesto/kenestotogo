@@ -8,7 +8,7 @@ import Document from './Document'
 import LoginContainer from '../containers/LoginContainer'
 import DocumentsContainer from '../containers/DocumentsContainer'
 import LauncherContainer from '../containers/LauncherContainer'
-import ImagePickerExample from './ImagePickerExample';
+import Scan from './Scan';
 
 import {
   BackAndroid,
@@ -51,7 +51,7 @@ class NavRoot extends Component {
       return <ForgotPassword userName={route.userName} _goBack={this._handleBackAction.bind(this) }  />
     }
     if (route.key === 'scan') {
-      return <ImagePickerExample _handleNavigate={this._handleNavigate.bind(this) } />
+      return <Scan _handleNavigate={this._handleNavigate.bind(this) } />
     }
     if (route.key === 'login') {
       return <LoginContainer _handleNavigate={this._handleNavigate.bind(this) } />

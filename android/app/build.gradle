@@ -158,7 +158,6 @@ dependencies {
     compile project(':RNMaterialKit')
     compile project(':react-native-orientation')
     compile project(':react-native-webview-bridge')
-    compile project(':react-native-file-opener')
      compile project(':react-native-fs')
 }
 

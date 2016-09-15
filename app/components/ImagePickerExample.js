@@ -1,168 +1,147 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-var React = require('react');
-import  {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    TouchableOpacity,
-    ActivityIndicatorIOS,
-} from 'react-native';
+import React, {Component} from 'react';
+import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity} from 'react-native';
 
-const ProgressBar = require('ProgressBarAndroid');
-const Platform = require('Platform');
-
-const RNFS = require('react-native-fs');
-const FileOpener = require('react-native-file-opener');
-
-const SavePath = Platform.OS === 'ios' ? RNFS.DocumentDirectoryPath : RNFS.ExternalDirectoryPath;
-const ProgressIndicator = Platform.OS === 'ios' ? ActivityIndicatorIOS : ProgressBar;
-
-
-const sampleImageFileURL = 'https://github.com/huangzuizui/react-native-file-opener/blob/master/sample/sample.jpg?raw=true';
-const sampleDocFileURL = 'https://github.com/huangzuizui/react-native-file-opener/blob/master/sample/sample.doc?raw=true';
-
-const sampleImageFilePath = SavePath + '/sample.jpg';
-const sampleDocFilePath = SavePath + '/sample.doc';
-
-export default class ImagePickerExample extends React.Component {
-    constructor (props) {
-        super(props);
-
-        this.state = {
-            imageLoaded: false,
-            docLoaded: false,
-            imageLoading: false,
-            docLoading: false,
-        };
-    }
-
-    getSampleImage () {
-
-        alert(sampleImageFilePath + ' : ' + sampleImageFileURL)
-        return null; 
-
-        this.setState({
-            imageLoading: true
-        });
-
-        RNFS.downloadFile(
-            sampleImageFileURL,
-            sampleImageFilePath
-        ).then(() => {
-            this.setState({
-                imageLoaded: true,
-            });
-        });
-
-    }
-
-    getSampleDoc () {
-
-        this.setState({
-            docLoading: true
-        });
-
-        RNFS.downloadFile(
-            sampleDocFileURL,
-            sampleDocFilePath
-        ).then(() => {
-            this.setState({
-                docLoaded: true,
-            });
-        });
-
-    }
-
-    openSampleImage () {
-        FileOpener.open(
-            sampleImageFilePath,
-            'image/jpeg'
-        ).then(() => {
-            console.log('success!!');
-        },(e) => {
-            console.log('error!!');
-        });
-
-    }
-
-    openSampleDoc () {
-        FileOpener.open(
-            sampleDocFilePath,
-            'application/msword'
-        ).then(() => {
-            console.log('success!!');
-        },(e) => {
-            console.log('error!!');
-        });
-
-    }
-    render() {
-        return (
-            <View style={styles.container}>
-                {!this.state.imageLoaded && (
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={this.getSampleImage.bind(this)}>
-                        {this.state.imageLoading && (
-                            <ProgressIndicator />
-                        )}
-                        <Text>get image file </Text>
-                    </TouchableOpacity>
-                )}
-                {this.state.imageLoaded && (
-                    <TouchableOpacity
-                        style={[styles.button, styles.buttonOrangeBorder]}
-                        onPress={this.openSampleImage.bind(this)}>
-                        <Text style={styles.textColor}>open image file</Text>
-                    </TouchableOpacity>
-                )}
-                {!this.state.docLoaded && (
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={this.getSampleDoc.bind(this)}>
-                        {this.state.docLoading && (
-                            <ProgressIndicator />
-                        )}
-                        <Text>get doc file {this.state.docLoadedPercentage}</Text>
-                    </TouchableOpacity>
-                )}
-                {this.state.docLoaded && (
-                    <TouchableOpacity
-                        style={[styles.button, styles.buttonOrangeBorder]}
-                        onPress={this.openSampleDoc.bind(this)}>
-                        <Text style={styles.textColor}>open doc file</Text>
-                    </TouchableOpacity>
-                )}
-            </View>
-        );
-    }
-}
+import {NativeModules, Dimensions} from 'react-native';
+var ImagePicker = NativeModules.ImageCropPicker;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-    },
-    button: {
-        padding: 10,
-        borderRadius: 5,
-        margin: 10,
-        borderWidth: 1,
-        borderColor: '#333333',
-    },
-    buttonOrangeBorder: {
-        borderColor: '#ff6600'
-    },
-    textColor: {
-        color: '#ff6600'
-    }
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  button: {
+    backgroundColor: 'blue',
+    marginBottom: 10
+  },
+  text: {
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center'
+  }
 });
 
+export default class App extends Component {
 
+  constructor() {
+    super();
+    this.state = {
+      image: null,
+      images: null
+    };
+  }
+
+  pickSingleWithCamera(cropping) {
+    ImagePicker.openCamera({
+      cropping,
+      width: 500,
+      height: 500
+    }).then(image => {
+      console.log('received image', image);
+      this.setState({
+        image: {uri: image.path, width: image.width, height: image.height},
+        images: null
+      });
+    }).catch(e => alert(e));
+  }
+
+  pickSingleBase64(cropit) {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: cropit,
+      includeBase64: true
+    }).then(image => {
+      console.log('received image', image);
+      this.setState({
+        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height},
+        images: null
+      });
+    }).catch(e => {});
+  }
+
+  cleanupImages() {
+    ImagePicker.clean().then(() => {
+      console.log('removed tmp images from tmp directory');
+    }).catch(e => {
+      alert(e);
+    });
+  }
+
+  cleanupSingleImage() {
+    let image = this.state.image || (this.state.images && this.state.images.length ? this.state.images[0] : null);
+    console.log('will cleanup image', image);
+
+    ImagePicker.cleanSingle(image ? image.uri : null).then(() => {
+      console.log(`removed tmp image ${image.uri} from tmp directory`);
+    }).catch(e => {
+      alert(e);
+    })
+  }
+
+  pickSingle(cropit) {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: cropit
+    }).then(image => {
+      console.log('received image', image);
+      this.setState({
+        image: {uri: image.path, width: image.width, height: image.height},
+        images: null
+      });
+    }).catch(e => {});
+  }
+
+  pickMultiple() {
+    ImagePicker.openPicker({
+      multiple: true
+    }).then(images => {
+      this.setState({
+        image: null,
+        images: images.map(i => {
+          console.log('received image', i);
+          return {uri: i.path, width: i.width, height: i.height};
+        })
+      });
+    }).catch(e => {});
+  }
+
+  scaledHeight(oldW, oldH, newW) {
+    return (oldH / oldW) * newW;
+  }
+
+  render() {
+    return <View style={styles.container}>
+      <ScrollView>
+        {this.state.image ? <Image style={{width: 300, height: 300, resizeMode: 'contain'}} source={this.state.image} /> : null}
+        {this.state.images ? this.state.images.map(i => <Image key={i.uri} style={{width: 300, height: this.scaledHeight(i.width, i.height, 300)}} source={i} />) : null}
+      </ScrollView>
+
+      <TouchableOpacity onPress={() => this.pickSingleWithCamera(false)} style={styles.button}>
+        <Text style={styles.text}>Select Single With Camera</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => this.pickSingleWithCamera(true)} style={styles.button}>
+        <Text style={styles.text}>Select Single With Camera With Cropping</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => this.pickSingle(false)} style={styles.button}>
+        <Text style={styles.text}>Select Single</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => this.pickSingleBase64(false)} style={styles.button}>
+        <Text style={styles.text}>Select Single Returning Base64</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => this.pickSingle(true)} style={styles.button}>
+        <Text style={styles.text}>Select Single With Cropping</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={this.pickMultiple.bind(this)} style={styles.button}>
+        <Text style={styles.text}>Select Multiple</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={this.cleanupImages.bind(this)} style={styles.button}>
+        <Text style={styles.text}>Cleanup All Images</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={this.cleanupSingleImage.bind(this)} style={styles.button}>
+        <Text style={styles.text}>Cleanup Single Image</Text>
+      </TouchableOpacity>
+    </View>;
+  }
+}

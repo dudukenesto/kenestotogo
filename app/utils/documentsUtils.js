@@ -104,3 +104,10 @@ export function getSelectedDocument(documentlists: Object, navReducer: Object){
     return selectedId == '' || selectedId == null ? null : _.find(items, { 'Id': selectedId }); 
 }
 
+
+export function getFileUploadUrl(env: string, sessionToken: string, path: string, fileDescription : string= "", fileKeyword: string ="", folderId: string = '00000000-0000-0000-0000-000000000000', baseFileId: string = '00000000-0000-0000-0000-000000000000', userData :string = ''){
+  const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+   return  `${apiBaseUrl}/KDocuments.svc/UploadFile?t=${sessionToken}&p=${path}&fd=${fileDescription}&fk=${fileKeyword}&fid=${folderId}&bid=${baseFileId}&ud=${userData}`;
+}
+

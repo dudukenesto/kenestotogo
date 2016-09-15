@@ -22,6 +22,3 @@ project(':react-native-image-crop-picker').projectDir = new File(settingsDir, '.
 
 include ':react-native-fs'
 project(':react-native-fs').projectDir = new File(settingsDir, '../node_modules/react-native-fs/android')
-
-include ':react-native-file-opener'
-project(':react-native-file-opener').projectDir = new File(settingsDir, '../node_modules/react-native-file-opener/android')

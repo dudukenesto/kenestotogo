@@ -14,7 +14,6 @@ import java.util.List;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.github.yamill.orientation.OrientationPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
-import com.fileopener.FileOpenerPackage;
 import com.rnfs.RNFSPackage;
 
 public class MainApplication extends Application implements ReactApplication {
@@ -34,7 +33,6 @@ public class MainApplication extends Application implements ReactApplication {
          new VectorIconsPackage(),
          new ReactMaterialKitPackage(),
         new WebViewBridgePackage() ,
-        new FileOpenerPackage(),
          new RNFSPackage() 
 
       );
