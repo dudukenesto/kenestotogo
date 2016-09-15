@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
   TextInput,
   ListView,
   TouchableHighlight,
@@ -190,17 +191,20 @@ export default class KenestoTagAutocomplete extends Component {
     }
 
     return (
-      <ListView
-        style={[styles.list, listStyle]}
-        ref='listView'
-        keyboardShouldPersistTaps={true}
-        dataSource={dataSource}
-        enableEmptySections={true}
-        renderRow={this._renderRow.bind(this)}
-        renderSeparator={this._renderSeparator.bind(this)}
-        renderFooter={this._renderFooter.bind(this)}
-        key={this.state.userInput}
-      />        
+      
+      <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
+        <ListView
+          style={[styles.list, listStyle]}
+          ref='listView'
+          keyboardShouldPersistTaps={true}
+          dataSource={dataSource}
+          enableEmptySections={true}
+          renderRow={this._renderRow.bind(this) }
+          renderSeparator={this._renderSeparator.bind(this) }
+          renderFooter={this._renderFooter.bind(this) }
+          key={this.state.userInput}
+          />
+      </ScrollView>
     )
   }
 
@@ -234,36 +238,38 @@ export default class KenestoTagAutocomplete extends Component {
     const { placeholder, containerStyle, inputContainerStyle, textInputStyle } = this.props;
 
     return (
-      <View style={[styles.container, containerStyle]}>
-      {this.props.title && <Text style={styles.autocompleteTitle}>{this.props.title}</Text>}
-        <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this)}>
-        
-          {this.state.tags.map((tag) => (
-            <Tag key={tag} text={tag} onPress={this._removeTag.bind(this, tag)}/>
-          ))}
-          <TextInput
-            ref='textInput'
-            style={[styles.textinput, textInputStyle]}
-            underlineColorAndroid='transparent'
-            placeholder={this.state.tags.length > 0 ? '' : this.props.placeholder}
-            placeholderTextColor = {"#bbb"}
-            onChangeText={this._onChangeText.bind(this)}
-            onFocus={this._onFocus.bind(this)}
-            onBlur={this._onBlur.bind(this)}
-            autoCorrect={false}
-            autoCapitalize='none'
-          />
+      <View style={[{flex:1}, containerStyle]}>
+        <View style={styles.headerContainer}>
+          {this.props.title && <Text style={styles.autocompleteTitle}>{this.props.title}</Text>}
+          <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this) }>
+
+            {this.state.tags.map((tag) => (
+              <Tag key={tag} text={tag} onPress={this._removeTag.bind(this, tag) }/>
+            )) }
+            <TextInput
+              ref='textInput'
+              style={[styles.textinput, textInputStyle]}
+              underlineColorAndroid='transparent'
+              placeholder={this.state.tags.length > 0 ? '' : this.props.placeholder}
+              placeholderTextColor = {"#bbb"}
+              onChangeText={this._onChangeText.bind(this) }
+              onFocus={this._onFocus.bind(this) }
+              onBlur={this._onBlur.bind(this) }
+              autoCorrect={false}
+              autoCapitalize='none'
+              />
+          </View>
+          
         </View>
-        {this._getListView()}
-      </View>
+        {this._getListView() }
+       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
+  headerContainer: {
+    
   },
   inputContainer: {
     flexDirection:'row', 

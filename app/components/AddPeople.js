@@ -33,7 +33,9 @@ var suggestions = [
     '7sdf@asa.sd',
     '8ghjkl@asa.sd',
     '9rty@asa.sd',
-    '10wer@asa.sd'
+    '10wer@asa.sd',
+    '11wer@zxa.sd',
+    '12wer@zxa.sd'
     ]
 class AddPeople extends Component {
   
@@ -112,12 +114,33 @@ class AddPeople extends Component {
           />
           
           {this.state.showSharingList==true? 
-            <View style={{}}>
+            <View style={{flex:1}}>
               <View>
                 <Text>Sharing</Text>
               </View>
           
             <View>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
+              <Text>list of people</Text>
               <Text>list of people</Text>
               <Text>list of people</Text>
               <Text>list of people</Text>
@@ -136,10 +159,10 @@ class AddPeople extends Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#fff',
+    backgroundColor: '#fff',   
   },
   autocompleteContainer: {
-    backgroundColor: "#fff"
+
   },
   tagsInputContainer: {},
   listStyle: {},
