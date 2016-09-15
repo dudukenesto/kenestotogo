@@ -236,9 +236,9 @@ export default class KenestoTagAutocomplete extends Component {
   render() {
 
     const { placeholder, containerStyle, inputContainerStyle, textInputStyle } = this.props;
-
+    var flex = (this.state.showList) ? {flex: 1} : {flex: 0} 
     return (
-      <View style={[{flex:1}, containerStyle]}>
+      <View style={[flex, containerStyle]}>
         <View style={styles.headerContainer}>
           {this.props.title && <Text style={styles.autocompleteTitle}>{this.props.title}</Text>}
           <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this) }>

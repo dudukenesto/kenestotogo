@@ -10,6 +10,7 @@ var {
   Text,
   // TextInput,
   StyleSheet,
+  ScrollView,
   // TouchableOpacity,
   // Dimensions,
   // TouchableWithoutFeedback
@@ -87,7 +88,6 @@ class AddPeople extends Component {
     return (
       <ViewContainer ref="mainContainer">
         <View style={styles.container}>
-        
           <KenestoTagAutocomplete
             ref='tagInput'
             suggestions={suggestions}
@@ -98,57 +98,61 @@ class AddPeople extends Component {
             newTagStyle={styles.newTagStyle}
             rowContainerStyle={styles.rowContainerStyle}
             autocompleteTextStyle={styles.autocompleteTextStyle}
-            onChange={this._onChange.bind(this)}
-            onUpdateLayout={this._onUpdateLayout.bind(this)}
-            onUpdateTags={this._onUpdateTags.bind(this)}
-            onHideTagsList={this.showSharingList.bind(this)}
-            onShowTagsList={this.hideSharingList.bind(this)}
-            onSubmit={this.submitSelectedTags.bind(this)}
+            onChange={this._onChange.bind(this) }
+            onUpdateLayout={this._onUpdateLayout.bind(this) }
+            onUpdateTags={this._onUpdateTags.bind(this) }
+            onHideTagsList={this.showSharingList.bind(this) }
+            onShowTagsList={this.hideSharingList.bind(this) }
+            onSubmit={this.submitSelectedTags.bind(this) }
             title={"Add Users"}
             minCharsToStartAutocomplete={1}
             allowAddingNewTags={true}
             addNewTagTitle={"Add a new user: "}
-            formatNewTag={this.formatNewTag.bind(this)}
-            onErrorAddNewTag={this.onErrorAddNewTag.bind(this)}
+            formatNewTag={this.formatNewTag.bind(this) }
+            onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
             // autocompleteField={"email"}
-          />
-          
-          {this.state.showSharingList==true? 
-            <View style={{flex:1}}>
-              <View>
-                <Text>Sharing</Text>
+            />
+
+          {this.state.showSharingList == true ?
+            <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
+              <View style={{ flex: 1 }}>
+                <View>
+                  <Text>Sharing</Text>
+                </View>
+
+                <View>
+                  <Text>1 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>5 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>10 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>15 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>20 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>24 list of people</Text>
+                </View>
               </View>
-          
-            <View>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-              <Text>list of people</Text>
-            </View>
-          </View> : 
-          <View style={{}}></View>
+            </ScrollView>
+            :
+            <View style={{}}></View>
+            
           }
-        
+
         </View>      
       </ViewContainer>
       
