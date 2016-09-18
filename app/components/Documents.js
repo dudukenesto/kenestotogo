@@ -275,12 +275,11 @@ class Documents extends Component {
     return (
 
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
-        <View style={styles.separator} />
+        <View style={styles.separator} elevation={5}/>
 
         {this._renderTableContent(dataSource, isFetching) }
-        <ActionButton buttonColor="rgba(231,76,60,1)" type={"float"} onPress={() => this.openModal()}>
+        <ActionButton buttonColor="#FF811B" onPress={() => this.openModal()} >            
         </ActionButton>
-
         
       </ViewContainer>
     )
@@ -354,7 +353,7 @@ var styles = StyleSheet.create({
     opacity: 0.0,
   },
   actionButtonIcon: {
-    fontSize: 20,
+    fontSize: 24,
     height: 22,
     color: 'white',
   },
