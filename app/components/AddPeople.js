@@ -84,6 +84,16 @@ class AddPeople extends Component {
     // VALIDATE TAGS, COMBINE this.state.selected WITH PERMISSIONS AND SEND TO SERVER
   }
   
+  autocompleteRowTemplate(searchedtext, rowData){
+    // alert(rowData)
+  return (
+    <View>
+      <Text>ASD </Text>
+      {searchedtext}
+    </View>
+  )
+} 
+  
   render() {
     return (
       <ViewContainer ref="mainContainer">
@@ -110,6 +120,7 @@ class AddPeople extends Component {
             addNewTagTitle={"Add a new user: "}
             formatNewTag={this.formatNewTag.bind(this) }
             onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
+            autocompleteRowTemplate={this.autocompleteRowTemplate.bind(this)}
             // autocompleteField={"email"}
             />
 

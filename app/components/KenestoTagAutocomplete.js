@@ -123,12 +123,18 @@ export default class KenestoTagAutocomplete extends Component {
     var searchedIndex = autocompleteString.indexOf(this.state.userInput);
     var textBefore = autocompleteString.substr(0, searchedIndex);
     var textAfter = autocompleteString.substr(searchedIndex+searchedTextLength);
+    var autocompleteFormattedString = (<View style={{flexDirection: "row"}}><Text style={styles.text}>{textBefore}</Text>
+      <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
+      <Text style={styles.text}>{textAfter}</Text></View>)
     return (
       <TouchableHighlight onPress={this._addTag.bind(this, rowData)}>
         <View style={[styles.rowContainer, rowContainerStyle]}>
-          <Text style={styles.text}>{textBefore}</Text>
-          <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
-          <Text style={styles.text}>{textAfter}</Text>
+          {this.props.autocompleteRowTemplate ?
+            this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
+            :
+            autocompleteFormattedString
+          }
+          
         </View>
       </TouchableHighlight>
     )
