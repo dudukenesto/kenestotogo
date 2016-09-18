@@ -241,17 +241,26 @@ export default class KenestoTagAutocomplete extends Component {
 
   render() {
 
-    const { placeholder, containerStyle, inputContainerStyle, textInputStyle } = this.props;
+    const { placeholder, containerStyle, inputContainerStyle, textInputStyle, tagContainerStyle, tagTemplate } = this.props;
     var flex = (this.state.showList) ? {flex: 1} : {flex: 0} 
+    
     return (
       <View style={[flex, containerStyle]}>
         <View style={styles.headerContainer}>
           {this.props.title && <Text style={styles.autocompleteTitle}>{this.props.title}</Text>}
           <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this) }>
 
-            {this.state.tags.map((tag) => (
-              <Tag key={tag} text={tag} onPress={this._removeTag.bind(this, tag) }/>
-            )) }
+            { tagTemplate ? this.state.tags.map((tag) => (
+              <TouchableHighlight key={tag} style={[styles.tagContainerStyle, tagContainerStyle]} >
+                {tagTemplate(tag, this._removeTag.bind(this)) }
+              </TouchableHighlight>
+            ))
+              :
+              this.state.tags.map((tag) => (
+                <Tag key={tag} text={tag} onPress={this._removeTag.bind(this, tag) } />
+              ))
+            }
+
             <TextInput
               ref='textInput'
               style={[styles.textinput, textInputStyle]}
@@ -322,5 +331,14 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   newTagContainer: {},
+  tagContainerStyle: {
+    backgroundColor: '#eee',
+    paddingLeft: 5,
+    paddingRight: 7,
+    paddingVertical: 0,
+    margin: 3,
+    borderRadius: 15,
+    height: 50,
+  }
   
 });

@@ -84,17 +84,31 @@ class AddPeople extends Component {
     // VALIDATE TAGS, COMBINE this.state.selected WITH PERMISSIONS AND SEND TO SERVER
   }
   
-  autocompleteRowTemplate(searchedtext, rowData){
-    // alert(rowData)
-  return (
-    <View>
-      <Text>ASD </Text>
-      {searchedtext}
-    </View>
-  )
-} 
   
-  render() {
+  // EXAMPLE OF CUSTOM AUTOCOMPLETE ROW TEMPLATE. rowData INCLUDES ALL FIELDS.
+  // 
+  // getAutocompleteRowTemplate(searchedtext, rowData) {
+  //   return (
+  //     <View>
+  //       <Text>ASD</Text>
+  //       {searchedtext}
+  //     </View>
+  //   )
+  // }
+  
+  // EXAMPLE OF CUSTOM TAG TEMPLATE
+  // 
+  // getTagTemplate(tag, removeTag){
+  //   return (
+  //     <View>
+  //       <Icon name="account-circle" />
+  //       <Text>{tag}</Text>
+  //       <Icon name="close" onPress={removeTag.bind(this, tag) } />
+  //     </View>
+  //   )
+  // } 
+  
+  render() {    
     return (
       <ViewContainer ref="mainContainer">
         <View style={styles.container}>
@@ -108,6 +122,7 @@ class AddPeople extends Component {
             newTagStyle={styles.newTagStyle}
             rowContainerStyle={styles.rowContainerStyle}
             autocompleteTextStyle={styles.autocompleteTextStyle}
+            tagContainerStyle={styles.tagContainerStyle}
             onChange={this._onChange.bind(this) }
             onUpdateLayout={this._onUpdateLayout.bind(this) }
             onUpdateTags={this._onUpdateTags.bind(this) }
@@ -120,7 +135,8 @@ class AddPeople extends Component {
             addNewTagTitle={"Add a new user: "}
             formatNewTag={this.formatNewTag.bind(this) }
             onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
-            autocompleteRowTemplate={this.autocompleteRowTemplate.bind(this)}
+            // autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this)}
+            // tagTemplate={this.getTagTemplate.bind(this)}
             // autocompleteField={"email"}
             />
 
@@ -185,6 +201,7 @@ var styles = StyleSheet.create({
   newTagStyle: {},
   rowContainerStyle: {},
   autocompleteTextStyle: {},
+  tagContainerStyle: {},
 });
 
 module.exports = AddPeople;
