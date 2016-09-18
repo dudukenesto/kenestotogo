@@ -10,6 +10,7 @@ import {
 
 import NavigationRootContainer from '../containers/navRootContainer'
 import PlusMenu from './PlusMenu'
+import ItemMenu from './ItemMenu'
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
@@ -40,6 +41,9 @@ let styles = StyleSheet.create({
   },
   plusMenu: {
     height: 150
+  },
+  itemMenu: {
+    height: 235
   },
   error: {
     height: 280,
@@ -115,8 +119,9 @@ class Main extends React.Component {
 
   getChildContext() {
     return {
-      kModal: this.refs.modalPlusMenu
-      , errorModal: this.refs.errorModal
+      plusMenuContext: this.refs.modalPlusMenu, 
+      itemMenuContext: this.refs.modalItemMenu,
+      errorModal: this.refs.errorModal
     };
   }
 
@@ -218,6 +223,11 @@ class Main extends React.Component {
     this.refs.modalPlusMenu.close();
   }
 
+  closeItemMenuModal() {
+    this.props.dispatch(documentsActions.updateSelectedId(''));
+    this.refs.modalItemMenu.close();
+  }
+
   isMenuModalOpen() {
     return this.refs.modalPlusMenu.state.isOpen;
   }
@@ -298,11 +308,15 @@ class Main extends React.Component {
         }
         <NavigationRootContainer closeDrawer ={this.closeDrawer.bind(this) } isDrawerOpen ={this.isDrawerOpen.bind(this) } isMenuModalOpen={this.isMenuModalOpen.bind(this) } closeMenuModal={this.closeMenuModal.bind(this) }/>
         <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
-          <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.openCreateFolder.bind(this) }
+          <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this) } 
             openCreateFolder = {this.openCreateFolder.bind(this) }  createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) }/>
         </Modal>
-
+        <Modal style={[styles.modal, styles.itemMenu]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
+          <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) }
+             createError={() => this.openModal("errorModal") }
+            closeCreateFolder={this.closeCreateFolder.bind(this) }/>
+        </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
           <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.closeCreateFolder.bind(this) }
             closeCreateFolder={this.closeCreateFolder.bind(this) } setCreateFolderStyle={this.setProcessingStyle.bind(this) }
@@ -311,7 +325,7 @@ class Main extends React.Component {
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>
         </Modal>
-        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}> 
           <Info closeModal = {() => this.closeModal("infoModal") } openModal = {() => this.openModal("infoModal") }/>
         </Modal>
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"confirmModal"} isDisabled={false}>
@@ -358,7 +372,8 @@ class Main extends React.Component {
 
 
 Main.childContextTypes = {
-  kModal: React.PropTypes.object,
+  plusMenuContext: React.PropTypes.object,
+  itemMenuContext: React.PropTypes.object,
   errorModal: React.PropTypes.object,
 }
 

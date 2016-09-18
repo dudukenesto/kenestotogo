@@ -29,17 +29,29 @@ var {
 
 var moment = require('moment');
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import fontelloConfig from '../assets/icons/config.json';
+import MartialExtendedConf from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
-const KenestoIcon = createIconSetFromFontello(fontelloConfig);
+import {updateSelectedId} from '../actions/documentlists'
+import {connect} from 'react-redux'
+const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
 //var getTextFromScore = require('./getTextFromScore');
 
 var DocumentCell = React.createClass({
-  render: function() {
+
+    menuPressed: function (id){
+      var {dispatch} = this.props; 
    
+     dispatch(updateSelectedId(id));
+      this.context.itemMenuContext.open();
+  
+     
+    },
+
+  render: function() {
+
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
@@ -53,21 +65,19 @@ var DocumentCell = React.createClass({
     }
     else {
       if (this.props.document.FamilyCode == 'FOLDER'){
-        elementIcon = <Icon name="folder" style={styles.icon} />
+        elementIcon = <KenestoIcon name="folder" style={styles.icon} />
       }
       else {
         if (typeof this.props.document.IconName != 'undefined')
           elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={this.props.document.IconName} style={styles.icon} /></View>
         else
-          elementIcon = <View style={styles.iconFiletype}><Icon name="description" style={styles.icon} /></View>
+          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
       }
     }
       
-      function menuPressed(){
-        alert('menu pressed...');
-      }
+
     return (
-      <View>
+      <View>  
         <TouchableElement
           onPress={this.props.onSelect}
           onShowUnderlay={this.props.onHighlight}
@@ -85,7 +95,7 @@ var DocumentCell = React.createClass({
                 
               </Text>
             </View>
-            <TouchableElement onPress={menuPressed}>
+            <TouchableElement onPress={ (()=> { this.menuPressed(this.props.document.Id)}).bind(this) }>
               <View style={styles.iconContainer}>
                 <Icon name="more-vert" style={styles.moreMenu} />
               </View>
@@ -129,10 +139,10 @@ var styles = StyleSheet.create({
     height: 40,
     width: 55,
     borderWidth: 0.5,
-    borderColor: "#999"
+    borderColor: "#bbb"
   },
   icon: {
-    fontSize: 16,
+    fontSize: 22,
     color: '#888',    
     
   },
@@ -141,8 +151,8 @@ var styles = StyleSheet.create({
     width: 55,
     alignItems: 'center',
     justifyContent: "center",
-    borderWidth: 0.5,
-    borderColor: "#999"
+    // borderWidth: 0.5,
+    // borderColor: "#999"
   },
   moreMenu: {
     fontSize: 22,
@@ -151,4 +161,10 @@ var styles = StyleSheet.create({
   
 });
 
-module.exports = DocumentCell;
+DocumentCell.contextTypes = {
+    itemMenuContext:  React.PropTypes.object,
+};
+
+
+
+module.exports = DocumentCell // connect(mapStateToProps)(DocumentCell)

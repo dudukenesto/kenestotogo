@@ -10,6 +10,9 @@ import * as accessActions from '../actions/Access'
 import * as navActions from '../actions/navActions'
 import * as documentsActions from '../actions/documentlists'
 import {connect} from 'react-redux'
+import { createIconSetFromFontello } from  'react-native-vector-icons'
+import MartialExtendedConf from '../assets/icons/config.json';
+const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 
 const styles = StyleSheet.create({
     screenContainer: {
@@ -37,6 +40,9 @@ const styles = StyleSheet.create({
     icon: {
     fontSize: 40,
     color: '#888',    
+  },
+  userIcon: {
+      fontSize: 50
   },
     userInfoContainer: {
         flex: 1
@@ -172,18 +178,17 @@ class TabView extends React.Component {
 
     render() {
         const drawer = this.context.drawer;
-         const {accessReducer} = this.props
-         var fullName =  `${accessReducer.firstName} ${accessReducer.lastName}`
-         var email = accessReducer.email;
+        const {accessReducer} = this.props
+        var fullName = `${accessReducer.firstName} ${accessReducer.lastName}`
+        var email = accessReducer.email;
         return (
             <View style={styles.screenContainer}>
                 <View style={[styles.headerContainer, this.props.sceneStyle]}>
                     <View style={styles.avatarContainer}>
-                    {accessReducer.thumbnailPath == "" ?
-                    <Icon name="person" style={styles.icon} />:
-                    <Image source={{uri: accessReducer.thumbnailPath}} style={styles.avatar} />
-                    }
-                        
+                        {accessReducer.thumbnailPath == "" ?
+                            <Icon name="account-circle" style={styles.userIcon} /> :
+                            <Image source={{ uri: accessReducer.thumbnailPath }} style={styles.avatar} />
+                        }
                     </View>
                     <View  style={styles.userInfoContainer}>
                         <Text style={{ color: '#000' }}>{fullName}</Text>
@@ -204,10 +209,8 @@ class TabView extends React.Component {
                         keyboardShouldPersistTaps={true}
                         showsVerticalScrollIndicator={false}
                         />
-
                 </ScrollView>
             </View>
-
         );
     }
 
@@ -256,9 +259,7 @@ class TabView extends React.Component {
                  break;
             default:
                 break;
-        }
-         
-
+        }        
     }
 
 
@@ -290,10 +291,7 @@ class TabView extends React.Component {
                 IsSelected = {listItem.Index == this.state.selectedItem}
                 />
         );
-
     }
-
-
 }
 
 function mapStateToProps(state) {

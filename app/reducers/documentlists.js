@@ -10,6 +10,7 @@ function documentlist(state = {
   dataSource: {}
 }, action) {
   switch (action.type) {
+
     case types.RECEIVE_DOCUMENTS:
       return {
         ...state,
@@ -48,6 +49,7 @@ function documentlist(state = {
         errorMessage: ''
       }
 
+
     default:
       return state
   }
@@ -81,7 +83,11 @@ export default function documentlists(state = {}, action) {
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action)
       })
-
+    case types.UPDATE_SELECTED_ID:
+      return {
+        ...state,
+        selectedId: action.selectedId
+      }
     case types.CLEAR_DOCUMENTS:
       return {
         isFetching: false,
@@ -89,7 +95,8 @@ export default function documentlists(state = {}, action) {
         nextUrl: false,
         errorMessage: '',
         hasError: false,
-        dataSource: {}
+        dataSource: {},
+          selectedId : ''
       }
     default:
       return state

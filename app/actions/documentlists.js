@@ -235,6 +235,13 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
   return false
 }
 
+export function updateSelectedId(Id: string){
+   return {
+      type: types.UPDATE_SELECTED_ID,
+      selectedId: Id
+  }
+}
+
 
 export function createFolder(folderName: string){
 

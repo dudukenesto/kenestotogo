@@ -6,9 +6,11 @@ import {
 } from 'react-native'
 import Button from './Button'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-
+import {connect} from 'react-redux'
 import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
+import * as navActions from '../actions/navActions'
+import {scanRoute} from '../constants/routes'
 const KenestoIcon = createIconSetFromFontello(fontelloConfig);
 
 let styles = StyleSheet.create({
@@ -42,7 +44,7 @@ let styles = StyleSheet.create({
     
 })
 
-export default class PlusMenu extends React.Component{
+class PlusMenu extends React.Component{
       constructor(props){
         super (props);
     }
@@ -51,6 +53,14 @@ export default class PlusMenu extends React.Component{
         this.props.closeMenuModal("modalPlusMenu");
        // this.props.createError();
         this.props.openCreateFolder();
+    }
+
+    scan(){
+          this.props.closeMenuModal("modalPlusMenu");
+        
+         
+          this.props.dispatch(navActions.push(scanRoute.route));
+
     }
     
 
@@ -68,7 +78,7 @@ export default class PlusMenu extends React.Component{
                 </View>
                 
                 <View style={styles.actionHolder}>
-                    <Icon name="photo-camera" style={styles.actionButtonIcon} />
+                    <Icon name="photo-camera" style={styles.actionButtonIcon} onPress={this.scan.bind(this)} />
                     <Text style={styles.actionName}>Scan</Text>
                 </View>                
             </View>
@@ -78,5 +88,17 @@ export default class PlusMenu extends React.Component{
 }
 
 PlusMenu.contextTypes = {
-    kModal:  React.PropTypes.object
+    plusMenuContext:  React.PropTypes.object
 }
+
+function mapStateToProps(state) {
+  const { navReducer } = state
+  
+  return {
+      navReducer: navReducer
+
+  }
+}
+
+
+export default connect(mapStateToProps)(PlusMenu)
