@@ -80,8 +80,15 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _filterList(newTags) {
-    var filteredList = this.props.suggestions.filter((tag) => {
-      return tag !== newTags.find((t) => (t === tag))
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      // return tag !== newTags.find((t) => (t === tag))
+      if(this.props.autocompleteField){
+        return listElement[this.props.autocompleteField] !== newTags.find((t) => (t === listElement[this.props.autocompleteField]))
+      }
+      else {
+        return listElement !== newTags.find((t) => (t === listElement))
+      }
+      
     });
     return filteredList;
   }
@@ -127,7 +134,7 @@ export default class KenestoTagAutocomplete extends Component {
       <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
     return (
-      <TouchableHighlight onPress={this._addTag.bind(this, rowData)}>
+      <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString)}>
         <View style={[styles.rowContainer, rowContainerStyle]}>
           {this.props.autocompleteRowTemplate ?
             this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
@@ -176,8 +183,15 @@ export default class KenestoTagAutocomplete extends Component {
 
   _onChangeText(text) {
     
-    var filteredList = this.props.suggestions.filter((tag) => {
-      return !this.state.tags.find(t => (t === tag)) && tag.includes(text);
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      // return !this.state.tags.find(t => (t === tag)) && tag.includes(text);
+      if(this.props.autocompleteField){
+        return !this.state.tags.find(t => (t === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(text);
+      }
+      else {
+        return !this.state.tags.find(t => (t === listElement)) && listElement.includes(text);
+      }
+      
     })
 
     this.setState({
@@ -216,8 +230,14 @@ export default class KenestoTagAutocomplete extends Component {
 
   _removeTag(tag) {
     var newTags = this.state.tags.filter((t) => (t !== tag));
-    var filteredList = this.props.suggestions.filter((tag) => {
-      return !this.state.tags.find(t => (t === tag)) && tag.includes(this.state.userInput);
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      if(this.props.autocompleteField){
+        return !this.state.tags.find(t => (t === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
+      }
+      else {
+        return !this.state.tags.find(t => (t === listElement)) && listElement.includes(this.state.userInput);
+      }
+      
     })
     this.setState({
       tags: newTags,

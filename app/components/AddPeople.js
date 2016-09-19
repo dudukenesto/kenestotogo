@@ -24,20 +24,122 @@ import ProggressBar from "../components/ProgressBar";
 // var BGWASH = 'rgba(255,255,255,0.8)';
 // var DISABLED_WASH = 'rgba(255,255,255,0.25)';
 
+
 var suggestions = [
-    '1scott@kenestodemo.com',
-    '2lisa@kenestodemo.com',
-    '3jeff@kenestodemo.com',
-    '4joe@kenestodemo.com',
-    '5admin@kenestodemo.com',
-    '6asd@asa.sd',
-    '7sdf@asa.sd',
-    '8ghjkl@asa.sd',
-    '9rty@asa.sd',
-    '10wer@asa.sd',
-    '11wer@zxa.sd',
-    '12wer@zxa.sd'
-    ]
+  {
+    id: 1,
+    fullName: 'Scott Supplier',
+    email: 'scott@kenestodemo.com',
+    type: 'internal',
+    permissions: 'all',
+    url: ''
+  },
+  {
+    id: 2,
+    fullName: 'Lisa Supplier',
+    email: 'lisa@kenestodemo.com',
+    type: 'internal',
+    permissions: 'all',
+    url: ''
+  },
+  {
+    id: 3,
+    fullName: 'Jeff Supplier',
+    email: 'jeff@kenestodemo.com',
+    type: 'internal',
+    permissions: 'all',
+    url: ''
+  },
+  {
+    id: 4,
+    fullName: 'Joe Supplier',
+    email: 'joe@kenestodemo.com',
+    type: 'internal',
+    permissions: 'all',
+    url: ''
+  },
+  {
+    id: 5,
+    fullName: 'Mary Brown',
+    email: 'mary@abc.com',
+    type: 'external',
+    permissions: 'view',
+    url: ''
+  },
+  {
+    id: 6,
+    fullName: 'John Smith',
+    email: 'john@abc.com',
+    type: 'external',
+    permissions: 'view',
+    url: ''
+  },
+  {
+    id: 7,
+    fullName: 'Harry Potter',
+    email: 'harrysukapotter@magic.com',
+    type: 'external',
+    permissions: 'view',
+    url: ''
+  },
+  {
+    id: 8,
+    fullName: 'Hermiona',
+    email: 'hermiona@magic.com',
+    type: 'external',
+    permissions: 'download',
+    url: ''
+  },
+  {
+    id: 9,
+    fullName: 'dr. House',
+    email: 'house@medicalcenter.com',
+    type: 'external',
+    permissions: 'download',
+    url: ''
+  },
+  {
+    id: 10,
+    fullName: 'Ra',
+    email: 'ra@god.com',
+    type: 'multitenant',
+    permissions: 'all',
+    url: ''
+  },
+  {
+    id: 11,
+    fullName: 'Gandalf The Grey',
+    email: 'gandalf@middleearth.com',
+    type: 'multitenant',
+    permissions: 'all',
+    url: ''
+  },
+  {
+    id: 12,
+    fullName: 'Daenerys of the House Targaryen, also known as Daenerys Stormborn and the Dragon Queen',
+    email: 'khalissy@vesteros.com',
+    type: 'external',
+    permissions: 'download',
+    url: ''
+  },
+  {
+    id: 14,
+    fullName: 'Hodor',
+    email: 'hodor@hodorhodor.com',
+    type: 'external',
+    permissions: 'view',
+    url: ''
+  },
+  {
+    id: 15,
+    fullName: 'Asya Polyak',
+    email: 'asya@polyak.com',
+    type: 'multitenant',
+    permissions: 'burn them all',
+    url: ''
+  }
+]
+
 class AddPeople extends Component {
   
   constructor(props) {
@@ -87,14 +189,14 @@ class AddPeople extends Component {
   
   // EXAMPLE OF CUSTOM AUTOCOMPLETE ROW TEMPLATE. rowData INCLUDES ALL FIELDS.
   // 
-  // getAutocompleteRowTemplate(searchedtext, rowData) {
-  //   return (
-  //     <View>
-  //       <Text>ASD</Text>
-  //       {searchedtext}
-  //     </View>
-  //   )
-  // }
+  getAutocompleteRowTemplate(searchedtext, rowData) {
+    return (
+      <View style={{flexDirection: "row"}}>
+        {searchedtext}
+        <Text> - {rowData.fullName}</Text>        
+      </View>
+    )
+  }
   
   // EXAMPLE OF CUSTOM TAG TEMPLATE
   // 
@@ -135,9 +237,10 @@ class AddPeople extends Component {
             addNewTagTitle={"Add a new user: "}
             formatNewTag={this.formatNewTag.bind(this) }
             onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
-            // autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this)}
+            autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this)}
             // tagTemplate={this.getTagTemplate.bind(this)}
-            // autocompleteField={"email"}
+            autocompleteField={"type"}
+            filteringUniqueField={"email"}
             />
 
           {this.state.showSharingList == true ?
