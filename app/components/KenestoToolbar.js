@@ -182,10 +182,9 @@ class KenestoToolbar extends Component {
     var documentlist = getDocumentsContext(navReducer);
     // const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
-    var title = navReducer.routes[navReducer.index].data.name;
+    var title =  navReducer.routes[navReducer.index].data != null? navReducer.routes[navReducer.index].data.name: navReducer.routes[navReducer.index].title;
     var showGoBack = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1 && navReducer.routes[navReducer.index].data.fId != "") || navReducer.routes[navReducer.index].key === 'document' || navReducer.routes[navReducer.index].key === 'addPeople' ? true : false;
     var isDocumentsTollbar = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1) ? true : false;
-
     return (
       <View style= {styles.toolbar} >
         <View>

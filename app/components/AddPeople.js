@@ -1,69 +1,179 @@
 'use strict';
-var React = require('react');
+// var React = require('react');
+import React, {Component} from 'react';
+import KenestoTagAutocomplete from './KenestoTagAutocomplete';
+import ViewContainer from '../components/ViewContainer';
 var ReactNative = require('react-native');
+
 var {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
   View,
+  Text,
+  // TextInput,
+  StyleSheet,
+  ScrollView,
+  // TouchableOpacity,
+  // Dimensions,
+  // TouchableWithoutFeedback
 } = ReactNative;
-import Button from './Button'
+// import Button from './Button'
 import ProggressBar from "../components/ProgressBar";
-import TagInput from 'react-native-tag-input';
-var HEADER = '#3b5998';
-var BGWASH = 'rgba(255,255,255,0.8)';
-var DISABLED_WASH = 'rgba(255,255,255,0.25)';
-class AddPeople extends React.Component{
-  constructor(props){
-    super(props);
-   
-    this.addPeopleProps = this.props.data;
-   
-    this.state = {  
-      isLoading: true,
-      scalingEnabled: true};
+// import _ from 'lodash';
+// import TagInput from 'react-native-taginput';
+
+// var HEADER = '#3b5998';
+// var BGWASH = 'rgba(255,255,255,0.8)';
+// var DISABLED_WASH = 'rgba(255,255,255,0.25)';
+
+var suggestions = [
+    '1scott@kenestodemo.com',
+    '2lisa@kenestodemo.com',
+    '3jeff@kenestodemo.com',
+    '4joe@kenestodemo.com',
+    '5admin@kenestodemo.com',
+    '6asd@asa.sd',
+    '7sdf@asa.sd',
+    '8ghjkl@asa.sd',
+    '9rty@asa.sd',
+    '10wer@asa.sd',
+    '11wer@zxa.sd',
+    '12wer@zxa.sd'
+    ]
+class AddPeople extends Component {
+  
+  constructor(props) {
+    super(props)
+
+        this.state = {
+          showSharingList: true
+        };
   }
   
- 
- onLoadEnd(){
-    this.setState({isLoading: false});
- }
- 
- renderLoading(){
-   return(
-    <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80}}>
-      <ProggressBar isLoading={true} />
-    </View>
-   )
- }
- 
+  _onChange(){
+    
+  }
   
-  render(){
+  _onUpdateLayout(){
+    
+  }
+  
+  _onUpdateTags(){
+    
+  }
+  
+  showSharingList(){
+    this.setState({showSharingList: true})
+  }
+  
+  hideSharingList(){
+    this.setState({showSharingList: false})
+  }
+  
+  formatNewTag(tag){      
+    // trim spaces, check for email correct format etc. 
+    // If the formatted text is not a correct email - return false
+    tag = tag.trim();
+    return /\S+@\S+\.\S+/.test(tag) ? tag : false;
+  }
+  
+  onErrorAddNewTag(tag){     // show error message/toast
+    var errorMessage = tag + ' is not a valid email!'
+    this.refs.mainContainer.showMessage("info", errorMessage);
+  }
+  
+  submitSelectedTags(){
+    // VALIDATE TAGS, COMBINE this.state.selected WITH PERMISSIONS AND SEND TO SERVER
+  }
+  
+  render() {
+    return (
+      <ViewContainer ref="mainContainer">
+        <View style={styles.container}>
+          <KenestoTagAutocomplete
+            ref='tagInput'
+            suggestions={suggestions}
+            containerStyle={styles.autocompleteContainer}
+            inputContainerStyle={styles.tagsInputContainer}
+            listStyle={styles.listStyle}
+            newTagContainerStyle={styles.newTagContainerStyle}
+            newTagStyle={styles.newTagStyle}
+            rowContainerStyle={styles.rowContainerStyle}
+            autocompleteTextStyle={styles.autocompleteTextStyle}
+            onChange={this._onChange.bind(this) }
+            onUpdateLayout={this._onUpdateLayout.bind(this) }
+            onUpdateTags={this._onUpdateTags.bind(this) }
+            onHideTagsList={this.showSharingList.bind(this) }
+            onShowTagsList={this.hideSharingList.bind(this) }
+            onSubmit={this.submitSelectedTags.bind(this) }
+            title={"Add Users"}
+            minCharsToStartAutocomplete={1}
+            allowAddingNewTags={true}
+            addNewTagTitle={"Add a new user: "}
+            formatNewTag={this.formatNewTag.bind(this) }
+            onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
+            // autocompleteField={"email"}
+            />
 
-    return(
-      <View style={{ flex: 1}}>
-        <Text>AddPeople</Text>
-        <TagInput
-  value={this.state.isLoading}
-  onChange={(emails) => this.onEmailChange(isLoading)} />
+          {this.state.showSharingList == true ?
+            <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
+              <View style={{ flex: 1 }}>
+                <View>
+                  <Text>Sharing</Text>
+                </View>
 
-      </View>
-    )
+                <View>
+                  <Text>1 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>5 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>10 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>15 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>20 list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>list of people</Text>
+                  <Text>24 list of people</Text>
+                </View>
+              </View>
+            </ScrollView>
+            :
+            <View style={{}}></View>
+            
+          }
+
+        </View>      
+      </ViewContainer>
+      
+    );
   }
 }
 
 var styles = StyleSheet.create({
-   title: {
-    marginBottom: 20,
-    fontSize: 22,
-    textAlign: 'center'
-  },
   container: {
     flex: 1,
-    backgroundColor: HEADER,
-  }
+    backgroundColor: '#fff',   
+  },
+  autocompleteContainer: {
+
+  },
+  tagsInputContainer: {},
+  listStyle: {},
+  newTagContainerStyle: {},
+  newTagStyle: {},
+  rowContainerStyle: {},
+  autocompleteTextStyle: {},
 });
 
 module.exports = AddPeople;

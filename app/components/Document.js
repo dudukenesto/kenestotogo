@@ -19,7 +19,9 @@ var DISABLED_WASH = 'rgba(255,255,255,0.25)';
 var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
-//import ViewTransformer from 'react-native-view-transformer';
+import WebViewBridge from 'react-native-webview-bridge';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 
 
@@ -93,9 +95,72 @@ class Document extends React.Component{
        
       // </View>
       // </ViewTransformer>
+onBridgeMessage(message){
+    const { webviewbridge } = this.refs;
 
+    switch (message) {
+      case "hello from webview":
+        webviewbridge.sendToBridge("hello from react-native");
+        break;
+      case "got the message inside webview":
+      //alert("webview");
+    //    console.log("we have got a message from webview! yeah");
+        break;
+    }
+  }
+
+  zoomIn(){
+      const { webviewbridge } = this.refs;
+     webviewbridge.sendToBridge("zoomIn");
+  }
+   zoomOut(){
+       const { webviewbridge } = this.refs;
+      webviewbridge.sendToBridge("zoomOut");
+
+
+
+    (function () {
+                  if (WebViewBridge) {
+                    WebViewBridge.onMessage = function (message) {
+                      //var xxx = typeof containerElement;
+                       //   $(tbox).text(xxx);
+                        switch (message) {
+                          case "zoomIn":
+                          $(tbox).text(message);
+                         //   containerElement.groupdocsViewer("zoomIn");
+                            break;
+                          case "zoomOut":
+                           $(tbox).text(message);
+                         //   containerElement.groupdocsViewer("zoomOut", 1);
+                            break;
+                        }
+                    }
+                  }
+                  }());
+
+
+
+
+
+  }
   
   render(){
+const injectScript = `
+       (function () {
+                  if (WebViewBridge) {
+                    WebViewBridge.onMessage = function (message) {
+                        switch (message) {
+                          case "zoomIn":
+                                activateZoomIn();
+                            break;
+                          case "zoomOut":
+                                  activateZoomOut();
+                            break;
+                        }
+                    }
+                  }
+                  }());
+`;
 
    var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env));
     return(
@@ -103,9 +168,22 @@ class Document extends React.Component{
     
     
       <View style={{ flex: 1}}>
-        
+          <View>
+          <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomIn.bind(this)()}) } >
+                      <View style={styles.optionContainer}>
+                       <Icon name="zoom-in"  style={styles.moreMenu}/>
+                      </View>
+           </TouchableWithoutFeedback>
+           <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomOut.bind(this)()}) }  >
+                      <View style={styles.optionContainer}>
+                        <Icon name="zoom-out" style={styles.moreMenu} />
+                      </View>
+           </TouchableWithoutFeedback>
+           
+          </View>
           <View style={{flex: 1, backgroundColor: 'transparent', }}>
-            <WebView
+            <WebViewBridge
+              ref="webviewbridge"
               style={styles.webview_body}
               source={{ uri: url }}
               onLoadEnd={this.onLoadEnd.bind(this) }
@@ -113,7 +191,9 @@ class Document extends React.Component{
               domStorageEnabled={true}
               startInLoadingState={true}
               scalesPageToFit={true}
+              onBridgeMessage={this.onBridgeMessage.bind(this)}
               renderLoading={this.renderLoading}
+              injectedJavaScript={injectScript}
               />
           </View>
 
@@ -241,7 +321,10 @@ var styles = StyleSheet.create({
     page_title: {
         color: '#FFF'
     },
-   
+    moreMenu: {
+    fontSize: 22,
+    color: '#888', 
+  }
   
 });
 

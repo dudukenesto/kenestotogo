@@ -122,23 +122,17 @@ class Documents extends Component {
 
     }
     else {
-      //  var data = {
-      //   key: "document",
-      //   name: document.Name,
-      //   documentId: document.Id,
-      //   catId: documentlist.catId,
-      //   fId: documentlist.fId,
-      //   viewerUrl: document.ViewerUrl, 
-      //   env: this.props.env
-      // }
-      //this.props._handleNavigate(routes.documentRoute(data));
-
        var data = {
-        key: "addPeople",
+        key: "document",
         name: document.Name,
         documentId: document.Id,
+        catId: documentlist.catId,
+        fId: documentlist.fId,
+        viewerUrl: document.ViewerUrl, 
+        env: this.props.env
       }
-      this.props._handleNavigate(routes.addPeopleRoute(data));
+      this.props._handleNavigate(routes.documentRoute(data));
+
     }
 
   }
@@ -203,7 +197,8 @@ class Documents extends Component {
 
   openModal(){
   //this.refs.modal3.open();
-  this.context.kModal.open();
+ // alert(this.context.itemMenuContext)
+ this.context.plusMenuContext.open();
 }
 
 
@@ -239,6 +234,7 @@ class Documents extends Component {
               onSelect={this.selectItem.bind(this, document) }
               //onHighlight={this.highlightRowFunc(sectionID, rowID)}
               //onUnhighlight={this.highlightRowFunc(null, null)}
+              dispatch = {this.props.dispatch}
               document={document}/>
             )
           } }
@@ -289,7 +285,10 @@ class Documents extends Component {
       </ViewContainer>
     )
   }
+
 }
+
+
 
 
 
@@ -397,8 +396,7 @@ var styles = StyleSheet.create({
 });
 
 Documents.contextTypes = {
-    kModal:  React.PropTypes.object
+    plusMenuContext:  React.PropTypes.object
 };
-
 
 export default Documents
