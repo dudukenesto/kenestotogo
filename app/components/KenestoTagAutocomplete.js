@@ -81,7 +81,6 @@ export default class KenestoTagAutocomplete extends Component {
 
   _filterList(newTags) {
     var filteredList = this.props.suggestions.filter((listElement) => {
-      // return tag !== newTags.find((t) => (t === tag))
       if(this.props.autocompleteField){
         return listElement[this.props.autocompleteField] !== newTags.find((t) => (t === listElement[this.props.autocompleteField]))
       }

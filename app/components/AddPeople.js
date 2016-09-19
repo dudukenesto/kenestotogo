@@ -239,7 +239,7 @@ class AddPeople extends Component {
             onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
             autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this)}
             // tagTemplate={this.getTagTemplate.bind(this)}
-            autocompleteField={"type"}
+            autocompleteField={"email"}
             filteringUniqueField={"email"}
             />
 
