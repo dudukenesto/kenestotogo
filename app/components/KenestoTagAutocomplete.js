@@ -216,7 +216,9 @@ export default class KenestoTagAutocomplete extends Component {
 
   _removeTag(tag) {
     var newTags = this.state.tags.filter((t) => (t !== tag));
-    var filteredList = this._filterList(newTags);
+    var filteredList = this.props.suggestions.filter((tag) => {
+      return !this.state.tags.find(t => (t === tag)) && tag.includes(this.state.userInput);
+    })
     this.setState({
       tags: newTags,
       dataSource: this.state.dataSource.cloneWithRows(filteredList),
