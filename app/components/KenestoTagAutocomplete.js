@@ -80,8 +80,14 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _filterList(newTags) {
-    var filteredList = this.props.suggestions.filter((tag) => {
-      return tag !== newTags.find((t) => (t === tag))
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      if(this.props.autocompleteField){
+        return listElement[this.props.autocompleteField] !== newTags.find((t) => (t === listElement[this.props.autocompleteField]))
+      }
+      else {
+        return listElement !== newTags.find((t) => (t === listElement))
+      }
+      
     });
     return filteredList;
   }
@@ -123,12 +129,18 @@ export default class KenestoTagAutocomplete extends Component {
     var searchedIndex = autocompleteString.indexOf(this.state.userInput);
     var textBefore = autocompleteString.substr(0, searchedIndex);
     var textAfter = autocompleteString.substr(searchedIndex+searchedTextLength);
+    var autocompleteFormattedString = (<View style={{flexDirection: "row"}}><Text style={styles.text}>{textBefore}</Text>
+      <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
+      <Text style={styles.text}>{textAfter}</Text></View>)
     return (
-      <TouchableHighlight onPress={this._addTag.bind(this, rowData)}>
+      <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString)}>
         <View style={[styles.rowContainer, rowContainerStyle]}>
-          <Text style={styles.text}>{textBefore}</Text>
-          <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
-          <Text style={styles.text}>{textAfter}</Text>
+          {this.props.autocompleteRowTemplate ?
+            this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
+            :
+            autocompleteFormattedString
+          }
+          
         </View>
       </TouchableHighlight>
     )
@@ -170,8 +182,15 @@ export default class KenestoTagAutocomplete extends Component {
 
   _onChangeText(text) {
     
-    var filteredList = this.props.suggestions.filter((tag) => {
-      return !this.state.tags.find(t => (t === tag)) && tag.includes(text);
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      // return !this.state.tags.find(t => (t === tag)) && tag.includes(text);
+      if(this.props.autocompleteField){
+        return !this.state.tags.find(t => (t === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(text);
+      }
+      else {
+        return !this.state.tags.find(t => (t === listElement)) && listElement.includes(text);
+      }
+      
     })
 
     this.setState({
@@ -210,7 +229,15 @@ export default class KenestoTagAutocomplete extends Component {
 
   _removeTag(tag) {
     var newTags = this.state.tags.filter((t) => (t !== tag));
-    var filteredList = this._filterList(newTags);
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      if(this.props.autocompleteField){
+        return !this.state.tags.find(t => (t === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
+      }
+      else {
+        return !this.state.tags.find(t => (t === listElement)) && listElement.includes(this.state.userInput);
+      }
+      
+    })
     this.setState({
       tags: newTags,
       dataSource: this.state.dataSource.cloneWithRows(filteredList),
@@ -235,17 +262,26 @@ export default class KenestoTagAutocomplete extends Component {
 
   render() {
 
-    const { placeholder, containerStyle, inputContainerStyle, textInputStyle } = this.props;
+    const { placeholder, containerStyle, inputContainerStyle, textInputStyle, tagContainerStyle, tagTemplate } = this.props;
     var flex = (this.state.showList) ? {flex: 1} : {flex: 0} 
+    
     return (
       <View style={[flex, containerStyle]}>
         <View style={styles.headerContainer}>
           {this.props.title && <Text style={styles.autocompleteTitle}>{this.props.title}</Text>}
           <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this) }>
 
-            {this.state.tags.map((tag) => (
-              <Tag key={tag} text={tag} onPress={this._removeTag.bind(this, tag) }/>
-            )) }
+            { tagTemplate ? this.state.tags.map((tag) => (
+              <TouchableHighlight key={tag} style={[styles.tagContainerStyle, tagContainerStyle]} >
+                {tagTemplate(tag, this._removeTag.bind(this)) }
+              </TouchableHighlight>
+            ))
+              :
+              this.state.tags.map((tag) => (
+                <Tag key={tag} text={tag} onPress={this._removeTag.bind(this, tag) } />
+              ))
+            }
+
             <TextInput
               ref='textInput'
               style={[styles.textinput, textInputStyle]}
@@ -316,5 +352,14 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   newTagContainer: {},
+  tagContainerStyle: {
+    backgroundColor: '#eee',
+    paddingLeft: 5,
+    paddingRight: 7,
+    paddingVertical: 0,
+    margin: 3,
+    borderRadius: 15,
+    height: 50,
+  }
   
 });
