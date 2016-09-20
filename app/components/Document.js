@@ -117,31 +117,6 @@ onBridgeMessage(message){
        const { webviewbridge } = this.refs;
       webviewbridge.sendToBridge("zoomOut");
 
-
-
-    (function () {
-                  if (WebViewBridge) {
-                    WebViewBridge.onMessage = function (message) {
-                      //var xxx = typeof containerElement;
-                       //   $(tbox).text(xxx);
-                        switch (message) {
-                          case "zoomIn":
-                          $(tbox).text(message);
-                         //   containerElement.groupdocsViewer("zoomIn");
-                            break;
-                          case "zoomOut":
-                           $(tbox).text(message);
-                         //   containerElement.groupdocsViewer("zoomOut", 1);
-                            break;
-                        }
-                    }
-                  }
-                  }());
-
-
-
-
-
   }
   
   render(){

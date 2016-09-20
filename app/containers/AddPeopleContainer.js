@@ -1,5 +1,15 @@
+var ReactNative = require('react-native');
 import React from 'react'
-
+var {
+  View,
+  Text,
+  // TextInput,
+  StyleSheet,
+  ScrollView,
+  // TouchableOpacity,
+  // Dimensions,
+  // TouchableWithoutFeedback
+} = ReactNative;
 let {
   Component
 } = React
@@ -17,19 +27,4 @@ class AddPeopleContainer extends Component {
 
 }
 
-function mapStateToProps(state) {
- 
-  const { documentlists, documentlist,navReducer } = state
-  const {env, sessionToken } = state.accessReducer; 
-  
-  return {
-    navReducer,
-    documentlist,
-    documentlists,
-    env,
-    sessionToken
-    
-  }
-}
 
-export default connect(mapStateToProps)(AddPeopleContainer)

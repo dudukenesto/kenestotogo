@@ -12,10 +12,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import {connect} from 'react-redux'
 import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
-import {getSelectedDocument} from '../utils/documentsUtils'
+import {getSelectedDocument, getDocumentsContext} from '../utils/documentsUtils'
 import MartialExtendedConf from '../assets/icons/config.json';
 import * as routes from '../constants/routes'
 import * as navActions from '../actions/navActions'
+
+import ProggressBar from "../components/ProgressBar";
+
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 var moment = require('moment');
 
@@ -122,15 +125,22 @@ class ItemMenu extends React.Component{
     shareDocument(){
      
        this.props.closeItemMenuModal();
+       const documentsContext = getDocumentsContext(this.props.navReducer);
 
-       var data = {
+         var data = {
         key: "addPeople",
         name: this.state.document.Name,
         documentId: this.state.document.Id,
+        familyCode: this.state.document.familyCode,
+        catId: documentsContext.catId,
+      fId: documentsContext.fId,
+      sortDirection: documentsContext.sortDirection,
+      sortBy: documentsContext.sortBy
       }
 
-
-      this.props.dispatch(navActions.push(routes.addPeopleRoute(data).route));
+    
+      
+       this.props.dispatch(navActions.push(routes.addPeopleRoute(data).route));
 
     }
     
@@ -142,9 +152,11 @@ class ItemMenu extends React.Component{
         alert('delete Document')
     }
 
-    componentWillMount(){
+  componentWillMount(){
         var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
         this.setState({ document: document});
+
+     
     }
 
 
@@ -168,7 +180,7 @@ class ItemMenu extends React.Component{
         }
 
 
-        return(
+     return(
             <View style={styles.container}>
                 <View style={styles.menuHeader}>
                     <View style={styles.row}>
@@ -236,10 +248,9 @@ ItemMenu.contextTypes = {
 
 function mapStateToProps(state) {
   const { documentlists, navReducer } = state
-  
   return {
       documentlists : documentlists, 
-      navReducer: navReducer
+      navReducer: navReducer, 
 
   }
 }

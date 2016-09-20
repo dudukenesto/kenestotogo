@@ -88,16 +88,6 @@ class AddPeople extends Component {
   }
 
 
-  componentWillMount(){
-    //alert(JSON.stringify(this.props.navReducer));
-       // var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
-        //this.setState({ document: document});
-
-        alert(' = ' + document.Name)
-
-     
-    }
-
 
   render() {
 
@@ -195,18 +185,3 @@ var styles = StyleSheet.create({
 });
 
 
-
-function mapStateToProps(state) {
- 
-  const { peopleReducer, documentlists ,navReducer  } = state
-
-
-  return {
-isFetching: peopleReducer.isFetching,
-documentlists, 
-  navReducer
-    
-  }
-}
-
-export default connect(mapStateToProps)(AddPeople)

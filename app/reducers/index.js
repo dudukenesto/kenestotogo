@@ -4,13 +4,15 @@ import documentlist from './documentlist'
 import documentlists from './documentlists'
 import tabReducer from './tabReducer'
 import accessReducer from './accessReducer'
+import peopleReducer from './peopleReducer'
 
 const rootReducer = combineReducers({
   tabReducer,
   navReducer, 
   accessReducer,
   documentlist,
-  documentlists
+  documentlists, 
+  peopleReducer
 })
 
 export default rootReducer
