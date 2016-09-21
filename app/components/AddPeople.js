@@ -185,7 +185,7 @@ class AddPeople extends Component {
        // var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
         //this.setState({ document: document});
 
-        alert(' = ' + document.Name)
+    //    alert(' = ' + document.Name)
 
      
     }
