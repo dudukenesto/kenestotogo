@@ -9,9 +9,11 @@ import {
   TextInput,
   ListView,
   TouchableHighlight,
+  Dimensions
 } from 'react-native';
 
 import Tag from './Tag';
+var {height, width} = Dimensions.get('window');
 
 export default class KenestoTagAutocomplete extends Component {
 
@@ -117,16 +119,18 @@ export default class KenestoTagAutocomplete extends Component {
       <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
     return (
-      <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID)}>
-        <View style={[styles.rowContainer, rowContainerStyle]}>
-          {this.props.autocompleteRowTemplate ?
-            this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
-            :
-            autocompleteFormattedString
-          }
-          
-        </View>
-      </TouchableHighlight>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
+        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID)}>
+          <View style={[styles.rowContainer, rowContainerStyle]}>
+            {this.props.autocompleteRowTemplate ?
+              this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
+              :
+              autocompleteFormattedString
+            }
+            
+          </View>
+        </TouchableHighlight>
+      </ScrollView>
     )
   }
 
@@ -338,7 +342,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: 'white',
     paddingVertical: 15,
-    paddingLeft: 30
+    paddingHorizontal: 30,
+    minWidth: width,
   },
   newTagText: {
     fontSize: 14,
