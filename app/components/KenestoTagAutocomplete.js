@@ -15,28 +15,13 @@ import Tag from './Tag';
 
 export default class KenestoTagAutocomplete extends Component {
 
-  // static propTypes = {
-  //   initialTags: React.PropTypes.arrayOf(React.PropTypes.string),
-  //   suggestions: React.PropTypes.arrayOf(React.PropTypes.string),
-  //   placeholder: React.PropTypes.string,
-  //   footerText: React.PropTypes.string,
-  //   height: React.PropTypes.number,
-  //   fontSize: React.PropTypes.number,
-  //   containerStyle: View.propTypes.style,
-  //   inputContainerStyle: View.propTypes.style,
-  //   textInputStyle: TextInput.propTypes.style,
-  //   listStyle: ListView.propTypes.style,
-  //   onUpdateTags: React.PropTypes.func,
-  //   onUpdateLayout: React.PropTypes.func,
-  // }
-
   static defaultProps = {
     initialTags: [],
     suggestions: [],
     placeholder: 'Select tag or enter tag name...',
     addNewTagTitle: 'Add a new tag',
-    onUpdateTags: () => {},
-    onUpdateLayout: () => {},
+    onUpdateTags: () => { },
+    onUpdateLayout: () => { },
     containerStyle: null,
     inputContainerStyle: null,
     textInputStyle: null,
@@ -62,10 +47,6 @@ export default class KenestoTagAutocomplete extends Component {
     }
   }
 
-  getTags() {
-    return this.state.tags;
-  }
-
   blur() {
     this.refs.textInput.blur();
   }
@@ -81,20 +62,23 @@ export default class KenestoTagAutocomplete extends Component {
 
   _filterList(newTags) {
     var filteredList = this.props.suggestions.filter((listElement) => {
-      if(this.props.autocompleteField){
-        return listElement[this.props.autocompleteField] !== newTags.find((t) => (t === listElement[this.props.autocompleteField]))
+      if(this.props.autocompleteField && this.props.uniqueField){
+        return listElement[this.props.uniqueField] !== newTags.find((t) => (t.tagID === listElement[this.props.uniqueField]))
+      }
+      else if(this.props.autocompleteField){
+        return listElement[this.props.autocompleteField] !== newTags.find((t) => (t.tagName === listElement[this.props.autocompleteField]))
       }
       else {
-        return listElement !== newTags.find((t) => (t === listElement))
+        return listElement !== newTags.find((t) => (t.tagName === listElement))
       }
       
     });
     return filteredList;
   }
 
-  _addTag(text) {
-    var newTags = this.state.tags.concat([text]);
-    var filteredList = this._filterList(newTags);
+  _addTag(tagName, tagID) {
+    var newTags = this.state.tags.concat({tagName: tagName, tagID: tagID});
+    var filteredList = this._filterList(newTags);  
     this.setState({
       tags: newTags,
       dataSource: this.state.dataSource.cloneWithRows(filteredList)
@@ -105,26 +89,26 @@ export default class KenestoTagAutocomplete extends Component {
     this.props.onChange(newTags);
   }
   
-  _addNewTag(text){
-    var tag = text;
+  _addNewTag(tagName){
+    var _tagName = tagName;
       if (this.props.formatNewTag) {
-        tag = this.props.formatNewTag(tag)
+        tagName = this.props.formatNewTag(tagName)
       }
       
-      if(tag === false){
-        // this.clearText();
+      if(tagName === false){
         if(this.props.onErrorAddNewTag){
-          this.props.onErrorAddNewTag(text);
+          this.props.onErrorAddNewTag(_tagName);
         }
       }
       else {
-        this._addTag(tag);
+        this._addTag(tagName, new Date().getTime());
       }      
     }
 
   _renderRow(rowData, sectionID, rowID) {
     const {rowContainerStyle, autocompleteTextStyle} = this.props;
     var autocompleteString = rowData[this.props.autocompleteField] || rowData;
+    var tagID = rowData[this.props.uniqueField] || autocompleteString;
     var searchedTextLength = this.state.userInput.length;
     var searchedIndex = autocompleteString.indexOf(this.state.userInput);
     var textBefore = autocompleteString.substr(0, searchedIndex);
@@ -133,7 +117,7 @@ export default class KenestoTagAutocomplete extends Component {
       <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
     return (
-      <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString)}>
+      <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID)}>
         <View style={[styles.rowContainer, rowContainerStyle]}>
           {this.props.autocompleteRowTemplate ?
             this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
@@ -180,24 +164,24 @@ export default class KenestoTagAutocomplete extends Component {
     this.props.onShowTagsList();
   }
 
-  _onChangeText(text) {
-    
+  _onChangeText(text) {    
     var filteredList = this.props.suggestions.filter((listElement) => {
-      // return !this.state.tags.find(t => (t === tag)) && tag.includes(text);
-      if(this.props.autocompleteField){
-        return !this.state.tags.find(t => (t === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(text);
+      if(this.props.autocompleteField && this.props.uniqueField){
+        return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].includes(text);
+      }
+      else if(this.props.autocompleteField){
+        return !this.state.tags.find(t => (t.tagName === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(text);
       }
       else {
-        return !this.state.tags.find(t => (t === listElement)) && listElement.includes(text);
+        return !this.state.tags.find(t => (t.tagName === listElement)) && listElement.includes(text);
       }
       
     })
 
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(filteredList),
-      userInput: text,
+      userInput: text
 });
-    
     
   }
 
@@ -227,14 +211,18 @@ export default class KenestoTagAutocomplete extends Component {
     )
   }
 
-  _removeTag(tag) {
-    var newTags = this.state.tags.filter((t) => (t !== tag));
+  _removeTag(tagID) {
+    
+    var newTags = this.state.tags.filter((t) => (t.tagID !== tagID));
     var filteredList = this.props.suggestions.filter((listElement) => {
-      if(this.props.autocompleteField){
-        return !this.state.tags.find(t => (t === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
+      if(this.props.autocompleteField && this.props.uniqueField){
+        return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.uniqueField].includes(this.state.userInput);
+      }
+      else if(this.props.autocompleteField){
+        return !this.state.tags.find(t => (t.tagName === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
       }
       else {
-        return !this.state.tags.find(t => (t === listElement)) && listElement.includes(this.state.userInput);
+        return !this.state.tags.find(t => (t.tagName === listElement)) && listElement.includes(this.state.userInput);
       }
       
     })
@@ -242,8 +230,7 @@ export default class KenestoTagAutocomplete extends Component {
       tags: newTags,
       dataSource: this.state.dataSource.cloneWithRows(filteredList),
     });
-
-    this.props.onChange(newTags);    
+       
   }
 
   _onChangeLayout(e) {
@@ -259,11 +246,44 @@ export default class KenestoTagAutocomplete extends Component {
 
     this.props.onUpdateLayout(layout);
   }
+  
+  renderTags() {
+    var tagTemplate = this.props.tagTemplate;
+    if (this.props.uniqueField) {
+      return (
+        tagTemplate ? this.state.tags.map((t) => (
+          <TouchableHighlight key={t.tagID} style={[styles.tagContainerStyle, this.props.tagContainerStyle]} >
+            {tagTemplate(t, this._removeTag.bind(this, t.tagID)) }
+          </TouchableHighlight>
+        ))
+          :
+          this.state.tags.map((t) => (
+            <Tag key={t.tagID} text={t.tagName} onPress={this._removeTag.bind(this, t.tagID) } />
+          ))
+
+      )
+    }
+    else {
+      return (
+        tagTemplate ? this.state.tags.map((t) => (
+          <TouchableHighlight key={t.tagName} style={[styles.tagContainerStyle, this.props.tagContainerStyle]} >
+            {tagTemplate(t.tagName, this._removeTag.bind(this, t.tagID)) }
+          </TouchableHighlight>
+        ))
+          :
+          this.state.tags.map((t) => (
+            <Tag key={t.tagName} text={t.tagName} onPress={this._removeTag.bind(this, t.tagID) } />
+          ))
+
+      )
+    }
+  }
 
   render() {
 
-    const { placeholder, containerStyle, inputContainerStyle, textInputStyle, tagContainerStyle, tagTemplate } = this.props;
+    const { placeholder, containerStyle, inputContainerStyle, textInputStyle, tagTemplate } = this.props;
     var flex = (this.state.showList) ? {flex: 1} : {flex: 0} 
+    
     
     return (
       <View style={[flex, containerStyle]}>
@@ -271,16 +291,7 @@ export default class KenestoTagAutocomplete extends Component {
           {this.props.title && <Text style={styles.autocompleteTitle}>{this.props.title}</Text>}
           <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this) }>
 
-            { tagTemplate ? this.state.tags.map((tag) => (
-              <TouchableHighlight key={tag} style={[styles.tagContainerStyle, tagContainerStyle]} >
-                {tagTemplate(tag, this._removeTag.bind(this)) }
-              </TouchableHighlight>
-            ))
-              :
-              this.state.tags.map((tag) => (
-                <Tag key={tag} text={tag} onPress={this._removeTag.bind(this, tag) } />
-              ))
-            }
+            {this.renderTags()}
 
             <TextInput
               ref='textInput'

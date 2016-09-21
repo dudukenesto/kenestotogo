@@ -21,11 +21,11 @@ const Tag = ({
             margin: 3,
             borderRadius: 15,
             height: 27,
+            maxWidth:295
         },
         innerContainer: {
             flex: 1,
             flexDirection: "row",
-            justifyContent: 'center',
             alignItems: "center"
         },
         text: {
@@ -55,7 +55,7 @@ const Tag = ({
         <TouchableHighlight style={[styles.container, tagContainer]} >
             <View style={styles.innerContainer}>
                 <Icon name="account-circle" style={styles.userIcon} />
-                <Text style={styles.text}>{text}</Text>
+                <View style={{flex:1}}><Text style={styles.text} numberOfLines={1}>{text}</Text></View>                
                 <Icon name="close" style={styles.closeIcon} onPress={onPress} />
             </View>
         </TouchableHighlight>

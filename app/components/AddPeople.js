@@ -3,26 +3,17 @@
 import React, {Component} from 'react';
 import KenestoTagAutocomplete from './KenestoTagAutocomplete';
 import ViewContainer from '../components/ViewContainer';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 var ReactNative = require('react-native');
 
 var {
   View,
   Text,
-  // TextInput,
   StyleSheet,
   ScrollView,
-  // TouchableOpacity,
-  // Dimensions,
-  // TouchableWithoutFeedback
 } = ReactNative;
-// import Button from './Button'
-import ProggressBar from "../components/ProgressBar";
-// import _ from 'lodash';
-// import TagInput from 'react-native-taginput';
 
-// var HEADER = '#3b5998';
-// var BGWASH = 'rgba(255,255,255,0.8)';
-// var DISABLED_WASH = 'rgba(255,255,255,0.25)';
+import ProggressBar from "../components/ProgressBar";
 
 
 var suggestions = [
@@ -193,22 +184,22 @@ class AddPeople extends Component {
     return (
       <View style={{flexDirection: "row"}}>
         {searchedtext}
-        <Text> - {rowData.fullName}</Text>        
+        <Text> - {rowData.type}</Text>        
       </View>
     )
   }
   
   // EXAMPLE OF CUSTOM TAG TEMPLATE
   // 
-  // getTagTemplate(tag, removeTag){
-  //   return (
-  //     <View>
-  //       <Icon name="account-circle" />
-  //       <Text>{tag}</Text>
-  //       <Icon name="close" onPress={removeTag.bind(this, tag) } />
-  //     </View>
-  //   )
-  // } 
+  getTagTemplate(tag, removeTag){
+    return (
+      <View>
+        <Icon name="account-circle" />
+        <Text>{tag.tagName}</Text>
+        <Icon name="close" onPress={removeTag.bind(this, tag) } />
+      </View>
+    )
+  } 
   
   render() {    
     return (
@@ -239,8 +230,8 @@ class AddPeople extends Component {
             onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
             autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this)}
             // tagTemplate={this.getTagTemplate.bind(this)}
-            autocompleteField={"email"}
-            filteringUniqueField={"email"}
+            autocompleteField={"fullName"}
+            uniqueField={"email"}
             />
 
           {this.state.showSharingList == true ?
