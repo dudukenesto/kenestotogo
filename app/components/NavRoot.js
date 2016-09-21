@@ -8,6 +8,7 @@ import Document from './Document'
 import LoginContainer from '../containers/LoginContainer'
 import DocumentsContainer from '../containers/DocumentsContainer'
 import LauncherContainer from '../containers/LauncherContainer'
+import AddPeople from './AddPeople'
 import Scan from './Scan';
 
 import {
@@ -65,7 +66,7 @@ class NavRoot extends Component {
       return <Document _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
     if (route.key === 'addPeople') {
-      return <AddPeopleContainer _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
+      return <AddPeople _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
   }
   _isMenuModalOpen() {

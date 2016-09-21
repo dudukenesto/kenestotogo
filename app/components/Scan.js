@@ -55,9 +55,7 @@ class Scan extends React.Component {
         }
         else {
          var AccessUrl = json.ResponseData.AccessUrl;
-
-console.log(AccessUrl)
-           console.log('accessUrl = ' + AccessUrl);
+            alert(AccessUrl)
                 fetch(AccessUrl,{
                 method: 'put',
                 headers: {
