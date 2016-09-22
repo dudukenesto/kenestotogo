@@ -62,8 +62,6 @@ export default class KenestoTagAutocomplete extends Component {
   }
   
    _orientationDidChange(orientation) {
-     console.log('\n\n\n')
-     console.log('callback fired, ', orientation)
     this.setState({
       orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
     })    
@@ -138,6 +136,7 @@ export default class KenestoTagAutocomplete extends Component {
     var autocompleteFormattedString = (<View style={{flexDirection: "row"}}><Text style={styles.text}>{textBefore}</Text>
       <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
+      
     return (
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
         <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID)}>
@@ -240,13 +239,13 @@ export default class KenestoTagAutocomplete extends Component {
     var newTags = this.state.tags.filter((t) => (t.tagID !== tagID));
     var filteredList = this.props.suggestions.filter((listElement) => {
       if(this.props.autocompleteField && this.props.uniqueField){
-        return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.uniqueField].includes(this.state.userInput);
+        return !newTags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
       }
       else if(this.props.autocompleteField){
-        return !this.state.tags.find(t => (t.tagName === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
+        return !newTags.find(t => (t.tagName === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
       }
       else {
-        return !this.state.tags.find(t => (t.tagName === listElement)) && listElement.includes(this.state.userInput);
+        return !newTags.find(t => (t.tagName === listElement)) && listElement.includes(this.state.userInput);
       }
       
     })
@@ -254,7 +253,7 @@ export default class KenestoTagAutocomplete extends Component {
       tags: newTags,
       dataSource: this.state.dataSource.cloneWithRows(filteredList),
     });
-       
+           
   }
 
   _onChangeLayout(e) {
