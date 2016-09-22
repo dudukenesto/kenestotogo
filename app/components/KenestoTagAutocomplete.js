@@ -14,6 +14,7 @@ import {
 
 import Tag from './Tag';
 var {height, width} = Dimensions.get('window');
+var Orientation = require('./KenestoDeviceOrientation');
 
 export default class KenestoTagAutocomplete extends Component {
 
@@ -45,10 +46,29 @@ export default class KenestoTagAutocomplete extends Component {
         top: 100,
         left: 0,
         right: 0,
-      }
+      },
+      orientation: Orientation.getInitialOrientation()
     }
-  }
 
+  }
+  
+  componentDidMount() {
+    this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+  }
+  
+  componentWillUnmount() {
+    this.orientationListener.remove();
+    Orientation.removeOrientationListener();
+  }
+  
+   _orientationDidChange(orientation) {
+     console.log('\n\n\n')
+     console.log('callback fired, ', orientation)
+    this.setState({
+      orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
+    })    
+  }
+    
   blur() {
     this.refs.textInput.blur();
   }
@@ -121,7 +141,9 @@ export default class KenestoTagAutocomplete extends Component {
     return (
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
         <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID)}>
-          <View style={[styles.rowContainer, rowContainerStyle]}>
+          <View style={[
+            styles.rowContainer, 
+            rowContainerStyle]}>
             {this.props.autocompleteRowTemplate ?
               this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
               :
@@ -168,7 +190,7 @@ export default class KenestoTagAutocomplete extends Component {
     this.props.onShowTagsList();
   }
 
-  _onChangeText(text) {    
+  _onChangeText(text) {   
     var filteredList = this.props.suggestions.filter((listElement) => {
       if(this.props.autocompleteField && this.props.uniqueField){
         return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].includes(text);
@@ -343,7 +365,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingVertical: 15,
     paddingHorizontal: 30,
-    minWidth: width,
   },
   newTagText: {
     fontSize: 14,

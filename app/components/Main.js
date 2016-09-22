@@ -24,7 +24,7 @@ import Error from './Error'
 import Info from './Info'
 import Confirm from './Confirm'
 
-var Orientation = require('react-native-orientation'); 
+var Orientation = require('./KenestoDeviceOrientation');
 
 let styles = StyleSheet.create({
   container: {

@@ -4,6 +4,7 @@ packages with special handling:
     problem: npm not synced with latest version 
     solution: instead of installing with npm install, copy folder from master to node_modules folder 
     and run: react-native link react-native-orientation
+    then replace the content of index.js with the content of KenestoDeviceOrientation.js OR use require('./KenestoDeviceOrientation') instead require('react-native-orientation');
 *  react-native-webview-bridge
     problem: npm not synced with latest version 
     solution: copy the following files from the master to the local react-native-webview-bridge inside node_modules
