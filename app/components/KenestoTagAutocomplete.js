@@ -141,9 +141,7 @@ export default class KenestoTagAutocomplete extends Component {
     return (
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
         <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID)}>
-          <View style={[
-            styles.rowContainer, 
-            rowContainerStyle]}>
+          <View style={[ styles.rowContainer, {minWidth: this.state.orientation == "PORTRAIT" ? width : height}, rowContainerStyle]}>
             {this.props.autocompleteRowTemplate ?
               this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
               :
@@ -231,7 +229,7 @@ export default class KenestoTagAutocomplete extends Component {
           renderRow={this._renderRow.bind(this) }
           renderSeparator={this._renderSeparator.bind(this) }
           renderFooter={this._renderFooter.bind(this) }
-          key={this.state.userInput}
+          key={this.state.userInput + this.state.orientation}
           />
       </ScrollView>
     )
