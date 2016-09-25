@@ -2,6 +2,7 @@
 // var React = require('react');
 import React, {Component} from 'react';
 import KenestoTagAutocomplete from './KenestoTagAutocomplete';
+import KenestoDropDown from './KenestoDropDown';
 import ViewContainer from '../components/ViewContainer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {connect} from 'react-redux'
@@ -238,16 +239,8 @@ class AddPeople extends Component {
     })
   }
   
-  onPressPopupMenu(){
-    
-  }
-  
-  onPermissionSelected(){
-    
-  }
   
   render() {    
-    console.log('=== ', this.state.showPermissionsPopup)
     return (
       <ViewContainer ref="mainContainer">
         <View style={styles.container}>
@@ -280,14 +273,8 @@ class AddPeople extends Component {
             uniqueField={"email"}
             />
 
-          <View style={styles.popupMenuButtonContainer}>
-            <TouchableWithoutFeedback onPress={this.togglePermissionsPopup.bind(this)} onPermissionSelected={this.onPermissionSelected} onPressPopupMenu={this.onPressPopupMenu} >
-              <View style={styles.popupMenuButton}>
-                <Icon name="remove-red-eye" style={styles.icon} />
-                <Icon name="keyboard-arrow-down" style={styles.icon} />
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
+          
+          <KenestoDropDown />
 
             
           {this.state.showSharingList == true ?
@@ -362,22 +349,8 @@ var styles = StyleSheet.create({
     fontWeight: '400',
     color: '#000',
   },
-  popupMenuButtonContainer: {
-    height:35,
-    width: 60,
-    borderWidth: 0.5,
-    // borderColor: '#F5F6F8',
-    borderColor: '#000',
-    position: 'absolute',
-    top: 15, 
-    right: 13,
-  },
-  popupMenuButton: {
-    flex:1,
-    flexDirection: 'row'
-  },
   icon: {
-    fontSize: 18,
+    fontSize: 15,
     color: '#333'
   }
   
