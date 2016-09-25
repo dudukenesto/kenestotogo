@@ -6,7 +6,7 @@ import ViewContainer from '../components/ViewContainer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {connect} from 'react-redux'
 import * as peopleAcions from '../actions/peopleActions'
-import {getSelectedDocument} from '../utils/documentsUtils'
+import {getSelectedDocument} from '../utils/documentsUtils';
 var ReactNative = require('react-native');
 
 var {
@@ -14,6 +14,7 @@ var {
   Text,
   StyleSheet,
   ScrollView,
+  TouchableWithoutFeedback
 } = ReactNative;
 
 import ProggressBar from "../components/ProgressBar";
@@ -131,6 +132,22 @@ var suggestions = [
     type: 'multitenant',
     permissions: 'burn them all',
     url: ''
+  },
+  {
+    id: 16,
+    fullName: 'group A',
+    email: 'group A',
+    type: 'internal',
+    permissions: 'download',
+    url: ''
+  },
+  {
+    id: 17,
+    fullName: 'group B',
+    email: 'group B',
+    type: 'internal',
+    permissions: 'download',
+    url: ''
   }
 ]
 
@@ -140,7 +157,8 @@ class AddPeople extends Component {
     super(props)
 
         this.state = {
-          showSharingList: true
+          showSharingList: true,
+          showPermissionsPopup: false
         };
   }
   
@@ -190,8 +208,6 @@ class AddPeople extends Component {
      
     }
 
-
-  
   
   // EXAMPLE OF CUSTOM AUTOCOMPLETE ROW TEMPLATE. rowData INCLUDES ALL FIELDS.
   // 
@@ -216,7 +232,22 @@ class AddPeople extends Component {
     )
   } 
   
+  togglePermissionsPopup(){
+    this.setState({
+      showPermissionsPopup: !this.state.showPermissionsPopup
+    })
+  }
+  
+  onPressPopupMenu(){
+    
+  }
+  
+  onPermissionSelected(){
+    
+  }
+  
   render() {    
+    console.log('=== ', this.state.showPermissionsPopup)
     return (
       <ViewContainer ref="mainContainer">
         <View style={styles.container}>
@@ -243,17 +274,27 @@ class AddPeople extends Component {
             addNewTagTitle={"Add a new user: "}
             formatNewTag={this.formatNewTag.bind(this) }
             onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
-            autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this)}
+            autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this) }
             // tagTemplate={this.getTagTemplate.bind(this)}
             autocompleteField={"fullName"}
             uniqueField={"email"}
             />
 
+          <View style={styles.popupMenuButtonContainer}>
+            <TouchableWithoutFeedback onPress={this.togglePermissionsPopup.bind(this)} onPermissionSelected={this.onPermissionSelected} onPressPopupMenu={this.onPressPopupMenu} >
+              <View style={styles.popupMenuButton}>
+                <Icon name="remove-red-eye" style={styles.icon} />
+                <Icon name="keyboard-arrow-down" style={styles.icon} />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+
+            
           {this.state.showSharingList == true ?
             <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
               <View style={{ flex: 1 }}>
-                <View>
-                  <Text>Sharing</Text>
+                <View style={styles.sharingTitleContainer}>
+                  <Text style={styles.sharingTitle}>Sharing</Text>
                 </View>
 
                 <View>
@@ -311,6 +352,35 @@ var styles = StyleSheet.create({
   rowContainerStyle: {},
   autocompleteTextStyle: {},
   tagContainerStyle: {},
+  sharingTitleContainer: {
+    height: 45,
+    backgroundColor: '#F5F6F8',
+    justifyContent: 'center',
+    paddingLeft: 25
+  },
+  sharingTitle: {
+    fontWeight: '400',
+    color: '#000',
+  },
+  popupMenuButtonContainer: {
+    height:35,
+    width: 60,
+    borderWidth: 0.5,
+    // borderColor: '#F5F6F8',
+    borderColor: '#000',
+    position: 'absolute',
+    top: 15, 
+    right: 13,
+  },
+  popupMenuButton: {
+    flex:1,
+    flexDirection: 'row'
+  },
+  icon: {
+    fontSize: 18,
+    color: '#333'
+  }
+  
 });
 
 

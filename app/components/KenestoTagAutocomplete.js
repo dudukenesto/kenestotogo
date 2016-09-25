@@ -345,6 +345,8 @@ const styles = StyleSheet.create({
     flexDirection:'row', 
     flexWrap: 'wrap',
     paddingHorizontal: 30,
+    paddingTop: 15,
+    paddingBottom: 3,
     borderColor: '#999',
     borderBottomWidth: 1,
     minHeight:20,
