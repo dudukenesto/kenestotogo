@@ -12,6 +12,7 @@ export function updateIsFetching(isFetching: boolean){
 
 export function RetrieveShareObjectInfo(ObjectInfo : Object, UsersAndGroups: Object)
 {
+   
     return {
         type: types.RETRIEVE_SHARE_OBJECT_INFO,
         ObjectInfo: ObjectInfo,
@@ -27,8 +28,8 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
     return fetch(url)
       .then(response => response.json())
       .then(json => {
-        alert(json.ResponseData.ResponseStatus);
-        if (json.ResponseData.ResponseStatus == "FAILED") {
+       // alert(json.ResponseData.ObjectInfo);
+        if (json.ResponseStatus == "FAILED") {
            dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
            dispatch(emitError(json.ResponseData.ErrorMessage,""))
         }

@@ -123,10 +123,14 @@ class ItemMenu extends React.Component{
     }
     
     shareDocument(){
-     
-       this.props.closeItemMenuModal();
+ //  alert('nav = ' + this.props.navReducer);
+
+   
+      
        const documentsContext = getDocumentsContext(this.props.navReducer);
 
+
+      // alert(documentsContext)
          var data = {
         key: "addPeople",
         name: this.state.document.Name,
@@ -141,6 +145,8 @@ class ItemMenu extends React.Component{
     
       
        this.props.dispatch(navActions.push(routes.addPeopleRoute(data).route));
+
+        this.props.closeItemMenuModal();
 
     }
     

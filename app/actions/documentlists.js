@@ -236,6 +236,8 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
 }
 
 export function updateSelectedId(Id: string){
+
+ // alert('updateSelectedId = ' + Id)
    return {
       type: types.UPDATE_SELECTED_ID,
       selectedId: Id
