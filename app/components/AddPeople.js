@@ -246,17 +246,18 @@ class AddPeople extends Component {
 
   renderCurrentPermissions(){
 
-  //  / alert('this.props.ObjectInfo.UsersPermissions = ' + this.props.ObjectInfo.UsersPermissions[0].Name)
+ // alert('this.props.ObjectInfo.UsersPermissions = ' + this.props.ObjectInfo.UsersPermissions[0].Name)
 
-     this.props.ObjectInfo.UsersPermissions.map(function(permission){
+     var permissions = this.props.ObjectInfo.UsersPermissions.map(function(permission){
+    
                 return (
-            <View>
-                <Text>aaaaaaaaaaaaa</Text>
-            </View>
+
+                <Text key={permission.ParticipantUniqueID}>{permission.Name}</Text>
+    
           );
             });
 
-
+return permissions
   
   }
   
@@ -315,9 +316,9 @@ class AddPeople extends Component {
                   <Text style={styles.sharingTitle}>Sharing</Text>
                 </View>
                     <View>
-              {this.renderCurrentPermissions}
+                                 {this.renderCurrentPermissions.bind(this)()}
             
-                </View>
+                    </View>
               </View>
             </ScrollView>
             :
