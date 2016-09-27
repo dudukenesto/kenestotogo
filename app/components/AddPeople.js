@@ -2,7 +2,7 @@
 // var React = require('react');
 import React, {Component} from 'react';
 import KenestoTagAutocomplete from './KenestoTagAutocomplete';
-import KenestoDropDown from './KenestoDropDown';
+import DropDownTrigger from './DropDownTrigger';
 import ViewContainer from '../components/ViewContainer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {connect} from 'react-redux'
@@ -192,7 +192,7 @@ class AddPeople extends Component {
   
   onErrorAddNewTag(tag){     // show error message/toast
     var errorMessage = tag + ' is not a valid email!'
-    this.refs.mainContainer.showMessage("info", errorMessage);
+    this.refs.mainContainer2.showMessage("info", errorMessage);
   }
   
   submitSelectedTags(){
@@ -233,10 +233,13 @@ class AddPeople extends Component {
     )
   } 
   
-  togglePermissionsPopup(){
-    this.setState({
-      showPermissionsPopup: !this.state.showPermissionsPopup
-    })
+  renderTrigger(){
+    return (
+      <View style={styles.dropDownTriggerTemplate}>
+        <Icon name="remove-red-eye" style={styles.icon} />
+        <Icon name="keyboard-arrow-down" style={styles.icon} />
+      </View>
+    )
   }
   
   
@@ -274,7 +277,11 @@ class AddPeople extends Component {
             />
 
           
-          <KenestoDropDown />
+          <DropDownTrigger
+            dropDownTriggerTemplate={this.renderTrigger.bind(this)}
+            DropDownTriggerStyle={styles.dropDownTriggerStyle}
+            
+            />
 
             
           {this.state.showSharingList == true ?
@@ -285,8 +292,33 @@ class AddPeople extends Component {
                 </View>
 
                 <View>
-                  <Text>1 list of people</Text>
-                  <Text>list of people</Text>
+                  <View style={{ flexDirection: "row", height: 60, alignItems: "center", borderWidth: 0.25 }}>
+                    <Icon name="person" />
+                    <Text>Lisa Suplier</Text>
+                    <DropDownTrigger
+                      dropDownTriggerTemplate={this.renderTrigger.bind(this) }
+                      dropDownTriggerStyle={styles.dropDownTriggerStyle} />
+                  </View>
+                  
+                  <View style={{ flexDirection: "row", height: 60, alignItems: "center", borderWidth: 0.25 }}>
+                    <Icon name="person" />
+                    <Text>Jeff Suplier</Text>
+                    <DropDownTrigger
+                      dropDownTriggerTemplate={this.renderTrigger.bind(this) }
+                      dropDownTriggerStyle={styles.dropDownTriggerStyle} />
+                  </View>
+                  
+                  <View style={{ flexDirection: "row", height: 60, alignItems: "center", borderWidth: 0.25 }}>
+                    <Icon name="person" />
+                    <Text>Scott Suplier</Text>
+                    <DropDownTrigger
+                      dropDownTriggerTemplate={this.renderTrigger.bind(this) }
+                      dropDownTriggerStyle={styles.dropDownTriggerStyle} />
+                  </View>
+                  
+                  
+                  
+                  <Text>123456</Text>
                   <Text>list of people</Text>
                   <Text>list of people</Text>
                   <Text>5 list of people</Text>
@@ -352,7 +384,12 @@ var styles = StyleSheet.create({
   icon: {
     fontSize: 15,
     color: '#333'
-  }
+  },
+  DropDownTriggerStyle: {},
+  dropDownTriggerTemplate: {
+    flex: 1,
+    flexDirection: "row"
+  },
   
 });
 

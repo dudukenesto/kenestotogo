@@ -23,7 +23,7 @@ import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
 import Info from './Info'
 import Confirm from './Confirm'
-
+import DropDownOptions from './DropDownOptions';
 var Orientation = require('./KenestoDeviceOrientation');
 
 let styles = StyleSheet.create({
@@ -118,10 +118,14 @@ class Main extends React.Component {
 
 
   getChildContext() {
+    // console.log('\n\n\n\n\n\n ================= \n\n')
+    // console.log(this.refs.dropDownOptionsContainer)
+    // console.log('\n\n\n\n\n\n ======== |||||||||||||||||||||| ========= \n\n')
     return {
       plusMenuContext: this.refs.modalPlusMenu, 
       itemMenuContext: this.refs.modalItemMenu,
-      errorModal: this.refs.errorModal
+      errorModal: this.refs.errorModal,
+      dropDownContext: this.refs.dropDownOptionsContainer
     };
   }
 
@@ -132,6 +136,7 @@ class Main extends React.Component {
           ifCreatingFolder: false,
           isPopupMenuOpen: false,
           orientation: 'unknown',
+          isDropDownOpen: true
         };
          this.onActionSelected = this.onActionSelected.bind(this);
          this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
@@ -277,8 +282,7 @@ class Main extends React.Component {
       this.setState({orientation: 'vertical'})
     }
   }
-
-  
+ 
   componentDidMount() {
     Orientation.addOrientationListener(this._orientationDidChange.bind(this));
   }
@@ -363,7 +367,9 @@ class Main extends React.Component {
           :
           <View></View>
         }
-
+        
+        <DropDownOptions ref={"dropDownOptionsContainer"} bar={"BAR"} />
+        
 
       </View>
     )
@@ -375,6 +381,7 @@ Main.childContextTypes = {
   plusMenuContext: React.PropTypes.object,
   itemMenuContext: React.PropTypes.object,
   errorModal: React.PropTypes.object,
+  dropDownContext: React.PropTypes.object
 }
 
 Main.contextTypes = {
