@@ -7,7 +7,6 @@ import accessReducer from './accessReducer'
 import peopleReducer from './peopleReducer'
 
 const rootReducer = combineReducers({
-  tabReducer,
   navReducer, 
   accessReducer,
   documentlist,

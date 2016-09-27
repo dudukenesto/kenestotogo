@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {connect} from 'react-redux'
 import * as peopleAcions from '../actions/peopleActions'
 import {getSelectedDocument} from '../utils/documentsUtils';
+import ProgressBar from './ProgressBar'
 var ReactNative = require('react-native');
 
 var {
@@ -200,11 +201,14 @@ class AddPeople extends Component {
   }
 
   componentWillMount(){
-    //alert(JSON.stringify(this.props.navReducer));
-       // var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
-        //this.setState({ document: document});
+   // alert(JSON.stringify(this.props.navReducer));
+       var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
+        this.setState({ document: document});
 
-    //    alert(' = ' + document.Name)
+        this.props.dispatch(peopleAcions.RequestShareObjectInfo(document.Id, document.FamilyCode, document.Name));
+//alert(document)
+     // alert('document = ' + document.Name)
+   //  alert(this.props.UsersAndGroups)
 
      
     }
@@ -242,14 +246,42 @@ class AddPeople extends Component {
     )
   }
   
+
+  renderCurrentPermissions(){
+
+ // alert('this.props.ObjectInfo.UsersPermissions = ' + this.props.ObjectInfo.UsersPermissions[0].Name)
+
+     var permissions = this.props.ObjectInfo.UsersPermissions.map(function(permission){
+    
+                return (
+
+                <Text key={permission.ParticipantUniqueID}>{permission.Name}</Text>
+    
+          );
+            });
+
+return permissions
+  
+  }
+  
   
   render() {    
+
+   
+    if (this.props.isFetching)
+    {
+      return (<View style={styles.creatingFolder}>
+                        <ProgressBar isLoading={true}/>
+                    </View>
+          )
+    }
+
     return (
       <ViewContainer ref="mainContainer">
         <View style={styles.container}>
           <KenestoTagAutocomplete
             ref='tagInput'
-            suggestions={suggestions}
+            suggestions={this.props.UsersAndGroups}
             containerStyle={styles.autocompleteContainer}
             inputContainerStyle={styles.tagsInputContainer}
             listStyle={styles.listStyle}
@@ -272,18 +304,16 @@ class AddPeople extends Component {
             onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
             autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this) }
             // tagTemplate={this.getTagTemplate.bind(this)}
-            autocompleteField={"fullName"}
-            uniqueField={"email"}
+            autocompleteField={"Name"}
+            uniqueField={"ParticipantUniqueID"}
             />
 
           
           <DropDownTrigger
             dropDownTriggerTemplate={this.renderTrigger.bind(this)}
-            DropDownTriggerStyle={styles.dropDownTriggerStyle}
-            
+            DropDownTriggerStyle={styles.dropDownTriggerStyle}            
             />
 
-            
           {this.state.showSharingList == true ?
             <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
               <View style={{ flex: 1 }}>
@@ -292,61 +322,13 @@ class AddPeople extends Component {
                 </View>
 
                 <View>
-                  <View style={{ flexDirection: "row", height: 60, alignItems: "center", borderWidth: 0.25 }}>
-                    <Icon name="person" />
-                    <Text>Lisa Suplier</Text>
-                    <DropDownTrigger
-                      dropDownTriggerTemplate={this.renderTrigger.bind(this) }
-                      dropDownTriggerStyle={styles.dropDownTriggerStyle} />
-                  </View>
-                  
-                  <View style={{ flexDirection: "row", height: 60, alignItems: "center", borderWidth: 0.25 }}>
-                    <Icon name="person" />
-                    <Text>Jeff Suplier</Text>
-                    <DropDownTrigger
-                      dropDownTriggerTemplate={this.renderTrigger.bind(this) }
-                      dropDownTriggerStyle={styles.dropDownTriggerStyle} />
-                  </View>
-                  
-                  <View style={{ flexDirection: "row", height: 60, alignItems: "center", borderWidth: 0.25 }}>
-                    <Icon name="person" />
-                    <Text>Scott Suplier</Text>
-                    <DropDownTrigger
-                      dropDownTriggerTemplate={this.renderTrigger.bind(this) }
-                      dropDownTriggerStyle={styles.dropDownTriggerStyle} />
-                  </View>
-                  
-                  
-                  
-                  <Text>123456</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>5 list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>10 list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>15 list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>20 list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>list of people</Text>
-                  <Text>24 list of people</Text>
+                              {this.renderCurrentPermissions.bind(this)()}
+        
                 </View>
               </View>
             </ScrollView>
             :
-            <View style={{}}></View>
-            
+            <View style={{}}></View>            
           }
 
         </View>      
@@ -403,7 +385,9 @@ function mapStateToProps(state) {
   return {
 isFetching: peopleReducer.isFetching,
 documentlists, 
-  navReducer
+navReducer, 
+ObjectInfo:  peopleReducer.ObjectInfo, 
+UsersAndGroups:  peopleReducer.UsersAndGroups
     
   }
 }

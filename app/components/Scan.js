@@ -55,7 +55,7 @@ class Scan extends React.Component {
         }
         else {
          var AccessUrl = json.ResponseData.AccessUrl;
-            alert(AccessUrl)
+         //   alert(AccessUrl)
                 fetch(AccessUrl,{
                 method: 'put',
                 headers: {
@@ -65,7 +65,7 @@ class Scan extends React.Component {
                 body:  this.state.avatarData// JSON.stringify({fileContents : this.state.avatarData})
                 }).then(response => {
                     
-                        alert( JSON.stringify(response));
+                     //   alert( JSON.stringify(response));
                 }).catch((error) => {
                         console.log("error:" + JSON.stringify(error))
                         this.props.dispatch(emitError("Failed to upload to s3",""))

@@ -60,7 +60,10 @@ export function getCreateFolderUrl(env, sessionToken, fId, folderName) {
 
 export function getDocumentsContext(navReducer: Object) {
   //console.log("getDocumentsContext:" + JSON.stringify(navReducer))
+
+  
   if (typeof (navReducer) == 'undefined' || navReducer == "" || navReducer.index == 0 || typeof (navReducer.routes[navReducer.index].data) == 'undefined') {
+  
     return ({})
   }
 
@@ -99,6 +102,8 @@ export function getSelectedDocument(documentlists: Object, navReducer: Object){
     var context = getDocumentsContext(navReducer);
     var catId = context.catId;
     var items = documentlists[catId].items;
+
+
 
     const selectedId = documentlists.selectedId; 
    return selectedId == '' || selectedId == null ? null : _.find(items, { 'Id': selectedId }); 
