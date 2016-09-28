@@ -8,9 +8,11 @@ import {
     ListView,
     TouchableWithoutFeedback,
     TouchableHighlight,
+    Dimensions
 } from 'react-native';
 import {connect} from 'react-redux';
 var Orientation = require('./KenestoDeviceOrientation');
+var {height, width} = Dimensions.get('window');
 
 class DropDownOptions extends Component {
 
@@ -21,7 +23,11 @@ class DropDownOptions extends Component {
         this.state = {
             showDropDown: false,
             orientation: Orientation.getInitialOrientation(),
-            dataSource: ds.cloneWithRows(['View', 'Download', 'Update'])
+            dataSource: ds.cloneWithRows(['View', 'Download', 'Update']),
+            position: {
+                top: -10000,
+                left: -10000
+            }
         }
     }
 
@@ -32,11 +38,13 @@ class DropDownOptions extends Component {
         })
     }
 
-    // if open up: render the list, measure height, then onLayout --> setVertical position
-
     closeDropDown() {
         this.setState({
-            showDropDown: false
+            showDropDown: false,
+            position: {
+                top: -10000,
+                left: -10000
+            }
         });
     }
 
@@ -50,19 +58,44 @@ class DropDownOptions extends Component {
         )
     }
     
-    setPosition(event){
-        var {optWidth, optHeight} = this.getDimensions(event);
-                
+    getOpeningDirection(triggerSettings, optHeight){
+        var windowHeight = (this.state.orientation === 'PORTRAIT') ? height : width;
+        if ((triggerSettings.direction === 'up' && triggerSettings.top > optHeight) ||
+            (triggerSettings.direction === 'down' && windowHeight-triggerSettings.top-triggerSettings.height < optHeight)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     
-    log(data){
-        console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-        console.log(data)       
+    setPosition(event){
+        var {optWidth, optHeight} = this.getDimensions(event);
+        var openUp = this.getOpeningDirection(this.state.triggerSettings, optHeight);
+        if(openUp){            
+            this.setState({
+                position: {
+                    top: this.state.triggerSettings.top - optHeight,
+                    left: (this.state.triggerSettings.aligning === 'left') ? this.state.triggerSettings.left : this.state.triggerSettings.left + this.state.triggerSettings.width - optWidth
+                }
+            })
+        }
+        else {            
+            this.setState({
+                position: {
+                    top: this.state.triggerSettings.top + this.state.triggerSettings.height,
+                    left: (this.state.triggerSettings.aligning === 'left') ? this.state.triggerSettings.left : this.state.triggerSettings.left + this.state.triggerSettings.width - optWidth
+                }
+            }) 
+        }
+        console.log('setPosition', this.state.position.top)
+        
+   
     }
 
     renderRow(rowData) {
         return(
-            <TouchableHighlight onPress={this.log.bind(this, rowData) }>
+            <TouchableHighlight>
                 <View style={{borderWidth:5, margin:1}}>
                     {this.props.optionTemplate ?
                         this.props.optionTemplate(rowData)
@@ -76,18 +109,18 @@ class DropDownOptions extends Component {
     }
 
     getListView() {
+        console.log('getListView')
         return (
-
-            <ListView
-                style={styles.optionsList}
-                keyboardShouldPersistTaps={true}
-                dataSource={this.state.dataSource}
-                enableEmptySections={true}
-                renderRow={this.renderRow.bind(this) }
-                // renderSeparator={this._renderSeparator.bind(this) }
-                // renderFooter={this._renderFooter.bind(this) }
-                // key={this.state.userInput + this.state.orientation}
-                />
+            <View>
+                <ListView
+                    style={styles.optionsList}
+                    keyboardShouldPersistTaps={true}
+                    dataSource={this.state.dataSource}
+                    enableEmptySections={true}
+                    renderRow={this.renderRow.bind(this) }
+                    // key={this.state.position}
+                    />
+            </View>
         )
     }
 
@@ -113,14 +146,15 @@ class DropDownOptions extends Component {
     // }
 
     render() {
-        // const {dropDownContainerStyle} = this.props;
+        console.log('\n\n\n\n\n\n ================= \n\n')
+        console.log('render: ', this.state.position) 
 
         return (
             this.state.showDropDown ?
                 <View style={[styles.dropDownOptionsContainer]} ref={"DropDownOptions"}>
                     <TouchableWithoutFeedback onPress={this.closeDropDown.bind(this) }>
                         <View style={{ flex: 1 }}>
-                            <View style={styles.optionsContent} onLayout={(event) => this.setPosition(event) }>
+                            <View style={[styles.optionsContent, this.state.position]} onLayout={(event) => this.setPosition(event) }>
                                 {this.state.showDropDown && this.getListView() }
                             </View>
 

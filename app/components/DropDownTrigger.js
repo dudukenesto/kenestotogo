@@ -7,16 +7,13 @@ import {
     View,
     // ScrollView,
     // TextInput,
-    ListView,
+    // ListView,
     TouchableWithoutFeedback,
-    Dimensions,
+    // Dimensions,
     // TouchableHighlight,
-    // Dimensions
 } from 'react-native';
 import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
-var {height, width} = Dimensions.get('window');
 
 class DropDownTrigger extends Component {
 
@@ -36,15 +33,9 @@ class DropDownTrigger extends Component {
     openDropDown() {
 
         this.refs.DropDownTrigger.measure((fx, fy, width, height, px, py) => {
-            // console.log('Component width is: ' + width)
-            // console.log('Component height is: ' + height)
-            // // console.log('X offset to frame: ' + fx)
-            // // console.log('Y offset to frame: ' + fy)
-            // console.log('X offset to page: ' + px)
-            // console.log('Y offset to page: ' + py)
             var triggerSettings = {
-                top: px,
-                left: py,
+                top: py,
+                left: px,
                 width: width,
                 height: height,
                 aligning: this.props.aligningOptionsWithTrigger,

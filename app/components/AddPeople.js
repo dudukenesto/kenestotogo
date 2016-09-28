@@ -369,7 +369,7 @@ var styles = StyleSheet.create({
     fontSize: 15,
     color: '#333'
   },
-  dropDownTriggerStyle: {},
+  dropDownTriggerStyle: {marginTop:450, zIndex:100},
   dropDownTriggerTemplate: {
     flex: 1,
     flexDirection: "row"
