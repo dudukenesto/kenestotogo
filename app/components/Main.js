@@ -367,8 +367,8 @@ class Main extends React.Component {
           :
           <View></View>
         }
-        
-        <DropDownOptions ref={"dropDownOptionsContainer"} bar={"BAR"} />
+
+        <DropDownOptions ref={"dropDownOptionsContainer"} />
         
 
       </View>

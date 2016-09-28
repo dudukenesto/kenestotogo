@@ -201,7 +201,7 @@ class AddPeople extends Component {
   }
 
   componentWillMount(){
-   // alert(JSON.stringify(this.props.navReducer));
+  //  alert(JSON.stringify(this.props.navReducer));
        var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
         this.setState({ document: document});
 
@@ -311,7 +311,9 @@ return permissions
           
           <DropDownTrigger
             dropDownTriggerTemplate={this.renderTrigger.bind(this)}
-            DropDownTriggerStyle={styles.dropDownTriggerStyle}            
+            dropDownTriggerStyle={styles.dropDownTriggerStyle}   
+            aligningOptionsWithTrigger={"right"}
+            openingDirection={"down"}        
             />
 
           {this.state.showSharingList == true ?
@@ -367,7 +369,7 @@ var styles = StyleSheet.create({
     fontSize: 15,
     color: '#333'
   },
-  DropDownTriggerStyle: {},
+  dropDownTriggerStyle: {},
   dropDownTriggerTemplate: {
     flex: 1,
     flexDirection: "row"

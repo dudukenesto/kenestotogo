@@ -24,7 +24,7 @@ class DropDownTrigger extends Component {
         super(props);
 
         this.state = {
-            showDropDown: false,
+            // showDropDown: false,
             //   listPosition: {
             //     top: 100,
             //     left: 0,
@@ -33,36 +33,34 @@ class DropDownTrigger extends Component {
         }
     }
 
-    toggleDropDown() {
-        this.setState({
-            showDropDown: !this.state.showDropDown
-        })
-        
-        this.refs.DropDownTrigger.measure( (fx, fy, width, height, px, py) => {
+    openDropDown() {
+
+        this.refs.DropDownTrigger.measure((fx, fy, width, height, px, py) => {
             // console.log('Component width is: ' + width)
             // console.log('Component height is: ' + height)
             // // console.log('X offset to frame: ' + fx)
             // // console.log('Y offset to frame: ' + fy)
             // console.log('X offset to page: ' + px)
             // console.log('Y offset to page: ' + py)
+            var triggerSettings = {
+                top: px,
+                left: py,
+                width: width,
+                height: height,
+                aligning: this.props.aligningOptionsWithTrigger,
+                direction: this.props.openingDirection
+            }
+            this.context.dropDownContext.openDropDown(triggerSettings);
         })
-        
-        // console.log('\n\n\n\n\n\n ================= \n\n')
-        console.log(this.context.dropDownContext.props.bar)
-         
-        // this.context.dropDownContext.foo()
-        this.context.dropDownContext.foo()
-        // this.context.dropDownContext.props.bar
-        console.log('\n======= END ====== \n\n\n')
-        
+
     }
 
     render() {
-        const {dropDownTriggerTemplate, DropDownTriggerStyle, } = this.props;
+        const {dropDownTriggerTemplate, dropDownTriggerStyle, } = this.props;
         
         return (
-            <View style={[styles.DropDownTriggerStyle, DropDownTriggerStyle]} ref={"DropDownTrigger"}>
-                <TouchableWithoutFeedback onPress={this.toggleDropDown.bind(this) } >
+            <View style={[styles.dropDownTriggerStyle, dropDownTriggerStyle]} ref={"DropDownTrigger"}>
+                <TouchableWithoutFeedback onPress={this.openDropDown.bind(this) } >
                     <View style={{flex: 1}}>
                         {dropDownTriggerTemplate() }
                     </View>
@@ -75,7 +73,7 @@ class DropDownTrigger extends Component {
 }
 
 const styles = StyleSheet.create({
-    DropDownTriggerStyle: {
+    dropDownTriggerStyle: {
         height: 35,
         width: 60,
         

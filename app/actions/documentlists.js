@@ -150,7 +150,7 @@ export function fetchTableIfNeeded() {
    
     var documentlist = getDocumentsContext(getState().navReducer);
     const {documentlists} = getState()
-     console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
+    //  console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
     if (shouldFetchDocuments(documentlists, documentlist)) {
       const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlists, documentlist)
       return dispatch(fetchDocumentsTable(nextUrl, documentlist, types.RECEIVE_DOCUMENTS))
