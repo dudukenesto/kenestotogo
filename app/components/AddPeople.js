@@ -219,8 +219,7 @@ class AddPeople extends Component {
   getAutocompleteRowTemplate(searchedtext, rowData) {
     return (
       <View style={{flexDirection: "row"}}>
-        {searchedtext}
-        <Text> - {rowData.type}</Text>        
+        {searchedtext}       
       </View>
     )
   }
@@ -369,7 +368,7 @@ var styles = StyleSheet.create({
     fontSize: 15,
     color: '#333'
   },
-  dropDownTriggerStyle: {marginTop:450, zIndex:100},
+  dropDownTriggerStyle: {},
   dropDownTriggerTemplate: {
     flex: 1,
     flexDirection: "row"

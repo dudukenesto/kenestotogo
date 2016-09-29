@@ -48,6 +48,13 @@ let styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: -2,
   },
+  shareIconContainer: {
+    marginRight: 5,
+  },
+  shareIcon: {
+    color: "#888",
+    fontSize:20
+  },
   folderName: {
     justifyContent: "flex-start",
     flex: 1,
@@ -185,6 +192,7 @@ class KenestoToolbar extends Component {
     var title =  navReducer.routes[navReducer.index].data != null? navReducer.routes[navReducer.index].data.name: navReducer.routes[navReducer.index].title;
     var showGoBack = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1 && navReducer.routes[navReducer.index].data.fId != "") || navReducer.routes[navReducer.index].key === 'document' || navReducer.routes[navReducer.index].key === 'addPeople' ? true : false;
     var isDocumentsTollbar = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1) ? true : false;
+    var isAddPeoplePage = (navReducer.routes[navReducer.index].key.indexOf('addPeople') > -1) ? true : false;
     return (
       <View style= {styles.toolbar} >
         <View>
@@ -226,8 +234,13 @@ class KenestoToolbar extends Component {
           :
           <View></View>
         }
+        {isAddPeoplePage && <View style={styles.shareIconContainer}><Icon name="send" style={[styles.iconStyle, styles.shareIcon]} onPress={this.addPeople.bind(this)} /></View>}
       </View>
     )
+  }
+  
+  addPeople(){
+    
   }
 
   render() {
