@@ -16,7 +16,8 @@ var {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Image
 } = ReactNative;
 
 import ProggressBar from "../components/ProgressBar";
@@ -246,21 +247,43 @@ class AddPeople extends Component {
   }
   
 
-  renderCurrentPermissions(){
+  renderCurrentPermissions() {
 
- // alert('this.props.ObjectInfo.UsersPermissions = ' + this.props.ObjectInfo.UsersPermissions[0].Name)
-
-     var permissions = this.props.ObjectInfo.UsersPermissions.map(function(permission){
+    console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
     
-                return (
+    var permissions = this.props.ObjectInfo.UsersPermissions.map(function (permission) {
+      var iconName;
+      var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
+      if (!permission.ThumbnailPath) {
+        if (permission.IsGroup) {
+          iconName = 'group';
+        }
+        else {
+          iconName = permission.IsExternal ? 'person-outline' : 'person'
+        }
+      }
+// console.log(permission)
+      return (
+        <View style={styles.sharingRow} key={permission.UserId}>
+          <View style={styles.roundIcon}>
+            {!permission.ThumbnailPath ? <Icon name={iconName} style={styles.iconMedium} /> : <Image source = {{ uri: uri }} style={styles.thumbnail} />}
+          </View>
+          <Text key={permission.ParticipantUniqueID}>{permission.Name}</Text>
+          <DropDownTrigger
+            dropDownTriggerTemplate={this.renderTrigger.bind(this) }
+            dropDownTriggerStyle={styles.dropDownTriggerStyle}
+            // aligningOptionsWithTrigger={"right"}
+            // openingDirection={"down"}        
+            />
+        </View>
 
-                <Text key={permission.ParticipantUniqueID}>{permission.Name}</Text>
-    
-          );
-            });
 
-return permissions
-  
+
+      );
+    }, this);
+
+    return permissions
+
   }
   
   
@@ -368,10 +391,38 @@ var styles = StyleSheet.create({
     fontSize: 15,
     color: '#333'
   },
+  iconMedium: {
+    fontSize: 22,
+    color: "#999",
+    borderWidth: 1,
+    marginLeft: 2
+  },
+  roundIcon: {
+    borderWidth: 1,
+    borderColor: "#aaa",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 7,
+    overflow: "hidden"
+  },
   dropDownTriggerStyle: {},
   dropDownTriggerTemplate: {
     flex: 1,
     flexDirection: "row"
+  },
+  sharingRow: {
+    flexDirection: "row",
+    height: 50,
+    alignItems: "center",
+    marginLeft: 30,
+  },
+  thumbnail: {
+    width: 30, 
+    height: 30,
+    borderRadius: 15,
   },
   
 });
