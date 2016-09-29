@@ -154,6 +154,40 @@ var suggestions = [
   }
 ]
 
+var globalOptions = [
+  {
+    icon: "remove-red-eye",
+    title: "View only"
+  },
+  {
+    icon: "file-download",
+    title: "Download"
+  },
+  {
+    icon: "update",
+    title: "Update"
+  }
+];
+
+var userOptions = [
+  {
+    icon: "remove-red-eye",
+    title: "View only"
+  },
+  {
+    icon: "file-download",
+    title: "Download"
+  },
+  {
+    icon: "update",
+    title: "Update"
+  },
+  {
+    icon: "not-interested",
+    title: "Delete share"
+  }
+]
+
 class AddPeople extends Component {
 
   constructor(props) {
@@ -214,7 +248,6 @@ class AddPeople extends Component {
 
   }
 
-
   // EXAMPLE OF CUSTOM AUTOCOMPLETE ROW TEMPLATE. rowData INCLUDES ALL FIELDS.
   // 
   getAutocompleteRowTemplate(searchedtext, rowData) {
@@ -254,11 +287,19 @@ class AddPeople extends Component {
         iconName = "update";
         break;
     }
-    console.log(selected, iconName)
     return (
       <View style={styles.dropDownTriggerTemplate}>
         <Icon name={iconName} style={styles.icon} />
-        <Icon name="keyboard-arrow-down" style={styles.icon} />
+        <Icon name="keyboard-arrow-down" style={[styles.icon, styles.iconDown]} />
+      </View>
+    )
+  }
+  
+  renderOptionTemplate(rowData){
+    return(
+      <View style={styles.optionRow}>
+        <Icon name={rowData.icon} />
+        <Text>{rowData.title}</Text>
       </View>
     )
   }
@@ -269,6 +310,7 @@ class AddPeople extends Component {
     console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
 
     var permissions = this.props.ObjectInfo.UsersPermissions.map(function (permission) {
+      
       var iconName;
       var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
       if (!permission.ThumbnailPath) {
@@ -290,10 +332,12 @@ class AddPeople extends Component {
           <DropDownTrigger
             dropDownTriggerTemplate={this.renderPermissionsTrigger.bind(this) }
             dropDownTriggerStyle={styles.dropDownTriggerStyle}
+            optionTemplate={this.renderOptionTemplate.bind(this)}
+            options={userOptions}
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
             selected={permission.PermissionType}
-            triggerOptions={["VIEW_ONLY", "ALLOW_DOWNLOAD", "ALLOW_UPDATE_VERSIONS"]}
+            
             />
         </View>
 
@@ -348,10 +392,13 @@ class AddPeople extends Component {
           <DropDownTrigger
             dropDownTriggerTemplate={this.renderPermissionsTrigger.bind(this) }
             dropDownTriggerStyle={styles.dropDownTriggerStyle}
+            optionTemplate={this.renderOptionTemplate.bind(this)}
+            
+            options={globalOptions}
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
             selected={this.state.globalPermissions}
-            triggerOptions={["VIEW_ONLY", "ALLOW_DOWNLOAD", "ALLOW_UPDATE_VERSIONS"]}
+            
             />
 
           {this.state.showSharingList == true ?
@@ -404,7 +451,13 @@ var styles = StyleSheet.create({
   },
   icon: {
     fontSize: 15,
-    color: '#333'
+    color: '#333',
+    paddingLeft: 3,
+    paddingRight: 3
+  },
+  iconDown: {
+    fontSize: 18, 
+    paddingRight: 0,
   },
   iconMedium: {
     fontSize: 22,
@@ -426,7 +479,8 @@ var styles = StyleSheet.create({
   dropDownTriggerStyle: {},
   dropDownTriggerTemplate: {
     flex: 1,
-    flexDirection: "row"
+    flexDirection: "row",
+    alignItems: "center",
   },
   sharingRow: {
     flexDirection: "row",
@@ -439,6 +493,11 @@ var styles = StyleSheet.create({
     height: 30,
     borderRadius: 15,
   },
+  optionRow: {
+    flexDirection: "row",
+    
+  },
+
 
 });
 

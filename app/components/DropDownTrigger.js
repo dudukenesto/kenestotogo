@@ -36,9 +36,8 @@ class DropDownTrigger extends Component {
                 aligning: this.props.aligningOptionsWithTrigger,
                 direction: this.props.openingDirection
             }
-            this.context.dropDownContext.openDropDown(triggerSettings);
+            this.context.dropDownContext.openDropDown(triggerSettings, this.props.options, this.props.optionTemplate);
         })
-
     }
 
     render() {
@@ -61,17 +60,14 @@ class DropDownTrigger extends Component {
 const styles = StyleSheet.create({
     dropDownTriggerStyle: {
         height: 35,
-        width: 60,
-        
-        // height: height,
-        // width: width,
-        
+        width: 55,        
         borderWidth: 0.5,
         // borderColor: '#F5F6F8',
         borderColor: '#000',
         position: 'absolute',
-        top: 15,
+        top: 0,
         right: 13,   
+        alignItems: "center",
     }
 })
 

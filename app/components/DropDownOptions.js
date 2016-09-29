@@ -18,12 +18,10 @@ class DropDownOptions extends Component {
 
     constructor(props) {
         super(props);
-        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
         this.state = {
             showDropDown: false,
             orientation: Orientation.getInitialOrientation(),
-            dataSource: ds.cloneWithRows(['View', 'Download', 'Update']),
             position: {
                 top: -10000,
                 left: -10000
@@ -31,10 +29,15 @@ class DropDownOptions extends Component {
         }
     }
 
-    openDropDown(triggerSettings) {
+    openDropDown(triggerSettings, options, optionTemplate) {
+        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        
         this.setState({
             showDropDown: true,
-            triggerSettings: triggerSettings
+            triggerSettings: triggerSettings,
+            options: options,
+            optionTemplate: optionTemplate,
+            dataSource: ds.cloneWithRows(options),
         })
     }
 
@@ -92,16 +95,14 @@ class DropDownOptions extends Component {
     }
 
     renderRow(rowData) {
+        console.log(rowData)
         return(
             <TouchableHighlight>
-                <View style={{borderWidth:5, margin:1}}>
-                    {this.props.optionTemplate ?
-                        this.props.optionTemplate(rowData)
+                {this.state.optionTemplate ?
+                        this.state.optionTemplate(rowData)
                         :
-                        <Text>{rowData}</Text>
+                        <Text>{rowData.title}</Text>
                     }
-
-                </View>
             </TouchableHighlight>
         )
     }
