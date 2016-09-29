@@ -17,13 +17,15 @@ import CreateFolder from './CreateFolder'
 import {connect} from 'react-redux'
 import KenestoToolbar from './KenestoToolbar'
 import * as documentsActions from '../actions/documentlists'
-import {pop, updateRouteData} from '../actions/navActions'
+import {pop, updateRouteData, clearToast} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
 import Info from './Info'
 import Confirm from './Confirm'
 
+var MessageBarAlert = require('react-native-message-bar').MessageBar;
+var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 var Orientation = require('./KenestoDeviceOrientation');
 
 let styles = StyleSheet.create({
@@ -268,6 +270,14 @@ class Main extends React.Component {
     if (nextprops.navReducer.HasConfirm) {
       this.openModal("confirmModal");
     }
+//this.showMessage('success', 'kululu', 'bululu')
+  
+    // if (nextprops.navReducer.HasToast)
+    // {
+    //   //  this.showMessage(nextprops.navReducer.ToastType, nextprops.navReducer.ToastMessage, nextprops.navReducer.ToastTitle);
+    //  //   this.props.dispatch(clearToast());
+    // }
+
   }
   
   _orientationDidChange(orientation) {
@@ -279,8 +289,35 @@ class Main extends React.Component {
   }
 
   
+  showMessage(type: string, message: string, title: string){
+     MessageBarManager.showAlert({
+        title: title,
+        message: message,
+        alertType: type,
+        position: 'bottom',
+        messageStyle:  {textAlign: 'center', color: '#fff', margin: 5},
+        stylesheetSuccess: {backgroundColor: '#3290F1', strokeColor: '#3290F1'},
+        stylesheetWarning: {backgroundColor: '#F2B702', strokeColor: '#F2B702'},
+        stylesheetError: {backgroundColor: '#DE4040', strokeColor: '#DE4040'},
+        stylesheetInfo: {backgroundColor: '#333', strokeColor: '#DE4040'},
+        // See Properties section for full customization
+        // Or check `index.ios.js` or `index.android.js` for a complete example
+});
+  }
+
+    componentWillMount(){
+
+ MessageBarManager.unregisterMessageBar();
+
+
+
+  }
+
   componentDidMount() {
     Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+    MessageBarManager.registerMessageBar(this.refs.alert);
+   this.showMessage("info", "asset deleted successfully");
+    //  this.refs.mainContainer.showMessage("info", "asset deleted successfully");
   }
 
   render() {
@@ -364,7 +401,7 @@ class Main extends React.Component {
           <View></View>
         }
 
-
+      <MessageBarAlert ref="alert" />
       </View>
     )
   }

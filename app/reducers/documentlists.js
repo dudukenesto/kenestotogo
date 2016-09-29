@@ -98,6 +98,11 @@ export default function documentlists(state = {}, action) {
         dataSource: {},
           selectedId : ''
       }
+      case types.UPDATE_IS_FETCHING:
+      return {
+          ...state,
+        isFetching: action.isFetching
+      }
     default:
       return state
   }

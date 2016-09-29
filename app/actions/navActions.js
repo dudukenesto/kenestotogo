@@ -1,5 +1,5 @@
 import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM} from '../constants/ActionTypes'
+  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST} from '../constants/ActionTypes'
 
 export function push (route) {
   return {
@@ -41,6 +41,21 @@ export function updateRouteData (routeData) {
   return {
     type: UPDATE_ROUTE_DATA,
     routeData
+  }
+}
+
+export function emitToast(type: string, messge: string, title: string){
+    return {
+    type: SUBMIT_TOAST, 
+    toastTitle: title, 
+    toastType: type,
+    toastMessage: messge
+  }
+}
+
+export function clearToast(){
+  return {
+    type: CLEAR_TOAST
   }
 }
 
@@ -96,3 +111,4 @@ export function changeTab (index) {
     index
   }
 }
+

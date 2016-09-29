@@ -1,5 +1,5 @@
 import { PUSH_ROUTE, POP_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO,SUBMIT_CONFIRM, CLEAR_CONFIRM} from '../constants/ActionTypes'
+  SUBMIT_INFO, CLEAR_INFO,SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST} from '../constants/ActionTypes'
 import { NavigationExperimental } from 'react-native'
 const {
   StateUtils: NavigationStateUtils
@@ -95,9 +95,23 @@ function navigationState(state = initialState, action) {
         GlobalErrorTitle:null, 
         GlobalErrorDetails: null,
         GlobalErrorOkAction: null
-
-
       }
+    case SUBMIT_TOAST:
+        return {
+          ...state, 
+          HasToast: true, 
+          GlobalToastType: action.toastType,
+          GlobalToastTitle:action.toastTitle, 
+          GlobalToastMessage: action.toastMessage
+        }
+   case CLEAR_TOAST:
+        return {
+          ...state, 
+          HasToast: false, 
+          GlobalToastType: null,
+          GlobalToastTitle:null, 
+          GlobalToastMessage: null
+        }
     default:
       return state
   }

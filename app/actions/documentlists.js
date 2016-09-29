@@ -1,14 +1,28 @@
 import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
 import * as Access from '../actions/Access'
-import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,getDocumentsContext} from '../utils/documentsUtils'
+import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
+  getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
+   getDeleteAssetUrl, getDeleteFolderUrl} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
+const Android_Download_Path = '/storage/emulated/0/download';
 let React = require('react-native')
+
+
+
+
 let {
   Alert,
   ListView
 } = React
+
+export function updateIsFetching(isFetching: boolean){
+    return {
+        type: types.UPDATE_IS_FETCHING, 
+        isFetching
+    }
+}
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
   return (dispatch, getState) => {
@@ -276,4 +290,177 @@ return (dispatch, getState) => {
          dispatch(UpdateCreateingFolderState(0))
       })
   }
+}
+
+
+
+export function downloadDocument(id: string, fileName: string){
+   return (dispatch, getState) => {
+        dispatch(updateIsFetching(true)); 
+        const url = getDownloadFileUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id);
+         fetch(url)
+            .then(response => response.json())
+            .then(json => {
+                  const downloadUrl = json.ResponseData.AccessUrl; 
+
+                   if (Platform.OS === 'ios')
+                        downloadpath =RNFS.DocumentDirectoryPath;
+                   else
+                        downloadpath = Android_Download_Path;
+
+                  const filePath = downloadpath + "/" + fileName;
+                    consloe.log('downloadUrl = ' + downloadUrl)
+                    RNFS.downloadFile({ fromUrl: downloadUrl, toFile: filePath}).then(res => {
+                          alert('OK');
+                    }).catch(err => alert(err));
+
+                dispatch(updateIsFetching(false)); 
+              
+              }).catch((error) => {
+                              alert("error:" + JSON.stringify(error))
+                              
+                          }).done();
+        }
+}
+ 
+
+
+export function uploadToKenesto(imageData: object, url: string){
+
+  return (dispatch, getState) => {
+
+          dispatch(updateIsFetching(true)); 
+
+           fetch(url)
+            .then(response => response.json())
+            .then(json => {
+             
+              if (json.ResponseData.ResponseStatus == "FAILED") {
+               //   alert(failed)
+                // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
+                 dispatch(emitError(json.ResponseData.ErrorMessage,""))
+              }
+              else {
+              var AccessUrl = json.ResponseData.AccessUrl;
+                      
+                      var request = new Request(AccessUrl, {
+                        method: 'PUT', 
+                        mode: 'cors', 
+                        redirect: 'follow',
+                        processData: false,
+                        cache: false,
+                        headers: new Headers({
+                          'Content-Type': 'multipart/form-data'
+                        }),
+                         body:  imageData
+                      });
+                                  
+                      fetch(request).then(response => {
+                          
+                          const completeUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
+
+                              alert(JSON.stringify(response))
+
+                          fetch(completeUrl)
+                                .then(response => response.json())
+                                .then(json => {
+                                  dispatch(updateIsFetching(false)); 
+
+                                  if (json.ResponseData.ResponseStatus == "FAILED") {
+                                    dispatch(emitError(json.ResponseData.ErrorMessage,""))
+                                  }
+                                  else {
+                                    alert('wawa');
+                                  }
+                                })
+                                .catch((error) => {
+                                  console.log("error:" + JSON.stringify(error))
+                                  dispatch(emitError("Failed to retrieve statistics",""))
+
+
+                                })
+
+
+
+
+
+                      }).catch((error) => {
+                              console.log("error:" + JSON.stringify(error))
+                              dispatch(emitError("Failed to upload to kenesto",""))
+                          }).done();
+      
+                          
+              }
+            })
+            .catch((error) => {
+              //console.log("error:" + JSON.stringify(error))
+              dispatch(emitError("Failed to upload file to kenesto",""))
+
+
+            })
+  }
+
+}
+
+// getDeleteFolderUrl
+export function deleteAsset(id: string, familyCode: string){
+   return (dispatch, getState) => {
+        dispatch(updateIsFetching(true)); 
+
+        const url = getDeleteAssetUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id, familyCode);
+
+            return fetch(url)
+                .then(response => response.json())
+                .then(json => {
+                   dispatch(updateIsFetching(false)); 
+                  if (json.ResponseStatus == "FAILED") {
+                //    dispatch(navActions.emitError("Error deleting asset", json.ErrorMessage))
+
+                dispatch(navActions.emitToast("error", json.ErrorMessage, "Error deleting asset"))
+                  }
+                  else {
+                        dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
+                  
+                     //  alert('deleted asset!')
+             
+                    }
+      })
+      .catch((error) => {
+     //   console.log("error:" + JSON.stringify(error))
+      //  dispatch(emitError("Failed to retrieve statistics",""))
+        alert(error)
+
+      })
+
+   }
+}
+
+export function deleteFolder(id: string){
+   return (dispatch, getState) => {
+        dispatch(updateIsFetching(true)); 
+
+        const url = getDeleteFolderUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id);
+
+            return fetch(url)
+                .then(response => response.json())
+                .then(json => {
+                   dispatch(updateIsFetching(false)); 
+                  if (json.ResponseData.ResponseStatus == "FAILED") {
+                    dispatch(navActions.emitError("error deleting folder",json.ResponseData.ErrorMessage))
+                  }
+                  else {
+               
+                     
+                 // var totalUsageSpace = json.ResponseData.TotalUsageSpace;
+                 // dispatch(updateStatistics(totalMyDocuments, totalAllDocuments, totalSharedWithMe, totalCheckedoutDocuments,totalArchivedDocuments,totalUsageSpace))
+                    }
+      })
+      .catch((error) => {
+     //   console.log("error:" + JSON.stringify(error))
+      //  dispatch(emitError("Failed to retrieve statistics",""))
+        alert('error')
+
+      })
+
+   }
 }
