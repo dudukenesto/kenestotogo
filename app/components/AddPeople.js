@@ -155,79 +155,79 @@ var suggestions = [
 ]
 
 class AddPeople extends Component {
-  
+
   constructor(props) {
     super(props)
 
-        this.state = {
-          showSharingList: true,
-          showPermissionsPopup: false
-        };
+    this.state = {
+      showSharingList: true,
+      globalPermissions: 'VIEW_ONLY'
+    };
   }
-  
-  _onChange(){
-    
+
+  _onChange() {
+
   }
-  
-  _onUpdateLayout(){
-    
+
+  _onUpdateLayout() {
+
   }
-  
-  _onUpdateTags(){
-    
+
+  _onUpdateTags() {
+
   }
-  
-  showSharingList(){
-    this.setState({showSharingList: true})
+
+  showSharingList() {
+    this.setState({ showSharingList: true })
   }
-  
-  hideSharingList(){
-    this.setState({showSharingList: false})
+
+  hideSharingList() {
+    this.setState({ showSharingList: false })
   }
-  
-  formatNewTag(tag){      
+
+  formatNewTag(tag) {
     // trim spaces, check for email correct format etc. 
     // If the formatted text is not a correct email - return false
     tag = tag.trim();
     return /\S+@\S+\.\S+/.test(tag) ? tag : false;
   }
-  
-  onErrorAddNewTag(tag){     // show error message/toast
+
+  onErrorAddNewTag(tag) {     // show error message/toast
     var errorMessage = tag + ' is not a valid email!'
     this.refs.mainContainer2.showMessage("info", errorMessage);
   }
-  
-  submitSelectedTags(){
+
+  submitSelectedTags() {
     // VALIDATE TAGS, COMBINE this.state.selected WITH PERMISSIONS AND SEND TO SERVER
   }
 
-  componentWillMount(){
-  //  alert(JSON.stringify(this.props.navReducer));
-       var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
-        this.setState({ document: document});
+  componentWillMount() {
+    //  alert(JSON.stringify(this.props.navReducer));
+    var document = getSelectedDocument(this.props.documentlists, this.props.navReducer);
+    this.setState({ document: document });
 
-        this.props.dispatch(peopleAcions.RequestShareObjectInfo(document.Id, document.FamilyCode, document.Name));
-//alert(document)
-     // alert('document = ' + document.Name)
-   //  alert(this.props.UsersAndGroups)
+    this.props.dispatch(peopleAcions.RequestShareObjectInfo(document.Id, document.FamilyCode, document.Name));
+    //alert(document)
+    // alert('document = ' + document.Name)
+    //  alert(this.props.UsersAndGroups)
 
-     
-    }
 
-  
+  }
+
+
   // EXAMPLE OF CUSTOM AUTOCOMPLETE ROW TEMPLATE. rowData INCLUDES ALL FIELDS.
   // 
   getAutocompleteRowTemplate(searchedtext, rowData) {
     return (
-      <View style={{flexDirection: "row"}}>
-        {searchedtext}       
+      <View style={{ flexDirection: "row" }}>
+        {searchedtext}
       </View>
     )
   }
-  
+
   // EXAMPLE OF CUSTOM TAG TEMPLATE
   // 
-  getTagTemplate(tag, removeTag){
+  getTagTemplate(tag, removeTag) {
     return (
       <View>
         <Icon name="account-circle" />
@@ -235,22 +235,39 @@ class AddPeople extends Component {
         <Icon name="close" onPress={removeTag.bind(this, tag) } />
       </View>
     )
-  } 
-  
-  renderTrigger(){
+  }
+
+  renderPermissionsTrigger(selected) {
+
+    if (!selected) {
+      selected = "VIEW_ONLY";
+    }
+    var iconName;
+    switch (selected) {
+      case "VIEW_ONLY":
+        iconName = "remove-red-eye";
+        break;
+      case "ALLOW_DOWNLOAD":
+        iconName = "file-download";
+        break;
+      case "ALLOW_UPDATE_VERSIONS":
+        iconName = "update";
+        break;
+    }
+    console.log(selected, iconName)
     return (
       <View style={styles.dropDownTriggerTemplate}>
-        <Icon name="remove-red-eye" style={styles.icon} />
+        <Icon name={iconName} style={styles.icon} />
         <Icon name="keyboard-arrow-down" style={styles.icon} />
       </View>
     )
   }
-  
+
 
   renderCurrentPermissions() {
 
     console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-    
+
     var permissions = this.props.ObjectInfo.UsersPermissions.map(function (permission) {
       var iconName;
       var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
@@ -262,22 +279,23 @@ class AddPeople extends Component {
           iconName = permission.IsExternal ? 'person-outline' : 'person'
         }
       }
-// console.log(permission)
+
       return (
         <View style={styles.sharingRow} key={permission.UserId}>
           <View style={styles.roundIcon}>
             {!permission.ThumbnailPath ? <Icon name={iconName} style={styles.iconMedium} /> : <Image source = {{ uri: uri }} style={styles.thumbnail} />}
           </View>
           <Text key={permission.ParticipantUniqueID}>{permission.Name}</Text>
+
           <DropDownTrigger
-            dropDownTriggerTemplate={this.renderTrigger.bind(this) }
+            dropDownTriggerTemplate={this.renderPermissionsTrigger.bind(this) }
             dropDownTriggerStyle={styles.dropDownTriggerStyle}
-            // aligningOptionsWithTrigger={"right"}
-            // openingDirection={"down"}        
+            aligningOptionsWithTrigger={"right"}
+            openingDirection={"down"}
+            selected={permission.PermissionType}
+            triggerOptions={["VIEW_ONLY", "ALLOW_DOWNLOAD", "ALLOW_UPDATE_VERSIONS"]}
             />
         </View>
-
-
 
       );
     }, this);
@@ -285,17 +303,14 @@ class AddPeople extends Component {
     return permissions
 
   }
-  
-  
-  render() {    
 
-   
-    if (this.props.isFetching)
-    {
+  render() {
+
+    if (this.props.isFetching) {
       return (<View style={styles.creatingFolder}>
-                        <ProgressBar isLoading={true}/>
-                    </View>
-          )
+        <ProgressBar isLoading={true}/>
+      </View>
+      )
     }
 
     return (
@@ -330,12 +345,13 @@ class AddPeople extends Component {
             uniqueField={"ParticipantUniqueID"}
             />
 
-          
           <DropDownTrigger
-            dropDownTriggerTemplate={this.renderTrigger.bind(this)}
-            dropDownTriggerStyle={styles.dropDownTriggerStyle}   
+            dropDownTriggerTemplate={this.renderPermissionsTrigger.bind(this) }
+            dropDownTriggerStyle={styles.dropDownTriggerStyle}
             aligningOptionsWithTrigger={"right"}
-            openingDirection={"down"}        
+            openingDirection={"down"}
+            selected={this.state.globalPermissions}
+            triggerOptions={["VIEW_ONLY", "ALLOW_DOWNLOAD", "ALLOW_UPDATE_VERSIONS"]}
             />
 
           {this.state.showSharingList == true ?
@@ -346,18 +362,17 @@ class AddPeople extends Component {
                 </View>
 
                 <View>
-                              {this.renderCurrentPermissions.bind(this)()}
-        
+                  {this.renderCurrentPermissions.bind(this)() }
                 </View>
               </View>
             </ScrollView>
             :
-            <View style={{}}></View>            
+            <View style={{}}></View>
           }
 
-        </View>      
+        </View>
       </ViewContainer>
-      
+
     );
   }
 }
@@ -365,7 +380,7 @@ class AddPeople extends Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',   
+    backgroundColor: '#fff',
   },
   autocompleteContainer: {
 
@@ -420,27 +435,24 @@ var styles = StyleSheet.create({
     marginLeft: 30,
   },
   thumbnail: {
-    width: 30, 
+    width: 30,
     height: 30,
     borderRadius: 15,
   },
-  
+
 });
 
-
-
 function mapStateToProps(state) {
- 
-  const { peopleReducer, documentlists ,navReducer  } = state
+
+  const { peopleReducer, documentlists, navReducer  } = state
 
 
   return {
-isFetching: peopleReducer.isFetching,
-documentlists, 
-navReducer, 
-ObjectInfo:  peopleReducer.ObjectInfo, 
-UsersAndGroups:  peopleReducer.UsersAndGroups
-    
+    isFetching: peopleReducer.isFetching,
+    documentlists,
+    navReducer,
+    ObjectInfo: peopleReducer.ObjectInfo,
+    UsersAndGroups: peopleReducer.UsersAndGroups
   }
 }
 

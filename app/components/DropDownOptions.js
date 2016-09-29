@@ -88,9 +88,7 @@ class DropDownOptions extends Component {
                 }
             }) 
         }
-        console.log('setPosition', this.state.position.top)
-        
-   
+
     }
 
     renderRow(rowData) {
@@ -109,7 +107,7 @@ class DropDownOptions extends Component {
     }
 
     getListView() {
-        console.log('getListView')
+
         return (
             <View>
                 <ListView
@@ -140,15 +138,10 @@ class DropDownOptions extends Component {
     }
 
     // onSelectOption() {
-    //     console.log('\n\n\n\n\n\n ================= \n\n')
-    //     console.log(this.state)
-    //     console.log('\n======= END ====== \n\n\n\n\n\n')
+    
     // }
 
     render() {
-        console.log('\n\n\n\n\n\n ================= \n\n')
-        console.log('render: ', this.state.position) 
-
         return (
             this.state.showDropDown ?
                 <View style={[styles.dropDownOptionsContainer]} ref={"DropDownOptions"}>

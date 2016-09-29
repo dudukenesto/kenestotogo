@@ -21,12 +21,7 @@ class DropDownTrigger extends Component {
         super(props);
 
         this.state = {
-            // showDropDown: false,
-            //   listPosition: {
-            //     top: 100,
-            //     left: 0,
-            //     right: 0,
-            //   },
+            selected: ''
         }
     }
 
@@ -53,7 +48,7 @@ class DropDownTrigger extends Component {
             <View style={[styles.dropDownTriggerStyle, dropDownTriggerStyle]} ref={"DropDownTrigger"}>
                 <TouchableWithoutFeedback onPress={this.openDropDown.bind(this) } >
                     <View style={{flex: 1}}>
-                        {dropDownTriggerTemplate() }
+                        {dropDownTriggerTemplate(this.state.selected || this.props.selected) }
                     </View>
                 </TouchableWithoutFeedback>                
             </View>
