@@ -41,32 +41,37 @@ class DropDownTrigger extends Component {
     }
 
     render() {
-        const {dropDownTriggerTemplate, dropDownTriggerStyle, } = this.props;
+        const {dropDownTriggerTemplate, dropDownTriggerStyle, dropDownTriggerContainer} = this.props;
         
         return (
-            <View style={[styles.dropDownTriggerStyle, dropDownTriggerStyle]} ref={"DropDownTrigger"}>
-                <TouchableWithoutFeedback onPress={this.openDropDown.bind(this) } >
-                    <View style={{flex: 1}}>
-                        {dropDownTriggerTemplate(this.state.selected || this.props.selected) }
-                    </View>
-                </TouchableWithoutFeedback>                
+            <View style={[styles.dropDownTriggerContainer, dropDownTriggerContainer]}>
+                <View style={[styles.dropDownTriggerStyle, dropDownTriggerStyle]} ref={"DropDownTrigger"}>
+                    <TouchableWithoutFeedback onPress={this.openDropDown.bind(this) } >
+                        <View style={{ flex: 1 }}>
+                            {dropDownTriggerTemplate(this.state.selected || this.props.selected) }
+                        </View>
+                    </TouchableWithoutFeedback>
+                </View>
             </View>
-            
         )
     }
 
 }
 
 const styles = StyleSheet.create({
+    dropDownTriggerContainer: {
+        flex: 1,
+        minWidth: 55,
+        alignItems: "flex-end",
+        paddingRight:13,
+        // borderWidth: 1,
+    },
     dropDownTriggerStyle: {
         height: 35,
         width: 55,        
         borderWidth: 0.5,
         // borderColor: '#F5F6F8',
-        borderColor: '#000',
-        position: 'absolute',
-        top: 0,
-        right: 13,   
+        borderColor: '#000',   
         alignItems: "center",
     }
 })

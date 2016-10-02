@@ -17,142 +17,13 @@ var {
   StyleSheet,
   ScrollView,
   TouchableWithoutFeedback,
-  Image
+  Image,
+  Dimensions
 } = ReactNative;
+var {height, width} = Dimensions.get('window');
+var Orientation = require('./KenestoDeviceOrientation');
 
 import ProggressBar from "../components/ProgressBar";
-
-
-var suggestions = [
-  {
-    id: 1,
-    fullName: 'Scott Supplier',
-    email: 'scott@kenestodemo.com',
-    type: 'internal',
-    permissions: 'all',
-    url: ''
-  },
-  {
-    id: 2,
-    fullName: 'Lisa Supplier',
-    email: 'lisa@kenestodemo.com',
-    type: 'internal',
-    permissions: 'all',
-    url: ''
-  },
-  {
-    id: 3,
-    fullName: 'Jeff Supplier',
-    email: 'jeff@kenestodemo.com',
-    type: 'internal',
-    permissions: 'all',
-    url: ''
-  },
-  {
-    id: 4,
-    fullName: 'Joe Supplier',
-    email: 'joe@kenestodemo.com',
-    type: 'internal',
-    permissions: 'all',
-    url: ''
-  },
-  {
-    id: 5,
-    fullName: 'Mary Brown',
-    email: 'mary@abc.com',
-    type: 'external',
-    permissions: 'view',
-    url: ''
-  },
-  {
-    id: 6,
-    fullName: 'John Smith',
-    email: 'john@abc.com',
-    type: 'external',
-    permissions: 'view',
-    url: ''
-  },
-  {
-    id: 7,
-    fullName: 'Harry Potter',
-    email: 'harrysukapotter@magic.com',
-    type: 'external',
-    permissions: 'view',
-    url: ''
-  },
-  {
-    id: 8,
-    fullName: 'Hermiona',
-    email: 'hermiona@magic.com',
-    type: 'external',
-    permissions: 'download',
-    url: ''
-  },
-  {
-    id: 9,
-    fullName: 'dr. House',
-    email: 'house@medicalcenter.com',
-    type: 'external',
-    permissions: 'download',
-    url: ''
-  },
-  {
-    id: 10,
-    fullName: 'Ra',
-    email: 'ra@god.com',
-    type: 'multitenant',
-    permissions: 'all',
-    url: ''
-  },
-  {
-    id: 11,
-    fullName: 'Gandalf The Grey',
-    email: 'gandalf@middleearth.com',
-    type: 'multitenant',
-    permissions: 'all',
-    url: ''
-  },
-  {
-    id: 12,
-    fullName: 'Daenerys of the House Targaryen, also known as Daenerys Stormborn and the Dragon Queen',
-    email: 'khalissy@vesteros.com',
-    type: 'external',
-    permissions: 'download',
-    url: ''
-  },
-  {
-    id: 14,
-    fullName: 'Hodor',
-    email: 'hodor@hodorhodor.com',
-    type: 'external',
-    permissions: 'view',
-    url: ''
-  },
-  {
-    id: 15,
-    fullName: 'Asya Polyak',
-    email: 'asya@polyak.com',
-    type: 'multitenant',
-    permissions: 'burn them all',
-    url: ''
-  },
-  {
-    id: 16,
-    fullName: 'group A',
-    email: 'group A',
-    type: 'internal',
-    permissions: 'download',
-    url: ''
-  },
-  {
-    id: 17,
-    fullName: 'group B',
-    email: 'group B',
-    type: 'internal',
-    permissions: 'download',
-    url: ''
-  }
-]
 
 var globalOptions = [
   {
@@ -195,8 +66,24 @@ class AddPeople extends Component {
 
     this.state = {
       showSharingList: true,
-      globalPermissions: 'VIEW_ONLY'
+      globalPermissions: 'VIEW_ONLY',
+      orientation: Orientation.getInitialOrientation()
     };
+  }
+
+  componentDidMount() {
+    this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+  }
+
+  componentWillUnmount() {
+    this.orientationListener.remove();
+    Orientation.removeOrientationListener();
+  }
+
+  _orientationDidChange(orientation) {
+    this.setState({
+      orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
+    })
   }
 
   _onChange() {
@@ -294,12 +181,12 @@ class AddPeople extends Component {
       </View>
     )
   }
-  
-  renderOptionTemplate(rowData){
-    return(
+
+  renderOptionTemplate(rowData) {
+    return (
       <View style={styles.optionRow}>
-        <Icon name={rowData.icon} />
-        <Text>{rowData.title}</Text>
+        <Icon name={rowData.icon} style={styles.icon} />
+        <Text style={styles.optionTitle}>{rowData.title}</Text>
       </View>
     )
   }
@@ -310,7 +197,7 @@ class AddPeople extends Component {
     console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
 
     var permissions = this.props.ObjectInfo.UsersPermissions.map(function (permission) {
-      
+
       var iconName;
       var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
       if (!permission.ThumbnailPath) {
@@ -321,23 +208,25 @@ class AddPeople extends Component {
           iconName = permission.IsExternal ? 'person-outline' : 'person'
         }
       }
-
+      var textWidth = (this.state.orientation == 'PORTRAIT') ? width - 140 : height - 140;
+      console.log(this.state.orientation, textWidth, width, height)
       return (
         <View style={styles.sharingRow} key={permission.UserId}>
           <View style={styles.roundIcon}>
             {!permission.ThumbnailPath ? <Icon name={iconName} style={styles.iconMedium} /> : <Image source = {{ uri: uri }} style={styles.thumbnail} />}
           </View>
-          <Text key={permission.ParticipantUniqueID}>{permission.Name}</Text>
-
+          <View style={{ maxWidth: textWidth }}>
+            <Text key={permission.ParticipantUniqueID} numberOfLines={1}>{permission.Name}</Text>
+          </View>
           <DropDownTrigger
             dropDownTriggerTemplate={this.renderPermissionsTrigger.bind(this) }
             dropDownTriggerStyle={styles.dropDownTriggerStyle}
-            optionTemplate={this.renderOptionTemplate.bind(this)}
+            optionTemplate={this.renderOptionTemplate.bind(this) }
             options={userOptions}
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
             selected={permission.PermissionType}
-            
+
             />
         </View>
 
@@ -392,13 +281,14 @@ class AddPeople extends Component {
           <DropDownTrigger
             dropDownTriggerTemplate={this.renderPermissionsTrigger.bind(this) }
             dropDownTriggerStyle={styles.dropDownTriggerStyle}
-            optionTemplate={this.renderOptionTemplate.bind(this)}
-            
+            dropDownTriggerContainer={styles.dropDownTriggerContainer}
+            optionTemplate={this.renderOptionTemplate.bind(this) }
+
             options={globalOptions}
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
             selected={this.state.globalPermissions}
-            
+
             />
 
           {this.state.showSharingList == true ?
@@ -456,7 +346,7 @@ var styles = StyleSheet.create({
     paddingRight: 3
   },
   iconDown: {
-    fontSize: 18, 
+    fontSize: 18,
     paddingRight: 0,
   },
   iconMedium: {
@@ -477,6 +367,11 @@ var styles = StyleSheet.create({
     overflow: "hidden"
   },
   dropDownTriggerStyle: {},
+  dropDownTriggerContainer: {
+    position: 'absolute',
+    top: 13,
+    right: 0,
+  },
   dropDownTriggerTemplate: {
     flex: 1,
     flexDirection: "row",
@@ -495,9 +390,13 @@ var styles = StyleSheet.create({
   },
   optionRow: {
     flexDirection: "row",
-    
+    alignItems: "center",
+    height: 45,
+    paddingHorizontal: 12,
   },
-
+  optionTitle: {
+    paddingLeft: 8
+  },
 
 });
 

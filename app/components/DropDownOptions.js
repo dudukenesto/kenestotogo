@@ -78,7 +78,7 @@ class DropDownOptions extends Component {
         if(openUp){            
             this.setState({
                 position: {
-                    top: this.state.triggerSettings.top - optHeight,
+                    top: this.state.triggerSettings.top - optHeight + 1,
                     left: (this.state.triggerSettings.aligning === 'left') ? this.state.triggerSettings.left : this.state.triggerSettings.left + this.state.triggerSettings.width - optWidth
                 }
             })
@@ -86,7 +86,7 @@ class DropDownOptions extends Component {
         else {            
             this.setState({
                 position: {
-                    top: this.state.triggerSettings.top + this.state.triggerSettings.height,
+                    top: this.state.triggerSettings.top + this.state.triggerSettings.height - 1,
                     left: (this.state.triggerSettings.aligning === 'left') ? this.state.triggerSettings.left : this.state.triggerSettings.left + this.state.triggerSettings.width - optWidth
                 }
             }) 
@@ -169,19 +169,13 @@ const styles = StyleSheet.create({
     dropDownOptionsContainer: {
         position: "absolute",
         top: 0, left: 0, right: 0, bottom: 0,
-        // borderWidth: 3,
-        // borderColor: "red",
-        // backgroundColor: "#eee",   
-
     },
     optionsContent: {
-        borderWidth: 1,
-        borderColor: "green",
+        borderWidth: 0.5,
+        borderColor: "#666",
         backgroundColor: "#fff",
-        // marginTop: 40,
-        // marginRight: 40,
         width: 170,
-        // height: 300
+        paddingVertical: 10,
     },
     optionsList: {},
 
