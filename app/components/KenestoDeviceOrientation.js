@@ -75,7 +75,7 @@ module.exports = {
   //   listeners[key] = null;
   // },
   getInitialOrientation() {
-    // return Orientation.initialOrientation;
+    return Orientation.initialOrientation;
     console.log('Orientation', Orientation)
   }
 }

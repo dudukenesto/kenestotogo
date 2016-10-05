@@ -164,7 +164,7 @@ export function fetchTableIfNeeded() {
    
     var documentlist = getDocumentsContext(getState().navReducer);
     const {documentlists} = getState()
-     console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
+    //  console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
     if (shouldFetchDocuments(documentlists, documentlist)) {
       const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlists, documentlist)
       return dispatch(fetchDocumentsTable(nextUrl, documentlist, types.RECEIVE_DOCUMENTS))
@@ -414,22 +414,20 @@ export function deleteAsset(id: string, familyCode: string){
                 .then(json => {
                    dispatch(updateIsFetching(false)); 
                   if (json.ResponseStatus == "FAILED") {
-                //    dispatch(navActions.emitError("Error deleting asset", json.ErrorMessage))
 
-                dispatch(navActions.emitToast("error", json.ErrorMessage, "Error deleting asset"))
+
+                      dispatch(navActions.emitToast("error", "", "Error deleting asset"))
                   }
                   else {
                         dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
-                  
-                     //  alert('deleted asset!')
-             
+                         var documentlist = getDocumentsContext(getState().navReducer);
+                         dispatch(refreshTable(documentlist))    
+                         dispatch(navActions.clearToast());
+                        
                     }
       })
       .catch((error) => {
-     //   console.log("error:" + JSON.stringify(error))
-      //  dispatch(emitError("Failed to retrieve statistics",""))
-        alert(error)
-
+          dispatch(navActions.emitToast("error", "", "Error deleting asset"))
       })
 
    }
@@ -445,21 +443,18 @@ export function deleteFolder(id: string){
                 .then(response => response.json())
                 .then(json => {
                    dispatch(updateIsFetching(false)); 
-                  if (json.ResponseData.ResponseStatus == "FAILED") {
-                    dispatch(navActions.emitError("error deleting folder",json.ResponseData.ErrorMessage))
+                  if (json.ResponseStatus == "FAILED") {
+                      dispatch(navActions.emitToast("error", "", "Error deleting folder"))
                   }
                   else {
-               
-                     
-                 // var totalUsageSpace = json.ResponseData.TotalUsageSpace;
-                 // dispatch(updateStatistics(totalMyDocuments, totalAllDocuments, totalSharedWithMe, totalCheckedoutDocuments,totalArchivedDocuments,totalUsageSpace))
+                        dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
+                         var documentlist = getDocumentsContext(getState().navReducer);
+                         dispatch(refreshTable(documentlist))    
+                         dispatch(navActions.clearToast());
                     }
       })
       .catch((error) => {
-     //   console.log("error:" + JSON.stringify(error))
-      //  dispatch(emitError("Failed to retrieve statistics",""))
-        alert('error')
-
+          // dispatch(navActions.emitToast("error",error, "Error deleting folder"))
       })
 
    }

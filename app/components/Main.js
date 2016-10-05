@@ -26,6 +26,7 @@ import Confirm from './Confirm'
 
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+import DropDownOptions from './DropDownOptions';
 var Orientation = require('./KenestoDeviceOrientation');
 
 let styles = StyleSheet.create({
@@ -120,10 +121,14 @@ class Main extends React.Component {
 
 
   getChildContext() {
+    // console.log('\n\n\n\n\n\n ================= \n\n')
+    // console.log(this.refs.dropDownOptionsContainer)
+    // console.log('\n\n\n\n\n\n ======== |||||||||||||||||||||| ========= \n\n')
     return {
       plusMenuContext: this.refs.modalPlusMenu, 
       itemMenuContext: this.refs.modalItemMenu,
-      errorModal: this.refs.errorModal
+      errorModal: this.refs.errorModal,
+      dropDownContext: this.refs.dropDownOptionsContainer
     };
   }
 
@@ -134,6 +139,7 @@ class Main extends React.Component {
           ifCreatingFolder: false,
           isPopupMenuOpen: false,
           orientation: 'unknown',
+          isDropDownOpen: true
         };
          this.onActionSelected = this.onActionSelected.bind(this);
          this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
@@ -270,13 +276,15 @@ class Main extends React.Component {
     if (nextprops.navReducer.HasConfirm) {
       this.openModal("confirmModal");
     }
-//this.showMessage('success', 'kululu', 'bululu')
   
-    // if (nextprops.navReducer.HasToast)
-    // {
-    //   //  this.showMessage(nextprops.navReducer.ToastType, nextprops.navReducer.ToastMessage, nextprops.navReducer.ToastTitle);
-    //  //   this.props.dispatch(clearToast());
-    // }
+    if (nextprops.navReducer.HasToast)
+    {
+      const type = nextprops.navReducer.GlobalToastType; 
+      const message = nextprops.navReducer.GlobalToastMessage;
+      const title = nextprops.navReducer.GlobalToastTitle;
+
+      this.showMessage(type, message, title);
+    }
 
   }
   
@@ -287,9 +295,9 @@ class Main extends React.Component {
       this.setState({orientation: 'vertical'})
     }
   }
-
   
   showMessage(type: string, message: string, title: string){
+
      MessageBarManager.showAlert({
         title: title,
         message: message,
@@ -300,13 +308,10 @@ class Main extends React.Component {
         stylesheetWarning: {backgroundColor: '#F2B702', strokeColor: '#F2B702'},
         stylesheetError: {backgroundColor: '#DE4040', strokeColor: '#DE4040'},
         stylesheetInfo: {backgroundColor: '#333', strokeColor: '#DE4040'},
-        // See Properties section for full customization
-        // Or check `index.ios.js` or `index.android.js` for a complete example
-});
+    });
   }
 
     componentWillMount(){
-
  MessageBarManager.unregisterMessageBar();
 
 
@@ -316,7 +321,7 @@ class Main extends React.Component {
   componentDidMount() {
     Orientation.addOrientationListener(this._orientationDidChange.bind(this));
     MessageBarManager.registerMessageBar(this.refs.alert);
-   this.showMessage("info", "asset deleted successfully");
+    //this.showMessage("info", "asset deleted successfully");
     //  this.refs.mainContainer.showMessage("info", "asset deleted successfully");
   }
 
@@ -402,6 +407,8 @@ class Main extends React.Component {
         }
 
       <MessageBarAlert ref="alert" />
+        <DropDownOptions ref={"dropDownOptionsContainer"} />
+        
       </View>
     )
   }
@@ -412,6 +419,7 @@ Main.childContextTypes = {
   plusMenuContext: React.PropTypes.object,
   itemMenuContext: React.PropTypes.object,
   errorModal: React.PropTypes.object,
+  dropDownContext: React.PropTypes.object
 }
 
 Main.contextTypes = {
