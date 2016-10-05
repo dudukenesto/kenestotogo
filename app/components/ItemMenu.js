@@ -16,8 +16,10 @@ import {getSelectedDocument, getDocumentsContext} from '../utils/documentsUtils'
 import MartialExtendedConf from '../assets/icons/config.json';
 import * as routes from '../constants/routes'
 import * as navActions from '../actions/navActions'
-
+import * as docActions from '../actions/documentlists'
+var RNFS = require('react-native-fs');
 import ProggressBar from "../components/ProgressBar";
+import ViewContainer from './ViewContainer';
 
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 var moment = require('moment');
@@ -115,7 +117,8 @@ class ItemMenu extends React.Component{
 
     
     startDownload(){
-        alert('start Download')
+        this.props.dispatch(docActions.downloadDocument(this.state.document.Id, "kuku.jpg"));
+        //alert('start Download')
     }
     
     viewDocument(){
@@ -155,7 +158,14 @@ class ItemMenu extends React.Component{
     }
     
     deleteDocument(){
-        alert('delete Document')
+
+         // this.refs.mainContainer.showMessage("info", errorMessage)
+
+        this.props.closeItemMenuModal();
+        if (this.state.document.FamilyCode == "FOLDER")
+            this.props.dispatch(docActions.deleteFolder(this.state.document.Id));
+        else 
+            this.props.dispatch(docActions.deleteAsset(this.state.document.Id, this.state.document.FamilyCode));
     }
 
   componentWillMount(){
@@ -187,7 +197,7 @@ class ItemMenu extends React.Component{
 
 
      return(
-            <View style={styles.container}>
+            <ViewContainer ref="itemMenuContainer"> 
                 <View style={styles.menuHeader}>
                     <View style={styles.row}>
                         <View style={styles.iconContainer}>
@@ -204,7 +214,7 @@ class ItemMenu extends React.Component{
                         </View>
                         
                         <View style={styles.actionIconsContainer}>
-                            <TouchableWithoutFeedback onPress={this.startDownload}>
+                            <TouchableWithoutFeedback onPress={this.startDownload.bind(this)}>
                                 <View style={styles.singleActionIconContainer}>
                                     <KenestoIcon name="word" style={styles.actionIcon} />
                                 </View>
@@ -234,14 +244,14 @@ class ItemMenu extends React.Component{
                         </View>
                     </TouchableHighlight>
                         
-                    <TouchableHighlight onPress={this.deleteDocument} underlayColor="#E9EAEC">
+                    <TouchableHighlight onPress={this.deleteDocument.bind(this)} underlayColor="#E9EAEC">
                         <View style={styles.actionHolder}>
                             <KenestoIcon name="word" style={styles.icon} />
                             <Text style={styles.actionName}>Delete (delete)</Text>
                         </View>    
                     </TouchableHighlight>
                 </View>
-            </View>
+            </ViewContainer>
         )
     }
 

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity} from 'react-native';
 import {getFileUploadUrl} from '../utils/documentsUtils'
+import {uploadToKenesto} from '../actions/documentlists'
 import {NativeModules, Dimensions} from 'react-native';
 import {connect} from 'react-redux'
 
@@ -44,42 +45,45 @@ class Scan extends React.Component {
   upload(){
       const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.image.name);
 
-       fetch(url)
-      .then(response => response.json())
-      .then(json => {
+      this.props.dispatch(uploadToKenesto(this.state.image.data,url));
+
+
+      //  fetch(url)
+      // .then(response => response.json())
+      // .then(json => {
         
-        if (json.ResponseData.ResponseStatus == "FAILED") {
-            alert(failed)
-          // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
-          // dispatch(emitError(json.ResponseData.ErrorMessage,""))
-        }
-        else {
-         var AccessUrl = json.ResponseData.AccessUrl;
-         //   alert(AccessUrl)
-                fetch(AccessUrl,{
-                method: 'put',
-                headers: {
-                    'Accept': 'multipart/form-data',
-                    'Content-Type': 'multipart/form-data'
-                },
-                body:  this.state.avatarData// JSON.stringify({fileContents : this.state.avatarData})
-                }).then(response => {
+      //   if (json.ResponseData.ResponseStatus == "FAILED") {
+      //       alert(failed)
+      //     // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
+      //     // dispatch(emitError(json.ResponseData.ErrorMessage,""))
+      //   }
+      //   else {
+      //    var AccessUrl = json.ResponseData.AccessUrl;
+      
+      //           fetch(AccessUrl,{
+      //           method: 'put',
+      //           headers: {
+      //               'Accept': 'multipart/form-data',
+      //               'Content-Type': 'multipart/form-data'
+      //           },
+      //           body:  this.state.image.data// JSON.stringify({fileContents : this.state.avatarData})
+      //           }).then(response => {
                     
-                     //   alert( JSON.stringify(response));
-                }).catch((error) => {
-                        console.log("error:" + JSON.stringify(error))
-                        this.props.dispatch(emitError("Failed to upload to s3",""))
-                    }).done();
+      //                  // alert( JSON.stringify(response));
+      //           }).catch((error) => {
+      //                   console.log("error:" + JSON.stringify(error))
+      //                   this.props.dispatch(emitError("Failed to upload to s3",""))
+      //               }).done();
  
                     
-        }
-      })
-      .catch((error) => {
-        console.log("error:" + JSON.stringify(error))
-        this.props.dispatch(emitError("Failed to retrieve statistics",""))
+      //   }
+      // })
+      // .catch((error) => {
+      //   console.log("error:" + JSON.stringify(error))
+      //   this.props.dispatch(emitError("Failed to retrieve statistics",""))
 
 
-      })
+      // })
     
   }
 
@@ -94,7 +98,7 @@ class Scan extends React.Component {
       const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
      
       this.setState({
-        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName},
+        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data},
         images: null, 
         initial: false
       });
@@ -131,7 +135,8 @@ function mapStateToProps(state) {
 
   return {
       env: state.accessReducer.env, 
-      sessionToken: state.accessReducer.sessionToken
+      sessionToken: state.accessReducer.sessionToken,
+      isFetching: state.documentlists.isFetching
   }
 }
 

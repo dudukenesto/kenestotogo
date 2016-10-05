@@ -96,7 +96,6 @@ export function retrieveStatistics() {
       .then(json => {
         
         if (json.ResponseData.ResponseStatus == "FAILED") {
-           dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
            dispatch(emitError(json.ResponseData.ErrorMessage,""))
         }
         else {

@@ -116,3 +116,30 @@ export function getFileUploadUrl(env: string, sessionToken: string, path: string
    return  `${apiBaseUrl}/KDocuments.svc/UploadFile?t=${sessionToken}&p=${path}&fd=${fileDescription}&fk=${fileKeyword}&fid=${folderId}&bid=${baseFileId}&ud=${userData}`;
 }
 
+export function getUploadFileCompletedUrl(env: string, sessionToken: string,url: string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/UploadFileCompleted?t=${sessionToken}&u=${url}&ud=${userData}`;
+}
+
+export function getDownloadFileUrl(env: string, sessionToken: string,assetId: string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/DownloadFile?t=${sessionToken}&fid=${assetId}&ud=${userData}`;
+}
+
+export function getDeleteAssetUrl(env: string, sessionToken: string,assetId: string, familyCode: string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/DeleteAsset?t=${sessionToken}&aid=${assetId}&fc=${familyCode}&ud=${userData}`;
+}
+
+export function getDeleteFolderUrl(env: string, sessionToken: string,folderId: string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/DeleteFolder?t=${sessionToken}&fid=${folderId}&ud=${userData}`;
+}
+
+
+
+

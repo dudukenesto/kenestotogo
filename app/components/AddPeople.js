@@ -10,7 +10,7 @@ import * as peopleAcions from '../actions/peopleActions'
 import {getSelectedDocument} from '../utils/documentsUtils';
 import ProgressBar from './ProgressBar'
 var ReactNative = require('react-native');
-
+import * as navActions from '../actions/navActions'
 var {
   View,
   Text,
@@ -115,7 +115,8 @@ class AddPeople extends Component {
 
   onErrorAddNewTag(tag) {     // show error message/toast
     var errorMessage = tag + ' is not a valid email!'
-    this.refs.mainContainer2.showMessage("info", errorMessage);
+    //this.refs.mainContainer2.showMessage("info", errorMessage);
+    this.props.dispatch(navActions.emitToast("info", "", errorMessage));
   }
 
   submitSelectedTags() {
