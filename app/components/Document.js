@@ -8,14 +8,15 @@ var {
   TouchableWithoutFeedback,
   TouchableOpacity,
   View,
-  WebView
+  WebView,
+  Dimensions,
 } = ReactNative;
 import Button from './Button'
 import {getEnvIp} from '../utils/accessUtils'
 var HEADER = '#3b5998';
 var BGWASH = 'rgba(255,255,255,0.8)';
 var DISABLED_WASH = 'rgba(255,255,255,0.25)';
-
+const window = Dimensions.get('window');
 var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
@@ -161,26 +162,14 @@ const injectScript = `
                   }
                   }());
 `;
-
-   var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env));
+  var width = window.width;
+  var height = window.height - 80;
+   var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env))+"&w="+width+"&h="+height;
+  
     return(
 
     
-    
       <View style={{ flex: 1}}>
-          <View>
-          <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomIn.bind(this)()}) } >
-                      <View style={styles.optionContainer}>
-                       <Icon name="zoom-in"  style={styles.moreMenu}/>
-                      </View>
-           </TouchableWithoutFeedback>
-           <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomOut.bind(this)()}) }  >
-                      <View style={styles.optionContainer}>
-                        <Icon name="zoom-out" style={styles.moreMenu} />
-                      </View>
-           </TouchableWithoutFeedback>
-           
-          </View>
           <View style={{flex: 1, backgroundColor: 'transparent', }}>
             <WebViewBridge
               ref="webviewbridge"
