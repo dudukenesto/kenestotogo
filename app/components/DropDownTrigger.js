@@ -21,12 +21,14 @@ class DropDownTrigger extends Component {
         super(props);
 
         this.state = {
-            selected: ''
+            selected: '',
+            triggerIsActive: false
         }
     }
 
     openDropDown() {
-
+console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
+console.log('open')
         this.refs.DropDownTrigger.measure((fx, fy, width, height, px, py) => {
             var triggerSettings = {
                 top: py,
@@ -38,18 +40,22 @@ class DropDownTrigger extends Component {
             }
             this.context.dropDownContext.openDropDown(triggerSettings, this.props.options, this.props.optionTemplate);
         })
+        
+        this.setState({
+            triggerIsActive: true
+        })
     }
 
     render() {
-        const {dropDownTriggerTemplate, dropDownTriggerStyle, dropDownTriggerContainer} = this.props;
+        const {dropDownTriggerTemplate, dropDownTriggerStyle, dropDownTriggerContainer, activeTriggerStyle} = this.props;
         
         return (
             <View style={[styles.dropDownTriggerContainer, dropDownTriggerContainer]}>
-                <View style={[styles.dropDownTriggerStyle, dropDownTriggerStyle]} ref={"DropDownTrigger"}>
-                    <TouchableWithoutFeedback onPress={this.openDropDown.bind(this) } >
-                        <View style={{ flex: 1 }}>
+                <View style={[styles.dropDownTriggerStyle, dropDownTriggerStyle, this.state.triggerIsActive && activeTriggerStyle]} ref={"DropDownTrigger"}>
+                    <TouchableWithoutFeedback onPress={this.openDropDown.bind(this) }>
+                        
                             {dropDownTriggerTemplate(this.state.selected || this.props.selected) }
-                        </View>
+                        
                     </TouchableWithoutFeedback>
                 </View>
             </View>
@@ -64,7 +70,6 @@ const styles = StyleSheet.create({
         minWidth: 55,
         alignItems: "flex-end",
         paddingRight:13,
-        // borderWidth: 1,
     },
     dropDownTriggerStyle: {
         height: 35,
@@ -72,7 +77,6 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         // borderColor: '#F5F6F8',
         borderColor: '#000',   
-        alignItems: "center",
     }
 })
 

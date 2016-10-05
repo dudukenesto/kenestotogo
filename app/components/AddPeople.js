@@ -175,9 +175,11 @@ class AddPeople extends Component {
         break;
     }
     return (
-      <View style={styles.dropDownTriggerTemplate}>
-        <Icon name={iconName} style={styles.icon} />
-        <Icon name="keyboard-arrow-down" style={[styles.icon, styles.iconDown]} />
+      <View style={styles.dropDownTriggerTemplateContainer}>
+        <View style={styles.dropDownTriggerTemplate}>
+          <Icon name={iconName} style={styles.icon} />
+          <Icon name="keyboard-arrow-down" style={[styles.icon, styles.iconDown]} />
+        </View>
       </View>
     )
   }
@@ -194,7 +196,7 @@ class AddPeople extends Component {
 
   renderCurrentPermissions() {
 
-    console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
+    
 
     var permissions = this.props.ObjectInfo.UsersPermissions.map(function (permission) {
 
@@ -221,6 +223,7 @@ class AddPeople extends Component {
           <DropDownTrigger
             dropDownTriggerTemplate={this.renderPermissionsTrigger.bind(this) }
             dropDownTriggerStyle={styles.dropDownTriggerStyle}
+            activeTriggerStyle={styles.activeTriggerStyle}
             optionTemplate={this.renderOptionTemplate.bind(this) }
             options={userOptions}
             aligningOptionsWithTrigger={"right"}
@@ -280,8 +283,9 @@ class AddPeople extends Component {
 
           <DropDownTrigger
             dropDownTriggerTemplate={this.renderPermissionsTrigger.bind(this) }
-            dropDownTriggerStyle={styles.dropDownTriggerStyle}
+            dropDownTriggerStyle={styles.dropDownGlobalTriggerStyle}
             dropDownTriggerContainer={styles.dropDownTriggerContainer}
+            activeTriggerStyle={styles.activeTriggerStyle}
             optionTemplate={this.renderOptionTemplate.bind(this) }
 
             options={globalOptions}
@@ -366,11 +370,23 @@ var styles = StyleSheet.create({
     marginRight: 7,
     overflow: "hidden"
   },
-  dropDownTriggerStyle: {},
+  dropDownTriggerStyle: {
+    borderColor: "transparent"
+  },
+  dropDownGlobalTriggerStyle: {
+    borderColor: "#ccc"
+  },
   dropDownTriggerContainer: {
     position: 'absolute',
     top: 13,
     right: 0,
+  },
+  activeTriggerStyle: {
+    borderColor: "#000"
+  },
+  dropDownTriggerTemplateContainer: {
+    flex: 1,
+    alignItems: "center",
   },
   dropDownTriggerTemplate: {
     flex: 1,

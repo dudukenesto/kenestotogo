@@ -95,7 +95,7 @@ class DropDownOptions extends Component {
     }
 
     renderRow(rowData) {
-        console.log(rowData)
+
         return(
             <TouchableHighlight>
                 {this.state.optionTemplate ?
