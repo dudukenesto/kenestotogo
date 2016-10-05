@@ -28,7 +28,6 @@ class DropDownTrigger extends Component {
 
     openDropDown() {
 console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-console.log('open')
         this.refs.DropDownTrigger.measure((fx, fy, width, height, px, py) => {
             var triggerSettings = {
                 top: py,
