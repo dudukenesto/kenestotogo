@@ -96,8 +96,13 @@ export default class KenestoTagAutocomplete extends Component {
     return filteredList;
   }
 
-  _addTag(tagName, tagID) {
-    var newTags = this.state.tags.concat({tagName: tagName, tagID: tagID});
+  _addTag(tagName, tagID, iconType, iconName) {
+    var newTags = this.state.tags.concat({
+      tagName: tagName, 
+      tagID: tagID,
+      iconType: iconType,
+      iconName: iconName
+    });
     var filteredList = this._filterList(newTags);  
     this.setState({
       tags: newTags,
@@ -137,12 +142,24 @@ export default class KenestoTagAutocomplete extends Component {
       <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
       
+    var iconType, iconName;
+    var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
+    iconType = rowData.ThumbnailPath ? 'thumbnail' : 'icon';
+    if (!rowData.ThumbnailPath) {
+      if (rowData.IsGroup) {
+        iconName = 'group';
+      }
+      else {
+        iconName = rowData.IsExternal ? 'person-outline' : 'person'
+      }
+    }
+      
     return (
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
-        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID)}>
+        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID, iconType, iconName)}>
           <View style={[ styles.rowContainer, {minWidth: this.state.orientation == "PORTRAIT" ? width : height}, rowContainerStyle]}>
             {this.props.autocompleteRowTemplate ?
-              this.props.autocompleteRowTemplate(autocompleteFormattedString, rowData)
+              this.props.autocompleteRowTemplate(autocompleteFormattedString, iconType, iconName, rowData)
               :
               autocompleteFormattedString
             }
@@ -303,7 +320,8 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   render() {
-
+// console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
+    console.log(this.state.tags)
     const { placeholder, containerStyle, inputContainerStyle, textInputStyle, tagTemplate } = this.props;
     var flex = (this.state.showList) ? {flex: 1} : {flex: 0} 
     
@@ -377,8 +395,11 @@ const styles = StyleSheet.create({
 
   },
   searchedText: {
-    color: "#F66400",
+    color: "#000",
     fontWeight: "bold"
+  },
+  text: {
+    color: "#888"
   },
   autocompleteTitle: {
     color: "#999",

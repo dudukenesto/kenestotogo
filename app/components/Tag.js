@@ -50,8 +50,20 @@ const Tag = ({
             borderRadius: 15,
         },
     })
+    
+    // var iconName;
+    // var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
+    // if (!permission.ThumbnailPath) {
+    //     if (permission.IsGroup) {
+    //         iconName = 'group';
+    //     }
+    //     else {
+    //         iconName = permission.IsExternal ? 'person-outline' : 'person'
+    //     }
+    // }
 
     return (
+        
         <TouchableHighlight style={[styles.container, tagContainer]} >
             <View style={styles.innerContainer}>
                 <Icon name="account-circle" style={styles.userIcon} />

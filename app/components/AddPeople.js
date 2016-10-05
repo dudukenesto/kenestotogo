@@ -137,10 +137,14 @@ class AddPeople extends Component {
 
   // EXAMPLE OF CUSTOM AUTOCOMPLETE ROW TEMPLATE. rowData INCLUDES ALL FIELDS.
   // 
-  getAutocompleteRowTemplate(searchedtext, rowData) {
+  getAutocompleteRowTemplate(searchedtext, iconType, iconName, rowData) {   
+    
     return (
-      <View style={{ flexDirection: "row" }}>
+      <View style={styles.autocompleteRow}>
         {searchedtext}
+        <View style={[styles.roundIcon, {marginLeft: 10}]}>
+            {iconType == 'icon' ? <Icon name={iconName} style={styles.iconMedium} /> : <Image source = {{ uri: iconName }} style={styles.thumbnail} />}
+          </View>
       </View>
     )
   }
@@ -414,6 +418,12 @@ var styles = StyleSheet.create({
   optionTitle: {
     paddingLeft: 8
   },
+  autocompleteRow: { 
+    flexDirection: "row", 
+    alignItems: "center", 
+    flex: 1, 
+    justifyContent: "space-between" 
+  }
 
 });
 
