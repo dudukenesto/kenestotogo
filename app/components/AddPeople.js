@@ -346,13 +346,14 @@ var styles = StyleSheet.create({
   },
   icon: {
     fontSize: 15,
-    color: '#333',
+    color: '#999',
     paddingLeft: 3,
     paddingRight: 3
   },
   iconDown: {
     fontSize: 18,
     paddingRight: 0,
+    color: "#000"
   },
   iconMedium: {
     fontSize: 22,

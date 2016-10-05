@@ -93,16 +93,20 @@ class DropDownOptions extends Component {
         }
 
     }
+    
+    onPress(){
+        console.log('onPress')
+    }
 
     renderRow(rowData) {
 
-        return(
-            <TouchableHighlight>
+        return (
+            <TouchableHighlight underlayColor={'#eee'} onPress={this.onPress}>
                 {this.state.optionTemplate ?
-                        this.state.optionTemplate(rowData)
-                        :
-                        <Text>{rowData.title}</Text>
-                    }
+                    this.state.optionTemplate(rowData)
+                    :
+                    <Text>{rowData.title}</Text>
+                }
             </TouchableHighlight>
         )
     }
@@ -147,7 +151,7 @@ class DropDownOptions extends Component {
             this.state.showDropDown ?
                 <View style={[styles.dropDownOptionsContainer]} ref={"DropDownOptions"}>
                     <TouchableWithoutFeedback onPress={this.closeDropDown.bind(this) }>
-                        <View style={{ flex: 1 }}>
+                        <View style={{flex: 1}}>
                             <View style={[styles.optionsContent, this.state.position]} onLayout={(event) => this.setPosition(event) }>
                                 {this.state.showDropDown && this.getListView() }
                             </View>
@@ -169,6 +173,7 @@ const styles = StyleSheet.create({
     dropDownOptionsContainer: {
         position: "absolute",
         top: 0, left: 0, right: 0, bottom: 0,
+        // backgroundColor:"#eee"
     },
     optionsContent: {
         borderWidth: 0.5,
