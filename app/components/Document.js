@@ -74,7 +74,7 @@ class Document extends React.Component{
   }
 
  onLoadEnd(){
-    this.setState({isLoading: false});
+    //this.setState({isLoading: false});
  }
  
  renderLoading(){
@@ -113,7 +113,6 @@ onBridgeMessage(message){
 
 
   render(){
-  
   if(this.props.data.isExternalLink)
   {
     var url =  this.props.data.viewerUrl;
