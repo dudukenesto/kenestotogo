@@ -8,20 +8,21 @@ var {
   TouchableWithoutFeedback,
   TouchableOpacity,
   View,
-  WebView
+  WebView,
+  Dimensions,
 } = ReactNative;
 import Button from './Button'
 import {getEnvIp} from '../utils/accessUtils'
 var HEADER = '#3b5998';
 var BGWASH = 'rgba(255,255,255,0.8)';
 var DISABLED_WASH = 'rgba(255,255,255,0.25)';
-
+const window = Dimensions.get('window');
 var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
 import WebViewBridge from 'react-native-webview-bridge';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+var Orientation = require('./KenestoDeviceOrientation');
 
 
 
@@ -34,7 +35,9 @@ class Document extends React.Component{
    
     this.state = {  
       isLoading: true,
-      scalingEnabled: true};
+      scalingEnabled: true,
+      orientation: Orientation.getInitialOrientation()
+    };
   }
   
   
@@ -60,7 +63,16 @@ class Document extends React.Component{
     //   </View>
     //   </ViewTransformer>
 
- 
+ componentDidMount() {
+    this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+  }
+
+  _orientationDidChange(orientation) {
+    this.setState({
+      orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
+    })
+  }
+
  onLoadEnd(){
     this.setState({isLoading: false});
  }
@@ -97,65 +109,26 @@ class Document extends React.Component{
       // </ViewTransformer>
 onBridgeMessage(message){
     const { webviewbridge } = this.refs;
-
-    switch (message) {
-      case "hello from webview":
-        webviewbridge.sendToBridge("hello from react-native");
-        break;
-      case "got the message inside webview":
-      //alert("webview");
-    //    console.log("we have got a message from webview! yeah");
-        break;
-    }
   }
 
-  zoomIn(){
-      const { webviewbridge } = this.refs;
-     webviewbridge.sendToBridge("zoomIn");
-  }
-   zoomOut(){
-       const { webviewbridge } = this.refs;
-      webviewbridge.sendToBridge("zoomOut");
 
-  }
-  
   render(){
-const injectScript = `
-       (function () {
-                  if (WebViewBridge) {
-                    WebViewBridge.onMessage = function (message) {
-                        switch (message) {
-                          case "zoomIn":
-                                activateZoomIn();
-                            break;
-                          case "zoomOut":
-                                  activateZoomOut();
-                            break;
-                        }
-                    }
-                  }
-                  }());
-`;
+  
+  if(this.props.data.isExternalLink)
+  {
+    var url =  this.props.data.viewerUrl;
+  }
+  else
+  {
+    var width =  this.state.orientation == 'PORTRAIT'? window.width : window.height - 80;
+    var height = this.state.orientation == 'PORTRAIT'? window.height - 80 : window.width- 80;
+    var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env))+"&w="+width+"&h="+height;
+  }
 
-   var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env));
     return(
 
     
-    
       <View style={{ flex: 1}}>
-          <View>
-          <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomIn.bind(this)()}) } >
-                      <View style={styles.optionContainer}>
-                       <Icon name="zoom-in"  style={styles.moreMenu}/>
-                      </View>
-           </TouchableWithoutFeedback>
-           <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomOut.bind(this)()}) }  >
-                      <View style={styles.optionContainer}>
-                        <Icon name="zoom-out" style={styles.moreMenu} />
-                      </View>
-           </TouchableWithoutFeedback>
-           
-          </View>
           <View style={{flex: 1, backgroundColor: 'transparent', }}>
             <WebViewBridge
               ref="webviewbridge"
@@ -168,7 +141,6 @@ const injectScript = `
               scalesPageToFit={true}
               onBridgeMessage={this.onBridgeMessage.bind(this)}
               renderLoading={this.renderLoading}
-              injectedJavaScript={injectScript}
               />
           </View>
 
