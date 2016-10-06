@@ -126,7 +126,7 @@ export default class KenestoTagAutocomplete extends Component {
         }
       }
       else {
-        this._addTag(tagName, new Date().getTime());
+        this._addTag(tagName, new Date().getTime(), 'icon', 'person-outline');
       }      
     }
 
@@ -298,7 +298,7 @@ export default class KenestoTagAutocomplete extends Component {
         ))
           :
           this.state.tags.map((t) => (
-            <Tag key={t.tagID} text={t.tagName} onPress={this._removeTag.bind(this, t.tagID) } />
+            <Tag key={t.tagID} onPress={this._removeTag.bind(this, t.tagID) } data={t} />
           ))
 
       )
@@ -410,13 +410,16 @@ const styles = StyleSheet.create({
   },
   newTagContainer: {},
   tagContainerStyle: {
-    backgroundColor: '#eee',
+    backgroundColor: '#fff',
     paddingLeft: 5,
     paddingRight: 7,
     paddingVertical: 0,
     margin: 3,
-    borderRadius: 15,
-    height: 50,
+    borderRadius: 16,
+    borderWidth: 0.5,
+    borderColor: "#ccc",
+    height: 31,
+    maxWidth: 295
   }
   
 });

@@ -153,11 +153,14 @@ class AddPeople extends Component {
   // EXAMPLE OF CUSTOM TAG TEMPLATE
   // 
   getTagTemplate(tag, removeTag) {
+    
     return (
-      <View>
-        <Icon name="account-circle" />
-        <Text>{tag.tagName}</Text>
-        <Icon name="close" onPress={removeTag.bind(this, tag) } />
+      <View style={styles.tagInnerContainer}>
+        <View style={[styles.roundIcon, { marginLeft: -5.5 }]}>
+          {tag.iconType == 'icon' ? <Icon name={tag.iconName} style={styles.iconMedium} /> : <Image source = {{ uri: tag.iconName }} style={styles.thumbnail} />}
+        </View>
+        <View style={{ flex: 1 }}><Text style={styles.tagText} numberOfLines={1}>{tag.tagName}</Text></View>
+        <Icon name="close" style={styles.closeIcon} onPress={removeTag.bind(this, tag)} />
       </View>
     )
   }
@@ -200,7 +203,7 @@ class AddPeople extends Component {
 
 
   renderCurrentPermissions() {
-
+  console.log(this.state.orientation)
     
 
     var permissions = this.props.ObjectInfo.UsersPermissions.map(function (permission) {
@@ -216,7 +219,7 @@ class AddPeople extends Component {
         }
       }
       var textWidth = (this.state.orientation == 'PORTRAIT') ? width - 140 : height - 140;
-      console.log(this.state.orientation, textWidth, width, height)
+      
       return (
         <View style={styles.sharingRow} key={permission.UserId}>
           <View style={styles.roundIcon}>
@@ -281,7 +284,7 @@ class AddPeople extends Component {
             formatNewTag={this.formatNewTag.bind(this) }
             onErrorAddNewTag={this.onErrorAddNewTag.bind(this) }
             autocompleteRowTemplate={this.getAutocompleteRowTemplate.bind(this) }
-            // tagTemplate={this.getTagTemplate.bind(this)}
+            tagTemplate={this.getTagTemplate.bind(this)}
             autocompleteField={"Name"}
             uniqueField={"ParticipantUniqueID"}
             />
@@ -366,15 +369,16 @@ var styles = StyleSheet.create({
     marginLeft: 2
   },
   roundIcon: {
-    borderWidth: 1,
-    borderColor: "#aaa",
-    borderRadius: 15,
-    width: 30,
-    height: 30,
+    borderWidth: 0.5,
+    borderColor: "#999",
+    borderRadius: 16,
+    width: 31,
+    height: 31,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 7,
-    overflow: "hidden"
+    // overflow: "hidden",
+    zIndex: 100
   },
   dropDownTriggerStyle: {
     borderColor: "transparent"
@@ -424,7 +428,33 @@ var styles = StyleSheet.create({
     alignItems: "center", 
     flex: 1, 
     justifyContent: "space-between" 
-  }
+  },
+  tagInnerContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  userIcon: {
+    fontSize: 34,
+    left: -7,
+  },
+  tagText: {
+    fontSize: 14,
+    color: '#000',
+    padding: 0,
+    margin: 0
+  },
+  closeIcon: {
+    fontSize: 15,
+    marginTop: 2,
+    marginRight: -7,
+    padding: 6,
+  },
+  avatar: {
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+  },
 
 });
 

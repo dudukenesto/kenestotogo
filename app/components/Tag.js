@@ -8,9 +8,9 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 const Tag = ({
-    text,
     tagContainer,
     onPress,
+    data
 }) => {
     const styles = StyleSheet.create({
         container: {
@@ -51,23 +51,13 @@ const Tag = ({
         },
     })
     
-    // var iconName;
-    // var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
-    // if (!permission.ThumbnailPath) {
-    //     if (permission.IsGroup) {
-    //         iconName = 'group';
-    //     }
-    //     else {
-    //         iconName = permission.IsExternal ? 'person-outline' : 'person'
-    //     }
-    // }
-
+console.log('data', data)
     return (
         
         <TouchableHighlight style={[styles.container, tagContainer]} >
             <View style={styles.innerContainer}>
                 <Icon name="account-circle" style={styles.userIcon} />
-                <View style={{flex:1}}><Text style={styles.text} numberOfLines={1}>{text}</Text></View>                
+                <View style={{flex:1}}><Text style={styles.text} numberOfLines={1}>{data.tagName}</Text></View>                
                 <Icon name="close" style={styles.closeIcon} onPress={onPress} />
             </View>
         </TouchableHighlight>
