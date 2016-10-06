@@ -173,8 +173,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
       
    
         var authUrl = getAuthUrl(env,userId, password);
-
-
+        console.log("authUrl: "+authUrl);
         return fetch(authUrl)
             .then((response) => response.json())
             .catch((error) => {
@@ -193,7 +192,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                         var organizationId = responseData.AuthenticateJsonResult.Organizations[0].OrganizationIdentifier; 
                         var token = responseData.AuthenticateJsonResult.Token;
                         const loginUrl = getLoginUrl(env, organizationId, token);
-                
+                        console.log("loginUrl: "+loginUrl);
                        fetch(loginUrl).then((response) => response.json())
                         .catch((error) => {
                              dispatch(emitError('Failed to Login')); 

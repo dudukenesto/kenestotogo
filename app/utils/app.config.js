@@ -44,7 +44,7 @@ export const config = {
         
     },
     {
-          env : 'production',
+          env : 'staging',
           Ip: '50.17.185.8',
          ApiBaseUrl : 'https://stage-app.kenesto.com/kenesto.web.api/', 
          AuthUrlTemplate: 'https://stage-app.kenesto.com/kenesto.web.api/access.svc/Authenticate/json/null?u={0}&p={1}',
@@ -55,10 +55,10 @@ export const config = {
      {
          env : 'production',  
          Ip: '50.17.185.8', 
-         ApiBaseUrl : 'https://stage-app.kenesto.com/kenesto.web.api/', 
-         AuthUrlTemplate: 'https://stage-app.kenesto.com/kenesto.web.api/access.svc/Authenticate/json/null?u={0}&p={1}',
-         LoginUrlTemplate: 'https://stage-app.kenesto.com/kenesto.web.api/access.svc/Login/json/{0}?t={1}',
-         ForgotPasswordUrl: 'https://stage-app.kenesto.com/Kenesto.Web.API/Access.svc/ForgotPassword/json?u={0}',
+         ApiBaseUrl : 'https://app.kenesto.com/kenesto.web.api/', 
+         AuthUrlTemplate: 'https://app.kenesto.com/kenesto.web.api/access.svc/Authenticate/json/null?u={0}&p={1}',
+         LoginUrlTemplate: 'https://app.kenesto.com/kenesto.web.api/access.svc/Login/json/{0}?t={1}',
+         ForgotPasswordUrl: 'https://app.kenesto.com/Kenesto.Web.API/Access.svc/ForgotPassword/json?u={0}',
         
     }
     ]
