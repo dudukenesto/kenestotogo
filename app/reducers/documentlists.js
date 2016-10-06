@@ -7,10 +7,11 @@ function documentlist(state = {
   nextUrl: false,
   errorMessage: '',
   hasError: false,
-  dataSource: {}
+  dataSource: {}, 
+  sharingPermissions: null
 }, action) {
   switch (action.type) {
-
+    
     case types.RECEIVE_DOCUMENTS:
       return {
         ...state,
@@ -38,7 +39,11 @@ function documentlist(state = {
         errorMessage: action.errorMessage,
         nextUrl: action.nextUrl
       }
-
+     case types.SET_SHARING_PERMISSIONS:
+            return {
+              ...state,
+              sharingPermissions: action.sharingPermissions
+            }
     case types.REFRESH_DOCUMENTS_LIST:
       return {
         isFetching: false,
@@ -48,7 +53,7 @@ function documentlist(state = {
         hasError: false,
         errorMessage: ''
       }
-
+ 
 
     default:
       return state
@@ -78,7 +83,11 @@ export default function documentlists(state = {}, action) {
         creatingFolder: action.creatingFolder
       }
     }
-
+ case types.SET_SHARING_PERMISSIONS:
+            return {
+              ...state,
+              sharingPermissions: action.sharingPermissions
+            }
     case types.SUBMIT_ERROR:
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action)

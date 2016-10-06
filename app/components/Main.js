@@ -344,6 +344,7 @@ class Main extends React.Component {
             onIconClicked = {this.onNavIconClicked.bind(this) }
             navReducer={this.props.navReducer}
             isPopupMenuOpen={this.state.isPopupMenuOpen}
+            dispatch={this.props.dispatch}
             />
           :
           <View></View>

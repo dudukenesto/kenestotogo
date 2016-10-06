@@ -3,7 +3,7 @@ import * as navActions from '../actions/navActions'
 import * as Access from '../actions/Access'
 import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
-   getDeleteAssetUrl, getDeleteFolderUrl} from '../utils/documentsUtils'
+   getDeleteAssetUrl, getDeleteFolderUrl,getSelectedDocument,getShareDocumentUrl} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
 const Android_Download_Path = '/storage/emulated/0/download';
@@ -459,3 +459,65 @@ export function deleteFolder(id: string){
 
    }
 }
+
+
+
+export function SetSharingPermissions(tags: object){
+
+    var permissions = []; 
+     tags.map((t) => (
+      permissions.push({ParticipantUniqueID: t.tagID, FamilyCode: t.aditionalData, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
+       ForUpdate: "true",  PermissionTypeValue : 'ALLOW_VIEW', AllowShare: "false",  AllowUpload: "false" })
+      ))
+      
+       return {
+            type: types.SET_SHARING_PERMISSIONS,
+            sharingPermissions : permissions
+        }
+  
+   
+}
+
+
+export function ShareDocument(){
+   return (dispatch, getState) => {
+      const documentLists = getState().documentlists; 
+      const navReducer = getState().navReducer;
+      var document = getSelectedDocument(documentLists, navReducer); 
+      const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue; 
+      const sharingPermissions = documentLists.sharingPermissions; 
+      const sharingObject = { asset: {
+          ID: document.Id, 
+          UsersPermissions : sharingPermissions
+          }
+      }
+
+      const url = getShareDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
+
+          
+                      var request = new Request(url, {
+                        method: 'post', 
+                        mode: 'cors', 
+                        redirect: 'follow',
+                        processData: false,
+                        cache: false,
+                        headers: new Headers({
+                          'Content-Type': 'application/json'
+                        }),
+                         body:  JSON.stringify(sharingObject)
+                      });
+                                  
+                      fetch(request).then(response => {
+                          
+                        
+                              alert(JSON.stringify(response))
+
+                      }).catch((error) => {
+                              dispatch(emitError("Failed to share object",""))
+                          }).done();
+
+
+      
+   }
+ 
+} 
