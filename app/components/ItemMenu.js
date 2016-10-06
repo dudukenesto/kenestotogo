@@ -197,7 +197,7 @@ class ItemMenu extends React.Component{
 
 
      return(
-            <ViewContainer ref="itemMenuContainer"> 
+            <ViewContainer ref="itemMenuContainer" style={styles.container}> 
                 <View style={styles.menuHeader}>
                     <View style={styles.row}>
                         <View style={styles.iconContainer}>
