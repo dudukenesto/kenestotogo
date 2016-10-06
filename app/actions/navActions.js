@@ -1,5 +1,5 @@
 import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST} from '../constants/ActionTypes'
+  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST, UPDATE_DROPDOWN_DATA,UPDATE_SELECTED_TRIGGER_VALUE} from '../constants/ActionTypes'
 
 export function push (route) {
   return {
@@ -96,7 +96,6 @@ export function emitInfo(infoTitle: string, infoDetails: string, okAction: Objec
     infoDetails: infoDetails,
     infoOkAction: okAction
   }
-  
 }
 
 export function clearInfo(){
@@ -109,6 +108,31 @@ export function changeTab (index) {
   return {
     type: CHANGE_TAB,
     index
+  }
+}
+
+export function toggleDropdown(showDropDown: boolean){
+  return {
+    type: TOGGLE_DROPDOWN, 
+    showDropDown: showDropDown
+  }
+}
+
+export function updateDropdownData(clickedTrigger: string, triggerSettings: object, options: object, optionTemplate: object, showDropDown: boolean = true){
+  return {
+      type: UPDATE_DROPDOWN_DATA, 
+      clickedTrigger: clickedTrigger,
+      triggerSettings: triggerSettings, 
+      options: options,
+      optionTemplate: optionTemplate,
+      showDropDown : showDropDown
+    }
+  }
+
+export function updatedSelectedTrigerValue(value: string){
+  return{
+    type: UPDATE_SELECTED_TRIGGER_VALUE,
+    value: value
   }
 }
 

@@ -128,7 +128,6 @@ class DropDownOptions extends Component {
     }
 
     componentWillReceiveProps(nextprops){
-      //  alert(this.state.showDropDown + ' ' + nextprops.showDropDown);
         if (this.state.showDropDown && !nextprops.showDropDown)
             this.closeDropDown();
          if (!this.state.showDropDown && nextprops.showDropDown)
@@ -205,10 +204,9 @@ function mapStateToProps(state) {
         showDropDown: navReducer.showDropDown,
          dropDownTrigger : navReducer.dropDownTrigger, 
          dropDownOptions: navReducer.dropDownOptions, 
-        triggerSelectedChanged: navReducer.triggerSelectedChanged,
          dropDownOptionTemplate : navReducer.dropDownOptionTemplate
     }
 }
 
-export default connect(mapStateToProps)(DropDownOptions)
+connect(mapStateToProps)(DropDownOptions)
 

@@ -21,7 +21,7 @@ class DropDownTrigger extends Component {
         super(props);
 
         this.state = {
-            selected: this.props.selected,
+            selected: '',
             triggerIsActive: false
         }
     }
@@ -39,7 +39,7 @@ console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n
             }
 
           //  alert(this.context.dropDownContext.openDropDown)
-          this.props.dispatch(navActions.updateDropdownData(this.props.id, triggerSettings, this.props.options, this.props.optionTemplate))
+        // /  this.props.dispatch(navActions.updateDropdownData(triggerSettings, this.props.options, this.props.optionTemplate))
          //   this.context.dropDownContext.openDropDown(triggerSettings, this.props.options, this.props.optionTemplate);
         })
         
@@ -48,33 +48,15 @@ console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n
         })
     }
 
-       componentWillReceiveProps(nextprops){
-       //    alert(this.props.id + ' ' + this.props.clickedTrigger + ' ' + nextprops.clickedTrigger )
-           if (this.props.clickedTrigger == this.props.id)
-           {
-              
-                this.setState({ selected: nextprops.triggerSelectedValue})
-           }
-               
-        }
-
-    componentWillMount(){
-        // var selectedTrigger; 
-        //         if (this.state.)
-        //         if (this.props.clickedTrigger == this.props.id)
-        //             alert(this.props.clickedTrigger)
-    }
-
     render() {
-
-        const {dropDownTriggerTemplate, dropDownTriggerStyle, dropDownTriggerContainer, activeTriggerStyle, id} = this.props;
-       
+        const {dropDownTriggerTemplate, dropDownTriggerStyle, dropDownTriggerContainer, activeTriggerStyle} = this.props;
+        
         return (
             <View style={[styles.dropDownTriggerContainer, dropDownTriggerContainer]}>
                 <View style={[styles.dropDownTriggerStyle, dropDownTriggerStyle, this.state.triggerIsActive && activeTriggerStyle]} ref={"DropDownTrigger"}>
                     <TouchableWithoutFeedback onPress={this.openDropDown.bind(this) }>
                         
-                            {dropDownTriggerTemplate(this.state.selected) }
+                            {dropDownTriggerTemplate(this.state.selected || this.props.selected) }
                         
                     </TouchableWithoutFeedback>
                 </View>
@@ -106,9 +88,9 @@ DropDownTrigger.contextTypes = {
 
 function mapStateToProps(state) {
   const { navReducer } = state
+  
   return {
-      clickedTrigger: navReducer.clickedTrigger, 
-      triggerSelectedValue: navReducer.triggerSelectedValue
+      navReducer: navReducer, 
   }
 }
 

@@ -27,14 +27,18 @@ import ProggressBar from "../components/ProgressBar";
 
 var globalOptions = [
   {
+    name: "VIEW_ONLY",
     icon: "remove-red-eye",
-    title: "View only"
+    title: "View only",
+  
   },
   {
+    name: "ALLOW_DOWNLOAD",
     icon: "file-download",
     title: "Download"
   },
   {
+    name: "ALLOW_UPDATE_VERSIONS",
     icon: "update",
     title: "Update"
   }
@@ -42,18 +46,22 @@ var globalOptions = [
 
 var userOptions = [
   {
+    name: "VIEW_ONLY",
     icon: "remove-red-eye",
     title: "View only"
   },
   {
+    name: "ALLOW_DOWNLOAD",
     icon: "file-download",
     title: "Download"
   },
   {
+    name: "ALLOW_UPDATE_VERSIONS",
     icon: "update",
     title: "Update"
   },
   {
+    name: "NONE",
     icon: "not-interested",
     title: "Delete share"
   }
@@ -165,13 +173,10 @@ class AddPeople extends Component {
     )
   }
 
-  renderPermissionsTrigger(selected) {
 
-    if (!selected) {
-      selected = "VIEW_ONLY";
-    }
+  renderPermissionsTrigger(permissionName : string) {
     var iconName;
-    switch (selected) {
+    switch (permissionName) {
       case "VIEW_ONLY":
         iconName = "remove-red-eye";
         break;
@@ -192,12 +197,25 @@ class AddPeople extends Component {
     )
   }
 
+ onMenuSelect(name: string){
+    this.props.dispatch(navActions.updatedSelectedTrigerValue(name));
+  // this.setState({globalPermissions : name});
+ }
+ 
+
   renderOptionTemplate(rowData) {
     return (
+      <View>
+      <TouchableWithoutFeedback onPress={() => (this.onMenuSelect(rowData.name))}>
       <View style={styles.optionRow}>
-        <Icon name={rowData.icon} style={styles.icon} />
-        <Text style={styles.optionTitle}>{rowData.title}</Text>
+    
+        
+            <Icon name={rowData.icon} style={styles.icon} />
+            <Text style={styles.optionTitle}>{rowData.title}</Text>
+     
       </View>
+         </TouchableWithoutFeedback>
+         </View>
     )
   }
 
@@ -237,7 +255,7 @@ class AddPeople extends Component {
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
             selected={permission.PermissionType}
-
+            id= {'trigger' + permission.Name}
             />
         </View>
 
@@ -256,7 +274,6 @@ class AddPeople extends Component {
       </View>
       )
     }
-
     return (
       <ViewContainer ref="mainContainer">
         <View style={styles.container}>
@@ -295,12 +312,12 @@ class AddPeople extends Component {
             dropDownTriggerContainer={styles.dropDownTriggerContainer}
             activeTriggerStyle={styles.activeTriggerStyle}
             optionTemplate={this.renderOptionTemplate.bind(this) }
-
+          
             options={globalOptions}
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
             selected={this.state.globalPermissions}
-
+            id="addPeopleTrigger"
             />
 
           {this.state.showSharingList == true ?
@@ -468,7 +485,8 @@ function mapStateToProps(state) {
     documentlists,
     navReducer,
     ObjectInfo: peopleReducer.ObjectInfo,
-    UsersAndGroups: peopleReducer.UsersAndGroups
+    UsersAndGroups: peopleReducer.UsersAndGroups,
+    clickedTrigger: navReducer.clickedTrigger,
   }
 }
 
