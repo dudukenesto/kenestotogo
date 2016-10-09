@@ -259,13 +259,13 @@ export function updateSelectedId(Id: string){
 }
 
 
-export function createFolder(folderName: string){
+export function createFolder(folderName: string, isVault: boolean){
 
 return (dispatch, getState) => {
    var documentlist = getDocumentsContext(getState().navReducer);
     const {sessionToken, env} = getState().accessReducer; 
     const folderId = documentlist.fId; 
-    const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName);
+    const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName, isVault);
     dispatch(UpdateCreateingFolderState(1))
     return fetch(createFolderUrl)
       .then(response => response.json())

@@ -1,5 +1,5 @@
 import React from "react"; 
-import {View, Text,TextInput, StyleSheet, Animated, Dimensions} from "react-native";
+import {View, Text,TextInput, StyleSheet, Animated, Dimensions, Switch} from "react-native";
 import Button from "react-native-button";
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -43,10 +43,10 @@ var styles = StyleSheet.create({
     textEdit: {
         flex: 1,
         color: "#000",
-        height: 50,            
+        // height: 50,            
         fontSize: 17,
-        // paddingLeft: 40,
-        paddingBottom: 15,
+        paddingLeft: 5,
+        // paddingBottom: 15,
     },
     buttonsContainer: {
         flex: 1,
@@ -93,7 +93,7 @@ class CreateFolder extends React.Component {
         super (props);
 
         this.state = {
-           
+            isVault: false,
             folderName: '',
         };
     }
@@ -115,8 +115,7 @@ class CreateFolder extends React.Component {
     }
 
     create(){
-       
-        this.props.dispatch(createFolder(this.state.folderName)); 
+        this.props.dispatch(createFolder(this.state.folderName,this.state.isVault)); 
         this.props.setCreateFolderStyle();
     }
 
@@ -136,29 +135,35 @@ class CreateFolder extends React.Component {
 
         return (
            
-                <View style={styles.container}>
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.title}>Create a new folder</Text>
-                    </View>
-                    <View style={styles.nameContainer}>
-                        <TextInput
-                            ref="folderName"
-                            value={this.state.folderName} 
-                            onChangeText={folderName => this.setState({folderName})}
-                            style={styles.textEdit}
-                            placeholder="Folder Name"    
-                            placeholderTextColor={"#ccc"}
-                            selectionColor={"orange"}
-                            underlineColorAndroid={"#ccc"}                       
-                            />
-                    </View>
-                    
-                        <View style={styles.buttonsContainer}>
-                            <Button onPress={this.create.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
-                            <Button onPress={this.props.closeCreateFolder.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
-                        </View>
-                        
+            <View style={styles.container}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.title}>Create a new folder</Text>
                 </View>
+                <View style={styles.nameContainer}>
+                    <TextInput
+                        ref="folderName"
+                        value={this.state.folderName}
+                        onChangeText={folderName => this.setState({ folderName }) }
+                        style={styles.textEdit}
+                        placeholder="Folder Name"
+                        placeholderTextColor={"#ccc"}
+                        selectionColor={"orange"}
+                        underlineColorAndroid={"#ccc"}
+                        />
+                </View>
+                <View style={styles.nameContainer}>
+                    <Text style={styles.textEdit}>Vault folder</Text>
+                    <Switch
+                        onValueChange={(value) => this.setState({ isVault: value }) }
+                        // style={{ j}}
+                        value={this.state.isVault} />
+                </View>
+                <View style={styles.buttonsContainer}>
+                    <Button onPress={this.create.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
+                    <Button onPress={this.props.closeCreateFolder.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
+                </View>
+
+            </View>
         );
     }
 }
