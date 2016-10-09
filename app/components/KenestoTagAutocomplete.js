@@ -97,6 +97,7 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _addTag(tagName, tagID, iconType, iconName) {
+    console.log('_addTag', tagName)
     var newTags = this.state.tags.concat({
       tagName: tagName, 
       tagID: tagID,
@@ -252,7 +253,7 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _removeTag(tagID) {
-    
+    console.log('_removeTag', tagID)
     var newTags = this.state.tags.filter((t) => (t.tagID !== tagID));
     var filteredList = this.props.suggestions.filter((listElement) => {
       if(this.props.autocompleteField && this.props.uniqueField){
@@ -321,7 +322,6 @@ export default class KenestoTagAutocomplete extends Component {
 
   render() {
 // console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-    console.log(this.state.tags)
     const { placeholder, containerStyle, inputContainerStyle, textInputStyle, tagTemplate } = this.props;
     var flex = (this.state.showList) ? {flex: 1} : {flex: 0} 
     

@@ -3,17 +3,12 @@ import * as navActions from '../actions/navActions'
 import React, { Component, PropTypes} from 'react';
 import {
     StyleSheet,
-    // Text,
     View,
-    // ScrollView,
-    // TextInput,
-    // ListView,
     TouchableWithoutFeedback,
-    // Dimensions,
-    // TouchableHighlight,
 } from 'react-native';
 import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons';
+var Orientation = require('./KenestoDeviceOrientation');
 
 class DropDownTrigger extends Component {
 
@@ -22,12 +17,31 @@ class DropDownTrigger extends Component {
 
         this.state = {
             selected: this.props.selected,
-            triggerIsActive: false
+            triggerIsActive: false,
+            orientation: Orientation.getInitialOrientation()
         }
+    }
+    
+    componentDidMount() {
+        this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+    }
+
+    componentWillUnmount() {
+        this.orientationListener.remove();
+        Orientation.removeOrientationListener();
+    }
+
+    _orientationDidChange(orientation) {
+        this.setState({
+            orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
+        })
+        this.setState({
+            triggerIsActive: false
+        })
+        
     }
 
     openDropDown() {
-console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
         this.refs.DropDownTrigger.measure((fx, fy, width, height, px, py) => {
             var triggerSettings = {
                 top: py,
@@ -44,7 +58,7 @@ console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n
         })
         
         this.setState({
-            triggerIsActive: true
+            triggerIsActive: true,
         })
     }
 

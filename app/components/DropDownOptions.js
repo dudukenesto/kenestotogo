@@ -49,6 +49,7 @@ class DropDownOptions extends Component {
                 left: -10000
             }
         });
+        console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
     }
 
     getDimensions(event) {
@@ -148,11 +149,9 @@ class DropDownOptions extends Component {
         this.setState({
             orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
         })
+        
+        this.closeDropDown();
     }
-
-    // onSelectOption() {
-    
-    // }
 
     render() {
         return (
