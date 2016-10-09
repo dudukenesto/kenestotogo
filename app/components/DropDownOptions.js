@@ -96,7 +96,7 @@ class DropDownOptions extends Component {
     }
     
     onPress(){
-        console.log('onPress')
+        
     }
 
     renderRow(rowData) {

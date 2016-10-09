@@ -76,21 +76,20 @@ class NavRoot extends Component {
     return this.props.isDrawerOpen();
   }
 
- _closeDrawer() {
+  _closeDrawer() {
     this.props.closeDrawer();
-    
+
   }
   _closeMenuModal() {
     this.props.closeMenuModal();
   }
-  
+
   _handleBackAction() {
     if (this._isMenuModalOpen()) {
       this._closeMenuModal();
       return true;
     }
-    else if(this._isDrawerOpen())
-    {
+    else if (this._isDrawerOpen()) {
       this._closeDrawer();
       return true;
     }
@@ -104,6 +103,11 @@ class NavRoot extends Component {
         this.props.popRoute()
         return true
       }
+      
+      if (this.props.navigation.routes[this.props.navigation.routes.length - 1].key == 'addPeople') {
+        return true
+      }
+      
       else {
         return false
       }
@@ -112,16 +116,16 @@ class NavRoot extends Component {
   }
 
   _handleNavigate(action) {
-      switch (action && action.type) {
-        case 'push':
-          this.props.pushRoute(action.route)
-          return true
-        case 'back':
-        case 'pop':
-          return this._handleBackAction()
-        default:
-          return false
-      }
+    switch (action && action.type) {
+      case 'push':
+        this.props.pushRoute(action.route)
+        return true
+      case 'back':
+      case 'pop':
+        return this._handleBackAction()
+      default:
+        return false
+    }
   }
   render() {
     return (

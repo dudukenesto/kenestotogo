@@ -9,7 +9,8 @@ import {
   TextInput,
   ListView,
   TouchableHighlight,
-  Dimensions
+  Dimensions,
+  Keyboard
 } from 'react-native';
 
 import Tag from './Tag';
@@ -53,11 +54,21 @@ export default class KenestoTagAutocomplete extends Component {
 
   componentDidMount() {
     this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+    Keyboard.addListener('keyboardDidShow', (e) => {
+      this.setState({ showList: true });
+      this.props.onShowTagsList();
+    })
+    Keyboard.addListener('keyboardDidHide', (e) => {
+      this.setState({ showList: false });
+      this.props.onHideTagsList();
+    })
   }
 
   componentWillUnmount() {
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
+    Keyboard.removeListener('keyboardDidShow', (message) => console.log(message))
+    Keyboard.removeListener('keyboardDidHide', (message) => console.log(message))
   }
 
   _orientationDidChange(orientation) {
@@ -94,9 +105,6 @@ export default class KenestoTagAutocomplete extends Component {
     });
     return filteredList;
   }
-
-
-
 
   _addTag(tagName, tagID, iconType, iconName, aditionalData) {
     console.log('_addTag', tagName)
