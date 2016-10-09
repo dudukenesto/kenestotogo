@@ -141,5 +141,11 @@ export function getDeleteFolderUrl(env: string, sessionToken: string,folderId: s
 }
 
 
+export function getShareDocumentUrl(env: string, sessionToken: string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/ShareDocument?t=${sessionToken}&ud=${userData}`;
+}
+
 
 
