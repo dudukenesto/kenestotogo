@@ -19,7 +19,8 @@ const initialState = {
   dropDownTrigger : null, 
   dropDownOptions: null,
   dropDownOptionTemplate: null, 
-  triggerSelectedValue: ''
+  triggerSelectedValue: '',
+  addPeopleTriggerValue: 'VIEW_ONLY'
 }
 
 function navigationState(state = initialState, action) {
@@ -133,11 +134,14 @@ function navigationState(state = initialState, action) {
       clickedTrigger: action.clickedTrigger
   }
   case UPDATE_SELECTED_TRIGGER_VALUE: 
-  return{
-      ...state,
-      triggerSelectedValue: action.value,
-      showDropDown: false
-  }
+    addPeopleTriggerValue = state.clickedTrigger == 'addPeopleTrigger' ? action.value : '';
+
+    return{
+        ...state,
+        triggerSelectedValue: action.value,
+        showDropDown: false,
+        addPeopleTriggerValue: addPeopleTriggerValue
+    }
   
     default:
       return state

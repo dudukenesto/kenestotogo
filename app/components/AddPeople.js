@@ -11,6 +11,7 @@ import {getSelectedDocument} from '../utils/documentsUtils';
 import ProgressBar from './ProgressBar'
 var ReactNative = require('react-native');
 import * as navActions from '../actions/navActions'
+import * as docActions from '../actions/documentlists'
 var {
   View,
   Text,
@@ -94,8 +95,8 @@ class AddPeople extends Component {
     })
   }
 
-  _onChange() {
-
+  _onChange(tags) {
+      this.props.dispatch(docActions.SetSharingPermissions(tags));
   }
 
   _onUpdateLayout() {
@@ -304,6 +305,7 @@ class AddPeople extends Component {
             tagTemplate={this.getTagTemplate.bind(this)}
             autocompleteField={"Name"}
             uniqueField={"ParticipantUniqueID"}
+            aditionalField={"FamilyCode"}
             />
 
           <DropDownTrigger

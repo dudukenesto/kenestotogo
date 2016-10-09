@@ -240,7 +240,7 @@ class KenestoToolbar extends Component {
   }
   
   addPeople(){
-    
+      this.props.dispatch(documentsActions.ShareDocument())
   }
 
   render() {

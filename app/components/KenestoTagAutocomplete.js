@@ -15,7 +15,6 @@ import {
 import Tag from './Tag';
 var {height, width} = Dimensions.get('window');
 var Orientation = require('./KenestoDeviceOrientation');
-
 export default class KenestoTagAutocomplete extends Component {
 
   static defaultProps = {
@@ -96,12 +95,13 @@ export default class KenestoTagAutocomplete extends Component {
     return filteredList;
   }
 
-  _addTag(tagName, tagID, iconType, iconName) {
+  _addTag(tagName, tagID, iconType, iconName, aditionalData) {
     var newTags = this.state.tags.concat({
       tagName: tagName, 
       tagID: tagID,
       iconType: iconType,
-      iconName: iconName
+      iconName: iconName, 
+      aditionalData: aditionalData
     });
     var filteredList = this._filterList(newTags);  
     this.setState({
@@ -126,7 +126,7 @@ export default class KenestoTagAutocomplete extends Component {
         }
       }
       else {
-        this._addTag(tagName, new Date().getTime(), 'icon', 'person-outline');
+        this._addTag(tagName,tagName, 'icon', 'person-outline', 'EXTERNAL_USER');
       }      
     }
 
@@ -134,6 +134,7 @@ export default class KenestoTagAutocomplete extends Component {
     const {rowContainerStyle, autocompleteTextStyle} = this.props;
     var autocompleteString = rowData[this.props.autocompleteField] || rowData;
     var tagID = rowData[this.props.uniqueField] || autocompleteString;
+    var aditionalData = rowData["FamilyCode"] 
     var searchedTextLength = this.state.userInput.length;
     var searchedIndex = autocompleteString.indexOf(this.state.userInput);
     var textBefore = autocompleteString.substr(0, searchedIndex);
@@ -156,7 +157,7 @@ export default class KenestoTagAutocomplete extends Component {
       
     return (
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
-        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID, iconType, iconName)}>
+        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID, iconType, iconName, aditionalData)}>
           <View style={[ styles.rowContainer, {minWidth: this.state.orientation == "PORTRAIT" ? width : height}, rowContainerStyle]}>
             {this.props.autocompleteRowTemplate ?
               this.props.autocompleteRowTemplate(autocompleteFormattedString, iconType, iconName, rowData)
@@ -270,6 +271,9 @@ export default class KenestoTagAutocomplete extends Component {
       tags: newTags,
       dataSource: this.state.dataSource.cloneWithRows(filteredList),
     });
+
+    
+    this.props.onChange(newTags);
            
   }
 
