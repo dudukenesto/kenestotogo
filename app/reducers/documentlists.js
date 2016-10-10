@@ -8,7 +8,12 @@ function documentlist(state = {
   errorMessage: '',
   hasError: false,
   dataSource: {}, 
-  sharingPermissions: null
+  sharingPermissions: null,
+  selectedObject:{
+    id:'',
+    familyCode:'',
+    Permissions:{}
+  }
 }, action) {
   switch (action.type) {
     
@@ -83,19 +88,21 @@ export default function documentlists(state = {}, action) {
         creatingFolder: action.creatingFolder
       }
     }
- case types.SET_SHARING_PERMISSIONS:
+    case types.SET_SHARING_PERMISSIONS:
             return {
               ...state,
+               isFetching: false,
               sharingPermissions: action.sharingPermissions
             }
     case types.SUBMIT_ERROR:
       return Object.assign({}, state, {
         [action.catId]: documentlist(state[action.catId], action)
       })
-    case types.UPDATE_SELECTED_ID:
+    case types.UPDATE_SELECTED_OBJECT:
       return {
         ...state,
-        selectedId: action.selectedId
+         isFetching: false,
+        selectedObject: action.selectedObject
       }
     case types.CLEAR_DOCUMENTS:
       return {
@@ -105,7 +112,11 @@ export default function documentlists(state = {}, action) {
         errorMessage: '',
         hasError: false,
         dataSource: {},
-          selectedId : ''
+        selectedObject:{
+          id:'',
+          familyCode:'',
+          Permissions:{}
+       }
       }
       case types.UPDATE_IS_FETCHING:
       return {

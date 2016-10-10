@@ -31,7 +31,7 @@ var moment = require('moment');
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MartialExtendedConf from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
-import {updateSelectedId} from '../actions/documentlists'
+import {updateSelectedObject,getDocumentPermissions} from '../actions/documentlists'
 import {connect} from 'react-redux'
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 
@@ -41,13 +41,12 @@ var getImageSource = require('./GetImageSource');
 
 var DocumentCell = React.createClass({
 
-    menuPressed: function (id){
+    menuPressed: function (id, familyCode){
       var {dispatch} = this.props; 
    
-     dispatch(updateSelectedId(id));
+      dispatch(updateSelectedObject(id, familyCode, ""));
+      dispatch(getDocumentPermissions(id, familyCode))
       this.context.itemMenuContext.open();
-  
-     
     },
 
   render: function() {
@@ -98,7 +97,7 @@ var DocumentCell = React.createClass({
                 
               </Text>
             </View>
-            <TouchableElement onPress={ (()=> { this.menuPressed(this.props.document.Id)}).bind(this) }>
+            <TouchableElement onPress={ (()=> { this.menuPressed(this.props.document.Id, this.props.document.FamilyCode)}).bind(this) }>
               <View style={styles.iconContainer}>
                 <Icon name="more-vert" style={styles.moreMenu} />
               </View>

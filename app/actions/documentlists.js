@@ -3,14 +3,11 @@ import * as navActions from '../actions/navActions'
 import * as Access from '../actions/Access'
 import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
-   getDeleteAssetUrl, getDeleteFolderUrl,getSelectedDocument,getShareDocumentUrl} from '../utils/documentsUtils'
+   getDeleteAssetUrl, getDeleteFolderUrl,getSelectedDocument,getShareDocumentUrl, getDocumentPermissionsUrl} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
 const Android_Download_Path = '/storage/emulated/0/download';
 let React = require('react-native')
-
-
-
 
 let {
   Alert,
@@ -22,6 +19,31 @@ export function updateIsFetching(isFetching: boolean){
         type: types.UPDATE_IS_FETCHING, 
         isFetching
     }
+}
+
+export function getDocumentPermissions(documentId:string, familyCode:string) {
+  return (dispatch, getState) => {
+    const {sessionToken, env} = getState().accessReducer; 
+    dispatch(updateIsFetching(true))
+    var url = getDocumentPermissionsUrl(env,sessionToken, documentId, familyCode);
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseData.ResponseStatus == "FAILED") {
+           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,'error details'))
+           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+        }
+        else {
+          var permissions = json.ResponseData.DocumentPermissions;
+          dispatch(updateSelectedObject(documentId, familyCode, permissions))
+        }
+      })
+      .catch((error) => {
+        console.log("error:" + JSON.stringify(error))
+        //dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
+        dispatch(navActions.emitError("Failed to get document permissions",""))
+      })
+  }
 }
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
@@ -249,13 +271,16 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
   return false
 }
 
-export function updateSelectedId(Id: string){
+export function updateSelectedObject(id: string, familyCode:string, permissions:object){
 
- // alert('updateSelectedId = ' + Id)
    return {
-      type: types.UPDATE_SELECTED_ID,
-      selectedId: Id
-  }
+      type: types.UPDATE_SELECTED_OBJECT,
+      selectedObject: {
+        id:id,
+        familyCode:familyCode,
+        permissions:permissions
+      }
+    }
 }
 
 
