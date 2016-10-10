@@ -105,6 +105,7 @@ class NavRoot extends Component {
       }
       
       if (this.props.navigation.routes[this.props.navigation.routes.length - 1].key == 'addPeople') {
+        this.props.popRoute()
         return true
       }
       

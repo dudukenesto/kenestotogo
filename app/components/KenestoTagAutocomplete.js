@@ -53,12 +53,14 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   componentDidMount() {
+    
+    console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
     this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-    Keyboard.addListener('keyboardDidShow', (e) => {
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       this.setState({ showList: true });
       this.props.onShowTagsList();
     })
-    Keyboard.addListener('keyboardDidHide', (e) => {
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (e) => {
       this.setState({ showList: false });
       this.props.onHideTagsList();
     })
@@ -67,8 +69,10 @@ export default class KenestoTagAutocomplete extends Component {
   componentWillUnmount() {
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
-    Keyboard.removeListener('keyboardDidShow', (message) => console.log(message))
-    Keyboard.removeListener('keyboardDidHide', (message) => console.log(message))
+    this.keyboardDidShowListener.remove();
+    Keyboard.removeListener('keyboardDidShow', (message) => console.log('\n\nremoveListener keyboardDidShow'));
+    this.keyboardDidHideListener.remove();
+    Keyboard.removeListener('keyboardDidHide', (message) => console.log('\n\nremoveListener keyboardDidHide'))
   }
 
   _orientationDidChange(orientation) {
