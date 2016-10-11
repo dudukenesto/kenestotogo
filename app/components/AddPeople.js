@@ -222,8 +222,6 @@ class AddPeople extends Component {
 
 
   renderCurrentPermissions() {
-  console.log(this.state.orientation)
-    
 
     var permissions = this.props.ObjectInfo.UsersPermissions.map(function (permission) {
 
