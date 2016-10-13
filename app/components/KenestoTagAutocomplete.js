@@ -152,11 +152,11 @@ export default class KenestoTagAutocomplete extends Component {
     var tagID = rowData[this.props.uniqueField] || autocompleteString;
     var aditionalData = rowData["FamilyCode"]
     var searchedTextLength = this.state.userInput.length;
-    var searchedIndex = autocompleteString.indexOf(this.state.userInput);
+    var searchedIndex = autocompleteString.toLowerCase().indexOf(this.state.userInput.toLowerCase());
     var textBefore = autocompleteString.substr(0, searchedIndex);
     var textAfter = autocompleteString.substr(searchedIndex + searchedTextLength);
     var autocompleteFormattedString = (<View style={{ flexDirection: "row" }}><Text style={styles.text}>{textBefore}</Text>
-      <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
+      <Text style={[styles.searchedText, autocompleteTextStyle]}>{autocompleteString.substr(searchedIndex, searchedTextLength)}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
 
     var iconType, iconName;
@@ -224,7 +224,7 @@ export default class KenestoTagAutocomplete extends Component {
   _onChangeText(text) {
     var filteredList = this.props.suggestions.filter((listElement) => {
       if (this.props.autocompleteField && this.props.uniqueField) {
-        return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].includes(text);
+        return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].toLowerCase().includes(text.toLowerCase());
       }
       else if (this.props.autocompleteField) {
         return !this.state.tags.find(t => (t.tagName === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(text);
