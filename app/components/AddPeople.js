@@ -199,8 +199,12 @@ class AddPeople extends Component {
   }
 
  onMenuSelect(name: string){
+ 
     this.props.dispatch(navActions.updatedSelectedTrigerValue(name));
-  // this.setState({globalPermissions : name});
+
+     if (this.props.clickedTrigger != 'addPeopleTrigger')
+        this.props.dispatch(docActions.UpdateDocumentSharingPermission());
+
  }
  
 
@@ -254,7 +258,7 @@ class AddPeople extends Component {
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
             selected={permission.PermissionType}
-            id= {'trigger' + permission.Name}
+            id= {'trigger_' + permission.ParticipantUniqueID + "_" + permission.FamilyCode}
             />
         </View>
 
