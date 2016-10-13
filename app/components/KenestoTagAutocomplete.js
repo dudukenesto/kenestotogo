@@ -222,6 +222,13 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _onChangeText(text) {
+    if(text == '' && this.state.tags == ''){
+      this.setState({ showList: false });
+      this.props.onHideTagsList();
+    }
+    else if (this.state.tags == ''){ 
+      this._onFocus();
+    }
     var filteredList = this.props.suggestions.filter((listElement) => {
       if (this.props.autocompleteField && this.props.uniqueField) {
         return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].toLowerCase().includes(text.toLowerCase());
