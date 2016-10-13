@@ -126,6 +126,7 @@ function navigationState(state = initialState, action) {
   }
   case UPDATE_DROPDOWN_DATA: 
   return{
+   
       ...state,
       dropDownTrigger : action.triggerSettings, 
       dropDownOptions: action.options,

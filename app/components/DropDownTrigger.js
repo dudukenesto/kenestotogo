@@ -63,21 +63,14 @@ class DropDownTrigger extends Component {
     }
 
        componentWillReceiveProps(nextprops){
-       //    alert(this.props.id + ' ' + this.props.clickedTrigger + ' ' + nextprops.clickedTrigger )
-           if (this.props.clickedTrigger == this.props.id)
+        
+           if (this.props.clickedTrigger == this.props.id && nextprops.triggerSelectedValue != '')
            {
-              
                 this.setState({ selected: nextprops.triggerSelectedValue})
            }
                
         }
 
-    componentWillMount(){
-        // var selectedTrigger; 
-        //         if (this.state.)
-        //         if (this.props.clickedTrigger == this.props.id)
-        //             alert(this.props.clickedTrigger)
-    }
 
     render() {
 

@@ -467,7 +467,7 @@ export function SetSharingPermissions(tags: object){
     var permissions = []; 
      tags.map((t) => (
       permissions.push({ParticipantUniqueID: t.tagID, FamilyCode: t.aditionalData, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
-       ForUpdate: "true",  PermissionTypeValue : 'ALLOW_VIEW', AllowShare: "false",  AllowUpload: "false" })
+       ForUpdate: "true",  PermissionTypeValue : 'VIEW_ONLY', AllowShare: "false",  AllowUpload: "false" })
       ))
       
        return {
@@ -479,13 +479,69 @@ export function SetSharingPermissions(tags: object){
 }
 
 
+export function UpdateDocumentSharingPermission(){
+  return (dispatch, getState) => {
+      const documentLists = getState().documentlists; 
+      const navReducer = getState().navReducer;
+      const document = getSelectedDocument(documentLists, navReducer);
+      const triggerSelectedValue = navReducer.triggerSelectedValue;
+      const uersDetails = getState().navReducer.clickedTrigger.split('_');
+      const ParticipantUniqueID = uersDetails[1];
+      const familyCode = uersDetails[2];
+      var sharingPermissions = []; 
+      sharingPermissions.push({ParticipantUniqueID: ParticipantUniqueID, FamilyCode: familyCode, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
+       ForUpdate: "true",  PermissionTypeValue : triggerSelectedValue, AllowShare: "false",  AllowUpload: "false" }); 
+
+       const sharingObject = { asset: {
+          ID: document.Id, 
+          UsersPermissions : sharingPermissions
+          }
+      }
+
+        const url = getShareDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
+
+          
+                      var request = new Request(url, {
+                        method: 'post', 
+                        mode: 'cors', 
+                        redirect: 'follow',
+                        processData: false,
+                        cache: false,
+                        headers: new Headers({
+                          'Content-Type': 'application/json'
+                        }),
+                         body:  JSON.stringify(sharingObject)
+                      });
+                                  
+                      fetch(request).then(response => {
+                          
+                        
+                         //     alert(JSON.stringify(response))
+
+                      }).catch((error) => {
+                              dispatch(emitError("Failed to share object",""))
+                          }).done();
+
+    
+
+    }
+}
+
+
 export function ShareDocument(){
+
    return (dispatch, getState) => {
       const documentLists = getState().documentlists; 
       const navReducer = getState().navReducer;
       var document = getSelectedDocument(documentLists, navReducer); 
       const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue; 
       const sharingPermissions = documentLists.sharingPermissions; 
+
+     
+     for (var i=0; i< sharingPermissions.length; i++){
+        sharingPermissions[i].PermissionTypeValue = addPeopleTriggerValue;
+     }
+
       const sharingObject = { asset: {
           ID: document.Id, 
           UsersPermissions : sharingPermissions
@@ -510,14 +566,11 @@ export function ShareDocument(){
                       fetch(request).then(response => {
                           
                         
-                              alert(JSON.stringify(response))
+                    //          alert(JSON.stringify(response))
 
                       }).catch((error) => {
                               dispatch(emitError("Failed to share object",""))
                           }).done();
-
-
-      
    }
  
 } 
