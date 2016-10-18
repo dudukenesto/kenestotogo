@@ -232,7 +232,7 @@ class Main extends React.Component {
   }
 
   closeItemMenuModal() {
-   // this.props.dispatch(documentsActions.updateSelectedId(''));
+   // this.props.dispatch(documentsActions.updateSelectedObject(''));
     this.refs.modalItemMenu.close();
   }
 

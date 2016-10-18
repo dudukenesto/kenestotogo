@@ -175,7 +175,9 @@ class AddPeople extends Component {
   }
 
 
-  renderPermissionsTrigger(permissionName : string) {
+  renderPermissionsTrigger(permissionName : string, isFetching: boolean) {
+
+
     var iconName;
     switch (permissionName) {
       case "VIEW_ONLY":
@@ -188,10 +190,13 @@ class AddPeople extends Component {
         iconName = "update";
         break;
     }
+
+    const content = isFetching? <View style={styles.creatingFolder}><ProgressBar isLoading={true}/></View> :  <Icon name={iconName} style={styles.icon} />; 
+
     return (
       <View style={styles.dropDownTriggerTemplateContainer}>
         <View style={styles.dropDownTriggerTemplate}>
-          <Icon name={iconName} style={styles.icon} />
+         {content}
           <Icon name="keyboard-arrow-down" style={[styles.icon, styles.iconDown]} />
         </View>
       </View>
@@ -200,11 +205,17 @@ class AddPeople extends Component {
 
  onMenuSelect(name: string){
  
-    this.props.dispatch(navActions.updatedSelectedTrigerValue(name));
+    
 
      if (this.props.clickedTrigger != 'addPeopleTrigger')
-        this.props.dispatch(docActions.UpdateDocumentSharingPermission());
-
+     {
+       this.props.dispatch(navActions.requestUpdateTrigger(name));
+       this.props.dispatch(docActions.UpdateDocumentSharingPermission());
+       
+     }
+     else
+       this.props.dispatch(navActions.updatedSelectedTrigerValue(name));
+       
  }
  
 
@@ -258,7 +269,7 @@ class AddPeople extends Component {
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
             selected={permission.PermissionType}
-            id= {'trigger_' + permission.ParticipantUniqueID + "_" + permission.FamilyCode}
+            id= {'trigger_' + permission.ParticipantUniqueID}
             />
         </View>
 

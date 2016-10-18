@@ -1,11 +1,29 @@
 import * as types from '../constants/ActionTypes'
-
-function peopleReducer(state = {isFetching: false, UsersAndGroups: null, ObjectInfo: null}, action){
+import _ from "lodash";
+function peopleReducer(state = {isFetching: false, UsersAndGroups: null, ObjectInfo: null, fetchingList: [], fetchingListChanged : 0},  action){
      switch (action.type) {
         case types.UPDATE_IS_FETCHING:
             return {
                 ...state,
                 isFetching: action.isFetching
+            }
+        case types.ADD_TO_FETCHING_LIST:
+        var fetchingList = state.fetchingList; 
+        fetchingList.push(action.id);
+            return {
+                ...state,
+                fetchingList : fetchingList
+            }
+        case types.REMOVE_FROM_FETCHING_LIST:
+       // alert(action.id + ' ' + state.fetchingList + ' ' + state.fetchingList.filter(obj => obj.id != action.id) )
+           _.remove(state.fetchingList, function (id) {
+                return action.id === id
+                });
+
+            return {
+                ...state,
+                fetchingListChanged : state.fetchingListChanged + 1
+            //    fetchingList :  state.fetchingList.filter(obj => obj.id !== action.id)
             }
         case types.RETRIEVE_SHARE_OBJECT_INFO:
             return {

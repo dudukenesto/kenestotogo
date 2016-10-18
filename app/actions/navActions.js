@@ -1,6 +1,7 @@
 import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
   SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST, UPDATE_DROPDOWN_DATA,UPDATE_SELECTED_TRIGGER_VALUE} from '../constants/ActionTypes'
-
+import * as peopleActions from '../actions/peopleActions'
+import {getSelectedDocument} from '../utils/documentsUtils'
 export function push (route) {
   return {
     type: PUSH_ROUTE,
@@ -134,5 +135,22 @@ export function updatedSelectedTrigerValue(value: string){
     type: UPDATE_SELECTED_TRIGGER_VALUE,
     value: value
   }
+}
+
+export function requestUpdateTrigger(value: string){
+   return (dispatch, getState) => {
+      const documentLists = getState().documentlists; 
+      const navReducer = getState().navReducer;
+      const document = getSelectedDocument(documentLists, navReducer);
+      const triggerSelectedValue = navReducer.triggerSelectedValue;
+      const uersDetails = getState().navReducer.clickedTrigger.split('_');
+      const ParticipantUniqueID = uersDetails[1];
+      const familyCode = uersDetails[2];
+      const triggerId = 'trigger_' + ParticipantUniqueID; 
+
+      dispatch(peopleActions.AddtoFetchingList(triggerId));
+      dispatch(updatedSelectedTrigerValue(value));
+   }
+        
 }
 

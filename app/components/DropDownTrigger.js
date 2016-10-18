@@ -1,5 +1,6 @@
 'use strict';
 import * as navActions from '../actions/navActions'
+import ProgressBar from './ProgressBar'
 import React, { Component, PropTypes} from 'react';
 import {
     StyleSheet,
@@ -8,6 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import _ from "lodash";
 var Orientation = require('./KenestoDeviceOrientation');
 
 class DropDownTrigger extends Component {
@@ -63,10 +65,19 @@ class DropDownTrigger extends Component {
     }
 
        componentWillReceiveProps(nextprops){
-        
+
+          
+          var indexOfId = nextprops.fetchingList.indexOf(this.props.id);
+       
+          //alert(indexOfId + ' ' + this.props.id)
            if (this.props.clickedTrigger == this.props.id && nextprops.triggerSelectedValue != '')
-           {
-                this.setState({ selected: nextprops.triggerSelectedValue})
+           {   
+                //  alert(this.props.fetchingList + ' ' +nextprops.fetchingList)
+                this.setState({ selected: nextprops.triggerSelectedValue, isFetching: indexOfId > -1})
+           }
+           else{
+             //    alert(this.props.fetchingList + ' ' + nextprops.fetchingList)
+                this.setState({ isFetching: indexOfId > -1})
            }
                
         }
@@ -74,14 +85,14 @@ class DropDownTrigger extends Component {
 
     render() {
 
+    
         const {dropDownTriggerTemplate, dropDownTriggerStyle, dropDownTriggerContainer, activeTriggerStyle, id} = this.props;
-       
         return (
             <View style={[styles.dropDownTriggerContainer, dropDownTriggerContainer]}>
                 <View style={[styles.dropDownTriggerStyle, dropDownTriggerStyle, this.state.triggerIsActive && activeTriggerStyle]} ref={"DropDownTrigger"}>
                     <TouchableWithoutFeedback onPress={this.openDropDown.bind(this) }>
                         
-                            {dropDownTriggerTemplate(this.state.selected) }
+                            { dropDownTriggerTemplate(this.state.selected, this.state.isFetching)}
                         
                     </TouchableWithoutFeedback>
                 </View>
@@ -112,10 +123,13 @@ DropDownTrigger.contextTypes = {
 }
 
 function mapStateToProps(state) {
-  const { navReducer } = state
+  const { navReducer, peopleReducer } = state
   return {
       clickedTrigger: navReducer.clickedTrigger, 
-      triggerSelectedValue: navReducer.triggerSelectedValue
+      triggerSelectedValue: navReducer.triggerSelectedValue, 
+      fetchingList : peopleReducer.fetchingList,
+      fetchingListChanged : peopleReducer.fetchingListChanged
+
   }
 }
 

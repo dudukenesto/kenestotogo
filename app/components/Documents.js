@@ -152,7 +152,8 @@ class Documents extends Component {
         catId: newId,
         fId: fId,
         sortDirection: constans.ASCENDING,
-        sortBy: constans.ASSET_NAME
+        sortBy: constans.ASSET_NAME,
+        isVault:document.IsVault
       }
       this.props._handleNavigate(routes.documentsRoute(data));
 
@@ -164,8 +165,10 @@ class Documents extends Component {
         documentId: document.Id,
         catId: documentlist.catId,
         fId: documentlist.fId,
-        viewerUrl: document.ViewerUrl,
-        isExternalLink: document.IsExternalLink,
+        viewerUrl: document.ViewerUrl, 
+        isExternalLink : document.IsExternalLink,
+        isVault:document.IsVault,
+
         env: this.props.env
       }
       this.props._handleNavigate(routes.documentRoute(data));

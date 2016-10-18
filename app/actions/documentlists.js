@@ -1,16 +1,14 @@
 import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
 import * as Access from '../actions/Access'
+import * as peopleActions from '../actions/peopleActions'
 import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
-   getDeleteAssetUrl, getDeleteFolderUrl,getSelectedDocument,getShareDocumentUrl} from '../utils/documentsUtils'
+   getDeleteAssetUrl, getDeleteFolderUrl,getSelectedDocument,getShareDocumentUrl, getDocumentPermissionsUrl} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
 const Android_Download_Path = '/storage/emulated/0/download';
 let React = require('react-native')
-
-
-
 
 let {
   Alert,
@@ -22,6 +20,31 @@ export function updateIsFetching(isFetching: boolean){
         type: types.UPDATE_IS_FETCHING, 
         isFetching
     }
+}
+
+export function getDocumentPermissions(documentId:string, familyCode:string) {
+  return (dispatch, getState) => {
+    const {sessionToken, env} = getState().accessReducer; 
+    dispatch(updateIsFetching(true))
+    var url = getDocumentPermissionsUrl(env,sessionToken, documentId, familyCode);
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseData.ResponseStatus == "FAILED") {
+           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,'error details'))
+           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+        }
+        else {
+          var permissions = json.ResponseData.DocumentPermissions;
+          dispatch(updateSelectedObject(documentId, familyCode, permissions))
+        }
+      })
+      .catch((error) => {
+        console.log("error:" + JSON.stringify(error))
+        //dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
+        dispatch(navActions.emitError("Failed to get document permissions",""))
+      })
+  }
 }
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
@@ -249,23 +272,26 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
   return false
 }
 
-export function updateSelectedId(Id: string){
+export function updateSelectedObject(id: string, familyCode:string, permissions:object){
 
- // alert('updateSelectedId = ' + Id)
    return {
-      type: types.UPDATE_SELECTED_ID,
-      selectedId: Id
-  }
+      type: types.UPDATE_SELECTED_OBJECT,
+      selectedObject: {
+        id:id,
+        familyCode:familyCode,
+        permissions:permissions
+      }
+    }
 }
 
 
-export function createFolder(folderName: string){
+export function createFolder(folderName: string, isVault: boolean){
 
 return (dispatch, getState) => {
    var documentlist = getDocumentsContext(getState().navReducer);
     const {sessionToken, env} = getState().accessReducer; 
     const folderId = documentlist.fId; 
-    const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName);
+    const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName, isVault);
     dispatch(UpdateCreateingFolderState(1))
     return fetch(createFolderUrl)
       .then(response => response.json())
@@ -474,8 +500,6 @@ export function SetSharingPermissions(tags: object){
             type: types.SET_SHARING_PERMISSIONS,
             sharingPermissions : permissions
         }
-  
-   
 }
 
 
@@ -488,6 +512,8 @@ export function UpdateDocumentSharingPermission(){
       const uersDetails = getState().navReducer.clickedTrigger.split('_');
       const ParticipantUniqueID = uersDetails[1];
       const familyCode = uersDetails[2];
+      const triggerId = 'trigger_' + ParticipantUniqueID; 
+
       var sharingPermissions = []; 
       sharingPermissions.push({ParticipantUniqueID: ParticipantUniqueID, FamilyCode: familyCode, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
        ForUpdate: "true",  PermissionTypeValue : triggerSelectedValue, AllowShare: "false",  AllowUpload: "false" }); 
@@ -498,29 +524,31 @@ export function UpdateDocumentSharingPermission(){
           }
       }
 
+      //  dispatch(peopleActions.AddtoFetchingList(triggerId));
+//updateIsFetching
         const url = getShareDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
 
-          
-                      var request = new Request(url, {
-                        method: 'post', 
-                        mode: 'cors', 
-                        redirect: 'follow',
-                        processData: false,
-                        cache: false,
-                        headers: new Headers({
-                          'Content-Type': 'application/json'
-                        }),
-                         body:  JSON.stringify(sharingObject)
-                      });
-                                  
-                      fetch(request).then(response => {
-                          
-                        
-                         //     alert(JSON.stringify(response))
 
-                      }).catch((error) => {
-                              dispatch(emitError("Failed to share object",""))
-                          }).done();
+        var request = new Request(url, {
+          method: 'post', 
+          mode: 'cors', 
+          redirect: 'follow',
+          processData: false,
+          cache: false,
+          headers: new Headers({
+            'Content-Type': 'application/json'
+          }),
+            body:  JSON.stringify(sharingObject)
+        });
+                    
+        fetch(request).then(response => {
+        //  setTimeout(function(){ dispatch(peopleActions.RemoveFromFetchingList(triggerId));}, 3000);
+         dispatch(peopleActions.RemoveFromFetchingList(triggerId));
+            //     alert(JSON.stringify(response))
+
+        }).catch((error) => {
+                dispatch(navActions.emitError(error,""))
+            }).done();
 
     
 
@@ -569,7 +597,7 @@ export function ShareDocument(){
                     //          alert(JSON.stringify(response))
 
                       }).catch((error) => {
-                              dispatch(emitError("Failed to share object",""))
+                              dispatch(navActions.emitError("Failed to share object",""))
                           }).done();
    }
  

@@ -47,14 +47,24 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
 
 }
 
-export function getCreateFolderUrl(env, sessionToken, fId, folderName) {
+
+export function getDocumentPermissionsUrl(env, sessionToken, documentId, familyCode) {
+  var urls = _.find(config.urls, { 'env': env });
+  var apiBaseUrl = urls.ApiBaseUrl;
+  if (urls == null)
+    return null;
+
+  return `${apiBaseUrl}/KDocuments.svc/RetrieveObjectPermissions?t=${sessionToken}&oi=${documentId}&fc=${familyCode}`;
+}
+
+export function getCreateFolderUrl(env, sessionToken, fId, folderName, isVault) {
   var urls = _.find(config.urls, { 'env': env });
   var apiBaseUrl = urls.ApiBaseUrl;
   if (urls == null)
     return null;
   var folderId = (typeof (fId) == 'undefined' || fId == null || fId == '') ? '00000000-0000-0000-0000-000000000000' : fId;
 
-  return `${apiBaseUrl}/KDocuments.svc/CreateFolder?t=${sessionToken}&pid=${folderId}&fn=${folderName}&folderDescription=''`;
+  return `${apiBaseUrl}/KDocuments.svc/CreateFolder?t=${sessionToken}&pid=${folderId}&fn=${folderName}&iv=${isVault}&fd=''`;
 }
 
 
@@ -103,9 +113,7 @@ export function getSelectedDocument(documentlists: Object, navReducer: Object){
     var catId = context.catId;
     var items = documentlists[catId].items;
 
-
-
-    const selectedId = documentlists.selectedId; 
+    const selectedId = documentlists.selectedObject.id; 
    return selectedId == '' || selectedId == null ? null : _.find(items, { 'Id': selectedId }); 
 }
 

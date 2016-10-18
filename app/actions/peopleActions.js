@@ -3,11 +3,50 @@ import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
 import {getRetrieveShareObjectInfoUrl} from '../utils/ObjectUtil'
 import { push, emitError} from './navActions'
+import _ from "lodash";
 export function updateIsFetching(isFetching: boolean){
     return {
         type: types.UPDATE_IS_FETCHING, 
         isFetching
     }
+}
+
+export function AddtoFetchingList(id: string){
+    return{
+         type: types.ADD_TO_FETCHING_LIST, 
+         id
+    }
+}
+
+export function updateFetchingList(fetchingList: object){
+    return{
+         type: types.REMOVE_FROM_FETCHING_LIST, 
+         fetchingList
+    }
+}
+
+export function RemoveFromFetchingList(id: string){
+
+    return{
+         type: types.REMOVE_FROM_FETCHING_LIST, 
+         id
+    }
+
+//   return (dispatch, getState) => {
+   
+//  const fetchingListNow = getState().peopleReducer.fetchingList; 
+
+
+
+// //   alert(fetchingListNow + ' ' + getState().peopleReducer.fetchingList)
+// //             _.remove(fetchingListNow, function (thisid) {
+// //                 return thisid === id
+// //                 });
+
+// //alert(fetchingListNow + ' ' + getState().peopleReducer.fetchingList)
+
+//         dispatch(updateFetchingList(fetchingListNow));
+//  }
 }
 
 export function RetrieveShareObjectInfo(ObjectInfo : Object, UsersAndGroups: Object)

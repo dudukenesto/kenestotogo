@@ -171,25 +171,59 @@ class ItemMenu extends React.Component{
   componentWillMount(){
         var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
         this.setState({ document: document});
-
-     
     }
 
+    _renderMenuItemActions(isFetching) {
+        if (!isFetching) {
+            return (<View style={styles.menuItemsContainer}>
+                <TouchableHighlight onPress={this.shareDocument.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <KenestoIcon name="word" style={styles.icon} />
+                        <Text style={styles.actionName}>Share (share) </Text>
+                    </View>
+                </TouchableHighlight>
 
-    render(){
+                <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <KenestoIcon name="word" style={styles.icon} />
+                        <Text style={styles.actionName}>Rename (rename-box) </Text>
+                    </View>
+                </TouchableHighlight>
 
-       
-        var elementIcon;
-        if (document.HasThumbnail) {
-            elementIcon = <Image source = {{ uri: document.ThumbnailUrl }} style={styles.previewThumbnail} />
+                <TouchableHighlight onPress={this.deleteDocument.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <KenestoIcon name="word" style={styles.icon} />
+                        <Text style={styles.actionName}>Delete (delete ) </Text>
+                    </View>
+                </TouchableHighlight>
+            </View>)
         }
         else {
-            if (document.FamilyCode == 'FOLDER') {
+            return (<View style={[styles.container, styles.centerText]}>
+                <View style={styles.textContainer}>
+                    <Text>Please wait...</Text>
+                    <ProggressBar isLoading={true} />
+                </View>
+            </View>)
+        }
+    }
+
+    render(){
+        var elementIcon;
+        const {navReducer} = this.props
+        var currRouteData = getDocumentsContext(navReducer);
+        const isFetching = this.props.documentlists.isFetching;
+
+        if (this.state.document.HasThumbnail) {
+            elementIcon = <Image source = {{ uri: this.state.document.ThumbnailUrl }} style={styles.previewThumbnail} />
+        }
+        else {
+            if (this.state.document.FamilyCode == 'FOLDER') {
                 elementIcon = <KenestoIcon name="folder" style={styles.icon} />
             }
             else {
-                if (typeof document.IconName != 'undefined')
-                    elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={document.IconName} style={styles.icon} /></View>
+                if (typeof this.state.document.IconName != 'undefined')
+                    elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={this.state.document.IconName} style={styles.icon} /></View>
                 else
                     elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
             }
@@ -205,10 +239,10 @@ class ItemMenu extends React.Component{
                         </View>
                         <View style={styles.textContainer}>
                             <Text style={styles.documentTitle} numberOfLines={2}>
-                                {document.Name}
+                                {this.state.document.Name}
                             </Text>
                             <Text style={styles.documentYear} numberOfLines={1}>
-                                {  "Modified " + moment(document.ModificationDate).format('MMM DD, YYYY') }
+                                {  "Modified " + moment(this.state.document.ModificationDate).format('MMM DD, YYYY') }
 
                             </Text>
                         </View>
@@ -228,29 +262,7 @@ class ItemMenu extends React.Component{
                         
                     </View>    
                 </View>
-                          
-                <View style={styles.menuItemsContainer}>  
-                    <TouchableHighlight onPress={this.shareDocument.bind(this)} underlayColor="#E9EAEC">
-                        <View style={styles.actionHolder}>
-                            <KenestoIcon name="word" style={styles.icon} />
-                            <Text style={styles.actionName}>Share (share)</Text>
-                        </View>
-                    </TouchableHighlight>
-                        
-                    <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
-                        <View style={styles.actionHolder}>
-                            <KenestoIcon name="word" style={styles.icon} />
-                            <Text style={styles.actionName}>Rename (rename-box)</Text>
-                        </View>
-                    </TouchableHighlight>
-                        
-                    <TouchableHighlight onPress={this.deleteDocument.bind(this)} underlayColor="#E9EAEC">
-                        <View style={styles.actionHolder}>
-                            <KenestoIcon name="word" style={styles.icon} />
-                            <Text style={styles.actionName}>Delete (delete)</Text>
-                        </View>    
-                    </TouchableHighlight>
-                </View>
+                {this._renderMenuItemActions(isFetching)}
             </ViewContainer>
         )
     }
