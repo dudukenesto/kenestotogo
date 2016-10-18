@@ -591,13 +591,20 @@ export function ShareDocument(){
                          body:  JSON.stringify(sharingObject)
                       });
                                   
-                      fetch(request).then(response => {
-                          
-                        
-                    //          alert(JSON.stringify(response))
+                      fetch(request)
+                         .then(response => response.json())
+                         .then(json => {
+                               if (json.ResponseStatus == "FAILED") {
+                                    dispatch(emitError(json.ErrorMessage,""))
+                                  }
+                                else{
+                                  dispatch(navActions.pop())
+                                   dispatch(navActions.emitToast("success","Sharing settings updated",""))
+                                }
 
                       }).catch((error) => {
                               dispatch(navActions.emitError("Failed to share object",""))
+                           throw error;
                           }).done();
    }
  

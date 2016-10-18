@@ -241,7 +241,8 @@ class KenestoToolbar extends Component {
   
   addPeople(){
       this.props.dispatch(documentsActions.ShareDocument()); 
-      this.onGoBack();
+  //    this.onGoBack();
+     
 
   }
 
