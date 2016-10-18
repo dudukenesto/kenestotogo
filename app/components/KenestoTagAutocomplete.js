@@ -9,7 +9,8 @@ import {
   TextInput,
   ListView,
   TouchableHighlight,
-  Dimensions
+  Dimensions,
+  Keyboard
 } from 'react-native';
 
 import Tag from './Tag';
@@ -52,12 +53,26 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   componentDidMount() {
+    
+    console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
     this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+      this.setState({ showList: true });
+      this.props.onShowTagsList();
+    })
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (e) => {
+      this.setState({ showList: false });
+      this.props.onHideTagsList();
+    })
   }
 
   componentWillUnmount() {
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
+    this.keyboardDidShowListener.remove();
+    Keyboard.removeListener('keyboardDidShow', (message) => console.log('\n\nremoveListener keyboardDidShow'));
+    this.keyboardDidHideListener.remove();
+    Keyboard.removeListener('keyboardDidHide', (message) => console.log('\n\nremoveListener keyboardDidHide'))
   }
 
   _orientationDidChange(orientation) {
@@ -94,9 +109,6 @@ export default class KenestoTagAutocomplete extends Component {
     });
     return filteredList;
   }
-
-
-
 
   _addTag(tagName, tagID, iconType, iconName, aditionalData) {
     console.log('_addTag', tagName)
@@ -140,11 +152,11 @@ export default class KenestoTagAutocomplete extends Component {
     var tagID = rowData[this.props.uniqueField] || autocompleteString;
     var aditionalData = rowData["FamilyCode"]
     var searchedTextLength = this.state.userInput.length;
-    var searchedIndex = autocompleteString.indexOf(this.state.userInput);
+    var searchedIndex = autocompleteString.toLowerCase().indexOf(this.state.userInput.toLowerCase());
     var textBefore = autocompleteString.substr(0, searchedIndex);
     var textAfter = autocompleteString.substr(searchedIndex + searchedTextLength);
     var autocompleteFormattedString = (<View style={{ flexDirection: "row" }}><Text style={styles.text}>{textBefore}</Text>
-      <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
+      <Text style={[styles.searchedText, autocompleteTextStyle]}>{autocompleteString.substr(searchedIndex, searchedTextLength)}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
 
     var iconType, iconName;
@@ -210,9 +222,16 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _onChangeText(text) {
+    if(text == '' && this.state.tags == ''){
+      this.setState({ showList: false });
+      this.props.onHideTagsList();
+    }
+    else if (this.state.tags == ''){ 
+      this._onFocus();
+    }
     var filteredList = this.props.suggestions.filter((listElement) => {
       if (this.props.autocompleteField && this.props.uniqueField) {
-        return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].includes(text);
+        return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].toLowerCase().includes(text.toLowerCase());
       }
       else if (this.props.autocompleteField) {
         return !this.state.tags.find(t => (t.tagName === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(text);
