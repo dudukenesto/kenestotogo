@@ -1,6 +1,7 @@
 import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
 import * as Access from '../actions/Access'
+import * as peopleActions from '../actions/peopleActions'
 import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
    getDeleteAssetUrl, getDeleteFolderUrl,getSelectedDocument,getShareDocumentUrl, getDocumentPermissionsUrl} from '../utils/documentsUtils'
@@ -499,8 +500,6 @@ export function SetSharingPermissions(tags: object){
             type: types.SET_SHARING_PERMISSIONS,
             sharingPermissions : permissions
         }
-  
-   
 }
 
 
@@ -513,6 +512,8 @@ export function UpdateDocumentSharingPermission(){
       const uersDetails = getState().navReducer.clickedTrigger.split('_');
       const ParticipantUniqueID = uersDetails[1];
       const familyCode = uersDetails[2];
+      const triggerId = 'trigger_' + ParticipantUniqueID; 
+
       var sharingPermissions = []; 
       sharingPermissions.push({ParticipantUniqueID: ParticipantUniqueID, FamilyCode: familyCode, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
        ForUpdate: "true",  PermissionTypeValue : triggerSelectedValue, AllowShare: "false",  AllowUpload: "false" }); 
@@ -523,29 +524,31 @@ export function UpdateDocumentSharingPermission(){
           }
       }
 
+      //  dispatch(peopleActions.AddtoFetchingList(triggerId));
+//updateIsFetching
         const url = getShareDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
 
-          
-                      var request = new Request(url, {
-                        method: 'post', 
-                        mode: 'cors', 
-                        redirect: 'follow',
-                        processData: false,
-                        cache: false,
-                        headers: new Headers({
-                          'Content-Type': 'application/json'
-                        }),
-                         body:  JSON.stringify(sharingObject)
-                      });
-                                  
-                      fetch(request).then(response => {
-                          
-                        
-                         //     alert(JSON.stringify(response))
 
-                      }).catch((error) => {
-                              dispatch(emitError("Failed to share object",""))
-                          }).done();
+        var request = new Request(url, {
+          method: 'post', 
+          mode: 'cors', 
+          redirect: 'follow',
+          processData: false,
+          cache: false,
+          headers: new Headers({
+            'Content-Type': 'application/json'
+          }),
+            body:  JSON.stringify(sharingObject)
+        });
+                    
+        fetch(request).then(response => {
+        //  setTimeout(function(){ dispatch(peopleActions.RemoveFromFetchingList(triggerId));}, 3000);
+         dispatch(peopleActions.RemoveFromFetchingList(triggerId));
+            //     alert(JSON.stringify(response))
+
+        }).catch((error) => {
+                dispatch(navActions.emitError(error,""))
+            }).done();
 
     
 
@@ -594,7 +597,7 @@ export function ShareDocument(){
                     //          alert(JSON.stringify(response))
 
                       }).catch((error) => {
-                              dispatch(emitError("Failed to share object",""))
+                              dispatch(navActions.emitError("Failed to share object",""))
                           }).done();
    }
  
