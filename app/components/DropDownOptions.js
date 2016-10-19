@@ -49,7 +49,6 @@ class DropDownOptions extends Component {
                 left: -10000
             }
         });
-        console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
     }
 
     getDimensions(event) {
