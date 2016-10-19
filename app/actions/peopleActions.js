@@ -69,8 +69,7 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
       .then(json => {
        // alert(json.ResponseData.ObjectInfo);
         if (json.ResponseStatus == "FAILED") {
-           dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
-           dispatch(emitError(json.ResponseData.ErrorMessage,""))
+           dispatch(emitError("Failed to retrieve sharing info",""))
         }
         else {
             const ObjectInfo = json.ResponseData.ObjectInfo; 
@@ -89,7 +88,7 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
       })
       .catch((error) => {
         //console.log("error:" + JSON.stringify(error))
-        dispatch(emitError("Failed to retrieve share info: " + JSON.stringify(error),""))
+        dispatch(emitError("Failed to retrieve sharing info" ,""))
 
 
       })

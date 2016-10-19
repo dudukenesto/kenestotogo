@@ -96,7 +96,7 @@ export function retrieveStatistics() {
       .then(json => {
         
         if (json.ResponseData.ResponseStatus == "FAILED") {
-           dispatch(emitError(json.ResponseData.ErrorMessage,""))
+           dispatch(emitError("Failed to retrieve statistics",""))
         }
         else {
          var totalMyDocuments = json.ResponseData.TotalMyDocuments;
@@ -109,7 +109,7 @@ export function retrieveStatistics() {
         }
       })
       .catch((error) => {
-        console.log("error:" + JSON.stringify(error))
+       // console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve statistics",""))
 
 
@@ -137,7 +137,7 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
             if (responseData.ForgotPasswordResult.ResponseStatus == "FAILED")
             {
                  dispatch(updateIsFetching(false)); 
-                 dispatch(emitError("Reset password failed", responseData.ForgotPasswordResult.ErrorMessage))
+                 dispatch(emitError("Reset password failed", ""))
             }
             else{
                    dispatch(updateIsFetching(false)); 

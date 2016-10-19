@@ -600,7 +600,7 @@ export function ShareDocument(){
                          .then(response => response.json())
                          .then(json => {
                                if (json.ResponseStatus == "FAILED") {
-                                    dispatch(emitError(json.ErrorMessage,""))
+                                    dispatch(navActions.emitError("Failed to share document",""))
                                   }
                                 else{
                                      dispatch(navActions.pop());

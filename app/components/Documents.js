@@ -14,7 +14,7 @@ import {View,
   RefreshControl
 } from 'react-native'
 import {MKButton} from 'react-native-material-kit';
-import {  emitToast, clearToast} from './navActions'
+import {  emitToast, clearToast} from '../actions/navActions'
 
 import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
