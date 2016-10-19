@@ -44,30 +44,7 @@ import * as routes from '../constants/routes'
 
 import {getDocumentsContext, getDocumentsTitle} from '../utils/documentsUtils'
 
-const CustomButton = new MKButton.coloredFab ()
-  .withBackgroundColor('orange')
-  // .withShadowRadius(2)
-  // .withShadowOffset({ width: 0, height: 2 })
-  // .withShadowOpacity(.7)
-  // .withShadowColor('black')
-  .withOnPress(() => {
-    console.log('hi, raised button!');
-  })
-  .withTextStyle({
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 24
-  })
-  .withStyle({
-    position: "absolute",
-    right: 100, 
-    bottom: 20,
-    width: 69, 
-    height: 69,
-    // elevation: 4
-  })
-  .withText('+')
-  .build();
+
 
 
 // const ColoredRaisedButton = MKButton.coloredButton()
@@ -237,7 +214,6 @@ class Documents extends Component {
 
   openModal() {
     //this.refs.modal3.open();
-    // alert(this.context.itemMenuContext)
     this.context.plusMenuContext.open();
   }
 
@@ -288,22 +264,31 @@ class Documents extends Component {
     }
   }
 
-  // coloredFab() {
-  //   return new ButtonBuilder()
-  //     .withStyle({
-  //       shadowRadius: 1,
-  //       shadowOffset: { width: 0, height: 0.5 },
-  //       shadowOpacity: 0.4,
-  //       shadowColor: 'black',
-  //       elevation: 4,
-  //     })
-  //     .withFab(true)
-  //     .withRippleLocation('center');
-  // }
-
   render() {
 
     const {dispatch, documentlists, navReducer } = this.props
+    const CustomButton = new MKButton.coloredFab()
+      .withBackgroundColor('#FF811B')
+      // .withShadowRadius(2)
+      // .withShadowOffset({ width: 0, height: 2 })
+      // .withShadowOpacity(.7)
+      // .withShadowColor('black')
+      .withOnPress(() => {
+        this.openModal();
+      })
+      .withTextStyle({
+        color: 'white',
+        fontSize: 28
+      })
+      .withStyle({
+        position: "absolute",
+        right: 20,
+        bottom: 20,
+        width: 60,
+        height: 60,
+      })
+      .withText('+')
+      .build();
 
     //var currRoute = navReducer.routes[navReducer.index];
     var documentlist = getDocumentsContext(navReducer);
@@ -318,10 +303,7 @@ class Documents extends Component {
         <View style={styles.separator} elevation={5}/>
 
         {this._renderTableContent(dataSource, isFetching) }
-        <ActionButton buttonColor="#FF811B" onPress={() => this.openModal() } >
-        </ActionButton>
-        
-
+        <CustomButton />
       </ViewContainer>
     )
   }
