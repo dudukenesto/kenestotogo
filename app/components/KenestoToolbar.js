@@ -246,7 +246,6 @@ class KenestoToolbar extends Component {
       return false;
     }
     this.props.dispatch(documentsActions.ShareDocument());
-    this.onGoBack();
   }
 
   render() {
