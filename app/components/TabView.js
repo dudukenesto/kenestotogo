@@ -142,14 +142,14 @@ class TabView extends React.Component {
                 selected: documentlist.catId == constans.CHECKED_OUT_DOCUMENTS ? true : false,
                 customStyle: ''
             },
-            {
-                Index: 4,
-                itemTitle: getDocumentsTitle(constans.ARCHIVED_DOCUMENTS),
-                itemCount: accessReducer.statistics.totalArchivedDocuments,
-                itemIcon: 'restore',
-                selected: documentlist.catId == constans.ARCHIVED_DOCUMENTS ? true : false,
-                customStyle: ''
-            },
+            // {
+            //     Index: 4,
+            //     itemTitle: getDocumentsTitle(constans.ARCHIVED_DOCUMENTS),
+            //     itemCount: accessReducer.statistics.totalArchivedDocuments,
+            //     itemIcon: 'restore',
+            //     selected: documentlist.catId == constans.ARCHIVED_DOCUMENTS ? true : false,
+            //     customStyle: ''
+            // },
             {
                 Index: 5,
                 itemTitle: 'My usage space '+accessReducer.statistics.totalUsageSpace,
