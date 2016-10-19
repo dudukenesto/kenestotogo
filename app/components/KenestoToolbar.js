@@ -239,6 +239,7 @@ class KenestoToolbar extends Component {
     )
   }
   
+
   addPeople() {
     const {documentlists} = this.props
     if (documentlists.sharingPermissions.length === 0) {

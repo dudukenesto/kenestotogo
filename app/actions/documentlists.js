@@ -368,6 +368,8 @@ export function uploadToKenesto(imageData: object, url: string){
               }
               else {
               var AccessUrl = json.ResponseData.AccessUrl;
+
+              alert(AccessUrl)
                       
                       var request = new Request(AccessUrl, {
                         method: 'PUT', 
@@ -385,23 +387,25 @@ export function uploadToKenesto(imageData: object, url: string){
                           
                           const completeUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
 
-                              alert(JSON.stringify(response))
+                          //    alert(JSON.stringify(response))
 
                           fetch(completeUrl)
                                 .then(response => response.json())
                                 .then(json => {
                                   dispatch(updateIsFetching(false)); 
 
-                                  if (json.ResponseData.ResponseStatus == "FAILED") {
-                                    dispatch(emitError(json.ResponseData.ErrorMessage,""))
-                                  }
-                                  else {
-                                    alert('wawa');
-                                  }
+                                 // alert(JSON.stringify(json))
+
+                                  // if (json.ResponseData.ResponseStatus == "FAILED") {
+                                  //   dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+                                  // }
+                                  // else {
+                                  //   alert('wawa');
+                                  // }
                                 })
                                 .catch((error) => {
                                   console.log("error:" + JSON.stringify(error))
-                                  dispatch(emitError("Failed to retrieve statistics",""))
+                                  dispatch(navActions.emitError("Failed",JSON.stringify(error)))
 
 
                                 })
@@ -412,7 +416,7 @@ export function uploadToKenesto(imageData: object, url: string){
 
                       }).catch((error) => {
                               console.log("error:" + JSON.stringify(error))
-                              dispatch(emitError("Failed to upload to kenesto",""))
+                              dispatch(navActions.emitError("Failed to upload to kenesto",""))
                           }).done();
       
                           
@@ -454,6 +458,7 @@ export function deleteAsset(id: string, familyCode: string){
       })
       .catch((error) => {
           dispatch(navActions.emitToast("error", "", "Error deleting asset"))
+          dispatch(navActions.clearToast());
       })
 
    }
@@ -591,13 +596,22 @@ export function ShareDocument(){
                          body:  JSON.stringify(sharingObject)
                       });
                                   
-                      fetch(request).then(response => {
-                          
-                        
-                    //          alert(JSON.stringify(response))
+                      fetch(request)
+                         .then(response => response.json())
+                         .then(json => {
+                               if (json.ResponseStatus == "FAILED") {
+                                    dispatch(emitError(json.ErrorMessage,""))
+                                  }
+                                else{
+                                     dispatch(navActions.pop());
+                                     dispatch(navActions.emitToast("success","Sharing settings updated",""));
+                                     dispatch(navActions.clearToast());
+                                   
+                                }
 
                       }).catch((error) => {
                               dispatch(navActions.emitError("Failed to share object",""))
+                           throw error;
                           }).done();
    }
  

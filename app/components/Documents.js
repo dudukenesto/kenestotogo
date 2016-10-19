@@ -15,7 +15,7 @@ import {View,
 } from 'react-native'
 // var MKButton = require('react-native-material-kit');
 import {MKButton} from 'react-native-material-kit';
-
+import {  emitToast, clearToast} from './navActions'
 
 import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -205,12 +205,13 @@ class Documents extends Component {
     var documentlist = getDocumentsContext(navReducer);
     const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
     const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
-
-
     if (hasError && this.refs.masterView != undefined) {
-      this.refs.masterView.showMessage("success", errorMessage);
+      //this.refs.masterView.showMessage("success", errorMessage);
+      this.props.dispatch(emitToast("error", "", "Error loading documents list"));
+      this.peops.dispatch(clearToast());
     }
   }
+
 
   openModal() {
     //this.refs.modal3.open();
