@@ -13,7 +13,6 @@ import {View,
   ActivityIndicator,
   RefreshControl
 } from 'react-native'
-// var MKButton = require('react-native-material-kit');
 import {MKButton} from 'react-native-material-kit';
 import {  emitToast, clearToast} from './navActions'
 
@@ -43,24 +42,6 @@ import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
 
 import {getDocumentsContext, getDocumentsTitle} from '../utils/documentsUtils'
-
-
-
-
-// const ColoredRaisedButton = MKButton.coloredButton()
-// .withText('BUTTON')
-// .withOnPress(() => {
-//   console.log("Hi, it's a colored button!");
-// })
-// .build();
-
-
-// const Documents = ({_goBack}) => (
-//   <View style={styles.container}>
-//     <Text style={styles.title}>Documents page</Text>
-//     <Button onPress={_goBack} label='Go Back' />
-//   </View>
-// )
 
 class Documents extends Component {
   constructor(props) {

@@ -139,7 +139,7 @@ export function updatedSelectedTrigerValue(value: string){
 
 export function requestUpdateTrigger(value: string){
   console.log('\n\n\n\n\n\n ================== MY LOG START 5 ==================  \n\n\n\n\n\n')
-      // console.log(sharingObject)
+      console.log(value)
    return (dispatch, getState) => {
       const documentLists = getState().documentlists; 
       const navReducer = getState().navReducer;

@@ -178,21 +178,21 @@ class ItemMenu extends React.Component{
             return (<View style={styles.menuItemsContainer}>
                 <TouchableHighlight onPress={this.shareDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <KenestoIcon name="share" style={styles.icon} />
+                        <Icon name="share" style={styles.icon} />
                         <Text style={styles.actionName}>Share</Text>
                     </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <KenestoIcon name="word" style={styles.icon} />
+                        <Icon name="edit" style={styles.icon} />
                         <Text style={styles.actionName}>Rename</Text>
                     </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight onPress={this.deleteDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <KenestoIcon name="word" style={styles.icon} />
+                        <Icon name="delete" style={styles.icon} />
                         <Text style={styles.actionName}>Delete</Text>
                     </View>
                 </TouchableHighlight>
@@ -250,12 +250,12 @@ class ItemMenu extends React.Component{
                         <View style={styles.actionIconsContainer}>
                             <TouchableWithoutFeedback onPress={this.startDownload.bind(this)}>
                                 <View style={styles.singleActionIconContainer}>
-                                    <KenestoIcon name="word" style={styles.actionIcon} />
+                                    <Icon name="file-download" style={styles.actionIcon} />
                                 </View>
                             </TouchableWithoutFeedback>
                             <TouchableWithoutFeedback onPress={this.viewDocument}>
                                 <View style={styles.singleActionIconContainer}>
-                                    <KenestoIcon name="powerpoint" style={styles.actionIcon} />
+                                    <Icon name="remove-red-eye" style={styles.actionIcon} />
                                 </View>
                             </TouchableWithoutFeedback>
                         </View>
