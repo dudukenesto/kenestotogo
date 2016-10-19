@@ -72,6 +72,11 @@ class Document extends React.Component{
       orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
     })
   }
+  
+  componentWillUnmount(){
+    this.orientationListener.remove();
+    Orientation.removeOrientationListener();
+  }
 
  onLoadEnd(){
     //this.setState({isLoading: false});

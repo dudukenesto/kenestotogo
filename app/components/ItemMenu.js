@@ -178,22 +178,22 @@ class ItemMenu extends React.Component{
             return (<View style={styles.menuItemsContainer}>
                 <TouchableHighlight onPress={this.shareDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <KenestoIcon name="word" style={styles.icon} />
-                        <Text style={styles.actionName}>Share (share) </Text>
+                        <KenestoIcon name="share" style={styles.icon} />
+                        <Text style={styles.actionName}>Share</Text>
                     </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
                         <KenestoIcon name="word" style={styles.icon} />
-                        <Text style={styles.actionName}>Rename (rename-box) </Text>
+                        <Text style={styles.actionName}>Rename</Text>
                     </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight onPress={this.deleteDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
                         <KenestoIcon name="word" style={styles.icon} />
-                        <Text style={styles.actionName}>Delete (delete ) </Text>
+                        <Text style={styles.actionName}>Delete</Text>
                     </View>
                 </TouchableHighlight>
             </View>)
