@@ -239,18 +239,20 @@ class KenestoToolbar extends Component {
     )
   }
   
-  addPeople(){
-      this.props.dispatch(documentsActions.ShareDocument()); 
-  //    this.onGoBack();
-     
 
+  addPeople() {
+    const {documentlists} = this.props
+    if (documentlists.sharingPermissions.length === 0) {
+      return false;
+    }
+    this.props.dispatch(documentsActions.ShareDocument());
+    this.onGoBack();
   }
 
   render() {
     const {navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     const sortBy = documentlist.sortBy;
-    
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
 
     if (this.state.isSearchBoxOpen) {

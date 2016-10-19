@@ -13,7 +13,9 @@ import {View,
   ActivityIndicator,
   RefreshControl
 } from 'react-native'
-
+// var MKButton = require('react-native-material-kit');
+import {MKButton} from 'react-native-material-kit';
+import {  emitToast, clearToast} from './navActions'
 
 import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -40,7 +42,18 @@ import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
 
-import {getDocumentsContext,getDocumentsTitle} from '../utils/documentsUtils'
+import {getDocumentsContext, getDocumentsTitle} from '../utils/documentsUtils'
+
+
+
+
+// const ColoredRaisedButton = MKButton.coloredButton()
+// .withText('BUTTON')
+// .withOnPress(() => {
+//   console.log("Hi, it's a colored button!");
+// })
+// .build();
+
 
 // const Documents = ({_goBack}) => (
 //   <View style={styles.container}>
@@ -53,11 +66,11 @@ class Documents extends Component {
   constructor(props) {
     super(props)
     this.documentsProps = this.props.data
-  
+
     this.state = {
       isFetchingTail: false
     }
-    
+
     this.onEndReached = this.onEndReached.bind(this)
     this.selectItem = this.selectItem.bind(this)
     this._onRefresh = this._onRefresh.bind(this)
@@ -75,7 +88,7 @@ class Documents extends Component {
         return "";
     }
   }
- 
+
 
   componentWillMount() {
     const {dispatch} = this.props
@@ -84,10 +97,10 @@ class Documents extends Component {
   }
 
 
-  // componentDidUpdate() {
-  //   this._showStatusBar()
-  // }
- 
+  componentDidUpdate() {
+    this._showStatusBar()
+  }
+
   onEndReached() {
     const {dispatch} = this.props
     console.log("documents onEndReached")
@@ -111,7 +124,7 @@ class Documents extends Component {
       }
 
       var data = {
-        key : "documents|"+fId,
+        key: "documents|" + fId,
         name: newName,
         catId: newId,
         fId: fId,
@@ -123,7 +136,7 @@ class Documents extends Component {
 
     }
     else {
-       var data = {
+      var data = {
         key: "document",
         name: document.Name,
         documentId: document.Id,
@@ -132,6 +145,7 @@ class Documents extends Component {
         viewerUrl: document.ViewerUrl, 
         isExternalLink : document.IsExternalLink,
         isVault:document.IsVault,
+
         env: this.props.env
       }
       this.props._handleNavigate(routes.documentRoute(data));
@@ -139,7 +153,7 @@ class Documents extends Component {
     }
 
   }
- 
+
   onSearchChange(event) {
     var filter = event.nativeEvent.text.toLowerCase();
 
@@ -164,7 +178,7 @@ class Documents extends Component {
 
 
   _onRefresh(type, message) {
-    const {dispatch,navReducer} = this.props
+    const {dispatch, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     dispatch(refreshTable(documentlist))
   }
@@ -178,7 +192,7 @@ class Documents extends Component {
   // }
 
   _renderSectionHeader(sectionData, sectionID) {
-   
+
     return (
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionLabel}>{sectionData}</Text>
@@ -186,23 +200,23 @@ class Documents extends Component {
     )
   }
 
-  // _showStatusBar() {
-  //   const {documentlists, navReducer} = this.props
-  //   var documentlist = getDocumentsContext(navReducer);
-  //   const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
-  //   const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
-    
+  _showStatusBar() {
+    const {documentlists, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
+    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+    if (hasError && this.refs.masterView != undefined) {
+      //this.refs.masterView.showMessage("success", errorMessage);
+      this.props.dispatch(emitToast("error", "", "Error loading documents list"));
+      this.peops.dispatch(clearToast());
+    }
+  }
 
-  //   if (hasError && this.refs.masterView != undefined) {
-  //     this.refs.masterView.showMessage("success", errorMessage);
-  //   }
-  // }
 
-  openModal(){
-  //this.refs.modal3.open();
- // alert(this.context.itemMenuContext)
- this.context.plusMenuContext.open();
-}
+  openModal() {
+    //this.refs.modal3.open();
+    this.context.plusMenuContext.open();
+  }
 
 
   _renderTableContent(dataSource, isFetching) {
@@ -251,23 +265,32 @@ class Documents extends Component {
     }
   }
 
- coloredFab() {
-  return new ButtonBuilder()
-    .withStyle({
-      shadowRadius: 1,
-      shadowOffset: { width: 0, height: 0.5 },
-      shadowOpacity: 0.4,
-      shadowColor: 'black',
-      elevation: 4,
-    })
-    .withFab(true)
-    .withRippleLocation('center');
-}
-
   render() {
-    
+
     const {dispatch, documentlists, navReducer } = this.props
-    
+    const CustomButton = new MKButton.coloredFab()
+      .withBackgroundColor('#FF811B')
+      // .withShadowRadius(2)
+      // .withShadowOffset({ width: 0, height: 2 })
+      // .withShadowOpacity(.7)
+      // .withShadowColor('black')
+      .withOnPress(() => {
+        this.openModal();
+      })
+      .withTextStyle({
+        color: 'white',
+        fontSize: 28
+      })
+      .withStyle({
+        position: "absolute",
+        right: 20,
+        bottom: 20,
+        width: 60,
+        height: 60,
+      })
+      .withText('+')
+      .build();
+
     //var currRoute = navReducer.routes[navReducer.index];
     var documentlist = getDocumentsContext(navReducer);
     // console.log("render documents page: " +JSON.stringify(documentlist))
@@ -281,9 +304,7 @@ class Documents extends Component {
         <View style={styles.separator} elevation={5}/>
 
         {this._renderTableContent(dataSource, isFetching) }
-        <ActionButton buttonColor="#FF811B" onPress={() => this.openModal()} >            
-        </ActionButton>
-        
+        <CustomButton />
       </ViewContainer>
     )
   }
@@ -306,19 +327,18 @@ var NoDocuments = React.createClass({
           </View>
         </View>)
     }
-    else
-    {
-    return (
-      <View style={[styles.container, styles.centerText]}>
-        <View style={styles.textContainer}>
-          <Text style={styles.noDocumentsText}>{text}</Text>
+    else {
+      return (
+        <View style={[styles.container, styles.centerText]}>
+          <View style={styles.textContainer}>
+            <Text style={styles.noDocumentsText}>{text}</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
+          </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
-        </View>        
-      </View>
-    );
-  }
+      );
+    }
   }
 });
 
@@ -369,7 +389,7 @@ var styles = StyleSheet.create({
     padding: 15,
     paddingLeft: 20,
     backgroundColor: '#F5F6F8',
-    alignSelf: 'stretch',    
+    alignSelf: 'stretch',
   },
   sortContainer: {
     padding: 0,
@@ -382,23 +402,23 @@ var styles = StyleSheet.create({
     textAlign: 'left'
   },
   singleBtnContainer: {
-        width: 140,
-        marginTop: 15,
-        justifyContent: "center",
-        height: 50,
-        backgroundColor: "#F5F6F8",
-        borderWidth: 0.5,
-        borderColor: "#BEBDBD"
-   },
-   button: {
-        color: "#666666",
-        fontWeight: "normal",
-        fontSize: 18, 
-   }
+    width: 140,
+    marginTop: 15,
+    justifyContent: "center",
+    height: 50,
+    backgroundColor: "#F5F6F8",
+    borderWidth: 0.5,
+    borderColor: "#BEBDBD"
+  },
+  button: {
+    color: "#666666",
+    fontWeight: "normal",
+    fontSize: 18,
+  }
 });
 
 Documents.contextTypes = {
-    plusMenuContext:  React.PropTypes.object
+  plusMenuContext: React.PropTypes.object
 };
 
 export default Documents
