@@ -84,9 +84,9 @@ class Documents extends Component {
   }
 
 
-  componentDidUpdate() {
-    this._showStatusBar()
-  }
+  // componentDidUpdate() {
+  //   this._showStatusBar()
+  // }
  
   onEndReached() {
     const {dispatch} = this.props
@@ -186,17 +186,17 @@ class Documents extends Component {
     )
   }
 
-  _showStatusBar() {
-    const {documentlists, navReducer} = this.props
-    var documentlist = getDocumentsContext(navReducer);
-    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
-    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+  // _showStatusBar() {
+  //   const {documentlists, navReducer} = this.props
+  //   var documentlist = getDocumentsContext(navReducer);
+  //   const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
+  //   const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
     
 
-    if (hasError && this.refs.masterView != undefined) {
-      this.refs.masterView.showMessage("success", errorMessage);
-    }
-  }
+  //   if (hasError && this.refs.masterView != undefined) {
+  //     this.refs.masterView.showMessage("success", errorMessage);
+  //   }
+  // }
 
   openModal(){
   //this.refs.modal3.open();
