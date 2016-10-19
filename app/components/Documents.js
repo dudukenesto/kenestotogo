@@ -302,8 +302,7 @@ class Documents extends Component {
   // }
 
   render() {
-    console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-    console.log('MKButton', MKButton.Builder)
+
     const {dispatch, documentlists, navReducer } = this.props
 
     //var currRoute = navReducer.routes[navReducer.index];

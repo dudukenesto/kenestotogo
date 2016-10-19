@@ -121,9 +121,7 @@ class Main extends React.Component {
 
 
   getChildContext() {
-    // console.log('\n\n\n\n\n\n ================= \n\n')
-    // console.log(this.refs.dropDownOptionsContainer)
-    // console.log('\n\n\n\n\n\n ======== |||||||||||||||||||||| ========= \n\n')
+
     return {
       plusMenuContext: this.refs.modalPlusMenu, 
       itemMenuContext: this.refs.modalItemMenu,
@@ -343,6 +341,7 @@ class Main extends React.Component {
             onPressPopupMenu={this.onPressPopupMenu}
             onIconClicked = {this.onNavIconClicked.bind(this) }
             navReducer={this.props.navReducer}
+            documentlists = {this.props.documentlists}
             isPopupMenuOpen={this.state.isPopupMenuOpen}
             dispatch={this.props.dispatch}
             />
