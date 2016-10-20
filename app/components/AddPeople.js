@@ -81,9 +81,9 @@ class AddPeople extends Component {
   }
 
   componentDidMount() {
-    var tags = [];
-    this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-    this.props.dispatch(docActions.SetSharingPermissions(tags));
+     var tags = [];
+     this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+     this.props.dispatch(docActions.SetSharingPermissions(tags));
   }
 
   componentWillUnmount() {
