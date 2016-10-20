@@ -56,10 +56,10 @@ class PlusMenu extends React.Component{
     }
 
     scan(){
-          this.props.closeMenuModal("modalPlusMenu");
+         // this.props.closeMenuModal("modalPlusMenu");
         
          
-          this.props.dispatch(navActions.push(scanRoute.route));
+         // this.props.dispatch(navActions.push(scanRoute.route));
 
     }
     

@@ -94,3 +94,11 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
       })
   }
 }
+
+export function removeFromSharingList(id: string){
+    
+    return {
+        type: types.REMOVE_FROM_SHARING_LIST,
+        id
+    }
+}

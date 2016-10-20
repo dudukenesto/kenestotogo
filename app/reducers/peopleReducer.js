@@ -33,6 +33,19 @@ function peopleReducer(state = {isFetching: false, UsersAndGroups: null, ObjectI
                 isFetching: false
 
             }
+         case types.REMOVE_FROM_SHARING_LIST:
+     //    alert(state.ObjectInfo.UsersPermissions)
+     
+     var permissions = state.ObjectInfo.UsersPermissions.slice();
+         _.remove(permissions, function (permission) {
+                return action.id === permission.ParticipantUniqueID
+                });
+                state.ObjectInfo.UsersPermissions = permissions;
+                return {
+                    ...state,
+                  //   fetchingListChanged : state.fetchingListChanged + 1
+                    }
+            
         default:
         return state
      }

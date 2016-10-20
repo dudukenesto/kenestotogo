@@ -76,7 +76,8 @@ class AddPeople extends Component {
     this.state = {
       showSharingList: true,
       globalPermissions: 'VIEW_ONLY',
-      orientation: Orientation.getInitialOrientation()
+      orientation: Orientation.getInitialOrientation(),
+      UsersPermissions : this.props.UsersPermissions
     };
   }
 
@@ -89,6 +90,11 @@ class AddPeople extends Component {
   componentWillUnmount() {
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
+  }
+
+  componentWillReceiveProps(nextprops){
+      //  alert(JSON.stringify(nextprops.ObjectInfo))
+     this.setState( {UsersPermissions : typeof nextprops.UsersPermissions  != 'undefined' ?nextprops.UsersPermissions : [] });
   }
 
   _orientationDidChange(orientation) {
@@ -128,6 +134,7 @@ class AddPeople extends Component {
     var errorMessage = tag + ' is not a valid email!'
     //this.refs.mainContainer2.showMessage("info", errorMessage);
     this.props.dispatch(navActions.emitToast("info", "", errorMessage));
+    this.props.dispatch(navActions.clearToast());
   }
 
   submitSelectedTags() {
@@ -206,8 +213,6 @@ class AddPeople extends Component {
   }
 
  onMenuSelect(name: string){
- 
-    
 
      if (this.props.clickedTrigger != 'addPeopleTrigger')
      {
@@ -219,7 +224,9 @@ class AddPeople extends Component {
        this.props.dispatch(navActions.updatedSelectedTrigerValue(name));
        
  }
- 
+ removeFromSharingList(ParticipantUniqueID : string){
+     this.props.dispatch(peopleAcions.removeFromSharingList(ParticipantUniqueID));
+ }
 
   renderOptionTemplate(rowData) {
     return (
@@ -240,7 +247,7 @@ class AddPeople extends Component {
 
   renderCurrentPermissions() {
 
-    var permissions = this.props.ObjectInfo.UsersPermissions.map(function (permission) {
+    var permissions = this.state.UsersPermissions.map(function (permission) {
 
       var iconName;
       var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
@@ -267,6 +274,7 @@ class AddPeople extends Component {
             dropDownTriggerStyle={styles.dropDownTriggerStyle}
             activeTriggerStyle={styles.activeTriggerStyle}
             optionTemplate={this.renderOptionTemplate.bind(this) }
+            removeOption={this.removeFromSharingList.bind(this)}
             options={userOptions}
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
@@ -329,7 +337,7 @@ class AddPeople extends Component {
             dropDownTriggerContainer={styles.dropDownTriggerContainer}
             activeTriggerStyle={styles.activeTriggerStyle}
             optionTemplate={this.renderOptionTemplate.bind(this) }
-          
+            removeOption={this.removeFromSharingList.bind(this)}
             options={globalOptions}
             aligningOptionsWithTrigger={"right"}
             openingDirection={"down"}
@@ -495,13 +503,13 @@ var styles = StyleSheet.create({
 function mapStateToProps(state) {
 
   const { peopleReducer, documentlists, navReducer  } = state
-
+  var thisUsersPermission = peopleReducer.ObjectInfo === null ||  peopleReducer.ObjectInfo.UsersPermissions === null ? [] : peopleReducer.ObjectInfo.UsersPermissions
 
   return {
     isFetching: peopleReducer.isFetching,
     documentlists,
     navReducer,
-    ObjectInfo: peopleReducer.ObjectInfo,
+    UsersPermissions:  thisUsersPermission,
     UsersAndGroups: peopleReducer.UsersAndGroups,
     clickedTrigger: navReducer.clickedTrigger,
   }

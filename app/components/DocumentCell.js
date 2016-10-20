@@ -45,7 +45,7 @@ var DocumentCell = React.createClass({
       var {dispatch} = this.props; 
    
       dispatch(updateSelectedObject(id, familyCode, ""));
-      dispatch(getDocumentPermissions(id, familyCode))
+      //dispatch(getDocumentPermissions(id, familyCode))
       this.context.itemMenuContext.open();
     },
 

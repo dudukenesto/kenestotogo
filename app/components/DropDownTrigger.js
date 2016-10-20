@@ -71,9 +71,22 @@ class DropDownTrigger extends Component {
        
           //alert(indexOfId + ' ' + this.props.id)
            if (this.props.clickedTrigger == this.props.id && nextprops.triggerSelectedValue != '')
-           {   
+           {   //alert(nextprops.triggerSelectedValue)
+               if (nextprops.triggerSelectedValue == 'NONE')
+               {    
+                   var xx = this.props.id.split('_'); 
+                   if (typeof xx != 'undefined' && xx.length > 1)
+                    {
+                        this.setState({isFetching: indexOfId > -1})
+                        this.props.removeOption(xx[1])
+                    }
+                 
+                 
+               }
+               else
                 //  alert(this.props.fetchingList + ' ' +nextprops.fetchingList)
-                this.setState({ selected: nextprops.triggerSelectedValue, isFetching: indexOfId > -1})
+                    this.setState({ selected: nextprops.triggerSelectedValue, isFetching: indexOfId > -1})
+                   
            }
            else{
              //    alert(this.props.fetchingList + ' ' + nextprops.fetchingList)

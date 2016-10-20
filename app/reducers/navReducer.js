@@ -135,7 +135,7 @@ function navigationState(state = initialState, action) {
       clickedTrigger: action.clickedTrigger
   }
   case UPDATE_SELECTED_TRIGGER_VALUE: 
-    addPeopleTriggerValue = state.clickedTrigger == 'addPeopleTrigger' ? action.value : '';
+    addPeopleTriggerValue = state.clickedTrigger == 'addPeopleTrigger' || action.value == 'NONE' ? action.value : '';
 
     return{
         ...state,

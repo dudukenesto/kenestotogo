@@ -343,7 +343,7 @@ export function downloadDocument(id: string, fileName: string){
                 dispatch(updateIsFetching(false)); 
               
               }).catch((error) => {
-                              alert("error:" + JSON.stringify(error))
+                         //     alert("error:" + JSON.stringify(error))
                               
                           }).done();
         }

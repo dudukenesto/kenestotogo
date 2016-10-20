@@ -149,9 +149,14 @@ export function requestUpdateTrigger(value: string){
       const ParticipantUniqueID = uersDetails[1];
       const familyCode = uersDetails[2];
       const triggerId = 'trigger_' + ParticipantUniqueID; 
-
-      dispatch(peopleActions.AddtoFetchingList(triggerId));
-      dispatch(updatedSelectedTrigerValue(value));
+  //    if (value != 'NONE')
+   //  {
+        dispatch(peopleActions.AddtoFetchingList(triggerId));
+        dispatch(updatedSelectedTrigerValue(value));
+   //  }
+    // else 
+    // alert('delete it!');
+     
    }
         
 }

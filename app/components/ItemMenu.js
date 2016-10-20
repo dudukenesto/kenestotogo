@@ -117,8 +117,7 @@ class ItemMenu extends React.Component{
 
     
     startDownload(){
-        return; 
-        
+
         this.props.dispatch(docActions.downloadDocument(this.state.document.Id, "kuku.jpg"));
         //alert('start Download')
     }
@@ -147,11 +146,7 @@ class ItemMenu extends React.Component{
     
     shareDocument(){
  //  alert('nav = ' + this.props.navReducer);
-
-   
-      alert(this.props.navReducer)
        const documentsContext = getDocumentsContext(this.props.navReducer);
-
 
       // alert(documentsContext)
          var data = {
