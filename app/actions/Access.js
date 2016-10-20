@@ -185,7 +185,8 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                 {
 
                     clearCredentials();
-                    dispatch(updateIsFetching(false)); 
+                    //dispatch(updateIsFetching(false));
+                     dispatch(emitError('Failed to Login')); 
                 }
   
                 else{

@@ -19,7 +19,7 @@ export function getAuthUrl(env: string,username: string, password: string){
     if (urls == null)
         return null;
 
-    var authUrl = urls.AuthUrlTemplate.replace('{0}', username).replace('{1}', password);
+    var authUrl = urls.AuthUrlTemplate.replace('{0}', username.trim()).replace('{1}', password.trim());
     return authUrl;
 
 }
