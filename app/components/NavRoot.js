@@ -69,6 +69,9 @@ class NavRoot extends Component {
       return <AddPeople _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
   }
+  _isItemMenuModalOpen() {
+    return this.props.isItemMenuModalOpen();
+  }
   _isMenuModalOpen() {
     return this.props.isMenuModalOpen();
   }
@@ -76,15 +79,21 @@ class NavRoot extends Component {
     return this.props.isDrawerOpen();
   }
 
+  _closeItemMenuModal() {
+    this.props.closeItemMenuModal();
+  }
   _closeDrawer() {
     this.props.closeDrawer();
-
   }
   _closeMenuModal() {
     this.props.closeMenuModal();
   }
 
   _handleBackAction() {
+    if (this._isItemMenuModalOpen()) {
+      this._closeItemMenuModal();
+      return true;
+    }
     if (this._isMenuModalOpen()) {
       this._closeMenuModal();
       return true;

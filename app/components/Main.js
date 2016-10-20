@@ -234,6 +234,10 @@ class Main extends React.Component {
     this.refs.modalItemMenu.close();
   }
 
+  isItemMenuModalOpen() {
+    return this.refs.modalItemMenu.state.isOpen;
+  }
+
   isMenuModalOpen() {
     return this.refs.modalPlusMenu.state.isOpen;
   }
@@ -348,7 +352,7 @@ class Main extends React.Component {
           :
           <View></View>
         }
-        <NavigationRootContainer closeDrawer ={this.closeDrawer.bind(this) } isDrawerOpen ={this.isDrawerOpen.bind(this) } isMenuModalOpen={this.isMenuModalOpen.bind(this) } closeMenuModal={this.closeMenuModal.bind(this) }/>
+        <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) } isItemMenuModalOpen ={this.isItemMenuModalOpen.bind(this) } closeDrawer ={this.closeDrawer.bind(this) } isDrawerOpen ={this.isDrawerOpen.bind(this) } isMenuModalOpen={this.isMenuModalOpen.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)  }/>
         <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
           <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this) } 
             openCreateFolder = {this.openCreateFolder.bind(this) }  createError={() => this.openModal("errorModal") }
