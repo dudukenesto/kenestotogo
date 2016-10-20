@@ -89,7 +89,7 @@ export async function getCredentials(props: Object) : Object{
           if (storedPassword != null && storedUserName != null)
                {
                 
-                   return   { hasCredentials: true, storedUserName : storedUserName, storedPassword : storedPassword, env : env, props: props};
+                   return   { hasCredentials: true, storedUserName : storedUserName, storedPassword : storedPassword, env : env, props: props, _handleNavigate: props._handleNavigate};
                }
                else
                     return { hasCredentials: false,  props: props};

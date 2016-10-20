@@ -70,7 +70,7 @@ class KenestoLauncher extends React.Component {
 
 
 
-        var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: actions.login, updateIsFetching : actions.updateIsFetching});
+        var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: actions.login, updateIsFetching : actions.updateIsFetching, _handleNavigate : this.props._handleNavigate});
         
     
          creadetiails.then(function(storedCredentials) {
@@ -78,12 +78,11 @@ class KenestoLauncher extends React.Component {
         
             if (storedCredentials.hasCredentials)
             {
-              //  alert(this.props.isFetching)
                storedCredentials.props.dispatch(storedCredentials.props.login(storedCredentials.storedUserName, storedCredentials.storedPassword, storedCredentials.env));
             }
             else{
-            
                 storedCredentials.props.dispatch(storedCredentials.props.updateIsFetching(false));
+                //storedCredentials.props._handleNavigate(routes.loginRoute)
             }
         });
 
