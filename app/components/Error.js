@@ -41,11 +41,9 @@ var styles = StyleSheet.create({
     },
     textEdit: {
         flex: 1,
-        color: "#000",
-        height: 50,            
+        color: "#000",          
         fontSize: 17,
         textAlign: "center",
-        paddingBottom: 15,
     },
     buttonsContainer: {
         flex: 1,
@@ -112,12 +110,11 @@ class Error extends React.Component {
                 <View style={styles.container}>
                     <View style={styles.titleContainer}>
                         <Icon name="error" style={styles.icon} />
-                        <Text style={styles.title}>{this.state.errorTitle}</Text>
+                        <Text style={styles.title}>Error has occurred</Text>
                     </View>
                     
                     <View style={styles.nameContainer}>
-
-                        <Text style={styles.textEdit}>{this.state.errorDetails}</Text>
+                        <Text style={styles.textEdit} numberOfLines={4}>{this.state.errorTitle}</Text>
                     </View>
                     
                     <View style={styles.buttonsContainer}>
