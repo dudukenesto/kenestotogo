@@ -117,6 +117,8 @@ class ItemMenu extends React.Component{
 
     
     startDownload(){
+        return; 
+        
         this.props.dispatch(docActions.downloadDocument(this.state.document.Id, "kuku.jpg"));
         //alert('start Download')
     }
