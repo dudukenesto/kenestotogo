@@ -122,14 +122,32 @@ class ItemMenu extends React.Component{
     }
     
     viewDocument(){
-        alert('view Document')
+         const documentsContext = getDocumentsContext(this.props.navReducer);
+         
+        var data = {
+        key: "document",
+        name: this.state.document.Name,
+        documentId: this.state.document.Id,
+        catId: documentsContext.catId,
+        fId: documentsContext.fId,
+        viewerUrl: this.state.document.ViewerUrl, 
+        isExternalLink : this.state.document.IsExternalLink,
+        isVault: this.state.document.IsVault,
+
+        env: this.props.env
+      }
+
+      
+       this.props.dispatch(navActions.push(routes.documentRoute(data).route));
+
+       this.props.closeItemMenuModal();
     }
     
     shareDocument(){
  //  alert('nav = ' + this.props.navReducer);
 
    
-      
+      alert(this.props.navReducer)
        const documentsContext = getDocumentsContext(this.props.navReducer);
 
 
@@ -253,7 +271,7 @@ class ItemMenu extends React.Component{
                                     <Icon name="file-download" style={styles.actionIcon} />
                                 </View>
                             </TouchableWithoutFeedback>
-                            <TouchableWithoutFeedback onPress={this.viewDocument}>
+                            <TouchableWithoutFeedback onPress={this.viewDocument.bind(this)}>
                                 <View style={styles.singleActionIconContainer}>
                                     <Icon name="remove-red-eye" style={styles.actionIcon} />
                                 </View>
@@ -276,9 +294,11 @@ ItemMenu.contextTypes = {
 
 function mapStateToProps(state) {
   const { documentlists, navReducer } = state
+   const {env } = state.accessReducer;
   return {
       documentlists : documentlists, 
       navReducer: navReducer, 
+      env: env
 
   }
 }
