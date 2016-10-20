@@ -67,7 +67,7 @@ var DocumentCell = React.createClass({
         if(this.props.document.IsVault)
           elementIcon = <KenestoIcon name="folder-google-drive" style={styles.icon} />
         else
-          elementIcon = <KenestoIcon name="folder" style={styles.icon} />
+          elementIcon = <Icon name="folder" style={styles.icon} />
       }
       else {
         if (typeof this.props.document.IconName != 'undefined')
