@@ -114,9 +114,11 @@ class CreateFolder extends React.Component {
         }
     }
 
-    create(){
-        this.props.dispatch(createFolder(this.state.folderName,this.state.isVault)); 
-        this.props.setCreateFolderStyle();
+    create() {
+        if (this.state.folderName != false) {
+            this.props.dispatch(createFolder(this.state.folderName, this.state.isVault));
+            this.props.setCreateFolderStyle();
+        }
     }
 
      

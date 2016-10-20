@@ -138,8 +138,6 @@ export function updatedSelectedTrigerValue(value: string){
 }
 
 export function requestUpdateTrigger(value: string){
- // console.log('\n\n\n\n\n\n ================== MY LOG START 5 ==================  \n\n\n\n\n\n')
- //     console.log(value)
    return (dispatch, getState) => {
       const documentLists = getState().documentlists; 
       const navReducer = getState().navReducer;
@@ -149,14 +147,8 @@ export function requestUpdateTrigger(value: string){
       const ParticipantUniqueID = uersDetails[1];
       const familyCode = uersDetails[2];
       const triggerId = 'trigger_' + ParticipantUniqueID; 
-  //    if (value != 'NONE')
-   //  {
-        dispatch(peopleActions.AddtoFetchingList(triggerId));
-        dispatch(updatedSelectedTrigerValue(value));
-   //  }
-    // else 
-    // alert('delete it!');
-     
+      dispatch(peopleActions.AddtoFetchingList(triggerId));
+      dispatch(updatedSelectedTrigerValue(value));
    }
         
 }
