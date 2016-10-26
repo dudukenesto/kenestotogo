@@ -24,8 +24,6 @@ import WebViewBridge from 'react-native-webview-bridge';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 var Orientation = require('./KenestoDeviceOrientation');
 
-
-
 class Document extends React.Component{
   constructor(props){
   
@@ -36,7 +34,8 @@ class Document extends React.Component{
     this.state = {  
       isLoading: true,
       scalingEnabled: true,
-      orientation: Orientation.getInitialOrientation()
+      orientation: Orientation.getInitialOrientation(),
+      url:""
     };
   }
   
@@ -67,6 +66,19 @@ class Document extends React.Component{
     this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
   }
 
+componentWillMount(){
+    if(this.props.data.isExternalLink)
+    {
+      var url =this.props.data.viewerUrl;
+    }
+    else
+    {
+      var width =  window.width ;
+      var height = window.height - 80;
+      var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env))+"&w="+width+"&h="+height;
+    }
+    this.setState( {url : url });
+}
   _orientationDidChange(orientation) {
     this.setState({
       orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
@@ -118,26 +130,15 @@ onBridgeMessage(message){
 
 
   render(){
-  if(this.props.data.isExternalLink)
-  {
-    var url =  this.props.data.viewerUrl;
-  }
-  else
-  {
-    var width =  this.state.orientation == 'PORTRAIT'? window.width : window.height - 80;
-    var height = this.state.orientation == 'PORTRAIT'? window.height - 80 : window.width- 80;
-    var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env))+"&w="+width+"&h="+height;
-  }
+
 
     return(
-
-    
       <View style={{ flex: 1}}>
           <View style={{flex: 1, backgroundColor: 'transparent', }}>
             <WebViewBridge
               ref="webviewbridge"
               style={styles.webview_body}
-              source={{ uri: url }}
+              source={{ uri: this.state.url }}
               onLoadEnd={this.onLoadEnd.bind(this) }
               javaScriptEnabled={true}
               domStorageEnabled={true}
