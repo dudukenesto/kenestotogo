@@ -99,11 +99,11 @@ export function retrieveStatistics() {
            dispatch(emitError("Failed to retrieve statistics",""))
         }
         else {
-         var totalMyDocuments = json.ResponseData.TotalMyDocuments;
-         var totalAllDocuments = json.ResponseData.TotalAllDocuments;
-         var totalSharedWithMe = json.ResponseData.TotalSharedWithMe;
-         var totalCheckedoutDocuments = json.ResponseData.TotalCheckedoutDocuments;
-         var totalArchivedDocuments = json.ResponseData.TotalArchivedDocuments;
+         var totalMyDocuments = json.ResponseData.MyDocuments;
+         var totalAllDocuments = json.ResponseData.AllDocuments;
+         var totalSharedWithMe = json.ResponseData.DocumentsSharedWithMe;
+         var totalCheckedoutDocuments = json.ResponseData.DocumentsCheckedOutByMe;
+         var totalArchivedDocuments = 0;//json.ResponseData.TotalArchivedDocuments;
          var totalUsageSpace = json.ResponseData.TotalUsageSpace;
          dispatch(updateStatistics(totalMyDocuments, totalAllDocuments, totalSharedWithMe, totalCheckedoutDocuments,totalArchivedDocuments,totalUsageSpace))
         }

@@ -155,5 +155,17 @@ export function getShareDocumentUrl(env: string, sessionToken: string, userData:
      return  `${apiBaseUrl}/KDocuments.svc/ShareDocument?t=${sessionToken}&ud=${userData}`;
 }
 
+export function getCheckInDocumentUrl(env: string, sessionToken: string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/CheckIn?t=${sessionToken}&ud=${userData}`;
+}
+
+export function getCheckOutDocumentUrl(env: string, sessionToken: string, documentId:string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/CheckOut?t=${sessionToken}&dId=${documentId}&ud=${userData}`;
+}
+
 
 

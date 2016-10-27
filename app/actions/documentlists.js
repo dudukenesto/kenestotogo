@@ -2,9 +2,11 @@ import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
 import * as Access from '../actions/Access'
 import * as peopleActions from '../actions/peopleActions'
-import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
+import {
+  constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
-   getDeleteAssetUrl, getDeleteFolderUrl,getSelectedDocument,getShareDocumentUrl, getDocumentPermissionsUrl} from '../utils/documentsUtils'
+  getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl, getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl
+} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
 const Android_Download_Path = '/storage/emulated/0/download';
@@ -15,34 +17,44 @@ let {
   ListView
 } = React
 
-export function updateIsFetching(isFetching: boolean){
-    return {
-        type: types.UPDATE_IS_FETCHING, 
-        isFetching
-    }
+export function updateIsFetching(isFetching: boolean) {
+  return {
+    type: types.UPDATE_IS_FETCHING,
+    isFetching
+  }
 }
 
-export function getDocumentPermissions(documentId:string, familyCode:string) {
+export function updateIsFetchingSelectedObject(isFetching: boolean) {
+  return {
+    type: types.UPDATE_IS_FETCHING_SELECTED_OBJECT,
+    isFetchingSelectedObject:isFetching
+  }
+}
+
+export function getDocumentPermissions(documentId: string, familyCode: string) {
   return (dispatch, getState) => {
-    const {sessionToken, env} = getState().accessReducer; 
-    dispatch(updateIsFetching(true))
-    var url = getDocumentPermissionsUrl(env,sessionToken, documentId, familyCode);
+    const {sessionToken, env} = getState().accessReducer;
+    dispatch(updateIsFetchingSelectedObject(true))
+    var url = getDocumentPermissionsUrl(env, sessionToken, documentId, familyCode);
     return fetch(url)
       .then(response => response.json())
       .then(json => {
         if (json.ResponseData.ResponseStatus == "FAILED") {
-           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,'error details'))
-           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+          dispatch(navActions.emitError(json.ResponseData.ErrorMessage, 'error details'))
+          dispatch(navActions.emitError(json.ResponseData.ErrorMessage, ""))
+          dispatch(updateIsFetchingSelectedObject(false))
         }
         else {
-          var permissions = json.ResponseData.DocumentPermissions;
+          var permissions = json.ResponseData.ObjectPermissions;
           dispatch(updateSelectedObject(documentId, familyCode, permissions))
+          dispatch(updateIsFetchingSelectedObject(false))
         }
       })
       .catch((error) => {
         console.log("error:" + JSON.stringify(error))
         //dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
-        dispatch(navActions.emitError("Failed to get document permissions",""))
+        dispatch(navActions.emitError("Failed to get document permissions", ""))
+        dispatch(updateIsFetchingSelectedObject(false))
       })
   }
 }
@@ -56,8 +68,8 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
         const nextUrl = json.ResponseData.next_href
         if (json.ResponseData.ResponseStatus == "FAILED") {
           //dispatch(failedToFetchDocumentsList(documentlist, url, json.ResponseData.ErrorMessage))
-           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,'error details'))
-           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+          dispatch(navActions.emitError(json.ResponseData.ErrorMessage, 'error details'))
+          dispatch(navActions.emitError(json.ResponseData.ErrorMessage, ""))
         }
         else {
           var prevState = getState();
@@ -73,22 +85,21 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             i,
             j;
 
-         var totalFiles = json.ResponseData.TotalFiles;
-         var totalFolders = json.ResponseData.TotalFolders;
-         
+          var totalFiles = json.ResponseData.TotalFiles;
+          var totalFolders = json.ResponseData.TotalFolders;
+
           if (actionType == types.RECEIVE_DOCUMENTS) {
             items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
           }
           else {
             items = [...json.ResponseData.DocumentsList]
           }
-          
+
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
           var sortBarTitle = `Folders`
-          if(totalFolders > 0 && totalFiles > 0)
-          {
+          if (totalFolders > 0 && totalFiles > 0) {
             dataBlob["ID1"] = `Folders (${totalFolders})`
             dataBlob["ID2"] = `Files (${totalFiles})`
             sectionIDs[0] = "ID1";
@@ -113,33 +124,31 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
               dataBlob['ID2:' + document.Id] = document;
             }
           }
-          else if(totalFolders > 0)
-          {
-             dataBlob["ID1"] = `Folders (${totalFolders})`
+          else if (totalFolders > 0) {
+            dataBlob["ID1"] = `Folders (${totalFolders})`
             sectionIDs[0] = "ID1";
-              rowIDs[0] = [];
-              for (j = 0; j < folders.length; j++) {
-                folder = folders[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[0].push(folder.Id);
+            rowIDs[0] = [];
+            for (j = 0; j < folders.length; j++) {
+              folder = folders[j];
+              // Add Unique Row ID to RowID Array for Section
+              rowIDs[0].push(folder.Id);
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID1:' + folder.Id] = folder;
-              }
+              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+              dataBlob['ID1:' + folder.Id] = folder;
+            }
           }
-          else if(totalFiles > 0)
-          {
-             dataBlob["ID1"] = `Files (${totalFiles})`
-             sectionIDs[0] = "ID1";
-              rowIDs[0] = [];
-              for (j = 0; j < documents.length; j++) {
-                document = documents[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[0].push(document.Id);
+          else if (totalFiles > 0) {
+            dataBlob["ID1"] = `Files (${totalFiles})`
+            sectionIDs[0] = "ID1";
+            rowIDs[0] = [];
+            for (j = 0; j < documents.length; j++) {
+              document = documents[j];
+              // Add Unique Row ID to RowID Array for Section
+              rowIDs[0].push(document.Id);
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID1:' + document.Id] = document;
-              }
+              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+              dataBlob['ID1:' + document.Id] = document;
+            }
           }
 
 
@@ -168,13 +177,13 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
               dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
               break
           }
-         
+
         }
       })
       .catch((error) => {
         console.log("error:" + JSON.stringify(error))
         //dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
-        dispatch(navActions.emitError("Failed to retrieve documents",""))
+        dispatch(navActions.emitError("Failed to retrieve documents", ""))
 
 
       })
@@ -184,7 +193,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
 export function fetchTableIfNeeded() {
   return (dispatch, getState) => {
-   
+
     var documentlist = getDocumentsContext(getState().navReducer);
     const {documentlists} = getState()
     //  console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
@@ -197,7 +206,7 @@ export function fetchTableIfNeeded() {
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId)
-     dispatch(navActions.updateRouteData(documentlist))
+    dispatch(navActions.updateRouteData(documentlist))
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
@@ -211,7 +220,7 @@ function getNextUrl(env: string, sessionToken: string, documentlists: Object, do
 
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
-    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection,documentlist.catId)
+    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId)
   }
   return activeDocumentsList.nextUrl
 }
@@ -235,15 +244,15 @@ function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: 
     type: types.REFRESH_DOCUMENTS_LIST,
     nextUrl,
     catId: documentlist.catId,
-    documents, 
+    documents,
     dataSource,
   }
 }
-export function UpdateCreateingFolderState(creating : int) {
+export function UpdateCreateingFolderState(creating: int) {
 
   return {
-    type : types.REQUEST_CREATE_FOLDER,
-    creatingFolder : creating
+    type: types.REQUEST_CREATE_FOLDER,
+    creatingFolder: creating
   }
 }
 
@@ -272,347 +281,432 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
   return false
 }
 
-export function updateSelectedObject(id: string, familyCode:string, permissions:object){
+export function updateSelectedObject(id: string, familyCode: string, permissions: object) {
 
-   return {
-      type: types.UPDATE_SELECTED_OBJECT,
-      selectedObject: {
-        id:id,
-        familyCode:familyCode,
-        permissions:permissions
-      }
+  return {
+    type: types.UPDATE_SELECTED_OBJECT,
+    selectedObject: {
+      id: id,
+      familyCode: familyCode,
+      permissions: permissions
     }
+  }
 }
 
 
-export function createFolder(folderName: string, isVault: boolean){
 
-return (dispatch, getState) => {
-   var documentlist = getDocumentsContext(getState().navReducer);
-    const {sessionToken, env} = getState().accessReducer; 
-    const folderId = documentlist.fId; 
+export function createFolder(folderName: string, isVault: boolean) {
+
+  return (dispatch, getState) => {
+    var documentlist = getDocumentsContext(getState().navReducer);
+    const {sessionToken, env} = getState().accessReducer;
+    const folderId = documentlist.fId;
     const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName, isVault);
     dispatch(UpdateCreateingFolderState(1))
     return fetch(createFolderUrl)
       .then(response => response.json())
       .then(json => {
         if (json.ResponseData.ResponseStatus == "FAILED") {
-         // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
-           
+          // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
 
-           dispatch(UpdateCreateingFolderState(2))
 
-           dispatch(navActions.emitError("Error creating new folder"))
+          dispatch(UpdateCreateingFolderState(2))
+
+          dispatch(navActions.emitError("Error creating new folder"))
         }
         else {
-             dispatch(UpdateCreateingFolderState(2))
-             dispatch(refreshTable(documentlist))    
-             dispatch(Access.retrieveStatistics());
+          dispatch(UpdateCreateingFolderState(2))
+          dispatch(refreshTable(documentlist))
+          dispatch(Access.retrieveStatistics());
         }
-        
+
       })
       .catch((error) => {
-         dispatch(navActions.emitError("Error creating new folder"))
-         dispatch(UpdateCreateingFolderState(0))
+        dispatch(navActions.emitError("Error creating new folder"))
+        dispatch(UpdateCreateingFolderState(0))
       })
   }
 }
 
 
 
-export function downloadDocument(id: string, fileName: string){
-   return (dispatch, getState) => {
-        dispatch(updateIsFetching(true)); 
-        const url = getDownloadFileUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id);
-         fetch(url)
-            .then(response => response.json())
-            .then(json => {
-                  const downloadUrl = json.ResponseData.AccessUrl; 
+export function downloadDocument(id: string, fileName: string) {
+  return (dispatch, getState) => {
+    dispatch(updateIsFetching(true));
+    const url = getDownloadFileUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id);
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        const downloadUrl = json.ResponseData.AccessUrl;
 
-                   if (Platform.OS === 'ios')
-                        downloadpath =RNFS.DocumentDirectoryPath;
-                   else
-                        downloadpath = Android_Download_Path;
+        if (Platform.OS === 'ios')
+          downloadpath = RNFS.DocumentDirectoryPath;
+        else
+          downloadpath = Android_Download_Path;
 
-                  const filePath = downloadpath + "/" + fileName;
-                    consloe.log('downloadUrl = ' + downloadUrl)
-                    RNFS.downloadFile({ fromUrl: downloadUrl, toFile: filePath}).then(res => {
-                          alert('OK');
-                    }).catch(err => alert(err));
+        const filePath = downloadpath + "/" + fileName;
+        consloe.log('downloadUrl = ' + downloadUrl)
+        RNFS.downloadFile({ fromUrl: downloadUrl, toFile: filePath }).then(res => {
+          alert('OK');
+        }).catch(err => alert(err));
 
-                dispatch(updateIsFetching(false)); 
-              
-              }).catch((error) => {
-                         //     alert("error:" + JSON.stringify(error))
-                              
-                          }).done();
-        }
+        dispatch(updateIsFetching(false));
+
+      }).catch((error) => {
+        //     alert("error:" + JSON.stringify(error))
+
+      }).done();
+  }
 }
- 
 
 
-export function uploadToKenesto(imageData: object, url: string){
+
+export function uploadToKenesto(imageData: object, url: string) {
 
   return (dispatch, getState) => {
 
-          dispatch(updateIsFetching(true)); 
+    dispatch(updateIsFetching(true));
 
-           fetch(url)
-            .then(response => response.json())
-            .then(json => {
-             
-              if (json.ResponseData.ResponseStatus == "FAILED") {
-               //   alert(failed)
-                // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
-                 dispatch(emitError(json.ResponseData.ErrorMessage,""))
-              }
-              else {
-              var AccessUrl = json.ResponseData.AccessUrl;
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
 
-              alert(AccessUrl)
-                      
-                      var request = new Request(AccessUrl, {
-                        method: 'PUT', 
-                        mode: 'cors', 
-                        redirect: 'follow',
-                        processData: false,
-                        cache: false,
-                        headers: new Headers({
-                          'Content-Type': 'multipart/form-data'
-                        }),
-                         body:  imageData
-                      });
-                                  
-                      fetch(request).then(response => {
-                          
-                          const completeUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
+        if (json.ResponseData.ResponseStatus == "FAILED") {
+          //   alert(failed)
+          // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
+          dispatch(emitError(json.ResponseData.ErrorMessage, ""))
+        }
+        else {
+          var AccessUrl = json.ResponseData.AccessUrl;
 
-                          //    alert(JSON.stringify(response))
+          alert(AccessUrl)
 
-                          fetch(completeUrl)
-                                .then(response => response.json())
-                                .then(json => {
-                                  dispatch(updateIsFetching(false)); 
+          var request = new Request(AccessUrl, {
+            method: 'PUT',
+            mode: 'cors',
+            redirect: 'follow',
+            processData: false,
+            cache: false,
+            headers: new Headers({
+              'Content-Type': 'multipart/form-data'
+            }),
+            body: imageData
+          });
 
-                                 // alert(JSON.stringify(json))
+          fetch(request).then(response => {
 
-                                  // if (json.ResponseData.ResponseStatus == "FAILED") {
-                                  //   dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
-                                  // }
-                                  // else {
-                                  //   alert('wawa');
-                                  // }
-                                })
-                                .catch((error) => {
-                                  console.log("error:" + JSON.stringify(error))
-                                  dispatch(navActions.emitError("Failed",JSON.stringify(error)))
+            const completeUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
 
+            //    alert(JSON.stringify(response))
 
-                                })
+            fetch(completeUrl)
+              .then(response => response.json())
+              .then(json => {
+                dispatch(updateIsFetching(false));
+
+                // alert(JSON.stringify(json))
+
+                // if (json.ResponseData.ResponseStatus == "FAILED") {
+                //   dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+                // }
+                // else {
+                //   alert('wawa');
+                // }
+              })
+              .catch((error) => {
+                console.log("error:" + JSON.stringify(error))
+                dispatch(navActions.emitError("Failed", JSON.stringify(error)))
 
 
+              })
 
 
 
-                      }).catch((error) => {
-                              console.log("error:" + JSON.stringify(error))
-                              dispatch(navActions.emitError("Failed to upload to kenesto",""))
-                          }).done();
-      
-                          
-              }
-            })
-            .catch((error) => {
-              //console.log("error:" + JSON.stringify(error))
-              dispatch(emitError("Failed to upload file to kenesto",""))
 
 
-            })
+          }).catch((error) => {
+            console.log("error:" + JSON.stringify(error))
+            dispatch(navActions.emitError("Failed to upload to kenesto", ""))
+          }).done();
+
+
+        }
+      })
+      .catch((error) => {
+        //console.log("error:" + JSON.stringify(error))
+        dispatch(emitError("Failed to upload file to kenesto", ""))
+
+
+      })
   }
 
 }
 
 // getDeleteFolderUrl
-export function deleteAsset(id: string, familyCode: string){
-   return (dispatch, getState) => {
-        dispatch(updateIsFetching(true)); 
-
-        const url = getDeleteAssetUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id, familyCode);
-
-            return fetch(url)
-                .then(response => response.json())
-                .then(json => {
-                   dispatch(updateIsFetching(false)); 
-                  if (json.ResponseStatus == "FAILED") {
-
-
-                      dispatch(navActions.emitToast("error", "", "Error deleting asset"))
-                  }
-                  else {
-                        dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
-                         var documentlist = getDocumentsContext(getState().navReducer);
-                         dispatch(refreshTable(documentlist))    
-                         dispatch(navActions.clearToast());
-                        
-                    }
-      })
-      .catch((error) => {
-          dispatch(navActions.emitToast("error", "", "Error deleting asset"))
-          dispatch(navActions.clearToast());
-      })
-
-   }
-}
-
-export function deleteFolder(id: string){
-   return (dispatch, getState) => {
-        dispatch(updateIsFetching(true)); 
-
-        const url = getDeleteFolderUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id);
-
-            return fetch(url)
-                .then(response => response.json())
-                .then(json => {
-                   dispatch(updateIsFetching(false)); 
-                  if (json.ResponseStatus == "FAILED") {
-                      dispatch(navActions.emitToast("error", "", "Error deleting folder"))
-                  }
-                  else {
-                        dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
-                         var documentlist = getDocumentsContext(getState().navReducer);
-                         dispatch(refreshTable(documentlist))    
-                         dispatch(navActions.clearToast());
-                    }
-      })
-      .catch((error) => {
-          // dispatch(navActions.emitToast("error",error, "Error deleting folder"))
-      })
-
-   }
-}
-
-
-
-export function SetSharingPermissions(tags: object){
-
-    var permissions = []; 
-     tags.map((t) => (
-      permissions.push({ParticipantUniqueID: t.tagID, FamilyCode: t.aditionalData, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
-       ForUpdate: "true",  PermissionTypeValue : 'VIEW_ONLY', AllowShare: "false",  AllowUpload: "false" })
-      ))
-      
-       return {
-            type: types.SET_SHARING_PERMISSIONS,
-            sharingPermissions : permissions
-        }
-}
-
-
-export function UpdateDocumentSharingPermission(){
+export function deleteAsset(id: string, familyCode: string) {
   return (dispatch, getState) => {
-      const documentLists = getState().documentlists; 
-      const navReducer = getState().navReducer;
-      const document = getSelectedDocument(documentLists, navReducer);
-      const triggerSelectedValue = navReducer.triggerSelectedValue;
-      const uersDetails = getState().navReducer.clickedTrigger.split('_');
-      const ParticipantUniqueID = uersDetails[1];
-      const familyCode = uersDetails[2];
-      const triggerId = 'trigger_' + ParticipantUniqueID; 
+    dispatch(updateIsFetching(true));
 
-      var sharingPermissions = []; 
-      sharingPermissions.push({ParticipantUniqueID: ParticipantUniqueID, FamilyCode: familyCode, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
-       ForUpdate: "true",  PermissionTypeValue : triggerSelectedValue, AllowShare: "false",  AllowUpload: "false" }); 
+    const url = getDeleteAssetUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id, familyCode);
 
-       const sharingObject = { asset: {
-          ID: document.Id, 
-          UsersPermissions : sharingPermissions
-          }
-      }
-
-      //  dispatch(peopleActions.AddtoFetchingList(triggerId));
-//updateIsFetching
-        const url = getShareDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(updateIsFetching(false));
+        if (json.ResponseStatus == "FAILED") {
 
 
-        var request = new Request(url, {
-          method: 'post', 
-          mode: 'cors', 
-          redirect: 'follow',
-          processData: false,
-          cache: false,
-          headers: new Headers({
-            'Content-Type': 'application/json'
-          }),
-            body:  JSON.stringify(sharingObject)
-        });
-                    
-        fetch(request).then(response => {
-        //  setTimeout(function(){ dispatch(peopleActions.RemoveFromFetchingList(triggerId));}, 3000);
-         dispatch(peopleActions.RemoveFromFetchingList(triggerId));
-            //     alert(JSON.stringify(response))
+          dispatch(navActions.emitToast("error", "", "Error deleting asset"))
+        }
+        else {
+          dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
+          var documentlist = getDocumentsContext(getState().navReducer);
+          dispatch(refreshTable(documentlist))
+          dispatch(navActions.clearToast());
 
-        }).catch((error) => {
-                dispatch(navActions.emitError(error,""))
-            }).done();
+        }
+      })
+      .catch((error) => {
+        dispatch(navActions.emitToast("error", "", "Error deleting asset"))
+        dispatch(navActions.clearToast());
+      })
 
-    
+  }
+}
 
-    }
+export function deleteFolder(id: string) {
+  return (dispatch, getState) => {
+    dispatch(updateIsFetching(true));
+
+    const url = getDeleteFolderUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id);
+
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(updateIsFetching(false));
+        if (json.ResponseStatus == "FAILED") {
+          dispatch(navActions.emitToast("error", "", "Error deleting folder"))
+        }
+        else {
+          dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
+          var documentlist = getDocumentsContext(getState().navReducer);
+          dispatch(refreshTable(documentlist))
+          dispatch(navActions.clearToast());
+        }
+      })
+      .catch((error) => {
+        // dispatch(navActions.emitToast("error",error, "Error deleting folder"))
+      })
+
+  }
 }
 
 
-export function ShareDocument(){
 
-   return (dispatch, getState) => {
-      const documentLists = getState().documentlists; 
-      const navReducer = getState().navReducer;
-      var document = getSelectedDocument(documentLists, navReducer); 
-      const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue; 
-      const sharingPermissions = documentLists.sharingPermissions; 
+export function SetSharingPermissions(tags: object) {
 
-     
-     for (var i=0; i< sharingPermissions.length; i++){
-        sharingPermissions[i].PermissionTypeValue = addPeopleTriggerValue;
-     }
+  var permissions = [];
+  tags.map((t) => (
+    permissions.push({
+      ParticipantUniqueID: t.tagID, FamilyCode: t.aditionalData, AccessLinkID: '00000000-0000-0000-0000-000000000000',
+      ForUpdate: "true", PermissionTypeValue: 'VIEW_ONLY', AllowShare: "false", AllowUpload: "false"
+    })
+  ))
 
-      const sharingObject = { asset: {
-          ID: document.Id, 
-          UsersPermissions : sharingPermissions
-          }
+  return {
+    type: types.SET_SHARING_PERMISSIONS,
+    sharingPermissions: permissions
+  }
+}
+
+
+export function UpdateDocumentSharingPermission() {
+  return (dispatch, getState) => {
+    const documentLists = getState().documentlists;
+    const navReducer = getState().navReducer;
+    const document = getSelectedDocument(documentLists, navReducer);
+    const triggerSelectedValue = navReducer.triggerSelectedValue;
+    const uersDetails = getState().navReducer.clickedTrigger.split('_');
+    const ParticipantUniqueID = uersDetails[1];
+    const familyCode = uersDetails[2];
+    const triggerId = 'trigger_' + ParticipantUniqueID;
+
+    var sharingPermissions = [];
+    sharingPermissions.push({
+      ParticipantUniqueID: ParticipantUniqueID, FamilyCode: familyCode, AccessLinkID: '00000000-0000-0000-0000-000000000000',
+      ForUpdate: "true", PermissionTypeValue: triggerSelectedValue, AllowShare: "false", AllowUpload: "false"
+    });
+
+    const sharingObject = {
+      asset: {
+        ID: document.Id,
+        UsersPermissions: sharingPermissions
       }
+    }
 
-      const url = getShareDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
+    //  dispatch(peopleActions.AddtoFetchingList(triggerId));
+    //updateIsFetching
+    const url = getShareDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
 
-          
-                      var request = new Request(url, {
-                        method: 'post', 
-                        mode: 'cors', 
-                        redirect: 'follow',
-                        processData: false,
-                        cache: false,
-                        headers: new Headers({
-                          'Content-Type': 'application/json'
-                        }),
-                         body:  JSON.stringify(sharingObject)
-                      });
-                                  
-                      fetch(request)
-                         .then(response => response.json())
-                         .then(json => {
-                               if (json.ResponseStatus == "FAILED") {
-                                    dispatch(navActions.emitError("Failed to share document",""))
-                                  }
-                                else{
-                                     dispatch(navActions.pop());
-                                     dispatch(navActions.emitToast("success","Sharing settings updated",""));
-                                     dispatch(navActions.clearToast());
-                                   
-                                }
 
-                      }).catch((error) => {
-                              dispatch(navActions.emitError("Failed to share object",""))
-                           throw error;
-                          }).done();
-   }
- 
+    var request = new Request(url, {
+      method: 'post',
+      mode: 'cors',
+      redirect: 'follow',
+      processData: false,
+      cache: false,
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify(sharingObject)
+    });
+
+    fetch(request).then(response => {
+      //  setTimeout(function(){ dispatch(peopleActions.RemoveFromFetchingList(triggerId));}, 3000);
+      dispatch(peopleActions.RemoveFromFetchingList(triggerId));
+      //     alert(JSON.stringify(response))
+
+    }).catch((error) => {
+      dispatch(navActions.emitError(error, ""))
+    }).done();
+
+  }
+}
+
+export function CheckOut() {
+
+  return (dispatch, getState) => {
+    const documentLists = getState().documentlists;
+    const navReducer = getState().navReducer;
+    var document = getSelectedDocument(documentLists, navReducer);
+
+    const url = getCheckOutDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, document.Id);
+    dispatch(updateIsFetching(true));
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseStatus == "FAILED") {
+           dispatch(updateIsFetching(false));
+           dispatch(navActions.emitError("Failed to Check-Out document", ""))
+        }
+        else {
+          dispatch(updateIsFetching(false));
+          dispatch(navActions.emitToast("success", "Document successfully checked out.", ""));
+          dispatch(navActions.clearToast());
+         
+        }
+
+      }).catch((error) => {
+        dispatch(updateIsFetching(false));
+        dispatch(navActions.emitError("Failed to Check-Out document", ""))
+        throw error;
+      }).done();
+  }
+
+}
+
+
+export function CheckIn(comment :string) {
+
+  return (dispatch, getState) => {
+    const documentLists = getState().documentlists;
+    const navReducer = getState().navReducer;
+    var document = getSelectedDocument(documentLists, navReducer);
+
+    const url = getCheckInDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
+    dispatch(updateIsFetching(true));
+    const jsonObject = {
+      asset: {
+        ID: document.Id,
+        Comment : comment
+      }
+    }
+console.log(url)
+console.log(JSON.stringify(jsonObject))
+    var request = new Request(url, {
+      method: 'post',
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify(jsonObject)
+    });
+
+    fetch(request)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseStatus == "FAILED") {
+           dispatch(updateIsFetching(false));
+           dispatch(navActions.emitError("Failed to Check-In document", ""))
+        }
+        else {
+          dispatch(updateIsFetching(false));
+          dispatch(navActions.emitToast("success", "Document successfully checked in.", ""));
+          dispatch(navActions.clearToast());
+         
+        }
+
+      }).catch((error) => {
+        dispatch(updateIsFetching(false));
+        dispatch(navActions.emitError("Failed to Check-In document", ""))
+        throw error;
+      }).done();
+  }
+
+}
+
+export function ShareDocument() {
+
+  return (dispatch, getState) => {
+    const documentLists = getState().documentlists;
+    const navReducer = getState().navReducer;
+    var document = getSelectedDocument(documentLists, navReducer);
+    const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue;
+    const sharingPermissions = documentLists.sharingPermissions;
+
+
+    for (var i = 0; i < sharingPermissions.length; i++) {
+      sharingPermissions[i].PermissionTypeValue = addPeopleTriggerValue;
+    }
+
+    const sharingObject = {
+      asset: {
+        ID: document.Id,
+        UsersPermissions: sharingPermissions
+      }
+    }
+
+    const url = getShareDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken);
+
+
+    var request = new Request(url, {
+      method: 'post',
+      mode: 'cors',
+      redirect: 'follow',
+      processData: false,
+      cache: false,
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify(sharingObject)
+    });
+
+    fetch(request)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseStatus == "FAILED") {
+          dispatch(navActions.emitError("Failed to share document", ""))
+        }
+        else {
+          dispatch(navActions.pop());
+          dispatch(navActions.emitToast("success", "Sharing settings updated", ""));
+          dispatch(navActions.clearToast());
+
+        }
+
+      }).catch((error) => {
+        dispatch(navActions.emitError("Failed to share object", ""))
+        throw error;
+      }).done();
+  }
+
 } 

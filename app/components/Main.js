@@ -23,6 +23,7 @@ import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
 import Info from './Info'
 import Confirm from './Confirm'
+import CheckInDocument from './CheckInDocument'
 
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
@@ -250,7 +251,10 @@ class Main extends React.Component {
     return this.props.isDrawerOpen();
   }
 
-
+openCheckInModal()
+{
+   this.openModal("checkInModal");
+}
 
   openCreateFolder() {
     this.refs.CreateFolder.open();
@@ -361,12 +365,15 @@ class Main extends React.Component {
         <Modal style={[styles.modal, styles.itemMenu]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
           <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) }
              createError={() => this.openModal("errorModal") }
-            closeCreateFolder={this.closeCreateFolder.bind(this) }/>
+            closeCreateFolder={this.closeCreateFolder.bind(this) } openCheckInModal={this.openCheckInModal.bind(this) }/>
         </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
           <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.closeCreateFolder.bind(this) }
             closeCreateFolder={this.closeCreateFolder.bind(this) } setCreateFolderStyle={this.setProcessingStyle.bind(this) }
             />
+        </Modal>
+        <Modal style= {modalStyle} position={"center"}  ref={"checkInModal"} isDisabled={false}>
+          <CheckInDocument closeModal = {() => this.closeModal("checkInModal") } openModal = {() => this.openModal("checkInModal") }/>
         </Modal>
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>

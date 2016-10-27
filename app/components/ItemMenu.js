@@ -13,6 +13,7 @@ import {connect} from 'react-redux'
 import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {getSelectedDocument, getDocumentsContext} from '../utils/documentsUtils'
+import * as documentsActions from '../actions/documentlists'
 import MartialExtendedConf from '../assets/icons/config.json';
 import * as routes from '../constants/routes'
 import * as navActions from '../actions/navActions'
@@ -172,6 +173,16 @@ class ItemMenu extends React.Component{
         alert('rename Document')
     }
     
+    checkinDocument(){
+        this.props.closeItemMenuModal();
+       this.props.openCheckInModal()
+    }
+    
+    checkoutDocument(){
+        this.props.closeItemMenuModal();
+        this.props.dispatch(documentsActions.CheckOut());
+    }
+    
     deleteDocument(){
 
          // this.refs.mainContainer.showMessage("info", errorMessage)
@@ -187,30 +198,103 @@ class ItemMenu extends React.Component{
         var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
         this.setState({ document: document});
     }
-
-    _renderMenuItemActions(isFetching) {
-        if (!isFetching) {
-            return (<View style={styles.menuItemsContainer}>
-                <TouchableHighlight onPress={this.shareDocument.bind(this) } underlayColor="#E9EAEC">
-                    <View style={styles.actionHolder}>
-                        <Icon name="share" style={styles.icon} />
-                        <Text style={styles.actionName}>Share</Text>
-                    </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
+   
+   _renderShareAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowShare)
+            {
+                return(<TouchableHighlight onPress={this.shareDocument.bind(this) } underlayColor="#E9EAEC">
+                                <View style={styles.actionHolder}>
+                                    <Icon name="share" style={styles.icon} />
+                                    <Text style={styles.actionName}>Share</Text>
+                                </View>
+                            </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+   
+    _renderRenameAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.IsOwnedByRequestor)
+            {
+                return( <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
                         <Icon name="edit" style={styles.icon} />
                         <Text style={styles.actionName}>Rename</Text>
                     </View>
-                </TouchableHighlight>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
 
-                <TouchableHighlight onPress={this.deleteDocument.bind(this) } underlayColor="#E9EAEC">
+    _renderDeleteAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.IsOwnedByRequestor)
+            {
+                return( <TouchableHighlight onPress={this.deleteDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
                         <Icon name="delete" style={styles.icon} />
                         <Text style={styles.actionName}>Delete</Text>
                     </View>
-                </TouchableHighlight>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+    _renderCheckinAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowCheckin)
+            {
+                return( <TouchableHighlight onPress={this.checkinDocument.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <Icon name="edit" style={styles.icon} />
+                        <Text style={styles.actionName}>Check In</Text>
+                    </View>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+    _renderCheckoutAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowCheckout)
+            {
+                return( <TouchableHighlight onPress={this.checkoutDocument.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <Icon name="edit" style={styles.icon} />
+                        <Text style={styles.actionName}>Check Out</Text>
+                    </View>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+    _renderMenuItemActions(isFetching) {
+         var document = getSelectedDocument(this.props.documentlists, this.props.navReducer);
+        if (!isFetching) {
+              
+              
+            return (
+                
+            <View style={styles.menuItemsContainer}>
+               { this._renderShareAction(document)}
+               { this._renderCheckinAction(document)}
+               { this._renderCheckoutAction(document)}
+               { this._renderRenameAction(document)}
+               { this._renderDeleteAction(document)}
+                
             </View>)
         }
         else {
@@ -227,7 +311,7 @@ class ItemMenu extends React.Component{
         var elementIcon;
         const {navReducer} = this.props
         var currRouteData = getDocumentsContext(navReducer);
-        const isFetching = this.props.documentlists.isFetching;
+        const isFetching = this.props.documentlists.isFetchingSelectedObject;
 
         if (this.state.document.HasThumbnail) {
             elementIcon = <Image source = {{ uri: this.state.document.ThumbnailUrl }} style={styles.previewThumbnail} />

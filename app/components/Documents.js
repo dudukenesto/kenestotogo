@@ -275,7 +275,8 @@ class Documents extends Component {
     //var currRoute = navReducer.routes[navReducer.index];
     var documentlist = getDocumentsContext(navReducer);
     // console.log("render documents page: " +JSON.stringify(documentlist))
-    const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
+    //const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
+    const isFetching = documentlists.isFetching;
     var additionalStyle = {};
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
     let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
