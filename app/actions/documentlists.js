@@ -8,11 +8,13 @@ import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreate
 import * as routes from '../constants/routes'
 import _ from "lodash";
 const Android_Download_Path = '/storage/emulated/0/download';
+var RNFS = require('react-native-fs');
 let React = require('react-native')
-
+//import RNFetchBlob from 'react-native-fetch-blob'
 let {
   Alert,
-  ListView
+  ListView,
+  Platform
 } = React
 
 export function updateIsFetching(isFetching: boolean){
@@ -328,33 +330,94 @@ export function downloadDocument(id: string, fileName: string){
             .then(response => response.json())
             .then(json => {
                   const downloadUrl = json.ResponseData.AccessUrl; 
-
                    if (Platform.OS === 'ios')
                         downloadpath =RNFS.DocumentDirectoryPath;
                    else
                         downloadpath = Android_Download_Path;
 
                   const filePath = downloadpath + "/" + fileName;
-                    consloe.log('downloadUrl = ' + downloadUrl)
-                    RNFS.downloadFile({ fromUrl: downloadUrl, toFile: filePath}).then(res => {
-                          alert('OK');
-                    }).catch(err => alert(err));
 
-                dispatch(updateIsFetching(false)); 
+                  const ret = RNFS.downloadFile({ fromUrl: downloadUrl, toFile: filePath});
+
+                   ret.promise.then(res => {
+                          alert(JSON.stringify(res));
+                           dispatch(updateIsFetching(false)); 
+                    }).catch(err => {
+                            alert('error downloading');
+                             dispatch(updateIsFetching(false)); 
+                    });
+
+
+
+                   // consloe.log('downloadUrl = ' + downloadUrl)
+                    // RNFS.downloadFile({ fromUrl: downloadUrl, toFile: filePath}).then(res => {
+                    //       alert('OK');
+                //    }).done();
+                    //.catch(err => alert(err));
+
+               
               
-              }).catch((error) => {
-                         //     alert("error:" + JSON.stringify(error))
+              }).done();
+              // .catch((error) => {
+              //                 alert("error:" + JSON.stringify(error))
                               
-                          }).done();
+              //             }).done();
         }
 }
+
+function uploadFile(url,file){
+	
+	       return new Promise((resolve, reject) => {
+	
+	    var xhr = new XMLHttpRequest();
+	    xhr.onerror = function (e) {
+	      // handle failture
+	      console.log(e);
+	      reject();
+	    };
+	
+	    xhr.upload.addEventListener('progress', function (e) {
+	      // handle notifications about upload progress: e.loaded / e.total
+	    }, false);
+	
+	    xhr.onreadystatechange = function () {
+	        if (xhr.readyState === XMLHttpRequest.DONE) {
+	          if (xhr.status >= 200 && xhr.status <= 299) {
+	            // upload completed//
+             // alert(xhr.status)
+	            resolve(xhr.status + ": " +url);
+	          } else {
+	            // failed with error messge from server
+	            reject(xhr.status + ": " + url);
+	          }
+	        }
+	    };
+
+      // xhr.processData = false;  
+    //   xhr.cache = false; 
+    // var formData = new FormData();
+  //   formData.append('file', file);
+	    
+       xhr.open('PUT', url);
+        xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+      if (1==2)
+        reject('error');
+
+      //   alert(file.name + ' ' + file.fileName );
+
+     // resolve(file.name + ' ' + file.fileName );
+
+     
+       
+	     xhr.send(file);
+	       });
+	}
+
+
  
-
-
-export function uploadToKenesto(imageData: object, url: string){
+export function uploadToKenesto(fileObject: object, url: string){
 
   return (dispatch, getState) => {
-
           dispatch(updateIsFetching(true)); 
 
            fetch(url)
@@ -364,13 +427,107 @@ export function uploadToKenesto(imageData: object, url: string){
               if (json.ResponseData.ResponseStatus == "FAILED") {
                //   alert(failed)
                 // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
-                 dispatch(emitError(json.ResponseData.ErrorMessage,""))
+                 dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+              }
+              else {
+                 var AccessUrl = json.ResponseData.AccessUrl;
+
+               //  alert(JSON.stringify(fileObject))
+                // const completeUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
+              // alert(imageData.path)
+
+              //alert(fileObject.name + ' ' + fileObject.fileName);
+                 uploadFile(AccessUrl,fileObject)
+                 .then((completed) => {
+                    
+                         const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
+                          fetch(thisCompletedUrl)
+                                .then(response => response.json())
+                                .then(json => {
+                                  dispatch(updateIsFetching(false)); 
+
+                                  alert(JSON.stringify(json))
+
+                                  // if (json.ResponseData.ResponseStatus == "FAILED") {
+                                  //   dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+                                  // }
+                                  // else {
+                                  //   alert('wawa');
+                                  // }
+                                })
+                                .catch((error) => {
+                                  console.log("error:" + JSON.stringify(error))
+                                  dispatch(navActions.emitError("Failed",JSON.stringify(error)))
+
+
+                                }) 
+                                
+                  })
+                 .catch(err => {alert(err)});
+
+                      
+                // var xhr = new XMLHttpRequest();
+                //       xhr.onerror = function (e) {
+                //   // handle failture
+                //  // console.log(e);
+                //  alert(e);
+                // //  reject();
+                // };
+
+                // xhr.upload.addEventListener('progress', function (e) {
+                //   // handle notifications about upload progress: e.loaded / e.total
+                // }, false);
+
+                // xhr.onreadystatechange = function () {
+                //     if (xhr.readyState === XMLHttpRequest.DONE) {
+                //       if (xhr.status >= 200 && xhr.status <= 299) {
+                //         // upload completed//
+                //      //  resolve(signedUrlToKeep);
+
+                //         alert('uploaded');
+                //       } else {
+
+                //         alert('error: ' + xhr.status);
+                //         // failed with error messge from server
+                //        // reject();
+                //       }
+                //     }
+                // };
+
+              // xhr.processData = false;  
+              // xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+
+              // xhr.open('GET', 'http://images1.ynet.co.il/PicServer4/2015/11/23/6652242/665223901000100640360no.jpg', false);
+              //  // xhr.open('PUT', url, false);
+              //   xhr.send();
+                    
+              }
+            })
+            .catch((error) => {
+              //console.log("error:" + JSON.stringify(error))
+              dispatch(navActions.emitError("Failed to upload file to kenesto",""))
+
+            })
+  }
+
+}
+
+export function uploadToKenesto2(imageData: object, url: string){
+
+  return (dispatch, getState) => {
+
+          dispatch(updateIsFetching(true)); 
+           fetch(url)
+            .then(response => response.json())
+            .then(json => {
+             
+              if (json.ResponseData.ResponseStatus == "FAILED") {
+               //   alert(failed)
+                // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
+                 dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
               }
               else {
               var AccessUrl = json.ResponseData.AccessUrl;
-
-              alert(AccessUrl)
-                      
                       var request = new Request(AccessUrl, {
                         method: 'PUT', 
                         mode: 'cors', 
@@ -387,8 +544,7 @@ export function uploadToKenesto(imageData: object, url: string){
                           
                           const completeUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
 
-                          //    alert(JSON.stringify(response))
-
+                           alert(JSON.stringify(response))
                           fetch(completeUrl)
                                 .then(response => response.json())
                                 .then(json => {
@@ -424,7 +580,7 @@ export function uploadToKenesto(imageData: object, url: string){
             })
             .catch((error) => {
               //console.log("error:" + JSON.stringify(error))
-              dispatch(emitError("Failed to upload file to kenesto",""))
+              dispatch(navActions.emitError("Failed to upload file to kenesto",""))
 
 
             })

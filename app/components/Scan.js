@@ -44,8 +44,11 @@ class Scan extends React.Component {
 
   upload(){
       const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.image.name);
-
-      this.props.dispatch(uploadToKenesto(this.state.image.data,url));
+  const fileName = this.state.image.path.substring(this.state.image.path.lastIndexOf('/') + 1); 
+  const name = fileName.substring(0,  fileName.lastIndexOf('.'));
+ // alert(fileName + name);
+//alert(JSON.stringify(this.state.image.path));
+      this.props.dispatch(uploadToKenesto({name: name, fileName : fileName, data : this.state.image.data},url));
 
 
       //  fetch(url)
@@ -98,7 +101,7 @@ class Scan extends React.Component {
       const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
      
       this.setState({
-        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data},
+        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path},
         images: null, 
         initial: false
       });

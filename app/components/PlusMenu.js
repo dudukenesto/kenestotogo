@@ -56,11 +56,8 @@ class PlusMenu extends React.Component{
     }
 
     scan(){
-         // this.props.closeMenuModal("modalPlusMenu");
-        
-         
-         // this.props.dispatch(navActions.push(scanRoute.route));
-
+          this.props.closeMenuModal("modalPlusMenu");
+          this.props.dispatch(navActions.push(scanRoute.route));
     }
     
 
@@ -73,7 +70,7 @@ class PlusMenu extends React.Component{
                 </View>
                 
                 <View style={styles.actionHolder}>
-                    <Icon name="file-upload" style={styles.actionButtonIcon} />
+                    <Icon name="file-upload" style={styles.actionButtonIcon} onPress={this.scan.bind(this)}/>
                     <Text style={styles.actionName}>Upload File</Text>
                 </View>
                 
