@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {View,
+  ScrollView,
   Text,
   TextInput,
   StyleSheet,
@@ -215,6 +216,7 @@ class Documents extends Component {
     }
     else {
       return (
+        <ScrollView>
         <ListView
           ref="listview"
           refreshControl={
@@ -243,6 +245,8 @@ class Documents extends Component {
           keyboardShouldPersistTaps={true}
           showsVerticalScrollIndicator={false}
           />
+          <View style={{backgroundColor: '#F5F6F8', height: 100}}></View>
+          </ScrollView>
       )
     }
   }

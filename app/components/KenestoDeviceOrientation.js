@@ -76,6 +76,6 @@ module.exports = {
   // },
   getInitialOrientation() {
     return Orientation.initialOrientation;
-    console.log('Orientation', Orientation)
+    
   }
 }
