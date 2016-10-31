@@ -3,7 +3,7 @@ import _ from 'lodash'
 import stricturiEncode from 'strict-uri-encode'
 import * as constans from '../constants/GlobalConstans'
 
-export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId) {
+export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId, keyboard) {
   var urls = _.find(config.urls, { 'env': env });
   const splitChars = '|';
   var apiBaseUrl = urls.ApiBaseUrl;
@@ -35,16 +35,24 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
       break;
     case constans.CHECKED_OUT_DOCUMENTS:
       functionName = 'RetrieveCheckedOutDocuments';
+    case constans.SEARCH_DOCUMENTS:
+      functionName = 'DocumentsQuickSearch';
       break;
   }
 
-  if (fId == undefined || fId == "") {
-    return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}`
+  if(key == constans.SEARCH_DOCUMENTS)
+  {
+    return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&k=${keyboard}`
   }
-  else {
-    return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}`
+  else
+  {
+    if ( typeof (fId) == 'undefined' || fId == "") {
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}`
+    }
+    else {
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}`
+    }
   }
-
 }
 
 
@@ -100,6 +108,8 @@ export function getDocumentsTitle(categoryType: String) {
       return "Checked-out Documents";
     case constans.ARCHIVED_DOCUMENTS:
       return "Archived Documents";
+       case constans.SEARCH_DOCUMENTS:
+      return "Search Documents";
     default:
       return "My Documents";
 

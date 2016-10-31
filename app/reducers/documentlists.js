@@ -98,7 +98,7 @@ export default function documentlists(state = {isFetching: false,isFetchingSelec
          isFetching: false,
         selectedObject: action.selectedObject
       }
-    case types.CLEAR_DOCUMENTS:
+    case types.CLEAR_ALL_DOCUMENTS_LIST:
       return state ={}
  
    case types.UPDATE_IS_FETCHING_SELECTED_OBJECT:

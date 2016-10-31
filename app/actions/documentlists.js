@@ -203,19 +203,29 @@ export function fetchTableIfNeeded() {
     }
   }
 }
-export function refreshTable(documentlist: Object) {
+export function refreshTable(documentlist: Object, keyboard: string ) {
   return (dispatch, getState) => {
-    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId)
+    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, keyboard)
     dispatch(navActions.updateRouteData(documentlist))
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
 
-export function clearDocumentlists() {
+export function clearAllDocumentlists() {
   return {
-    type: types.CLEAR_DOCUMENTS
+    type: types.CLEAR_ALL_DOCUMENTS_LIST
   }
 }
+
+export function clearDocuments(documentlist: Object) {
+  return (dispatch, getState) => {
+    var items= [];
+    var nextUrl= ""
+    var dataSource ={};    
+  dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
+ }
+}
+
 function getNextUrl(env: string, sessionToken: string, documentlists: Object, documentlist: Object) {
 
   const activeDocumentsList = documentlists[documentlist.catId]

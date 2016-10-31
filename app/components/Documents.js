@@ -206,11 +206,12 @@ class Documents extends Component {
     const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
 
     if (itemsLength == 0) {
-      return (<NoDocuments
-        filter={this.state.filter}
-        isFetching={isFetching}
-        onRefresh={this._onRefresh.bind(this) }
-        />)
+
+        return (<NoDocuments
+          filter={this.state.filter}
+          isFetching={isFetching}
+          onRefresh={this._onRefresh.bind(this) }
+          documentlist={documentlist}/>)
     }
     else {
       return (
@@ -280,21 +281,20 @@ class Documents extends Component {
     var additionalStyle = {};
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
     let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
+    let showCustomButton = documentlist.catId == constans.SEARCH_DOCUMENTS ? false : true
     return (
 
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
         <View style={styles.separator} elevation={5}/>
 
         {this._renderTableContent(dataSource, isFetching) }
-        <CustomButton />
+        {showCustomButton? <CustomButton /> : <View></View>}
+       
       </ViewContainer>
     )
   }
 
 }
-
-
-
 
 
 var NoDocuments = React.createClass({
@@ -310,16 +310,30 @@ var NoDocuments = React.createClass({
         </View>)
     }
     else {
-      return (
-        <View style={[styles.container, styles.centerText]}>
-          <View style={styles.textContainer}>
-            <Text style={styles.noDocumentsText}>{text}</Text>
-          </View>
-          <View style={styles.buttonContainer}>
-            <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
-          </View>
-        </View>
-      );
+       if(this.props.documentlist.catId == constans.SEARCH_DOCUMENTS)
+       {
+        return (
+            <View style={[styles.container, styles.centerText]}>
+              <View style={styles.textContainer}>
+                <Text style={styles.noDocumentsText}>{text}</Text>
+              </View>
+            </View>
+          );
+       }
+       else
+       {
+          return (
+            <View style={[styles.container, styles.centerText]}>
+              <View style={styles.textContainer}>
+                <Text style={styles.noDocumentsText}>{text}</Text>
+              </View>
+              <View style={styles.buttonContainer}>
+                <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
+              </View>
+            </View>
+          );
+       }
+      
     }
   }
 });
