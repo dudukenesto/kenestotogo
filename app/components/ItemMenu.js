@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   View,
+  ScrollView,
   Text,
   StyleSheet,
   Image,
@@ -287,15 +288,16 @@ class ItemMenu extends React.Component{
               
               
             return (
-                
-            <View style={styles.menuItemsContainer}>
-               { this._renderShareAction(document)}
-               { this._renderCheckinAction(document)}
-               { this._renderCheckoutAction(document)}
-               { this._renderRenameAction(document)}
-               { this._renderDeleteAction(document)}
-                
-            </View>)
+                <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
+                    <View style={styles.menuItemsContainer}>
+                        { this._renderShareAction(document) }
+                        { this._renderCheckinAction(document) }
+                        { this._renderCheckoutAction(document) }
+                        { this._renderRenameAction(document) }
+                        { this._renderDeleteAction(document) }
+
+                    </View>
+                </ScrollView>)
         }
         else {
             return (<View style={[styles.container, styles.centerText]}>
