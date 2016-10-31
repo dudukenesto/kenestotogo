@@ -111,7 +111,9 @@ class KenestoToolbar extends Component {
       searchText:""
     }
   }
+  
   onPressSearchBox() {
+
     var data = {
         key:"documents|search",
         name: "documents|" + "search",
@@ -119,13 +121,15 @@ class KenestoToolbar extends Component {
         fId: "",
         sortDirection: constans.ASCENDING,
         sortBy: constans.ASSET_NAME,
-        isVault:false
+        isVault:false,
+        keyboard: ""
       }
-    
-    this.props.dispatch(navActions.push(routes.documentsRoute(data).route));
-    this.setState({
-      isSearchBoxOpen: true
-    })
+      this.props.dispatch(documentsActions.initializeSearchBox(data));
+      
+      this.setState({
+        isSearchBoxOpen: true,
+        searchText:""
+      })
   }
 
   onGoBack() {
@@ -154,10 +158,10 @@ class KenestoToolbar extends Component {
                 catId: constans.SEARCH_DOCUMENTS,
                 fId: "",
                 sortDirection: constans.ASCENDING,
-                sortBy: constans.ASSET_NAME
+                sortBy: constans.ASSET_NAME,
+                keyboard:""
             }
-
-    this.props.dispatch(documentsActions.clearDocuments(routeData));
+            
     this.props.onActionSelected(1)
     this.setState({
       isSearchBoxOpen: false
@@ -170,10 +174,11 @@ class KenestoToolbar extends Component {
                 catId: constans.SEARCH_DOCUMENTS,
                 fId: "",
                 sortDirection: constans.ASCENDING,
-                sortBy: constans.ASSET_NAME
+                sortBy: constans.ASSET_NAME,
+                keyboard:text
             }
 
-    this.props.dispatch(documentsActions.refreshTable(routeData, text));
+    this.props.dispatch(documentsActions.refreshTable(routeData));
      this.setState({
       searchText: text
     });
@@ -260,8 +265,9 @@ class KenestoToolbar extends Component {
     var documentlist = getDocumentsContext(navReducer);
     const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
+    var isDocumentsTollbar = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1) ? true : false;
     
-    if (documentlist.catId == constans.SEARCH_DOCUMENTS) {
+    if (documentlist.catId == constans.SEARCH_DOCUMENTS && this.state.isSearchBoxOpen && isDocumentsTollbar) {
       return (<View>
         {this.renderSearchBox() }
       </View>)

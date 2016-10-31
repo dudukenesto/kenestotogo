@@ -62,6 +62,7 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
   return (dispatch, getState) => {
     dispatch(requestDocumentsList(documentlist))
+    console.log("fetch url:"+url)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
@@ -203,11 +204,18 @@ export function fetchTableIfNeeded() {
     }
   }
 }
-export function refreshTable(documentlist: Object, keyboard: string ) {
+export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
-    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, keyboard)
+    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
     dispatch(navActions.updateRouteData(documentlist))
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
+  }
+}
+
+export function initializeSearchBox(documentlist: Object) {
+  return (dispatch, getState) => {
+      dispatch(clearDocuments(documentlist));
+      return dispatch(navActions.push(routes.documentsRoute(documentlist).route));
   }
 }
 
@@ -230,7 +238,7 @@ function getNextUrl(env: string, sessionToken: string, documentlists: Object, do
 
   const activeDocumentsList = documentlists[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
-    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId)
+    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId,documentlist.keyboard)
   }
   return activeDocumentsList.nextUrl
 }
