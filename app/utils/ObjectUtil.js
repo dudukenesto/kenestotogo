@@ -10,3 +10,12 @@ export function getRetrieveShareObjectInfoUrl(env: string, token: string, object
     
     return `${apiBaseUrl}/KObject.svc/RetrieveShareObjectInfo?t=${token}&oi=${objectId}&fc=${familyCode}`; 
 }
+
+export function isRouteKeyExists(key:string, routes:Object)
+{
+      for (index = 0; index < routes.length; ++index) {
+          if(routes[index].key == key)
+          return true;
+      }
+      return false;
+}

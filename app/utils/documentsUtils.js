@@ -8,6 +8,7 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
   const splitChars = '|';
   var apiBaseUrl = urls.ApiBaseUrl;
   var url
+  keyboard = typeof (keyboard) == 'undefined' ? "":encodeURIComponent(keyboard)
   if (urls == null)
     return null;
 
