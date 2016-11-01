@@ -238,6 +238,7 @@ class Documents extends Component {
                 document={document}/>
               )
             } }
+            renderFooter={() => {return <View style={{height: 100}}></View>}}
             onEndReached={this.onEndReached}
             automaticallyAdjustContentInsets={false}
             keyboardDismissMode="on-drag"
