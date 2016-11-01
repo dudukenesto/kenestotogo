@@ -348,7 +348,7 @@ var NoDocuments = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F5F6F8',
   },
   textContainer: {
     flex: 1,
