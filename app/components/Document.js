@@ -70,14 +70,13 @@ componentWillMount(){
     if(this.props.data.isExternalLink)
     {
       var url =this.props.data.viewerUrl;
+      this.setState( {url : url });
     }
     else
     {
-      var width =  window.width ;
-      var height = window.height - 80;
-      var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env))+"&w="+width+"&h="+height;
+      Orientation.getOrientation(this.updateOrientation.bind(this))
     }
-    this.setState( {url : url });
+    
 }
   _orientationDidChange(orientation) {
     this.setState({
@@ -88,6 +87,18 @@ componentWillMount(){
   componentWillUnmount(){
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
+  }
+  
+  updateOrientation(error, orientation) {
+    var longDimension = window.width > window.height ? window.width : window.height;
+    var shortDimension = window.height > window.width ? window.width : window.height;
+    var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
+    var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
+    var url = this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env)) + "&w=" + width + "&h=" + height;
+    this.setState({
+      orientation: orientation,
+      url: url
+    });
   }
 
  onLoadEnd(){
@@ -130,7 +141,6 @@ onBridgeMessage(message){
 
 
   render(){
-
 
     return(
       <View style={{ flex: 1}}>
