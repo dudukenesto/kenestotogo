@@ -225,7 +225,8 @@ class TabView extends React.Component {
                 catId: constans.MY_DOCUMENTS,
                 fId: "",
                 sortDirection: constans.ASCENDING,
-                sortBy: constans.ASSET_NAME
+                sortBy: constans.ASSET_NAME,
+                keyboard:""
             }
        
         switch (menuitem.Index) {

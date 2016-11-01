@@ -207,6 +207,7 @@ export function fetchTableIfNeeded() {
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
+    console.log("refreshTable url:"+url)
     dispatch(navActions.updateRouteData(documentlist))
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
