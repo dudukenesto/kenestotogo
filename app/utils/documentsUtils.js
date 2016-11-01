@@ -73,7 +73,27 @@ export function getCreateFolderUrl(env, sessionToken, fId, folderName, isVault) 
     return null;
   var folderId = (typeof (fId) == 'undefined' || fId == null || fId == '') ? '00000000-0000-0000-0000-000000000000' : fId;
 
-  return `${apiBaseUrl}/KDocuments.svc/CreateFolder?t=${sessionToken}&pid=${folderId}&fn=${folderName}&iv=${isVault}&fd=''`;
+  return `${apiBaseUrl}/KDocuments.svc/CreateFolder?t=${sessionToken}&pid=${folderId}&fn=${encodeURIComponent(folderName)}&iv=${isVault}&fd=''`;
+}
+
+export function getEditFolderUrl(env, sessionToken, fId, folderName, isVault) {
+  var urls = _.find(config.urls, { 'env': env });
+  var apiBaseUrl = urls.ApiBaseUrl;
+  if (urls == null)
+    return null;
+ 
+
+  return `${apiBaseUrl}/KDocuments.svc/EditFolder?t=${sessionToken}&fid=${fId}&fn=${encodeURIComponent(folderName)}&iv=${isVault}`;
+}
+
+export function getEditDocumentUrl(env, sessionToken, documentId, documentName) {
+  var urls = _.find(config.urls, { 'env': env });
+  var apiBaseUrl = urls.ApiBaseUrl;
+  if (urls == null)
+    return null;
+ 
+
+  return `${apiBaseUrl}/KDocuments.svc/UpdateAssetName?t=${sessionToken}&did=${documentId}&dn=${encodeURIComponent(documentName)}`;
 }
 
 
@@ -158,7 +178,7 @@ export function getDeleteAssetUrl(env: string, sessionToken: string,assetId: str
 export function getDeleteFolderUrl(env: string, sessionToken: string,folderId: string, userData: string = ''){
    const urls = _.find(config.urls, { 'env': env });
    const apiBaseUrl = urls.ApiBaseUrl; 
-     return  `${apiBaseUrl}/KDocuments.svc/DeleteFolder?t=${sessionToken}&fid=${folderId}&ud=${userData}`;
+     return  `${apiBaseUrl}/KDocuments.svc/DeleteFolder?t=${sessionToken}&fid=${folderId}&ud=${userData}&async=true`;
 }
 
 

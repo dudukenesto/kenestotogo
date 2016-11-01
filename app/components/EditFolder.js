@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
 import * as documentsActions from '../actions/documentlists'
-import {createFolder} from '../actions/documentlists'
+import {getSelectedDocument} from '../utils/documentsUtils'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
@@ -88,13 +88,14 @@ var styles = StyleSheet.create({
     // },
 });
 
-class CreateFolder extends React.Component {
+class EditFolder extends React.Component {
     constructor(props){
         super (props);
-
+        var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
         this.state = {
-            isVault: false,
-            folderName: '',
+            isVault: document.IsVault,
+            folderName: document.Name,
+            folderId:document.Id
         };
     }
 
@@ -104,42 +105,19 @@ class CreateFolder extends React.Component {
     }
 
     componentWillReceiveProps(nextprops){
-        // alert(nextprops.creatingFolder)
-
-        if (nextprops.creatingFolder == 2)
-        {
-            this.props.closeCreateFolder();
-            this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
-           
-        }
     }
 
-    create() {
+    _edit() {
         if (this.state.folderName != false) {
-            this.props.dispatch(createFolder(this.state.folderName, this.state.isVault));
-            this.props.setCreateFolderStyle();
+            this.props.dispatch(documentsActions.EditFolder(this.state.folderId ,this.state.folderName, this.state.isVault));
+            this.props.closeModal();
         }
     }
-
-     
-
     render(){
-
-        if (this.props.creatingFolder == 1){
-            return(         
-                    <View style={styles.creatingFolder}>
-                        <Text style={styles.processingMessage}>Creating a new folder</Text> 
-                        <ProgressBar isLoading={true}/>
-                    </View>
-          
-            )
-        }
-
         return (
-           
             <View style={styles.container}>
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>Create a new folder</Text>
+                    <Text style={styles.title}>Edit folder</Text>
                 </View>
                 <View style={styles.nameContainer}>
                     <TextInput
@@ -161,8 +139,8 @@ class CreateFolder extends React.Component {
                         value={this.state.isVault} />
                 </View>
                 <View style={styles.buttonsContainer}>
-                    <Button onPress={this.create.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
-                    <Button onPress={this.props.closeCreateFolder.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
+                    <Button onPress={this._edit.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Edit</Button>
+                    <Button onPress={this.props.closeModal.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
                 </View>
 
             </View>
@@ -172,23 +150,13 @@ class CreateFolder extends React.Component {
 
 
  
-function mapStateToProps(state) {    
-  
-
-  return {
-   // folderId : state.documentlist.fId,
-    creatingFolder : state.documentlists.creatingFolder
-  }
+function mapStateToProps(state) {
+    const { documentlists,navReducer} = state
+    return {
+        documentlists,
+        navReducer
+    }
 }
 
-// function  matchDispatchToProps(dispatch) {
-//     return bindActionCreators({
-//        createFolder : documentsActions.createFolder, 
-       
-//         dispatch,
-       
-//     }, dispatch)
-    
-// }
 
-export default connect(mapStateToProps)(CreateFolder)
+export default connect(mapStateToProps)(EditFolder)

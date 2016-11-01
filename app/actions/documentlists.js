@@ -5,7 +5,8 @@ import * as peopleActions from '../actions/peopleActions'
 import {
   constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
-  getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl, getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl
+  getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl,
+  getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl, getEditDocumentUrl
 } from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
@@ -640,8 +641,8 @@ export function CheckIn(comment :string) {
         Comment : comment
       }
     }
-console.log(url)
-console.log(JSON.stringify(jsonObject))
+    console.log(url)
+    console.log(JSON.stringify(jsonObject))
     var request = new Request(url, {
       method: 'post',
       headers: new Headers({
@@ -672,6 +673,68 @@ console.log(JSON.stringify(jsonObject))
   }
 
 }
+
+export function EditFolder(fId: string, folderName: string, isVault: boolean) {
+
+  return (dispatch, getState) => {
+    var documentlist = getDocumentsContext(getState().navReducer);
+    const url = getEditFolderUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, fId, folderName, isVault);
+    
+    dispatch(updateIsFetching(true));
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseStatus == "FAILED") {
+           dispatch(updateIsFetching(false));
+           dispatch(navActions.emitError("Failed to edit folder", ""))
+        }
+        else {
+          dispatch(updateIsFetching(false));
+          dispatch(refreshTable(documentlist));
+          dispatch(navActions.emitToast("success", "folder successfully updated.", ""));
+          dispatch(navActions.clearToast());
+         
+        }
+
+      }).catch((error) => {
+        dispatch(updateIsFetching(false));
+        dispatch(navActions.emitError("Failed to edit folder", ""))
+        throw error;
+      }).done();
+  }
+
+}
+
+export function EditDocument(documentId: string, documentName: string) {
+
+  return (dispatch, getState) => {
+    var documentlist = getDocumentsContext(getState().navReducer);
+    const url = getEditDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentId, documentName);
+    
+    dispatch(updateIsFetching(true));
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseStatus == "FAILED") {
+           dispatch(updateIsFetching(false));
+           dispatch(navActions.emitError("Failed to edit document", ""))
+        }
+        else {
+          dispatch(updateIsFetching(false));
+          dispatch(refreshTable(documentlist));
+          dispatch(navActions.emitToast("success", "document successfully updated.", ""));
+          dispatch(navActions.clearToast());
+        }
+
+      }).catch((error) => {
+        dispatch(updateIsFetching(false));
+        dispatch(navActions.emitError("Failed to edit document", ""))
+        throw error;
+      }).done();
+  }
+
+}
+
 
 export function ShareDocument() {
 

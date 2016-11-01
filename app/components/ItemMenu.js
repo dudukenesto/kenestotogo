@@ -170,13 +170,19 @@ class ItemMenu extends React.Component{
 
     }
     
-    renameDocument(){
-        alert('rename Document')
+    editFolder(){
+        this.props.closeItemMenuModal();
+        this.props.openEditFolderModal()
     }
     
+    editDocument(){
+        this.props.closeItemMenuModal();
+        this.props.openEditDocumentModal()
+    }
+
     checkinDocument(){
         this.props.closeItemMenuModal();
-       this.props.openCheckInModal()
+        this.props.openCheckInModal()
     }
     
     checkoutDocument(){
@@ -217,16 +223,27 @@ class ItemMenu extends React.Component{
             }
     }
    
-    _renderRenameAction(document)
+    _renderEditAction(document)
     {
             if(this.props.documentlists.selectedObject.permissions.IsOwnedByRequestor)
             {
-                return( <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
-                    <View style={styles.actionHolder}>
-                        <Icon name="edit" style={styles.icon} />
-                        <Text style={styles.actionName}>Rename</Text>
-                    </View>
-                </TouchableHighlight>)
+                if (this.state.document.FamilyCode == 'FOLDER') {
+                    return( <TouchableHighlight onPress={this.editFolder.bind(this)} underlayColor="#E9EAEC">
+                        <View style={styles.actionHolder}>
+                            <Icon name="edit" style={styles.icon} />
+                            <Text style={styles.actionName}>Edit Folder</Text>
+                        </View>
+                    </TouchableHighlight>)
+                }
+                else
+                {
+                    return( <TouchableHighlight onPress={this.editDocument.bind(this)} underlayColor="#E9EAEC">
+                        <View style={styles.actionHolder}>
+                            <Icon name="edit" style={styles.icon} />
+                            <Text style={styles.actionName}>Edit Document</Text>
+                        </View>
+                    </TouchableHighlight>)
+                }
             }
             else
             {
@@ -293,7 +310,7 @@ class ItemMenu extends React.Component{
                         { this._renderShareAction(document) }
                         { this._renderCheckinAction(document) }
                         { this._renderCheckoutAction(document) }
-                        { this._renderRenameAction(document) }
+                        { this._renderEditAction(document) }
                         { this._renderDeleteAction(document) }
 
                     </View>
