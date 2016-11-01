@@ -93,7 +93,9 @@ export function getDocumentsContext(navReducer: Object) {
       catId: currRoute.data.catId,
       fId: currRoute.data.fId,
       sortDirection: currRoute.data.sortDirection,
-      sortBy: currRoute.data.sortBy
+      sortBy: currRoute.data.sortBy,
+      keyboard:currRoute.data.keyboard
+
     })
 }
 

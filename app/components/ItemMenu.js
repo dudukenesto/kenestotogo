@@ -157,9 +157,9 @@ class ItemMenu extends React.Component{
         documentId: this.state.document.Id,
         familyCode: this.state.document.familyCode,
         catId: documentsContext.catId,
-      fId: documentsContext.fId,
-      sortDirection: documentsContext.sortDirection,
-      sortBy: documentsContext.sortBy
+        fId: documentsContext.fId,
+        sortDirection: documentsContext.sortDirection,
+        sortBy: documentsContext.sortBy
       }
 
     
