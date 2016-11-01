@@ -216,37 +216,35 @@ class Documents extends Component {
     }
     else {
       return (
-        <ScrollView>
-        <ListView
-          ref="listview"
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetching}
-              onRefresh={this._onRefresh.bind(this) }
-              />
-          }
-          enableEmptySections={true}
-          renderSeparator={this.renderSeparator}
-          dataSource={dataSource}
-          renderSectionHeader={this._renderSectionHeader.bind(this) }
-          renderRow={(document, sectionID, rowID, highlightRowFunc) => {
-            return (<DocumentCell
-              key={document.Id}
-              onSelect={this.selectItem.bind(this, document) }
-              //onHighlight={this.highlightRowFunc(sectionID, rowID)}
-              //onUnhighlight={this.highlightRowFunc(null, null)}
-              dispatch = {this.props.dispatch}
-              document={document}/>
-            )
-          } }
-          onEndReached={this.onEndReached}
-          automaticallyAdjustContentInsets={false}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps={true}
-          showsVerticalScrollIndicator={false}
-          />
-          <View style={{backgroundColor: '#F5F6F8', height: 100}}></View>
-          </ScrollView>
+          <ListView
+            ref="listview"
+            refreshControl={
+              <RefreshControl
+                refreshing={isFetching}
+                onRefresh={this._onRefresh.bind(this) }
+                />
+            }
+            enableEmptySections={true}
+            renderSeparator={this.renderSeparator}
+            dataSource={dataSource}
+            renderSectionHeader={this._renderSectionHeader.bind(this) }
+            renderRow={(document, sectionID, rowID, highlightRowFunc) => {
+              return (<DocumentCell
+                key={document.Id}
+                onSelect={this.selectItem.bind(this, document) }
+                //onHighlight={this.highlightRowFunc(sectionID, rowID)}
+                //onUnhighlight={this.highlightRowFunc(null, null)}
+                dispatch = {this.props.dispatch}
+                document={document}/>
+              )
+            } }
+            onEndReached={this.onEndReached}
+            automaticallyAdjustContentInsets={false}
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps={true}
+            showsVerticalScrollIndicator={false}
+            />
+        
       )
     }
   }
