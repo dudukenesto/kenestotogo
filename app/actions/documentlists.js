@@ -6,7 +6,7 @@ import {
   constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
   getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl,
-  getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl, getEditDocumentUrl
+  getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl, getEditDocumentUrl, geDiscardCheckOutDocumentUrl
 } from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
@@ -593,6 +593,37 @@ export function UpdateDocumentSharingPermission() {
   }
 }
 
+export function DiscardCheckOut() {
+
+  return (dispatch, getState) => {
+    const documentLists = getState().documentlists;
+    const navReducer = getState().navReducer;
+    var document = getSelectedDocument(documentLists, navReducer);
+
+    const url = geDiscardCheckOutDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, document.Id);
+    dispatch(updateIsFetching(true));
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseStatus == "FAILED") {
+           dispatch(updateIsFetching(false));
+           dispatch(navActions.emitError("Failed to discard Check-Out document", ""))
+        }
+        else {
+          dispatch(updateIsFetching(false));
+          dispatch(navActions.emitToast("success", "Check-Out successfully discarded", ""));
+          dispatch(navActions.clearToast());
+         
+        }
+
+      }).catch((error) => {
+        dispatch(updateIsFetching(false));
+        dispatch(navActions.emitError("Failed to discard Check-Out document", ""))
+        throw error;
+      }).done();
+  }
+
+}
 export function CheckOut() {
 
   return (dispatch, getState) => {
@@ -706,7 +737,6 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 }
 
 export function EditDocument(documentId: string, documentName: string) {
-
   return (dispatch, getState) => {
     var documentlist = getDocumentsContext(getState().navReducer);
     const url = getEditDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentId, documentName);

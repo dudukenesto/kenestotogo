@@ -190,15 +190,20 @@ class ItemMenu extends React.Component{
         this.props.dispatch(documentsActions.CheckOut());
     }
     
+    discardCheckOut(){
+        this.props.closeItemMenuModal();
+        this.props.dispatch(documentsActions.DiscardCheckOut());
+    }
+
     deleteDocument(){
 
          // this.refs.mainContainer.showMessage("info", errorMessage)
 
         this.props.closeItemMenuModal();
         if (this.state.document.FamilyCode == "FOLDER")
-            this.props.dispatch(docActions.deleteFolder(this.state.document.Id));
-        else 
-            this.props.dispatch(docActions.deleteAsset(this.state.document.Id, this.state.document.FamilyCode));
+         this.props.dispatch(navActions.emitConfirm("Delete Folder", "Are you sure you want to delete?", () =>  this.props.dispatch(docActions.deleteFolder(this.state.document.Id))))   
+        else
+           this.props.dispatch(navActions.emitConfirm("Delete "+this.state.document.Name, "Are you sure you want to delete?", () =>  this.props.dispatch(docActions.deleteAsset(this.state.document.Id, this.state.document.FamilyCode))))
     }
 
   componentWillMount(){
@@ -283,6 +288,24 @@ class ItemMenu extends React.Component{
                 return(<View></View>)
             }
     }
+
+    _renderDiscardCheckOutAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowDiscardCheckout)
+            {
+                return( <TouchableHighlight onPress={this.discardCheckOut.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <Icon name="edit" style={styles.icon} />
+                        <Text style={styles.actionName}>Discard Check Out</Text>
+                    </View>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+    
     _renderCheckoutAction(document)
     {
             if(this.props.documentlists.selectedObject.permissions.AllowCheckout)
@@ -310,6 +333,7 @@ class ItemMenu extends React.Component{
                         { this._renderShareAction(document) }
                         { this._renderCheckinAction(document) }
                         { this._renderCheckoutAction(document) }
+                        { this._renderDiscardCheckOutAction(document) }
                         { this._renderEditAction(document) }
                         { this._renderDeleteAction(document) }
 
