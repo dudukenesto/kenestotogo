@@ -40,9 +40,9 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
     return fetch(url)
       .then(response => response.json())
       .then(json => {
-        if (json.ResponseData.ResponseStatus == "FAILED") {
-          dispatch(navActions.emitError(json.ResponseData.ErrorMessage, 'error details'))
-          dispatch(navActions.emitError(json.ResponseData.ErrorMessage, ""))
+        if (json.ResponseStatus == "FAILED") {
+          dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
+          dispatch(navActions.emitError(json.ErrorMessage, ""))
           dispatch(updateIsFetchingSelectedObject(false))
         }
         else {
@@ -68,10 +68,10 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
       .then(response => response.json())
       .then(json => {
         const nextUrl = json.ResponseData.next_href
-        if (json.ResponseData.ResponseStatus == "FAILED") {
-          //dispatch(failedToFetchDocumentsList(documentlist, url, json.ResponseData.ErrorMessage))
-          dispatch(navActions.emitError(json.ResponseData.ErrorMessage, 'error details'))
-          dispatch(navActions.emitError(json.ResponseData.ErrorMessage, ""))
+        if (json.ResponseStatus == "FAILED") {
+          //dispatch(failedToFetchDocumentsList(documentlist, url, json.ErrorMessage))
+          dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
+          dispatch(navActions.emitError(json.ErrorMessage, ""))
         }
         else {
           var prevState = getState();
@@ -326,13 +326,21 @@ export function createFolder(folderName: string, isVault: boolean) {
     return fetch(createFolderUrl)
       .then(response => response.json())
       .then(json => {
-        if (json.ResponseData.ResponseStatus == "FAILED") {
+        if (json.ResponseStatus == "FAILED") {
           // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
 
-
+          if(json.ErrorMessage.indexOf('VAL10357') > -1)
+          {
+            dispatch(navActions.emitError("Folder Name already exists"))
+          }
+          else
+          {
+            dispatch(navActions.emitError("Error creating new folder"))
+          }
+          
           dispatch(UpdateCreateingFolderState(2))
 
-          dispatch(navActions.emitError("Error creating new folder"))
+         
         }
         else {
           dispatch(UpdateCreateingFolderState(2))
@@ -391,10 +399,10 @@ export function uploadToKenesto(imageData: object, url: string) {
       .then(response => response.json())
       .then(json => {
 
-        if (json.ResponseData.ResponseStatus == "FAILED") {
+        if (json.ResponseStatus == "FAILED") {
           //   alert(failed)
-          // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
-          dispatch(emitError(json.ResponseData.ErrorMessage, ""))
+          // dispatch(emitError(json.ErrorMessage,'error details'))
+          dispatch(emitError(json.ErrorMessage, ""))
         }
         else {
           var AccessUrl = json.ResponseData.AccessUrl;
@@ -426,8 +434,8 @@ export function uploadToKenesto(imageData: object, url: string) {
 
                 // alert(JSON.stringify(json))
 
-                // if (json.ResponseData.ResponseStatus == "FAILED") {
-                //   dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+                // if (json.ResponseStatus == "FAILED") {
+                //   dispatch(navActions.emitError(json.ErrorMessage,""))
                 // }
                 // else {
                 //   alert('wawa');
@@ -613,7 +621,6 @@ export function DiscardCheckOut() {
           dispatch(updateIsFetching(false));
           dispatch(navActions.emitToast("success", "Check-Out successfully discarded", ""));
           dispatch(navActions.clearToast());
-         
         }
 
       }).catch((error) => {
@@ -717,14 +724,22 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
       .then(json => {
         if (json.ResponseStatus == "FAILED") {
            dispatch(updateIsFetching(false));
-           dispatch(navActions.emitError("Failed to edit folder", ""))
+           
+           if(json.ErrorMessage.indexOf('VAL10357') > -1)
+            {
+              dispatch(navActions.emitError("Folder Name already exists"))
+            }
+            else
+            {
+              dispatch(navActions.emitError("Failed to edit folder", ""))
+            }
+          
         }
         else {
           dispatch(updateIsFetching(false));
           dispatch(refreshTable(documentlist));
           dispatch(navActions.emitToast("success", "folder successfully updated.", ""));
           dispatch(navActions.clearToast());
-         
         }
 
       }).catch((error) => {

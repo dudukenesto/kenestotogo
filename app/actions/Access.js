@@ -95,7 +95,7 @@ export function retrieveStatistics() {
       .then(response => response.json())
       .then(json => {
         
-        if (json.ResponseData.ResponseStatus == "FAILED") {
+        if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve statistics",""))
         }
         else {
@@ -134,7 +134,7 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
              dispatch(emitError('Fialed to reset password'))
         })
         .then( (responseData) => {
-            if (responseData.ForgotPasswordResult.ResponseStatus == "FAILED")
+            if (responseData.ResponseStatus == "FAILED")
             {
                  dispatch(updateIsFetching(false)); 
                  dispatch(emitError("Reset password failed", ""))
@@ -181,7 +181,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
            
             })
             .then( (responseData) => {
-                if (responseData.AuthenticateJsonResult.ResponseStatus == "FAILED")
+                if (responseData.ResponseStatus == "FAILED")
                 {
 
                     clearCredentials();

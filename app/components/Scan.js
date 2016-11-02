@@ -52,7 +52,7 @@ class Scan extends React.Component {
       // .then(response => response.json())
       // .then(json => {
         
-      //   if (json.ResponseData.ResponseStatus == "FAILED") {
+      //   if (json.ResponseStatus == "FAILED") {
       //       alert(failed)
       //     // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
       //     // dispatch(emitError(json.ResponseData.ErrorMessage,""))
