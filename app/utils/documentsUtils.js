@@ -208,4 +208,137 @@ export function geDiscardCheckOutDocumentUrl(env: string, sessionToken: string, 
      return  `${apiBaseUrl}/KDocuments.svc/DiscardCheckOut?t=${sessionToken}&dId=${documentId}&ud=${userData}`;
 }
 
-
+export function getIconNameFromExtension(extension: string){
+   var iconName = "";
+   
+   switch (extension.toLowerCase())
+  
+            {
+                case ".asmdot":
+                case ".asmprp":
+                case ".btl":
+                case ".cex":
+                case ".drwdot":
+                case ".drwprp":
+                case ".e3d":
+                case ".easm":
+                case ".easmx":
+                case ".edrw":
+                case ".edrwx":
+                case ".edw":
+                case ".eprt":
+                case ".journal.doc":
+                case ".lin":
+                case ".p2m":
+                case ".prtdot":
+                case ".prtprp":
+                case ".sldasm":
+                case ".sldblk":
+                case ".sldbombt":
+                case ".sldclr":
+                case ".slddrt":
+                case ".slddrw":
+                case ".slddwg":
+                case ".sldgtolfvt":
+                case ".sldholtbt":
+                case ".sldlfp":
+                case ".sldmat":
+                case ".sldprt":
+                case ".sldreg":
+                case ".sldrevtbt":
+                case ".sldsffvt":
+                case ".sldstd":
+                case ".sldtbt":
+                case ".sldweldfvt":
+                case ".sldwldtbt":
+                case ".swb":
+                case ".swj":
+                case ".swp":
+                    iconName = "solidw";
+                    break;
+                case "link":
+                    iconName = "web";
+                    break;
+                case ".csv":
+                    iconName = "file-chart";
+                    break;
+                case ".xlsx":
+                case ".xlsm":
+                case ".xltx":
+                case ".xltm":
+                case ".xlsb":
+                case ".xlam":
+                case ".xls":
+                    iconName = "file-excel";
+                    break;
+                case ".pdf":
+                    iconName = "file-pdf";
+                    break;
+                case ".ppt":
+                case ".pps":
+                case ".pptx":
+                case ".pptm":
+                case ".potx":
+                case ".potm":
+                case ".ppam":
+                case ".ppsx":
+                case ".ppsm":
+                    iconName = "file-powerpoint";
+                    break;
+                case ".docx":
+                case ".docm":
+                case ".dotx":
+                case ".dotm":
+                case ".doc":
+                    iconName = "file-word";
+                    break;
+                case "sldx": // autocad
+                case ".sldm":
+                case ".thmx": // theme file
+                    iconName = "file";
+                    break;
+                case ".zip":
+                case ".rar":
+                case ".tar":
+                case ".7z":
+                case ".gz":
+                    iconName = "zip-box";
+                    break;
+                case ".jt":
+                    iconName = "file";
+                    break;
+                case ".jpg":
+                case ".png":
+                case ".gif":
+                case ".bmp":
+                    iconName = "file-image";
+                    break;
+                case ".mp3":
+                    iconName = "file-music";
+                    break;
+                case ".mp4":
+                case ".webm":
+                case ".ogv":
+                case ".avi":
+                case ".3g2":
+                case ".3gp":
+                case ".asf":
+                case ".asx":
+                case ".avs":
+                case ".flv":
+                case ".mov":
+                case ".mpg":
+                case ".rm":
+                case ".srt":
+                case ".swf":
+                case ".vob":
+                case ".wmv":
+                    iconName = "file-video";
+                    break;
+                default:
+                    iconName = "file";
+                    break;
+            }
+   
+     return  iconName;
+}
