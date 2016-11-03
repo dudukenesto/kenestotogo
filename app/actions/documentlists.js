@@ -210,6 +210,7 @@ export function refreshTable(documentlist: Object) {
     const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
     console.log("refreshTable url:"+url)
     dispatch(navActions.updateRouteData(documentlist))
+    dispatch(Access.retrieveStatistics());
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
@@ -345,7 +346,7 @@ export function createFolder(folderName: string, isVault: boolean) {
         else {
           dispatch(UpdateCreateingFolderState(2))
           dispatch(refreshTable(documentlist))
-          dispatch(Access.retrieveStatistics());
+         
         }
 
       })
