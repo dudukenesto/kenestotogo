@@ -19,14 +19,16 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
   else {
     var key = catId
   }
-
+  var asOwner = false;
   var functionName = 'RetrieveDocuments';
   switch (key) {
     case constans.MY_DOCUMENTS:
-      functionName = 'RetrieveMyDocuments';
+      functionName = 'RetrieveDocuments';
+      asOwner = true;
       break;
     case constans.ALL_DOCUMENTS:
       functionName = 'RetrieveDocuments';
+      asOwner = false;
       break;
     case constans.ARCHIVED_DOCUMENTS:
       functionName = 'RetrieveArchivedDocuments';
@@ -36,6 +38,7 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
       break;
     case constans.CHECKED_OUT_DOCUMENTS:
       functionName = 'RetrieveCheckedOutDocuments';
+       break;
     case constans.SEARCH_DOCUMENTS:
       functionName = 'DocumentsQuickSearch';
       break;
@@ -48,10 +51,10 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
   else
   {
     if ( typeof (fId) == 'undefined' || fId == "") {
-      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}`
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}`
     }
     else {
-      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}`
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}}&ao=${asOwner}`
     }
   }
 }
