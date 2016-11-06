@@ -42,6 +42,28 @@ class Document extends React.Component{
   }
   
 
+  _orientationDidChange(orientation) {
+    this.setState({
+      orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
+    })
+  }
+  
+  componentWillUnmount(){
+    this.orientationListener.remove();
+    Orientation.removeOrientationListener();
+  }
+  
+  updateOrientation(error, orientation) {
+    var longDimension = window.width > window.height ? window.width : window.height;
+    var shortDimension = window.height > window.width ? window.width : window.height;
+    var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
+    var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
+    var url = this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env)) + "&w=" + width + "&h=" + height;
+    this.setState({
+      orientation: orientation,
+      url: url
+    });
+  }
 
  onLoadEnd(){
     this.setState({isLoading: false});
@@ -78,32 +100,9 @@ onBridgeMessage(message){
        const { webviewbridge } = this.refs;
       webviewbridge.sendToBridge("zoomOut");
 
+}
 
 
-    (function () {
-                  if (WebViewBridge) {
-                    WebViewBridge.onMessage = function (message) {
-                      //var xxx = typeof containerElement;
-                       //   $(tbox).text(xxx);
-                        switch (message) {
-                          case "zoomIn":
-                          $(tbox).text(message);
-                         //   containerElement.groupdocsViewer("zoomIn");
-                            break;
-                          case "zoomOut":
-                           $(tbox).text(message);
-                         //   containerElement.groupdocsViewer("zoomOut", 1);
-                            break;
-                        }
-                    }
-                  }
-                  }());
-
-
-
-
-
-  }
 
   
 // _handleStartShouldSetPanResponder(e: Object, gestureState: Object){
@@ -127,14 +126,17 @@ onBridgeMessage(message){
 // }
   
   componentWillMount(){
-    //    this._panResponder = PanResponder.create({
-    //   onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
-    //   onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
-    //   onPanResponderGrant: this._handlePanResponderGrant,
-    //   onPanResponderMove: this._handlePanResponderMove.bind(this),
-    //   onPanResponderRelease: this._handlePanResponderEnd.bind(this),
-    //   onPanResponderTerminate: this._handlePanResponderEnd.bind(this),
-    // });
+
+    if(this.props.data.isExternalLink)
+    {
+      var url =this.props.data.viewerUrl;
+      this.setState( {url : url });
+    }
+    else
+    {
+      Orientation.getOrientation(this.updateOrientation.bind(this))
+    }
+    
   this.gestureResponder = createResponder({
     onStartShouldSetResponder: (evt, gestureState) => true,
     onStartShouldSetResponderCapture: (evt, gestureState) => true,
@@ -187,7 +189,6 @@ onBridgeMessage(message){
                   }());
 `;
 
-   var url =  this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env));
     return(
 
     
@@ -211,7 +212,7 @@ onBridgeMessage(message){
             <WebViewBridge
               ref="webviewbridge"
               style={styles.webview_body}
-              source={{ uri: url }}
+              source={{ uri: this.state.url }}
               onLoadEnd={this.onLoadEnd.bind(this) }
               javaScriptEnabled={true}
               domStorageEnabled={true}
@@ -324,7 +325,6 @@ var styles = StyleSheet.create({
     backgroundColor: 'gray',
     
   },
-  
   webview_header: {
         paddingLeft: 10,
         backgroundColor: '#FF6600',

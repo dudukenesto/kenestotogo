@@ -147,10 +147,6 @@ componentDidMount(){
       <Text>
         {this.state.initial}
       </Text>
-
-
-
-
     {buttons}
 
     </View>;
