@@ -11,11 +11,12 @@ import {
 import Button from './Button'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {connect} from 'react-redux'
-import fontelloConfig from '../assets/icons/config.json';
+// import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {getSelectedDocument, getDocumentsContext} from '../utils/documentsUtils'
 import * as documentsActions from '../actions/documentlists'
 import MartialExtendedConf from '../assets/icons/config.json';
+import customConfig from '../assets/icons/customConfig.json';
 import * as routes from '../constants/routes'
 import * as navActions from '../actions/navActions'
 import * as docActions from '../actions/documentlists'
@@ -23,6 +24,9 @@ import ProggressBar from "../components/ProgressBar";
 import ViewContainer from './ViewContainer';
 
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
+const CustomIcon = createIconSetFromFontello(customConfig);
+
+
 var moment = require('moment');
 
 let styles = StyleSheet.create({
@@ -94,6 +98,15 @@ let styles = StyleSheet.create({
     icon: {
         fontSize: 22,
         color: '#888',
+    },
+    kenestoIcon: {
+        fontSize: 22,
+        color: '#888',
+        marginTop: -13
+    },
+    customIconContainer: {
+        alignItems: 'center', 
+        width: 22
     },
     actionIcon: {
         fontSize: 22,
@@ -281,7 +294,7 @@ class ItemMenu extends React.Component{
             {
                 return( <TouchableHighlight onPress={this.checkinDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <Icon name="edit" style={styles.icon} />
+                        <CustomIcon name="lock-open" style={styles.icon} />
                         <Text style={styles.actionName}>Check In</Text>
                     </View>
                 </TouchableHighlight>)
@@ -298,7 +311,7 @@ class ItemMenu extends React.Component{
             {
                 return( <TouchableHighlight onPress={this.discardCheckOut.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <Icon name="edit" style={styles.icon} />
+                        <CustomIcon name="lock-alt" style={styles.icon} />
                         <Text style={styles.actionName}>Discard Check Out</Text>
                     </View>
                 </TouchableHighlight>)
@@ -315,7 +328,7 @@ class ItemMenu extends React.Component{
             {
                 return( <TouchableHighlight onPress={this.checkoutDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <Icon name="edit" style={styles.icon} />
+                        <View style={styles.customIconContainer}><CustomIcon name="lock" style={styles.icon} /></View>
                         <Text style={styles.actionName}>Check Out</Text>
                     </View>
                 </TouchableHighlight>)
