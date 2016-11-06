@@ -8,9 +8,10 @@ import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreate
 import * as routes from '../constants/routes'
 import _ from "lodash";
 const Android_Download_Path = '/storage/emulated/0/download';
-var RNFS = require('react-native-fs');
 let React = require('react-native')
-//import RNFetchBlob from 'react-native-fetch-blob'
+import RNFetchBlob from 'react-native-fetch-blob'
+const android = RNFetchBlob.android
+
 let {
   Alert,
   ListView,
@@ -293,6 +294,7 @@ return (dispatch, getState) => {
    var documentlist = getDocumentsContext(getState().navReducer);
     const {sessionToken, env} = getState().accessReducer; 
     const folderId = documentlist.fId; 
+    alert(folderId)
     const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName, isVault);
     dispatch(UpdateCreateingFolderState(1))
     return fetch(createFolderUrl)
@@ -324,44 +326,41 @@ return (dispatch, getState) => {
 
 export function downloadDocument(id: string, fileName: string){
    return (dispatch, getState) => {
-        dispatch(updateIsFetching(true)); 
+        //dispatch(updateIsFetching(true)); 
+        dispatch(navActions.emitToast('info', 'Document will be downloaded shortly'));
         const url = getDownloadFileUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, id);
          fetch(url)
             .then(response => response.json())
             .then(json => {
-                  const downloadUrl = json.ResponseData.AccessUrl; 
-                   if (Platform.OS === 'ios')
-                        downloadpath =RNFS.DocumentDirectoryPath;
-                   else
-                        downloadpath = Android_Download_Path;
+                  const downloadUrl = json.ResponseData.AccessUrl;
+                  
+                  RNFetchBlob.config({
+                    fileCache : true,
+                    // android only options, these options be a no-op on IOS
+                    addAndroidDownloads : {
+                      useDownloadManager : true,
+                      // Show notification when response data transmitted
+                      notification : true,
+                      // Title of download notification
+                      title : fileName,
+                      // File description (not notification description)
+                      description : 'Download completed',
+                     // mime : 'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                      // Make the file scannable  by media scanner
+                      meidaScannable : true,
+                    }
+                  })
+                  .fetch('GET', downloadUrl)
+                  .then( (res) => {
+                    
+                    })
 
-                  const filePath = downloadpath + "/" + fileName;
-
-                  const ret = RNFS.downloadFile({ fromUrl: downloadUrl, toFile: filePath});
-
-                   ret.promise.then(res => {
-                          alert(JSON.stringify(res));
-                           dispatch(updateIsFetching(false)); 
-                    }).catch(err => {
-                            alert('error downloading');
-                             dispatch(updateIsFetching(false)); 
-                    });
+              }).catch(error => { 
+                  dispatch(navActions.emitToast('error downloading document'))
 
 
-
-                   // consloe.log('downloadUrl = ' + downloadUrl)
-                    // RNFS.downloadFile({ fromUrl: downloadUrl, toFile: filePath}).then(res => {
-                    //       alert('OK');
-                //    }).done();
-                    //.catch(err => alert(err));
-
-               
-              
-              }).done();
-              // .catch((error) => {
-              //                 alert("error:" + JSON.stringify(error))
-                              
-              //             }).done();
+              })
+              .done();
         }
 }
 
@@ -385,7 +384,7 @@ function uploadFile(url,file){
 	          if (xhr.status >= 200 && xhr.status <= 299) {
 	            // upload completed//
              // alert(xhr.status)
-	            resolve(xhr.status + ": " +url);
+	            resolve(url);
 	          } else {
 	            // failed with error messge from server
 	            reject(xhr.status + ": " + url);
@@ -400,25 +399,27 @@ function uploadFile(url,file){
 	    
        xhr.open('PUT', url);
         xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-      if (1==2)
-        reject('error');
+     
 
       //   alert(file.name + ' ' + file.fileName );
 
      // resolve(file.name + ' ' + file.fileName );
 
-     
-       
+   //  alert(file.path)
+     // var asset = RNFetchBlob.fs.asset(file.path)
+
+     // alert(file)
+      // var x = new File(file.path);
 	     xhr.send(file);
 	       });
 	}
 
 
  
-export function uploadToKenesto(fileObject: object, url: string){
+  export function uploadToKenesto(fileObject: object, url: string){
 
   return (dispatch, getState) => {
-          dispatch(updateIsFetching(true)); 
+          //dispatch(updateIsFetching(true)); 
 
            fetch(url)
             .then(response => response.json())
@@ -437,23 +438,27 @@ export function uploadToKenesto(fileObject: object, url: string){
               // alert(imageData.path)
 
               //alert(fileObject.name + ' ' + fileObject.fileName);
+
                  uploadFile(AccessUrl,fileObject)
-                 .then((completed) => {
-                    
-                         const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
+                 .then((url) => {
+                    //    alert(completed)
+                         const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, url);
                           fetch(thisCompletedUrl)
                                 .then(response => response.json())
                                 .then(json => {
-                                  dispatch(updateIsFetching(false)); 
+                                  //dispatch(updateIsFetching(false)); 
 
-                                  alert(JSON.stringify(json))
+                                 
+                                  if(json.ResponseStatus == 'OK')
+                                  {
+                                     
+                                        dispatch(navActions.emitToast("success","file successfully uploaded",""));
+                                  }
+                                  else {
+                                         dispatch(navActions.emitToast("info","coudn't upload file",""));
+                                  }
+                                  dispatch(navActions.pop());
 
-                                  // if (json.ResponseData.ResponseStatus == "FAILED") {
-                                  //   dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
-                                  // }
-                                  // else {
-                                  //   alert('wawa');
-                                  // }
                                 })
                                 .catch((error) => {
                                   console.log("error:" + JSON.stringify(error))
@@ -465,6 +470,20 @@ export function uploadToKenesto(fileObject: object, url: string){
                   })
                  .catch(err => {alert(err)});
 
+
+                  // RNFetchBlob.fetch('PUT', AccessUrl, {
+                  //       'Content-Type' : 'multipart/form-data',
+                  //     }, [
+                  //       // element with property `filename` will be transformed into `file` in form data
+                  //       { name : fileObject.name, filename :fileObject.fileName, data: fileObject.data},
+                  // ,
+                  //     ]).then((resp) => {
+                  //       alert(JSON.stringify(resp))
+                  //       // ...
+                  //     }).catch((err) => {
+                  //       alert('error')
+                  //       // ...
+                  //     })
                       
                 // var xhr = new XMLHttpRequest();
                 //       xhr.onerror = function (e) {
@@ -608,13 +627,11 @@ export function deleteAsset(id: string, familyCode: string){
                         dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
                          var documentlist = getDocumentsContext(getState().navReducer);
                          dispatch(refreshTable(documentlist))    
-                         dispatch(navActions.clearToast());
                         
                     }
       })
       .catch((error) => {
           dispatch(navActions.emitToast("error", "", "Error deleting asset"))
-          dispatch(navActions.clearToast());
       })
 
    }
@@ -637,7 +654,6 @@ export function deleteFolder(id: string){
                         dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
                          var documentlist = getDocumentsContext(getState().navReducer);
                          dispatch(refreshTable(documentlist))    
-                         dispatch(navActions.clearToast());
                     }
       })
       .catch((error) => {
@@ -761,7 +777,6 @@ export function ShareDocument(){
                                 else{
                                      dispatch(navActions.pop());
                                      dispatch(navActions.emitToast("success","Sharing settings updated",""));
-                                     dispatch(navActions.clearToast());
                                    
                                 }
 

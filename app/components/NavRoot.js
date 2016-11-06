@@ -52,7 +52,7 @@ class NavRoot extends Component {
       return <ForgotPassword userName={route.userName} _goBack={this._handleBackAction.bind(this) }  />
     }
     if (route.key === 'scan') {
-      return <Scan _handleNavigate={this._handleNavigate.bind(this) } />
+      return <Scan _handleNavigate={this._handleNavigate.bind(this) } isCameraScan={route.data.isCameraScan} />
     }
     if (route.key === 'login') {
       return <LoginContainer _handleNavigate={this._handleNavigate.bind(this) } />

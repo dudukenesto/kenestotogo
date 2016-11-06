@@ -56,12 +56,16 @@ export function addPeopleRoute(data) {
   )
 };
 
-export const scanRoute = {
-  type: 'push',
-  route: {
-    key: 'scan',
-    title: 'scan'
-  }
+export function scanRoute(data) {
+  return(
+    {  type: 'push',
+      route: {
+        key: 'scan',
+        title: 'scan',
+        data: data
+      }
+    }
+  )
 }
 
 

@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity} from 'react-native';
-import {getFileUploadUrl} from '../utils/documentsUtils'
+import {getFileUploadUrl,getDocumentsContext} from '../utils/documentsUtils'
 import {uploadToKenesto} from '../actions/documentlists'
 import {NativeModules, Dimensions} from 'react-native';
 import {connect} from 'react-redux'
-
+import RNFetchBlob from 'react-native-fetch-blob'
+import ProggressBar from "../components/ProgressBar";
 var ImagePicker = NativeModules.ImageCropPicker;
+import {CameraKitCamera, CameraKitGalleryView} from 'react-native-camera-kit'
+var FilePickerModule = NativeModules.FilePickerModule;
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +36,7 @@ class Scan extends React.Component {
     this.state = {
       image: null,
       images: null, 
-      initial: true
+      initial: true, 
     };
   }
 
@@ -43,78 +46,92 @@ class Scan extends React.Component {
 
 
   upload(){
-      const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.image.name);
+      
+
+    const documentsContext = getDocumentsContext(this.props.navReducer);
+    const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.image.name, "", "",  documentsContext.fId);
+
   const fileName = this.state.image.path.substring(this.state.image.path.lastIndexOf('/') + 1); 
   const name = fileName.substring(0,  fileName.lastIndexOf('.'));
- // alert(fileName + name);
-//alert(JSON.stringify(this.state.image.path));
-      this.props.dispatch(uploadToKenesto({name: name, fileName : fileName, data : this.state.image.data},url));
-
-
-      //  fetch(url)
-      // .then(response => response.json())
-      // .then(json => {
-        
-      //   if (json.ResponseData.ResponseStatus == "FAILED") {
-      //       alert(failed)
-      //     // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
-      //     // dispatch(emitError(json.ResponseData.ErrorMessage,""))
-      //   }
-      //   else {
-      //    var AccessUrl = json.ResponseData.AccessUrl;
-      
-      //           fetch(AccessUrl,{
-      //           method: 'put',
-      //           headers: {
-      //               'Accept': 'multipart/form-data',
-      //               'Content-Type': 'multipart/form-data'
-      //           },
-      //           body:  this.state.image.data// JSON.stringify({fileContents : this.state.avatarData})
-      //           }).then(response => {
-                    
-      //                  // alert( JSON.stringify(response));
-      //           }).catch((error) => {
-      //                   console.log("error:" + JSON.stringify(error))
-      //                   this.props.dispatch(emitError("Failed to upload to s3",""))
-      //               }).done();
  
-                    
-      //   }
-      // })
-      // .catch((error) => {
-      //   console.log("error:" + JSON.stringify(error))
-      //   this.props.dispatch(emitError("Failed to retrieve statistics",""))
+this.setState({uploading : true});
 
-
-      // })
+this.props.dispatch(uploadToKenesto({name: name, uri : this.state.image.path, type: this.state.image.type},url));
     
   }
 
-  takePhoto(){
-    ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropping: true,
-      includeBase64: true
+  takePhoto(cropping : boolean){
+
+    ImagePicker.openCamera({
+      cropping: cropping,
+      width: 400,
+      height: 400,
+        includeBase64: true
     }).then(image => {
-      console.log('received image', image);
-      const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
-     
+
+     const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
+           
       this.setState({
-        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path},
-        images: null, 
-        initial: false
-      });
-    }).catch(e => {});
+        initial: false, 
+        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
+        images: null});
+
+    }).catch(e => alert(JSON.stringify(e)));
+
     
   }
+
+    selectFromLib(cropping : boolean){
+
+    ImagePicker.openPicker({
+      width: 400,
+      height: 400,
+      cropping : true,
+       includeBase64: true
+    }).then(image => {
+
+
+      
+    const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
+           
+      this.setState({
+        initial: false, 
+        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
+        images: null});
+
+    }).catch(e => alert(JSON.stringify(e)));
+
+    
+  }
+
+updateImage(image : Object){
+  //var ff = this.camera.capture;
+       //   const img = await ff(true);
+       //alert(this.camera)
+}
 
 componentDidMount(){
-   this.takePhoto();
+  if (this.props.isCameraScan)
+      this.takePhoto(true);
+  else 
+  this.selectFromLib(true);
+
 }
    render() {
+
+     if (this.state.uploading){
+        return(
+          <View>
+            <Text>uploading file....</Text>
+            <ProggressBar isLoading={true} />
+           </View>
+            )
+
+     }
+
+     console.log('render scan: ' + this.state.initial)
        const buttons = this.state.initial? null : (<View>
-            <TouchableOpacity onPress={this.takePhoto.bind(this)} style={styles.button}>
+            <TouchableOpacity onPress={() => {this.takePhoto.bind(this)(true)}} style={styles.button}>
                 <Text style={styles.text}>Shoot again</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={this.upload.bind(this)} style={styles.button}>
@@ -127,6 +144,12 @@ componentDidMount(){
         {this.state.image ? <Image style={{width: 300, height: 300, resizeMode: 'contain'}} source={this.state.image} /> : null}
         {this.state.images ? this.state.images.map(i => <Image key={i.uri} style={{width: 300, height: this.scaledHeight(i.width, i.height, 300)}} source={i} />) : null}
       </ScrollView>
+      <Text>
+        {this.state.initial}
+      </Text>
+
+
+
 
     {buttons}
 
@@ -135,11 +158,15 @@ componentDidMount(){
 }
 
 function mapStateToProps(state) {    
+var {navReducer} = state; 
+
 
   return {
       env: state.accessReducer.env, 
       sessionToken: state.accessReducer.sessionToken,
-      isFetching: state.documentlists.isFetching
+      isFetching: state.documentlists.isFetching,
+      navReducer : navReducer
+  
   }
 }
 

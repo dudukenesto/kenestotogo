@@ -3,6 +3,7 @@ package com.kenestotogo;
 import android.app.Application;
 import android.util.Log;
 import com.facebook.react.ReactApplication;
+import com.github.yamill.orientation.OrientationPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -12,9 +13,9 @@ import com.github.xinthink.rnmk.ReactMaterialKitPackage;
 import java.util.Arrays;
 import java.util.List;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.github.yamill.orientation.OrientationPackage;
 import com.github.alinz.reactnativewebviewbridge.WebViewBridgePackage;
-import com.rnfs.RNFSPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import com.wix.RNCameraKit.RNCameraKitPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -33,7 +34,8 @@ public class MainApplication extends Application implements ReactApplication {
          new VectorIconsPackage(),
          new ReactMaterialKitPackage(),
         new WebViewBridgePackage() ,
-         new RNFSPackage() 
+          new RNFetchBlobPackage(),
+           new RNCameraKitPackage() 
 
       );
     }

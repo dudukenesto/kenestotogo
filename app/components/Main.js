@@ -269,6 +269,7 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
+    if (typeof nextprops.HasToast != 'undefined')
     if (nextprops.navReducer.HasError) {
       this.openModal("errorModal");
     }
@@ -286,6 +287,7 @@ class Main extends React.Component {
       const title = nextprops.navReducer.GlobalToastTitle;
 
       this.showMessage(type, message, title);
+      this.props.dispatch(clearToast());
     }
 
   }
@@ -439,7 +441,7 @@ function mapStateToProps(state) {
     documentlists,
     navReducer,
     env,
-    sessionToken
+    sessionToken, 
 
   }
 }

@@ -11,6 +11,7 @@ import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import * as navActions from '../actions/navActions'
 import {scanRoute} from '../constants/routes'
+import {getDocumentsContext} from '../utils/documentsUtils'
 const KenestoIcon = createIconSetFromFontello(fontelloConfig);
 
 let styles = StyleSheet.create({
@@ -55,13 +56,29 @@ class PlusMenu extends React.Component{
         this.props.openCreateFolder();
     }
 
-    scan(){
+    scan(isCameraScan : boolean){
           this.props.closeMenuModal("modalPlusMenu");
-          this.props.dispatch(navActions.push(scanRoute.route));
+           const documentsContext = getDocumentsContext(this.props.navReducer);
+
+                var data = {
+                        key: "scan",
+                        catId: documentsContext.catId,
+                        fId: documentsContext.fId,
+                        sortDirection: documentsContext.sortDirection,
+                        sortBy: documentsContext.sortBy, 
+                        isCameraScan: isCameraScan, 
+                        name: 'Image to upload'
+      }
+
+
+          this.props.dispatch(navActions.push(scanRoute(data).route));
     }
     
 
     render(){
+
+        
+
         return(
             <View style={styles.container}>
                 <View style={styles.actionHolder}>
@@ -70,12 +87,12 @@ class PlusMenu extends React.Component{
                 </View>
                 
                 <View style={styles.actionHolder}>
-                    <Icon name="file-upload" style={styles.actionButtonIcon} onPress={this.scan.bind(this)}/>
+                    <Icon name="file-upload" style={styles.actionButtonIcon} onPress={()=> {this.scan.bind(this)(false)}}/>
                     <Text style={styles.actionName}>Upload File</Text>
                 </View>
                 
                 <View style={styles.actionHolder}>
-                    <Icon name="photo-camera" style={styles.actionButtonIcon} onPress={this.scan.bind(this)} />
+                    <Icon name="photo-camera" style={styles.actionButtonIcon} onPress={()=> {this.scan.bind(this)(true)}} />
                     <Text style={styles.actionName}>Scan</Text>
                 </View>                
             </View>

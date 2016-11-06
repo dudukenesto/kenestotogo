@@ -73,7 +73,6 @@ class Documents extends Component {
 
   componentWillMount() {
     const {dispatch} = this.props
-    console.log("documents componentWillMount")
     dispatch(fetchTableIfNeeded())
   }
 
@@ -84,7 +83,6 @@ class Documents extends Component {
 
   onEndReached() {
     const {dispatch} = this.props
-    console.log("documents onEndReached")
     dispatch(fetchTableIfNeeded())
   }
 
@@ -189,7 +187,6 @@ class Documents extends Component {
     if (hasError && this.refs.masterView != undefined) {
       //this.refs.masterView.showMessage("success", errorMessage);
       this.props.dispatch(emitToast("error", "", "Error loading documents list"));
-      this.peops.dispatch(clearToast());
     }
   }
 

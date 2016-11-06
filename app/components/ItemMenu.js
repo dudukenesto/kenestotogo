@@ -17,7 +17,6 @@ import MartialExtendedConf from '../assets/icons/config.json';
 import * as routes from '../constants/routes'
 import * as navActions from '../actions/navActions'
 import * as docActions from '../actions/documentlists'
-var RNFS = require('react-native-fs');
 import ProggressBar from "../components/ProgressBar";
 import ViewContainer from './ViewContainer';
 
@@ -117,7 +116,12 @@ class ItemMenu extends React.Component{
 
     
     startDownload(){
+         //this.props.dispatch(docActions.downloadDocument(this.state.document.Id, this.state.document.FileName));
+         this.props.closeItemMenuModal();
+     
          this.props.dispatch(docActions.downloadDocument(this.state.document.Id, this.state.document.FileName));
+        //  this.props.dispatch(navActions.clearToast());
+     //   
         //alert('start Download')
     }
     

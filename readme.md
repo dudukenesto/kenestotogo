@@ -5,13 +5,7 @@ packages with special handling:
     solution: instead of installing with npm install, copy folder from master to node_modules folder 
     and run: react-native link react-native-orientation
     then replace the content of index.js with the content of KenestoDeviceOrientation.js OR use require('./KenestoDeviceOrientation') instead require('react-native-orientation');
-*  react-native-webview-bridge
-    problem: npm not synced with latest version 
-    solution: copy the following files from the master to the local react-native-webview-bridge inside node_modules
-        * C:\Work\Dev\react native\projects\KenestoToGo\node_modules\react-native-webview-bridge\webview-bridge\index.android.js
-        * C:\Work\Dev\react native\projects\KenestoToGo\node_modules\react-native-webview-bridge\webview-bridge\index.ios.js
 * react-native-crop-picker 
-    problem: npm not synced with latest version 
-    solution: instead of installing with npm install, copy folder from master to node_modules folder 
-    and run: react-native link react-native-picker, 
-    also make sure cnages have been made in: settings.gradle, buil.gradle, androidManifest.xml, MainApplication.java
+    problem: current version not complient with latest react native version
+    solution: replace \node_modules\react-native-image-crop-picker\android\src\main\java\com\reactnative\ivpusic\imagepicker\PickerModule.js 
+    with the one in \apapendix

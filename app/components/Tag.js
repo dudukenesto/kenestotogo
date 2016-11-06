@@ -51,7 +51,6 @@ const Tag = ({
         },
     })
     
-console.log('data', data)
     return (
         
         <TouchableHighlight style={[styles.container, tagContainer]} >
