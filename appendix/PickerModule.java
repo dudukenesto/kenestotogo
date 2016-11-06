@@ -375,7 +375,7 @@ public class PickerModule extends ReactContextBaseJavaModule implements Activity
             return getVideo(path, mime);
         }
 
-        return getImage(activity, uri, true);
+        return getImage(activity, uri, true, false);
     }
 
     public WritableMap getVideo(String path, String mime) {
@@ -397,7 +397,7 @@ public class PickerModule extends ReactContextBaseJavaModule implements Activity
         return image;
     }
 
-    private WritableMap getImage(Activity activity, Uri uri, boolean resolvePath) throws Exception {
+    private WritableMap getImage(Activity activity, Uri uri, boolean resolvePath, boolean isCamera) throws Exception {
         WritableMap image = new WritableNativeMap();
         String path;
 
@@ -408,9 +408,16 @@ public class PickerModule extends ReactContextBaseJavaModule implements Activity
                 path = RealPathUtil.getRealPathFromURI(activity, uri);
             }
         } else {
-            Uri imageUri = Uri.parse(mCurrentPhotoPath);
+            if (isCamera) {
+                Uri imageUri = Uri.parse(mCurrentPhotoPath);
+                path = imageUri.getPath();
+            } else {
+                path = uri.getPath();
 
-            path = imageUri.getPath();
+                if (resolvePath) {
+                    path = RealPathUtil.getRealPathFromURI(activity, uri);
+                }
+            }
         }
 
         if (path == null || path.isEmpty()) {
@@ -522,7 +529,7 @@ public class PickerModule extends ReactContextBaseJavaModule implements Activity
                 startCropping(activity, uri);
             } else {
                 try {
-                    mPickerPromise.resolve(getImage(activity, uri, true));
+                    mPickerPromise.resolve(getImage(activity, uri, true, true));
                 } catch (Exception ex) {
                     mPickerPromise.reject(E_NO_IMAGE_DATA_FOUND, ex.getMessage());
                 }
@@ -535,7 +542,7 @@ public class PickerModule extends ReactContextBaseJavaModule implements Activity
             final Uri resultUri = UCrop.getOutput(data);
             if (resultUri != null) {
                 try {
-                    mPickerPromise.resolve(getImage(activity, resultUri, false));
+                    mPickerPromise.resolve(getImage(activity, resultUri, false, false));
                 } catch (Exception ex) {
                     mPickerPromise.reject(E_NO_IMAGE_DATA_FOUND, ex.getMessage());
                 }
