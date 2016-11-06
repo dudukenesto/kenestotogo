@@ -210,8 +210,9 @@ export function fetchTableIfNeeded() {
 }
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
-    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId)
-     dispatch(navActions.updateRouteData(documentlist))
+    const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
+    dispatch(navActions.updateRouteData(documentlist))
+    dispatch(Access.retrieveStatistics());
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
   }
 }
@@ -339,6 +340,7 @@ return (dispatch, getState) => {
              dispatch(UpdateCreateingFolderState(2))
              dispatch(refreshTable(documentlist))    
              dispatch(Access.retrieveStatistics());
+
         }
         
       })
