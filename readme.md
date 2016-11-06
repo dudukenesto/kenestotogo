@@ -8,4 +8,8 @@ packages with special handling:
 * react-native-crop-picker 
     problem: current version not complient with latest react native version
     solution: replace \node_modules\react-native-image-crop-picker\android\src\main\java\com\reactnative\ivpusic\imagepicker\PickerModule.js 
-    with the one in \apapendix
+    with the one in \appendix
+* react-native-material-kit 
+    problem: npm not synced with latest version 
+    solution: replace \node_modules\react-native-material-kit\lib\internal\MKTouchable.js 
+    with the one in \appendix
