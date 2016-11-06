@@ -9,25 +9,20 @@ var {
   TouchableOpacity,
   View,
   WebView,
-  PanResponder, 
-  Animated
+  Dimensions,
 } = ReactNative;
-import {createResponder} from 'react-native-gesture-responder';
-
 import Button from './Button'
 import {getEnvIp} from '../utils/accessUtils'
 var HEADER = '#3b5998';
 var BGWASH = 'rgba(255,255,255,0.8)';
 var DISABLED_WASH = 'rgba(255,255,255,0.25)';
-
+const window = Dimensions.get('window');
 var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
 import WebViewBridge from 'react-native-webview-bridge';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
-
-
+var Orientation = require('./KenestoDeviceOrientation');
 
 class Document extends React.Component{
   constructor(props){
@@ -38,10 +33,51 @@ class Document extends React.Component{
    
     this.state = {  
       isLoading: true,
-      scalingEnabled: true};
+      scalingEnabled: true,
+      orientation: Orientation.getInitialOrientation(),
+      url:""
+    };
   }
   
+  
+    //  <ViewTransformer
+    //     onGestureEnd={(e) => {
+    //       console.log('onGestureEnd...' + JSON.stringify(e))
+    //       return false;
+    //     }}
+    //     enableResistance={true}
+    //     maxScale={20}
+    //     style={{flex: 1}}>
+    //       <View style={{ flex: 1}}>
+    //     <WebView
+    //       style={{ backgroundColor: BGWASH, position: 'absolute',top: 0, bottom: 0, left: 0, right: 0}}
+    //      source={{uri: this.state.viewerUrl}}
+          
+    //         javaScriptEnabled={true}
+    //         domStorageEnabled={true}
+         
+    //       scalesPageToFit={true}
+    //     />
+       
+    //   </View>
+    //   </ViewTransformer>
 
+ componentDidMount() {
+    this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+  }
+
+componentWillMount(){
+    if(this.props.data.isExternalLink)
+    {
+      var url =this.props.data.viewerUrl;
+      this.setState( {url : url });
+    }
+    else
+    {
+      Orientation.getOrientation(this.updateOrientation.bind(this))
+    }
+    
+}
   _orientationDidChange(orientation) {
     this.setState({
       orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
@@ -66,7 +102,7 @@ class Document extends React.Component{
   }
 
  onLoadEnd(){
-    this.setState({isLoading: false});
+    //this.setState({isLoading: false});
  }
  
  renderLoading(){
@@ -78,137 +114,37 @@ class Document extends React.Component{
    )
  }
  
+      // <ViewTransformer
+      //   onGestureEnd={(e) => {
+      //     console.log('onGestureEnd...' + JSON.stringify(e))
+      //     return false;
+      //   }}
+      //   enableResistance={true}
+      //   maxScale={3}
+      //   style={{flex: 1}}>
+      //     <View style={{ flex: 1}}>
+      //   <WebView
+      //     style={{ backgroundColor: BGWASH, position: 'absolute',top: 0, bottom: 0, left: 0, right: 0}}
+      //   // source={{uri: this.state.viewerUrl}}
+      //     source={{uri: "http://10.0.0.105/static/hoops_web_viewer/client_side_renderer/hoops_web_viewer_mobile.html?/static/tempcache/session-db2ac1c3f805234f3b3f2e7d156971007db37c43/2c6407c0-b340-43e2-97e8-eb6c76cd6c6c.hsf"}}
+      //       javaScriptEnabled={true}
+      //       domStorageEnabled={true}
+         
+      //     scalesPageToFit={false}
+      //   />
+       
+      // </View>
+      // </ViewTransformer>
 onBridgeMessage(message){
     const { webviewbridge } = this.refs;
-
-    switch (message) {
-      case "hello from webview":
-        webviewbridge.sendToBridge("hello from react-native");
-        break;
-      case "got the message inside webview":
-      //alert("webview");
-    //    console.log("we have got a message from webview! yeah");
-        break;
-    }
   }
 
-  zoomIn(){
-      const { webviewbridge } = this.refs;
-     webviewbridge.sendToBridge("zoomIn");
-  }
-   zoomOut(){
-       const { webviewbridge } = this.refs;
-      webviewbridge.sendToBridge("zoomOut");
-
-}
-
-
-
-  
-// _handleStartShouldSetPanResponder(e: Object, gestureState: Object){
-//     return true;
-// }
-
-// _handleMoveShouldSetPanResponder(e: Object, gestureState: Object){
-//     return true;
-// }
-
-// _handlePanResponderGrant(e: Object, gestureState: Object){
-
-// }
-
-// _handlePanResponderMove(e: Object, gestureState: Object){
-//   debugger;
-// }
-
-// _handlePanResponderEnd(e: Object, gestureState: Object){
-
-// }
-  
-  componentWillMount(){
-
-    if(this.props.data.isExternalLink)
-    {
-      var url =this.props.data.viewerUrl;
-      this.setState( {url : url });
-    }
-    else
-    {
-      Orientation.getOrientation(this.updateOrientation.bind(this))
-    }
-    
-  this.gestureResponder = createResponder({
-    onStartShouldSetResponder: (evt, gestureState) => true,
-    onStartShouldSetResponderCapture: (evt, gestureState) => true,
-    onMoveShouldSetResponder: (evt, gestureState) => true,
-    onMoveShouldSetResponderCapture: (evt, gestureState) => true,
-    onResponderGrant: (evt, gestureState) => {},
-    onResponderMove: (evt, gestureState) => {
-      if (gestureState.doubleTapUp)
-             alert('yyeee')
-      
-       if (gestureState.pinch && gestureState.previousPinch) {
-      //   debugger;
-         var  rezio = (gestureState.pinch / gestureState.previousPinch)
-
-         if (rezio > 1.05)
-            this.zoomIn();
-         else  if (rezio < 0.98)
-            this.zoomOut();
-        }
-    },
-    onResponderTerminationRequest: (evt, gestureState) => true,
-    onResponderRelease: (evt, gestureState) => {},
-    onResponderTerminate: (evt, gestureState) => {
-      alert(gestureState.doubleTapUp)
-    },
-    
-    onResponderSingleTapConfirmed: (evt, gestureState) => {},
-    
-    moveThreshold: 1,
-    debug: false
-  });
-    
-  }
 
   render(){
-    const injectScript = `
-       (function () {
-                  if (WebViewBridge) {
-                    WebViewBridge.onMessage = function (message) {
-                        switch (message) {
-                          case "zoomIn":
-                                activateZoomIn();
-                            break;
-                          case "zoomOut":
-                                  activateZoomOut();
-                            break;
-                        }
-                    }
-                  }
-                  }());
-`;
 
     return(
-
-    
-    
       <View style={{ flex: 1}}>
-          <View>
-          <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomIn.bind(this)()}) } >
-                      <View style={styles.optionContainer}>
-                       <Icon name="zoom-in"  style={styles.moreMenu}/>
-                      </View>
-           </TouchableWithoutFeedback>
-           <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomOut.bind(this)()}) }  >
-                      <View style={styles.optionContainer}>
-                        <Icon name="zoom-out" style={styles.moreMenu} />
-                      </View>
-           </TouchableWithoutFeedback>
-           
-          </View>
-          <View style={{flex: 1, backgroundColor: 'transparent', }}
-            {...this.gestureResponder}>
+          <View style={{flex: 1, backgroundColor: 'transparent', }}>
             <WebViewBridge
               ref="webviewbridge"
               style={styles.webview_body}
@@ -220,7 +156,6 @@ onBridgeMessage(message){
               scalesPageToFit={true}
               onBridgeMessage={this.onBridgeMessage.bind(this)}
               renderLoading={this.renderLoading}
-              injectedJavaScript={injectScript}
               />
           </View>
 
@@ -325,6 +260,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'gray',
     
   },
+  
   webview_header: {
         paddingLeft: 10,
         backgroundColor: '#FF6600',

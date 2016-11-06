@@ -2,9 +2,12 @@ import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
 import * as Access from '../actions/Access'
 import * as peopleActions from '../actions/peopleActions'
-import {constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
+import {
+  constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
-   getDeleteAssetUrl, getDeleteFolderUrl,getSelectedDocument,getShareDocumentUrl, getDocumentPermissionsUrl} from '../utils/documentsUtils'
+  getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl,
+  getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl, getEditDocumentUrl, geDiscardCheckOutDocumentUrl
+} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
 const Android_Download_Path = '/storage/emulated/0/download';
