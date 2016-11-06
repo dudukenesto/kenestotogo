@@ -3,7 +3,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import * as constans from '../constants/GlobalConstans'
 import * as documentsActions from '../actions/documentlists'
-import {pop, updateRouteData} from '../actions/navActions'
+import * as navActions from '../actions/navActions'
+import {getDocumentsTitle} from '../utils/documentsUtils'
+import * as routes from '../constants/routes'
 
 import {
   View,
@@ -105,13 +107,29 @@ class KenestoToolbar extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isSearchBoxOpen: false
+      isSearchBoxOpen: false,
+      searchText:""
     }
   }
+  
   onPressSearchBox() {
-    this.setState({
-      isSearchBoxOpen: true
-    })
+
+    var data = {
+        key:"documents|search",
+        name: "documents|" + "search",
+        catId: constans.SEARCH_DOCUMENTS,
+        fId: "",
+        sortDirection: constans.ASCENDING,
+        sortBy: constans.ASSET_NAME,
+        isVault:false,
+        keyboard: ""
+      }
+      this.props.dispatch(documentsActions.initializeSearchBox(data));
+      
+      this.setState({
+        isSearchBoxOpen: true,
+        searchText:""
+      })
   }
 
   onGoBack() {
@@ -135,49 +153,43 @@ class KenestoToolbar extends Component {
   }
 
   hideSearchBox() {
+    var routeData ={
+                name: getDocumentsTitle(constans.SEARCH_DOCUMENTS),
+                catId: constans.SEARCH_DOCUMENTS,
+                fId: "",
+                sortDirection: constans.ASCENDING,
+                sortBy: constans.ASSET_NAME,
+                keyboard:""
+            }
+            
+    this.props.onActionSelected(1)
     this.setState({
       isSearchBoxOpen: false
     });
   }
 
-  // getToolbarActions() {
-  //   const {navReducer} = this.props
-  //   var documentlist = getDocumentsContext(this.props.navReducer);
-  //   // const sortBy = documentlist.sortBy;
-  //   const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
-  //   var toolbarActions = [];
-  //   switch (sortDirection) {
-  //     case constans.ASCENDING:
-  //       toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-  //       if (navReducer.index > 1) {
-  //         toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
-  //       }
-  //       toolbarActions.push({ title: 'Arrowdownward', iconName: 'arrow-downward', show: 'always', iconColor: '#000' });
-  //       toolbarActions.push({ title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' })
-  //       break;
-  //     case constans.DESCENDING:
-  //       toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-  //       if (navReducer.index > 1) {
-  //         toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
-  //       }
-  //       toolbarActions.push({ title: 'arrowUpward', iconName: 'arrow-upward', show: 'always', iconColor: '#000' });
-  //       toolbarActions.push({ title: 'Filter', iconName: 'more-vert', show: 'always', iconColor: '#000' })
-  //       break;
-  //     default:
-  //       toolbarActions.push({ title: 'Search', iconName: 'search', iconSize: 30, show: 'always', iconColor: '#000' });
-  //       if (navReducer.index > 1) {
-  //         toolbarActions.push({ title: 'GoBack', iconName: 'arrow-back', show: 'always', iconColor: '#000' });
-  //       }
-  //       break;
-  //   }
-  //   return toolbarActions;
-  // }
+  _submitSearch(text){
+    var routeData ={
+                name: getDocumentsTitle(constans.SEARCH_DOCUMENTS),
+                catId: constans.SEARCH_DOCUMENTS,
+                fId: "",
+                sortDirection: constans.ASCENDING,
+                sortBy: constans.ASSET_NAME,
+                keyboard:text
+            }
+
+    this.props.dispatch(documentsActions.refreshTable(routeData));
+     this.setState({
+      searchText: text
+    });
+    
+  }
 
   renderSearchBox() {
     return (
       <View style={styles.searchBoxContainer}>
-        <Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} />
-        <View style={styles.textInputContainer}><TextInput style={styles.textInput} /></View>
+       <Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} />
+        <View style={styles.textInputContainer}><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text)} value={this.state.searchText}/></View>
         <Icon name="search" style={styles.iconStyle} />
       </View>
     )
@@ -254,8 +266,9 @@ class KenestoToolbar extends Component {
     var documentlist = getDocumentsContext(navReducer);
     const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
-
-    if (this.state.isSearchBoxOpen) {
+    var isDocumentsTollbar = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1) ? true : false;
+    
+    if (documentlist.catId == constans.SEARCH_DOCUMENTS && this.state.isSearchBoxOpen && isDocumentsTollbar) {
       return (<View>
         {this.renderSearchBox() }
       </View>)
@@ -267,33 +280,7 @@ class KenestoToolbar extends Component {
         
       </View>)
     }
-
-
-
-
-
-
-    // return (
-    // <Icon.ToolbarAndroid 
-    //             style={[styles.toolbar, this.props.style]}
-    //             onActionSelected={this.props.onActionSelected}
-    //             titleColor='#333'
-    //             backgroundColor='#eee'
-    //             title={'Kenesto hello'}
-    //             navIconName='menu'
-    //             iconColor='orange'
-    //            onIconClicked = {this.props.onIconClicked}
-    //             actions={this.getToolbarActions()}
-    //             overflowIconName="more"
-    //         />
-
-
-
-
   }
-
-
-
 }
 
 

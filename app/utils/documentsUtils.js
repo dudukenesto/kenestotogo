@@ -3,11 +3,12 @@ import _ from 'lodash'
 import stricturiEncode from 'strict-uri-encode'
 import * as constans from '../constants/GlobalConstans'
 
-export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId) {
+export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId, keyboard) {
   var urls = _.find(config.urls, { 'env': env });
   const splitChars = '|';
   var apiBaseUrl = urls.ApiBaseUrl;
   var url
+  keyboard = typeof (keyboard) == 'undefined' ? "":encodeURIComponent(keyboard)
   if (urls == null)
     return null;
 
@@ -35,16 +36,24 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
       break;
     case constans.CHECKED_OUT_DOCUMENTS:
       functionName = 'RetrieveCheckedOutDocuments';
+    case constans.SEARCH_DOCUMENTS:
+      functionName = 'DocumentsQuickSearch';
       break;
   }
 
-  if (fId == undefined || fId == "") {
-    return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}`
+  if(key == constans.SEARCH_DOCUMENTS)
+  {
+    return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&k=${keyboard}`
   }
-  else {
-    return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}`
+  else
+  {
+    if ( typeof (fId) == 'undefined' || fId == "") {
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}`
+    }
+    else {
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}`
+    }
   }
-
 }
 
 
@@ -64,7 +73,27 @@ export function getCreateFolderUrl(env, sessionToken, fId, folderName, isVault) 
     return null;
   var folderId = (typeof (fId) == 'undefined' || fId == null || fId == '') ? '00000000-0000-0000-0000-000000000000' : fId;
 
-  return `${apiBaseUrl}/KDocuments.svc/CreateFolder?t=${sessionToken}&pid=${folderId}&fn=${folderName}&iv=${isVault}&fd=''`;
+  return `${apiBaseUrl}/KDocuments.svc/CreateFolder?t=${sessionToken}&pid=${folderId}&fn=${encodeURIComponent(folderName)}&iv=${isVault}&fd=''`;
+}
+
+export function getEditFolderUrl(env, sessionToken, fId, folderName, isVault) {
+  var urls = _.find(config.urls, { 'env': env });
+  var apiBaseUrl = urls.ApiBaseUrl;
+  if (urls == null)
+    return null;
+ 
+
+  return `${apiBaseUrl}/KDocuments.svc/EditFolder?t=${sessionToken}&fid=${fId}&fn=${encodeURIComponent(folderName)}&iv=${isVault}`;
+}
+
+export function getEditDocumentUrl(env, sessionToken, documentId, documentName) {
+  var urls = _.find(config.urls, { 'env': env });
+  var apiBaseUrl = urls.ApiBaseUrl;
+  if (urls == null)
+    return null;
+ 
+
+  return `${apiBaseUrl}/KDocuments.svc/UpdateAssetName?t=${sessionToken}&did=${documentId}&dn=${encodeURIComponent(documentName)}`;
 }
 
 
@@ -84,7 +113,9 @@ export function getDocumentsContext(navReducer: Object) {
       catId: currRoute.data.catId,
       fId: currRoute.data.fId,
       sortDirection: currRoute.data.sortDirection,
-      sortBy: currRoute.data.sortBy
+      sortBy: currRoute.data.sortBy,
+      keyboard:currRoute.data.keyboard
+
     })
 }
 
@@ -100,6 +131,8 @@ export function getDocumentsTitle(categoryType: String) {
       return "Checked-out Documents";
     case constans.ARCHIVED_DOCUMENTS:
       return "Archived Documents";
+       case constans.SEARCH_DOCUMENTS:
+      return "Search Documents";
     default:
       return "My Documents";
 
@@ -146,7 +179,7 @@ export function getDeleteAssetUrl(env: string, sessionToken: string,assetId: str
 export function getDeleteFolderUrl(env: string, sessionToken: string,folderId: string, userData: string = ''){
    const urls = _.find(config.urls, { 'env': env });
    const apiBaseUrl = urls.ApiBaseUrl; 
-     return  `${apiBaseUrl}/KDocuments.svc/DeleteFolder?t=${sessionToken}&fid=${folderId}&ud=${userData}`;
+     return  `${apiBaseUrl}/KDocuments.svc/DeleteFolder?t=${sessionToken}&fid=${folderId}&ud=${userData}&async=true`;
 }
 
 
@@ -156,5 +189,157 @@ export function getShareDocumentUrl(env: string, sessionToken: string, userData:
      return  `${apiBaseUrl}/KDocuments.svc/ShareDocument?t=${sessionToken}&ud=${userData}`;
 }
 
+export function getCheckInDocumentUrl(env: string, sessionToken: string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/CheckIn?t=${sessionToken}&ud=${userData}`;
+}
+
+export function getCheckOutDocumentUrl(env: string, sessionToken: string, documentId:string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/CheckOut?t=${sessionToken}&dId=${documentId}&ud=${userData}`;
+}
 
 
+
+export function geDiscardCheckOutDocumentUrl(env: string, sessionToken: string, documentId:string, userData: string = ''){
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/DiscardCheckOut?t=${sessionToken}&dId=${documentId}&ud=${userData}`;
+}
+
+export function getIconNameFromExtension(extension: string){
+   var iconName = "";
+   
+   switch (extension.toLowerCase())
+  
+            {
+                case ".asmdot":
+                case ".asmprp":
+                case ".btl":
+                case ".cex":
+                case ".drwdot":
+                case ".drwprp":
+                case ".e3d":
+                case ".easm":
+                case ".easmx":
+                case ".edrw":
+                case ".edrwx":
+                case ".edw":
+                case ".eprt":
+                case ".journal.doc":
+                case ".lin":
+                case ".p2m":
+                case ".prtdot":
+                case ".prtprp":
+                case ".sldasm":
+                case ".sldblk":
+                case ".sldbombt":
+                case ".sldclr":
+                case ".slddrt":
+                case ".slddrw":
+                case ".slddwg":
+                case ".sldgtolfvt":
+                case ".sldholtbt":
+                case ".sldlfp":
+                case ".sldmat":
+                case ".sldprt":
+                case ".sldreg":
+                case ".sldrevtbt":
+                case ".sldsffvt":
+                case ".sldstd":
+                case ".sldtbt":
+                case ".sldweldfvt":
+                case ".sldwldtbt":
+                case ".swb":
+                case ".swj":
+                case ".swp":
+                    iconName = "solidw";
+                    break;
+                case "link":
+                    iconName = "web";
+                    break;
+                case ".csv":
+                    iconName = "file-chart";
+                    break;
+                case ".xlsx":
+                case ".xlsm":
+                case ".xltx":
+                case ".xltm":
+                case ".xlsb":
+                case ".xlam":
+                case ".xls":
+                    iconName = "file-excel";
+                    break;
+                case ".pdf":
+                    iconName = "file-pdf";
+                    break;
+                case ".ppt":
+                case ".pps":
+                case ".pptx":
+                case ".pptm":
+                case ".potx":
+                case ".potm":
+                case ".ppam":
+                case ".ppsx":
+                case ".ppsm":
+                    iconName = "file-powerpoint";
+                    break;
+                case ".docx":
+                case ".docm":
+                case ".dotx":
+                case ".dotm":
+                case ".doc":
+                    iconName = "file-word";
+                    break;
+                case "sldx": // autocad
+                case ".sldm":
+                case ".thmx": // theme file
+                    iconName = "file";
+                    break;
+                case ".zip":
+                case ".rar":
+                case ".tar":
+                case ".7z":
+                case ".gz":
+                    iconName = "zip-box";
+                    break;
+                case ".jt":
+                    iconName = "file";
+                    break;
+                case ".jpg":
+                case ".png":
+                case ".gif":
+                case ".bmp":
+                    iconName = "file-image";
+                    break;
+                case ".mp3":
+                    iconName = "file-music";
+                    break;
+                case ".mp4":
+                case ".webm":
+                case ".ogv":
+                case ".avi":
+                case ".3g2":
+                case ".3gp":
+                case ".asf":
+                case ".asx":
+                case ".avs":
+                case ".flv":
+                case ".mov":
+                case ".mpg":
+                case ".rm":
+                case ".srt":
+                case ".swf":
+                case ".vob":
+                case ".wmv":
+                    iconName = "file-video";
+                    break;
+                default:
+                    iconName = "file";
+                    break;
+            }
+   
+     return  iconName;
+}

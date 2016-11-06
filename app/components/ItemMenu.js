@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   View,
+  ScrollView,
   Text,
   StyleSheet,
   Image,
@@ -13,6 +14,7 @@ import {connect} from 'react-redux'
 import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {getSelectedDocument, getDocumentsContext} from '../utils/documentsUtils'
+import * as documentsActions from '../actions/documentlists'
 import MartialExtendedConf from '../assets/icons/config.json';
 import * as routes from '../constants/routes'
 import * as navActions from '../actions/navActions'
@@ -158,9 +160,9 @@ class ItemMenu extends React.Component{
         documentId: this.state.document.Id,
         familyCode: this.state.document.familyCode,
         catId: documentsContext.catId,
-      fId: documentsContext.fId,
-      sortDirection: documentsContext.sortDirection,
-      sortBy: documentsContext.sortBy
+        fId: documentsContext.fId,
+        sortDirection: documentsContext.sortDirection,
+        sortBy: documentsContext.sortBy
       }
 
     
@@ -171,50 +173,175 @@ class ItemMenu extends React.Component{
 
     }
     
-    renameDocument(){
-        alert('rename Document')
+    editFolder(){
+        this.props.closeItemMenuModal();
+        this.props.openEditFolderModal()
     }
     
+    editDocument(){
+        this.props.closeItemMenuModal();
+        this.props.openEditDocumentModal()
+    }
+
+    checkinDocument(){
+        this.props.closeItemMenuModal();
+        this.props.openCheckInModal()
+    }
+    
+    checkoutDocument(){
+        this.props.closeItemMenuModal();
+        this.props.dispatch(documentsActions.CheckOut());
+    }
+    
+    discardCheckOut(){
+        this.props.closeItemMenuModal();
+        this.props.dispatch(documentsActions.DiscardCheckOut());
+    }
+
     deleteDocument(){
 
          // this.refs.mainContainer.showMessage("info", errorMessage)
 
         this.props.closeItemMenuModal();
         if (this.state.document.FamilyCode == "FOLDER")
-            this.props.dispatch(docActions.deleteFolder(this.state.document.Id));
-        else 
-            this.props.dispatch(docActions.deleteAsset(this.state.document.Id, this.state.document.FamilyCode));
+         this.props.dispatch(navActions.emitConfirm("Delete Folder", "Are you sure you want to delete?", () =>  this.props.dispatch(docActions.deleteFolder(this.state.document.Id))))   
+        else
+           this.props.dispatch(navActions.emitConfirm("Delete "+this.state.document.Name, "Are you sure you want to delete?", () =>  this.props.dispatch(docActions.deleteAsset(this.state.document.Id, this.state.document.FamilyCode))))
     }
 
   componentWillMount(){
         var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
         this.setState({ document: document});
     }
+   
+   _renderShareAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowShare)
+            {
+                return(<TouchableHighlight onPress={this.shareDocument.bind(this) } underlayColor="#E9EAEC">
+                                <View style={styles.actionHolder}>
+                                    <Icon name="share" style={styles.icon} />
+                                    <Text style={styles.actionName}>Share</Text>
+                                </View>
+                            </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+   
+    _renderEditAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.IsOwnedByRequestor)
+            {
+                if (this.state.document.FamilyCode == 'FOLDER') {
+                    return( <TouchableHighlight onPress={this.editFolder.bind(this)} underlayColor="#E9EAEC">
+                        <View style={styles.actionHolder}>
+                            <Icon name="edit" style={styles.icon} />
+                            <Text style={styles.actionName}>Edit Folder</Text>
+                        </View>
+                    </TouchableHighlight>)
+                }
+                else
+                {
+                    return( <TouchableHighlight onPress={this.editDocument.bind(this)} underlayColor="#E9EAEC">
+                        <View style={styles.actionHolder}>
+                            <Icon name="edit" style={styles.icon} />
+                            <Text style={styles.actionName}>Edit Document</Text>
+                        </View>
+                    </TouchableHighlight>)
+                }
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
 
-    _renderMenuItemActions(isFetching) {
-        if (!isFetching) {
-            return (<View style={styles.menuItemsContainer}>
-                <TouchableHighlight onPress={this.shareDocument.bind(this) } underlayColor="#E9EAEC">
-                    <View style={styles.actionHolder}>
-                        <Icon name="share" style={styles.icon} />
-                        <Text style={styles.actionName}>Share</Text>
-                    </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight onPress={this.renameDocument} underlayColor="#E9EAEC">
-                    <View style={styles.actionHolder}>
-                        <Icon name="edit" style={styles.icon} />
-                        <Text style={styles.actionName}>Rename</Text>
-                    </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight onPress={this.deleteDocument.bind(this) } underlayColor="#E9EAEC">
+    _renderDeleteAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.IsOwnedByRequestor)
+            {
+                return( <TouchableHighlight onPress={this.deleteDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
                         <Icon name="delete" style={styles.icon} />
                         <Text style={styles.actionName}>Delete</Text>
                     </View>
-                </TouchableHighlight>
-            </View>)
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+    _renderCheckinAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowCheckin)
+            {
+                return( <TouchableHighlight onPress={this.checkinDocument.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <Icon name="edit" style={styles.icon} />
+                        <Text style={styles.actionName}>Check In</Text>
+                    </View>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+
+    _renderDiscardCheckOutAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowDiscardCheckout)
+            {
+                return( <TouchableHighlight onPress={this.discardCheckOut.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <Icon name="edit" style={styles.icon} />
+                        <Text style={styles.actionName}>Discard Check Out</Text>
+                    </View>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+    
+    _renderCheckoutAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowCheckout)
+            {
+                return( <TouchableHighlight onPress={this.checkoutDocument.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <Icon name="edit" style={styles.icon} />
+                        <Text style={styles.actionName}>Check Out</Text>
+                    </View>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
+    _renderMenuItemActions(isFetching) {
+         var document = getSelectedDocument(this.props.documentlists, this.props.navReducer);
+        if (!isFetching) {
+              
+              
+            return (
+                <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
+                    <View style={styles.menuItemsContainer}>
+                        { this._renderShareAction(document) }
+                        { this._renderCheckinAction(document) }
+                        { this._renderCheckoutAction(document) }
+                        { this._renderDiscardCheckOutAction(document) }
+                        { this._renderEditAction(document) }
+                        { this._renderDeleteAction(document) }
+
+                    </View>
+                </ScrollView>)
         }
         else {
             return (<View style={[styles.container, styles.centerText]}>
@@ -230,7 +357,7 @@ class ItemMenu extends React.Component{
         var elementIcon;
         const {navReducer} = this.props
         var currRouteData = getDocumentsContext(navReducer);
-        const isFetching = this.props.documentlists.isFetching;
+        const isFetching = this.props.documentlists.isFetchingSelectedObject;
 
         if (this.state.document.HasThumbnail) {
             elementIcon = <Image source = {{ uri: this.state.document.ThumbnailUrl }} style={styles.previewThumbnail} />

@@ -2,25 +2,18 @@ import * as types from '../constants/ActionTypes'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 let React = require('react-native')
 function documentlist(state = {
-  isFetching: false,
   items: [],
   nextUrl: false,
   errorMessage: '',
   hasError: false,
   dataSource: {}, 
-  sharingPermissions: null,
-  selectedObject:{
-    id:'',
-    familyCode:'',
-    Permissions:{}
-  }
+  sharingPermissions: null
 }, action) {
   switch (action.type) {
     
     case types.RECEIVE_DOCUMENTS:
       return {
         ...state,
-        isFetching: false,
         items: [...action.documents],
         dataSource: action.dataSource,
         nextUrl: action.nextUrl,
@@ -31,7 +24,6 @@ function documentlist(state = {
     case types.REQUEST_DOCUMENTS:
       return {
         ...state,
-        isFetching: true,
         nextUrl: null,
         hasError: false,
         errorMessage: ''
@@ -39,7 +31,6 @@ function documentlist(state = {
     case types.SUBMIT_ERROR:
       return {
         ...state,
-        isFetching: false,
         hasError: true,
         errorMessage: action.errorMessage,
         nextUrl: action.nextUrl
@@ -51,7 +42,6 @@ function documentlist(state = {
             }
     case types.REFRESH_DOCUMENTS_LIST:
       return {
-        isFetching: false,
         items: [...action.documents],
         dataSource: action.dataSource,
         nextUrl: action.nextUrl,
@@ -65,20 +55,23 @@ function documentlist(state = {
   }
 }
 
-export default function documentlists(state = {}, action) {
+export default function documentlists(state = {isFetching: false,isFetchingSelectedObject:false}, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
       return Object.assign({}, state, {
+        isFetching: false,
         [action.catId]: documentlist(state[action.catId], action)
       })
 
     case types.REQUEST_DOCUMENTS:
       return Object.assign({}, state, {
+        isFetching: true,
         [action.catId]: documentlist(state[action.catId], action)
       })
 
     case types.REFRESH_DOCUMENTS_LIST:
       return Object.assign({}, state, {
+        isFetching: false,
         [action.catId]: documentlist(state[action.catId], action),
 
       })
@@ -96,27 +89,22 @@ export default function documentlists(state = {}, action) {
             }
     case types.SUBMIT_ERROR:
       return Object.assign({}, state, {
+         isFetching: false,
         [action.catId]: documentlist(state[action.catId], action)
       })
-    case types.UPDATE_SELECTED_OBJECT:
+  case types.UPDATE_SELECTED_OBJECT:
       return {
         ...state,
          isFetching: false,
         selectedObject: action.selectedObject
       }
-    case types.CLEAR_DOCUMENTS:
+    case types.CLEAR_ALL_DOCUMENTS_LIST:
+      return state ={}
+ 
+   case types.UPDATE_IS_FETCHING_SELECTED_OBJECT:
       return {
-        isFetching: false,
-        items: [],
-        nextUrl: false,
-        errorMessage: '',
-        hasError: false,
-        dataSource: {},
-        selectedObject:{
-          id:'',
-          familyCode:'',
-          Permissions:{}
-       }
+          ...state,
+        isFetchingSelectedObject: action.isFetchingSelectedObject
       }
       case types.UPDATE_IS_FETCHING:
       return {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {View,
+  ScrollView,
   Text,
   TextInput,
   StyleSheet,
@@ -73,6 +74,7 @@ class Documents extends Component {
 
   componentWillMount() {
     const {dispatch} = this.props
+    console.log("documents componentWillMount")
     dispatch(fetchTableIfNeeded())
   }
 
@@ -83,6 +85,7 @@ class Documents extends Component {
 
   onEndReached() {
     const {dispatch} = this.props
+    console.log("documents onEndReached")
     dispatch(fetchTableIfNeeded())
   }
 
@@ -187,6 +190,7 @@ class Documents extends Component {
     if (hasError && this.refs.masterView != undefined) {
       //this.refs.masterView.showMessage("success", errorMessage);
       this.props.dispatch(emitToast("error", "", "Error loading documents list"));
+      this.peops.dispatch(clearToast());
     }
   }
 
@@ -203,42 +207,45 @@ class Documents extends Component {
     const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
 
     if (itemsLength == 0) {
-      return (<NoDocuments
-        filter={this.state.filter}
-        isFetching={isFetching}
-        onRefresh={this._onRefresh.bind(this) }
-        />)
+
+        return (<NoDocuments
+          filter={this.state.filter}
+          isFetching={isFetching}
+          onRefresh={this._onRefresh.bind(this) }
+          documentlist={documentlist}/>)
     }
     else {
       return (
-        <ListView
-          ref="listview"
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetching}
-              onRefresh={this._onRefresh.bind(this) }
-              />
-          }
-          enableEmptySections={true}
-          renderSeparator={this.renderSeparator}
-          dataSource={dataSource}
-          renderSectionHeader={this._renderSectionHeader.bind(this) }
-          renderRow={(document, sectionID, rowID, highlightRowFunc) => {
-            return (<DocumentCell
-              key={document.Id}
-              onSelect={this.selectItem.bind(this, document) }
-              //onHighlight={this.highlightRowFunc(sectionID, rowID)}
-              //onUnhighlight={this.highlightRowFunc(null, null)}
-              dispatch = {this.props.dispatch}
-              document={document}/>
-            )
-          } }
-          onEndReached={this.onEndReached}
-          automaticallyAdjustContentInsets={false}
-          keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps={true}
-          showsVerticalScrollIndicator={false}
-          />
+          <ListView
+            ref="listview"
+            refreshControl={
+              <RefreshControl
+                refreshing={isFetching}
+                onRefresh={this._onRefresh.bind(this) }
+                />
+            }
+            enableEmptySections={true}
+            renderSeparator={this.renderSeparator}
+            dataSource={dataSource}
+            renderSectionHeader={this._renderSectionHeader.bind(this) }
+            renderRow={(document, sectionID, rowID, highlightRowFunc) => {
+              return (<DocumentCell
+                key={document.Id}
+                onSelect={this.selectItem.bind(this, document) }
+                //onHighlight={this.highlightRowFunc(sectionID, rowID)}
+                //onUnhighlight={this.highlightRowFunc(null, null)}
+                dispatch = {this.props.dispatch}
+                document={document}/>
+              )
+            } }
+            renderFooter={() => {return <View style={{height: 100}}></View>}}
+            onEndReached={this.onEndReached}
+            automaticallyAdjustContentInsets={false}
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps={true}
+            showsVerticalScrollIndicator={false}
+            />
+        
       )
     }
   }
@@ -272,25 +279,25 @@ class Documents extends Component {
     //var currRoute = navReducer.routes[navReducer.index];
     var documentlist = getDocumentsContext(navReducer);
     // console.log("render documents page: " +JSON.stringify(documentlist))
-    const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
+    //const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
+    const isFetching = documentlists.isFetching;
     var additionalStyle = {};
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
     let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
+    let showCustomButton = documentlist.catId == constans.SEARCH_DOCUMENTS ? false : true
     return (
 
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
         <View style={styles.separator} elevation={5}/>
 
         {this._renderTableContent(dataSource, isFetching) }
-        <CustomButton />
+        {showCustomButton? <CustomButton /> : <View></View>}
+       
       </ViewContainer>
     )
   }
 
 }
-
-
-
 
 
 var NoDocuments = React.createClass({
@@ -306,16 +313,30 @@ var NoDocuments = React.createClass({
         </View>)
     }
     else {
-      return (
-        <View style={[styles.container, styles.centerText]}>
-          <View style={styles.textContainer}>
-            <Text style={styles.noDocumentsText}>{text}</Text>
-          </View>
-          <View style={styles.buttonContainer}>
-            <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
-          </View>
-        </View>
-      );
+       if(this.props.documentlist.catId == constans.SEARCH_DOCUMENTS)
+       {
+        return (
+            <View style={[styles.container, styles.centerText]}>
+              <View style={styles.textContainer}>
+                <Text style={styles.noDocumentsText}>{text}</Text>
+              </View>
+            </View>
+          );
+       }
+       else
+       {
+          return (
+            <View style={[styles.container, styles.centerText]}>
+              <View style={styles.textContainer}>
+                <Text style={styles.noDocumentsText}>{text}</Text>
+              </View>
+              <View style={styles.buttonContainer}>
+                <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
+              </View>
+            </View>
+          );
+       }
+      
     }
   }
 });
@@ -326,7 +347,7 @@ var NoDocuments = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F5F6F8',
   },
   textContainer: {
     flex: 1,

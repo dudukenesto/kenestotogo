@@ -14,6 +14,8 @@ import ItemMenu from './ItemMenu'
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
+import EditDocument from './EditDocument'
+import EditFolder from './EditFolder'
 import {connect} from 'react-redux'
 import KenestoToolbar from './KenestoToolbar'
 import * as documentsActions from '../actions/documentlists'
@@ -23,6 +25,7 @@ import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
 import Info from './Info'
 import Confirm from './Confirm'
+import CheckInDocument from './CheckInDocument'
 
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
@@ -250,8 +253,21 @@ class Main extends React.Component {
     return this.props.isDrawerOpen();
   }
 
+  openCheckInModal()
+  {
+    this.openModal("checkInModal");
+  }
 
-
+  openEditFolderModal()
+  {
+    this.openModal("editFolderModal");
+  }
+  
+  openEditDocumentModal()
+  {
+    this.openModal("editDocumentModal");
+  }
+  
   openCreateFolder() {
     this.refs.CreateFolder.open();
 
@@ -363,12 +379,21 @@ class Main extends React.Component {
         <Modal style={[styles.modal, styles.itemMenu]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
           <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) }
              createError={() => this.openModal("errorModal") }
-            closeCreateFolder={this.closeCreateFolder.bind(this) }/>
+            closeCreateFolder={this.closeCreateFolder.bind(this) } openCheckInModal={this.openCheckInModal.bind(this) } openEditDocumentModal={this.openEditDocumentModal.bind(this) } openEditFolderModal={this.openEditFolderModal.bind(this) }/>
         </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
           <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.closeCreateFolder.bind(this) }
             closeCreateFolder={this.closeCreateFolder.bind(this) } setCreateFolderStyle={this.setProcessingStyle.bind(this) }
             />
+        </Modal>
+        <Modal style= {modalStyle} position={"center"}  ref={"checkInModal"} isDisabled={false}>
+          <CheckInDocument closeModal = {() => this.closeModal("checkInModal") } openModal = {() => this.openModal("checkInModal") }/>
+        </Modal>
+        <Modal style= {modalStyle} position={"center"}  ref={"editFolderModal"} isDisabled={false}>
+          <EditFolder closeModal = {() => this.closeModal("editFolderModal") } openModal = {() => this.openModal("editFolderModal") }/>
+        </Modal>
+        <Modal style= {modalStyle} position={"center"}  ref={"editDocumentModal"} isDisabled={false}>
+          <EditDocument closeModal = {() => this.closeModal("editDocumentModal") } openModal = {() => this.openModal("editDocumentModal") }/>
         </Modal>
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>

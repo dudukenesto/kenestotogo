@@ -4,7 +4,7 @@ import { push, pop, emitInfo, emitError, navigateReset} from './navActions'
 
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
-import {clearDocumentlists} from '../actions/documentlists'
+import {clearAllDocumentlists} from '../actions/documentlists'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 
 var stricturiEncode = require('strict-uri-encode');
@@ -95,14 +95,14 @@ export function retrieveStatistics() {
       .then(response => response.json())
       .then(json => {
         
-        if (json.ResponseData.ResponseStatus == "FAILED") {
+        if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve statistics",""))
         }
         else {
-         var totalMyDocuments = json.ResponseData.TotalMyDocuments;
-         var totalAllDocuments = json.ResponseData.TotalAllDocuments;
-         var totalSharedWithMe = json.ResponseData.TotalSharedWithMe;
-         var totalCheckedoutDocuments = json.ResponseData.TotalCheckedoutDocuments;
+         var totalMyDocuments = json.ResponseData.MyDocuments;
+         var totalAllDocuments = json.ResponseData.AllDocuments;
+         var totalSharedWithMe = json.ResponseData.DocumentsSharedWithMe;
+         var totalCheckedoutDocuments = json.ResponseData.DocumentsCheckedOutByMe;
          var totalArchivedDocuments = json.ResponseData.TotalArchivedDocuments;
          var totalUsageSpace = json.ResponseData.TotalUsageSpace;
          dispatch(updateStatistics(totalMyDocuments, totalAllDocuments, totalSharedWithMe, totalCheckedoutDocuments,totalArchivedDocuments,totalUsageSpace))
@@ -134,7 +134,7 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
              dispatch(emitError('Fialed to reset password'))
         })
         .then( (responseData) => {
-            if (responseData.ForgotPasswordResult.ResponseStatus == "FAILED")
+            if (responseData.ResponseStatus == "FAILED")
             {
                  dispatch(updateIsFetching(false)); 
                  dispatch(emitError("Reset password failed", ""))
@@ -154,7 +154,7 @@ export function logOut() {
     return (dispatch, getstate) => {
         clearCredentials();
         dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
-        dispatch(clearDocumentlists());
+        dispatch(clearAllDocumentlists());
 
     }
 }
@@ -180,7 +180,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
            
             })
             .then( (responseData) => {
-                if (responseData.AuthenticateJsonResult.ResponseStatus == "FAILED")
+                if (responseData.ResponseStatus == "FAILED")
                 {
 
                     clearCredentials();
@@ -208,7 +208,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                                                     responseData.LoginJsonResult.User.TenantID));
                                                     
                             dispatch(retrieveStatistics());
-                            dispatch(clearDocumentlists());
+                            dispatch(clearAllDocumentlists());
                                var data = {
                                                 key : "documents",
                                                 name: getDocumentsTitle(constans.MY_DOCUMENTS),

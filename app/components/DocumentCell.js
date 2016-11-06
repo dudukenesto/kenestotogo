@@ -33,6 +33,7 @@ import MartialExtendedConf from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {updateSelectedObject,getDocumentPermissions} from '../actions/documentlists'
 import {connect} from 'react-redux'
+import {getIconNameFromExtension} from '../utils/documentsUtils'
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 
 //var getStyleFromScore = require('./getStyleFromScore');
@@ -45,7 +46,7 @@ var DocumentCell = React.createClass({
       var {dispatch} = this.props; 
    
       dispatch(updateSelectedObject(id, familyCode, ""));
-      //dispatch(getDocumentPermissions(id, familyCode))
+      dispatch(getDocumentPermissions(id, familyCode))
       this.context.itemMenuContext.open();
     },
 
@@ -70,8 +71,11 @@ var DocumentCell = React.createClass({
           elementIcon = <KenestoIcon name="folder" style={styles.icon} />
       }
       else {
+        // const iconName = this.props.document.IconName == 'word'? 'file-music' : this.props.document.IconName;
+        // console.log(getIconNameFromExtension(this.props.document.FileExtension))
+        // 
         if (typeof this.props.document.IconName != 'undefined')
-          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={this.props.document.IconName} style={styles.icon} /></View>
+          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={getIconNameFromExtension(this.props.document.FileExtension)} style={styles.icon} /></View>
         else
           elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
       }
