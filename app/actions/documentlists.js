@@ -14,20 +14,18 @@ const Android_Download_Path = '/storage/emulated/0/download';
 let React = require('react-native')
 import RNFetchBlob from 'react-native-fetch-blob'
 const android = RNFetchBlob.android
-
 let {
   Alert,
-  ListView,
-  Platform
+  Platform,
+  ListView
 } = React
 
-export function updateIsFetching(isFetching: boolean){
-    return {
-        type: types.UPDATE_IS_FETCHING, 
-        isFetching
-    }
+export function updateIsFetching(isFetching: boolean) {
+  return {
+    type: types.UPDATE_IS_FETCHING,
+    isFetching
+  }
 }
-
 
 export function updateIsFetchingSelectedObject(isFetching: boolean) {
   return {
@@ -67,14 +65,15 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
   return (dispatch, getState) => {
     dispatch(requestDocumentsList(documentlist))
+    console.log("fetch url:"+url)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
         const nextUrl = json.ResponseData.next_href
-        if (json.ResponseData.ResponseStatus == "FAILED") {
-          //dispatch(failedToFetchDocumentsList(documentlist, url, json.ResponseData.ErrorMessage))
-           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,'error details'))
-           dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+        if (json.ResponseStatus == "FAILED") {
+          //dispatch(failedToFetchDocumentsList(documentlist, url, json.ErrorMessage))
+          dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
+          dispatch(navActions.emitError(json.ErrorMessage, ""))
         }
         else {
           var prevState = getState();
@@ -90,22 +89,21 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             i,
             j;
 
-         var totalFiles = json.ResponseData.TotalFiles;
-         var totalFolders = json.ResponseData.TotalFolders;
-         
+          var totalFiles = json.ResponseData.TotalFiles;
+          var totalFolders = json.ResponseData.TotalFolders;
+
           if (actionType == types.RECEIVE_DOCUMENTS) {
             items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
           }
           else {
             items = [...json.ResponseData.DocumentsList]
           }
-          
+
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
           var sortBarTitle = `Folders`
-          if(totalFolders > 0 && totalFiles > 0)
-          {
+          if (totalFolders > 0 && totalFiles > 0) {
             dataBlob["ID1"] = `Folders (${totalFolders})`
             dataBlob["ID2"] = `Files (${totalFiles})`
             sectionIDs[0] = "ID1";
@@ -130,33 +128,31 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
               dataBlob['ID2:' + document.Id] = document;
             }
           }
-          else if(totalFolders > 0)
-          {
-             dataBlob["ID1"] = `Folders (${totalFolders})`
+          else if (totalFolders > 0) {
+            dataBlob["ID1"] = `Folders (${totalFolders})`
             sectionIDs[0] = "ID1";
-              rowIDs[0] = [];
-              for (j = 0; j < folders.length; j++) {
-                folder = folders[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[0].push(folder.Id);
+            rowIDs[0] = [];
+            for (j = 0; j < folders.length; j++) {
+              folder = folders[j];
+              // Add Unique Row ID to RowID Array for Section
+              rowIDs[0].push(folder.Id);
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID1:' + folder.Id] = folder;
-              }
+              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+              dataBlob['ID1:' + folder.Id] = folder;
+            }
           }
-          else if(totalFiles > 0)
-          {
-             dataBlob["ID1"] = `Files (${totalFiles})`
-             sectionIDs[0] = "ID1";
-              rowIDs[0] = [];
-              for (j = 0; j < documents.length; j++) {
-                document = documents[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[0].push(document.Id);
+          else if (totalFiles > 0) {
+            dataBlob["ID1"] = `Files (${totalFiles})`
+            sectionIDs[0] = "ID1";
+            rowIDs[0] = [];
+            for (j = 0; j < documents.length; j++) {
+              document = documents[j];
+              // Add Unique Row ID to RowID Array for Section
+              rowIDs[0].push(document.Id);
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID1:' + document.Id] = document;
-              }
+              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+              dataBlob['ID1:' + document.Id] = document;
+            }
           }
 
 
@@ -185,13 +181,13 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
               dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
               break
           }
-         
+
         }
       })
       .catch((error) => {
         console.log("error:" + JSON.stringify(error))
         //dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
-        dispatch(navActions.emitError("Failed to retrieve documents",""))
+        dispatch(navActions.emitError("Failed to retrieve documents", ""))
 
 
       })
@@ -201,7 +197,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
 export function fetchTableIfNeeded() {
   return (dispatch, getState) => {
-   
+
     var documentlist = getDocumentsContext(getState().navReducer);
     const {documentlists} = getState()
     //  console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
@@ -214,6 +210,7 @@ export function fetchTableIfNeeded() {
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
+    console.log("refreshTable url:"+url)
     dispatch(navActions.updateRouteData(documentlist))
     dispatch(Access.retrieveStatistics());
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
@@ -263,21 +260,22 @@ function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: 
   }
 }
 
+
 function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
 
   return {
     type: types.REFRESH_DOCUMENTS_LIST,
     nextUrl,
     catId: documentlist.catId,
-    documents, 
+    documents,
     dataSource,
   }
 }
-export function UpdateCreateingFolderState(creating : int) {
+export function UpdateCreateingFolderState(creating: int) {
 
   return {
-    type : types.REQUEST_CREATE_FOLDER,
-    creatingFolder : creating
+    type: types.REQUEST_CREATE_FOLDER,
+    creatingFolder: creating
   }
 }
 
@@ -306,54 +304,60 @@ function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
   return false
 }
 
-export function updateSelectedObject(id: string, familyCode:string, permissions:object){
+export function updateSelectedObject(id: string, familyCode: string, permissions: object) {
 
-   return {
-      type: types.UPDATE_SELECTED_OBJECT,
-      selectedObject: {
-        id:id,
-        familyCode:familyCode,
-        permissions:permissions
-      }
+  return {
+    type: types.UPDATE_SELECTED_OBJECT,
+    selectedObject: {
+      id: id,
+      familyCode: familyCode,
+      permissions: permissions
     }
+  }
 }
 
 
-export function createFolder(folderName: string, isVault: boolean){
 
-return (dispatch, getState) => {
-   var documentlist = getDocumentsContext(getState().navReducer);
-    const {sessionToken, env} = getState().accessReducer; 
-    const folderId = documentlist.fId; 
-    alert(folderId)
+export function createFolder(folderName: string, isVault: boolean) {
+
+  return (dispatch, getState) => {
+    var documentlist = getDocumentsContext(getState().navReducer);
+    const {sessionToken, env} = getState().accessReducer;
+    const folderId = documentlist.fId;
     const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName, isVault);
     dispatch(UpdateCreateingFolderState(1))
     return fetch(createFolderUrl)
       .then(response => response.json())
       .then(json => {
-        if (json.ResponseData.ResponseStatus == "FAILED") {
-         // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
-           
+        if (json.ResponseStatus == "FAILED") {
+          // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
 
-           dispatch(UpdateCreateingFolderState(2))
+          if(json.ErrorMessage.indexOf('VAL10357') > -1)
+          {
+            dispatch(navActions.emitError("Folder Name already exists"))
+          }
+          else
+          {
+            dispatch(navActions.emitError("Error creating new folder"))
+          }
+          
+          dispatch(UpdateCreateingFolderState(2))
 
-           dispatch(navActions.emitError("Error creating new folder"))
+         
         }
         else {
-             dispatch(UpdateCreateingFolderState(2))
-             dispatch(refreshTable(documentlist))    
-             dispatch(Access.retrieveStatistics());
-
+          dispatch(UpdateCreateingFolderState(2))
+          dispatch(refreshTable(documentlist))
+         
         }
-        
+
       })
       .catch((error) => {
-         dispatch(navActions.emitError("Error creating new folder"))
-         dispatch(UpdateCreateingFolderState(0))
+        dispatch(navActions.emitError("Error creating new folder"))
+        dispatch(UpdateCreateingFolderState(0))
       })
   }
 }
-
 
 
 export function downloadDocument(id: string, fileName: string){
@@ -457,10 +461,10 @@ function uploadFile(url,file){
             .then(response => response.json())
             .then(json => {
              
-              if (json.ResponseData.ResponseStatus == "FAILED") {
+              if (json.ResponseStatus == "FAILED") {
                //   alert(failed)
                 // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
-                 dispatch(navActions.emitError(json.ResponseData.ErrorMessage,""))
+                 dispatch(navActions.emitError(json.ErrorMessage,""))
               }
               else {
                  var AccessUrl = json.ResponseData.AccessUrl;
@@ -709,6 +713,7 @@ export function DiscardCheckOut() {
           dispatch(updateIsFetching(false));
           dispatch(navActions.emitToast("success", "Check-Out successfully discarded", ""));
           dispatch(navActions.clearToast());
+          dispatch(Access.retrieveStatistics());
         }
 
       }).catch((error) => {
@@ -739,6 +744,7 @@ export function CheckOut() {
           dispatch(updateIsFetching(false));
           dispatch(navActions.emitToast("success", "Document successfully checked out.", ""));
           dispatch(navActions.clearToast());
+          dispatch(Access.retrieveStatistics());
          
         }
 
@@ -788,6 +794,7 @@ export function CheckIn(comment :string) {
           dispatch(updateIsFetching(false));
           dispatch(navActions.emitToast("success", "Document successfully checked in.", ""));
           dispatch(navActions.clearToast());
+          dispatch(Access.retrieveStatistics());
          
         }
 
