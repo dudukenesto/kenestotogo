@@ -22,6 +22,7 @@ import * as navActions from '../actions/navActions'
 import * as docActions from '../actions/documentlists'
 import ProggressBar from "../components/ProgressBar";
 import ViewContainer from './ViewContainer';
+import {getIconNameFromExtension} from '../utils/documentsUtils'
 
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 const CustomIcon = createIconSetFromFontello(customConfig);
@@ -381,7 +382,7 @@ class ItemMenu extends React.Component{
             }
             else {
                 if (typeof this.state.document.IconName != 'undefined')
-                    elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={this.state.document.IconName} style={styles.icon} /></View>
+                    elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={getIconNameFromExtension(this.state.document.FileExtension) } style={styles.icon} /></View>
                 else
                     elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
             }
