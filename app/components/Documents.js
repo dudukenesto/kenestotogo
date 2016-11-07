@@ -14,7 +14,6 @@ import {View,
   ActivityIndicator,
   RefreshControl
 } from 'react-native'
-import {MKButton} from 'react-native-material-kit';
 import {  emitToast, clearToast} from '../actions/navActions'
 
 import ProggressBar from "../components/ProgressBar";
@@ -253,28 +252,30 @@ class Documents extends Component {
   render() {
 
     const {dispatch, documentlists, navReducer } = this.props
-    const CustomButton = new MKButton.coloredFab()
-      .withBackgroundColor('#FF811B')
-      // .withShadowRadius(2)
-      // .withShadowOffset({ width: 0, height: 2 })
-      // .withShadowOpacity(.7)
-      // .withShadowColor('black')
-      .withOnPress(() => {
-        this.openModal();
-      })
-      .withTextStyle({
-        color: 'white',
-        fontSize: 28
-      })
-      .withStyle({
-        position: "absolute",
-        right: 20,
-        bottom: 20,
-        width: 60,
-        height: 60,
-      })
-      .withText('+')
-      .build();
+    
+    
+    // const CustomButton = new MKButton.coloredFab()
+    //   .withBackgroundColor('#FF811B')
+    //   // .withShadowRadius(2)
+    //   // .withShadowOffset({ width: 0, height: 2 })
+    //   // .withShadowOpacity(.7)
+    //   // .withShadowColor('black')
+    //   .withOnPress(() => {
+    //     this.openModal();
+    //   })
+    //   .withTextStyle({
+    //     color: 'white',
+    //     fontSize: 28
+    //   })
+    //   .withStyle({
+    //     position: "absolute",
+    //     right: 20,
+    //     bottom: 20,
+    //     width: 60,
+    //     height: 60,
+    //   })
+    //   .withText('+')
+    //   .build();
 
     //var currRoute = navReducer.routes[navReducer.index];
     var documentlist = getDocumentsContext(navReducer);
@@ -291,7 +292,8 @@ class Documents extends Component {
         <View style={styles.separator} elevation={5}/>
 
         {this._renderTableContent(dataSource, isFetching) }
-        {showCustomButton? <CustomButton /> : <View></View>}
+        {showCustomButton?  <ActionButton buttonColor="#FF811B" onPress={() => this.openModal()} >            
+        </ActionButton> : <View></View>}
        
       </ViewContainer>
     )
