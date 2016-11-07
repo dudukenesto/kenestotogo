@@ -16,4 +16,4 @@ packages with special handling:
 * react-native-fetch-blob
     problem: SupportsRtl definitions colides with general definition.
     soution: change the value of parameter "android:supportsRtl" from "true" to "false", 
-             in \kenestotogo\node_modules\react-native-fetch-blob\android\src\main\AndroidManifest.xml
+             in \kenestotogo\node_modules\react-native-fetch-blob\android\src\main\AndroidManifest.xml  
