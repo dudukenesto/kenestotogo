@@ -90,14 +90,14 @@ componentWillMount(){
       
        if (gestureState.pinch && gestureState.previousPinch) {
       //   debugger;
-       //  var  rezio = (gestureState.pinch / gestureState.previousPinch)
+         var  rezio = (gestureState.pinch / gestureState.previousPinch)
 
-       var diff = gestureState.pinch - gestureState.previousPinch;
+         var diff = gestureState.pinch - gestureState.previousPinch;
 
-         if (rezio > 1.05)
-            this.zoomIn();
-         else  if (rezio < 0.98)
-            this.zoomOut();
+        //  if (rezio > 1.05)
+        //     this.zoomIn();
+        //  else  if (rezio < 0.98)
+        //     this.zoomOut();
         }
     },
     onResponderTerminationRequest: (evt, gestureState) => true,
@@ -200,16 +200,7 @@ onBridgeMessage(message){
     
       <View style={{ flex: 1}}>
           <View>
-          <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomIn.bind(this)()}) } >
-                      <View style={styles.optionContainer}>
-                       <Icon name="zoom-in"  style={styles.moreMenu}/>
-                      </View>
-           </TouchableWithoutFeedback>
-           <TouchableWithoutFeedback onPress={ ( ()=> {this.zoomOut.bind(this)()}) }  >
-                      <View style={styles.optionContainer}>
-                        <Icon name="zoom-out" style={styles.moreMenu} />
-                      </View>
-           </TouchableWithoutFeedback>
+ 
            
           </View>
           <View style={{flex: 1, backgroundColor: 'transparent', }}

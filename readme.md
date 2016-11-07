@@ -13,3 +13,7 @@ packages with special handling:
     problem: npm not synced with latest version 
     solution: replace \node_modules\react-native-material-kit\lib\internal\MKTouchable.js 
     with the one in \appendix
+* react-native-fetch-blob
+    problem: SupportsRtl definitions colides with general definition.
+    soution: change the value of parameter "android:supportsRtl" from "true" to "false", 
+             in \kenestotogo\node_modules\react-native-fetch-blob\android\src\main\AndroidManifest.xml
