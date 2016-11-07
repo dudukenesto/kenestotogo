@@ -381,8 +381,16 @@ class ItemMenu extends React.Component{
                 elementIcon = <KenestoIcon name="folder" style={styles.icon} />
             }
             else {
-                if (typeof this.state.document.IconName != 'undefined')
-                    elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={getIconNameFromExtension(this.state.document.FileExtension) } style={styles.icon} /></View>
+                if (typeof this.state.document.IconName != 'undefined') {
+                    var iconName = getIconNameFromExtension(this.state.document.FileExtension);
+                    elementIcon = <View style={styles.iconFiletype}>
+                        { iconName === 'solidw' ?
+                            <CustomIcon name={iconName} style={styles.icon} />
+                            :
+                            <KenestoIcon name={iconName} style={styles.icon} />
+                        }
+                    </View>
+                }
                 else
                     elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
             }
