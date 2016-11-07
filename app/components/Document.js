@@ -94,16 +94,15 @@ componentWillMount(){
 
          var diff = gestureState.pinch - gestureState.previousPinch;
 
-        //  if (rezio > 1.05)
-        //     this.zoomIn();
-        //  else  if (rezio < 0.98)
-        //     this.zoomOut();
+         if (rezio > 1.05)
+            this.zoomIn();
+         else  if (rezio < 0.98)
+            this.zoomOut();
         }
     },
     onResponderTerminationRequest: (evt, gestureState) => true,
     onResponderRelease: (evt, gestureState) => {},
     onResponderTerminate: (evt, gestureState) => {
-      alert(gestureState.doubleTapUp)
     },
     
     onResponderSingleTapConfirmed: (evt, gestureState) => {},
