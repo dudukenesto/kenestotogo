@@ -36,7 +36,9 @@ class Document extends React.Component{
       isLoading: true,
       scalingEnabled: true,
       orientation: Orientation.getInitialOrientation(),
-      url:""
+      url:"", 
+      prevPinch: null, 
+      pinchDirection : null
     };
   }
   
@@ -79,34 +81,56 @@ componentWillMount(){
     }
 
       this.gestureResponder = createResponder({
-    onStartShouldSetResponder: (evt, gestureState) => true,
-    onStartShouldSetResponderCapture: (evt, gestureState) => true,
-    onMoveShouldSetResponder: (evt, gestureState) => true,
+    onStartShouldSetResponder: (evt, gestureState) => false,
+    onStartShouldSetResponderCapture: (evt, gestureState) =>false,
+    onMoveShouldSetResponder: (evt, gestureState) => false,
     onMoveShouldSetResponderCapture: (evt, gestureState) => true,
     onResponderGrant: (evt, gestureState) => {},
     onResponderMove: (evt, gestureState) => {
 
-        console.log('gestureState.pinch: ' + gestureState.pinch  + 'gestureState.previousPinch: ' + gestureState.previousPinch);
-      
-       if (gestureState.pinch && gestureState.previousPinch) {
-      //   debugger;
-         var  rezio = (gestureState.pinch / gestureState.previousPinch)
-
+        if ( typeof(gestureState.pinch) != 'undefined' && typeof(gestureState.previousPinch) != 'undefined') {
          var diff = gestureState.pinch - gestureState.previousPinch;
+          if (this.state.startPinch == null)
+            this.setState({startPinch : gestureState.pinch, pinchDirection: diff > 0 ? "in" : "out"})
+          else{
+              if (diff < 0 && this.state.pinchDirection == 'in')
+              {
+                this.setState({startPinch: gestureState.pinch, pinchDirection : "out"})
+              }
+              else if (diff > 0 && this.state.pinchDirection == 'out')
+              {
+                this.setState({startPinch: gestureState.pinch, pinchDirection : "in"})
+              }
+          }
 
-         if (rezio > 1.05)
-            this.zoomIn();
-         else  if (rezio < 0.98)
-            this.zoomOut();
-        }
+         const absDistance =  Math.round(Math.abs(gestureState.pinch -  this.state.startPinch));
+         const mod = absDistance % 11; 
+         if (mod == 0)
+         {
+            if (this.state.pinchDirection == "in")
+                this.zoomIn();
+            else {
+              this.zoomOut();
+            }
+         }
+     }
+
+        
     },
     onResponderTerminationRequest: (evt, gestureState) => true,
-    onResponderRelease: (evt, gestureState) => {},
+    onResponderRelease: (evt, gestureState) => {
+        // if (gestureState.doubleTapUp)
+        //   alert('zaba')
+        this.setState({startPinch: null, pinchDirection : null, doubleTapUp: gestureState.doubleTapUp})
+    },
+    
     onResponderTerminate: (evt, gestureState) => {
     },
     
-    onResponderSingleTapConfirmed: (evt, gestureState) => {},
     
+    onResponderSingleTapConfirmed: (evt, gestureState) => {
+    },
+
     moveThreshold: 1,
     debug: false
   });
@@ -171,7 +195,12 @@ onBridgeMessage(message){
        const { webviewbridge } = this.refs;
       webviewbridge.sendToBridge("zoomOut");
 
-}
+  }
+  setZoom(){
+    alert('wawa');
+      const { webviewbridge } = this.refs;
+      webviewbridge.sendToBridge("setZoom");
+  }
 
 
 
@@ -187,6 +216,9 @@ onBridgeMessage(message){
                           case "zoomOut":
                                   activateZoomOut();
                             break;
+                           case "setZoom":
+                                  activateSetZoom(100);
+                            break;
                         }
                     }
                   }
@@ -199,7 +231,6 @@ onBridgeMessage(message){
     
       <View style={{ flex: 1}}>
           <View>
- 
            
           </View>
           <View style={{flex: 1, backgroundColor: 'transparent', }}

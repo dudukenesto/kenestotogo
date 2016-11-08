@@ -325,7 +325,6 @@ return (dispatch, getState) => {
    var documentlist = getDocumentsContext(getState().navReducer);
     const {sessionToken, env} = getState().accessReducer; 
     const folderId = documentlist.fId; 
-    alert(folderId)
     const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName, isVault);
     dispatch(UpdateCreateingFolderState(1))
     return fetch(createFolderUrl)
