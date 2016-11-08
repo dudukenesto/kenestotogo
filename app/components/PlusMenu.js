@@ -62,6 +62,7 @@ class PlusMenu extends React.Component{
 
                 var data = {
                         key: "scan",
+                        baseFileId:"",
                         catId: documentsContext.catId,
                         fId: documentsContext.fId,
                         sortDirection: documentsContext.sortDirection,

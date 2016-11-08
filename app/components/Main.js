@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import CreateFolder from './CreateFolder'
 import EditDocument from './EditDocument'
 import EditFolder from './EditFolder'
+import UpdateVersions from './UpdateVersions'
 import {connect} from 'react-redux'
 import KenestoToolbar from './KenestoToolbar'
 import * as documentsActions from '../actions/documentlists'
@@ -67,6 +68,12 @@ let styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
   ifProcessing: {
+    height: 90,
+    width: 320,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  updateVersionsModal: {
     height: 90,
     width: 320,
     justifyContent: 'center',
@@ -268,6 +275,11 @@ class Main extends React.Component {
     this.openModal("editDocumentModal");
   }
   
+  openUpdateVersionsModal()
+  {
+    this.openModal("updateVersionsModal");
+  }
+  
   openCreateFolder() {
     this.refs.CreateFolder.open();
 
@@ -379,7 +391,7 @@ class Main extends React.Component {
         <Modal style={[styles.modal, styles.itemMenu]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
           <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) }
              createError={() => this.openModal("errorModal") }
-            closeCreateFolder={this.closeCreateFolder.bind(this) } openCheckInModal={this.openCheckInModal.bind(this) } openEditDocumentModal={this.openEditDocumentModal.bind(this) } openEditFolderModal={this.openEditFolderModal.bind(this) }/>
+            closeCreateFolder={this.closeCreateFolder.bind(this) } openUpdateVersionsModal={this.openUpdateVersionsModal.bind(this) } openCheckInModal={this.openCheckInModal.bind(this) } openEditDocumentModal={this.openEditDocumentModal.bind(this) } openEditFolderModal={this.openEditFolderModal.bind(this)}/>
         </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
           <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.closeCreateFolder.bind(this) }
@@ -394,6 +406,9 @@ class Main extends React.Component {
         </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"editDocumentModal"} isDisabled={false}>
           <EditDocument closeModal = {() => this.closeModal("editDocumentModal") } openModal = {() => this.openModal("editDocumentModal") }/>
+        </Modal>
+        <Modal style= {styles.updateVersionsModal} position={"center"}  ref={"updateVersionsModal"} isDisabled={false}>
+          <UpdateVersions closeModal = {() => this.closeModal("updateVersionsModal") } openModal = {() => this.openModal("updateVersionsModal") }/>
         </Modal>
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>

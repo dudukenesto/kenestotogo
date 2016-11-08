@@ -207,11 +207,15 @@ class ItemMenu extends React.Component{
         this.props.dispatch(documentsActions.CheckOut());
     }
     
+    updateVersions(){
+        this.props.closeItemMenuModal();
+         this.props.openUpdateVersionsModal()
+    }
+
     discardCheckOut(){
         this.props.closeItemMenuModal();
         this.props.dispatch(documentsActions.DiscardCheckOut());
     }
-
     deleteDocument(){
 
          // this.refs.mainContainer.showMessage("info", errorMessage)
@@ -289,6 +293,23 @@ class ItemMenu extends React.Component{
                 return(<View></View>)
             }
     }
+   
+    _renderUpdateVersionsAction(document)
+    {
+            if(this.props.documentlists.selectedObject.permissions.AllowUpdateVersions)
+            {
+                return( <TouchableHighlight onPress={this.updateVersions.bind(this) } underlayColor="#E9EAEC">
+                    <View style={styles.actionHolder}>
+                        <Icon name="edit" style={styles.icon} />
+                        <Text style={styles.actionName}>Update Versions</Text>
+                    </View>
+                </TouchableHighlight>)
+            }
+            else
+            {
+                return(<View></View>)
+            }
+    }
     _renderCheckinAction(document)
     {
             if(this.props.documentlists.selectedObject.permissions.AllowCheckin)
@@ -348,6 +369,7 @@ class ItemMenu extends React.Component{
                 <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
                     <View style={styles.menuItemsContainer}>
                         { this._renderShareAction(document) }
+                        { this._renderUpdateVersionsAction(document)}
                         { this._renderCheckinAction(document) }
                         { this._renderCheckoutAction(document) }
                         { this._renderDiscardCheckOutAction(document) }

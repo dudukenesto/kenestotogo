@@ -117,8 +117,8 @@ export function getDocumentsContext(navReducer: Object) {
       fId: currRoute.data.fId,
       sortDirection: currRoute.data.sortDirection,
       sortBy: currRoute.data.sortBy,
-      keyboard:currRoute.data.keyboard
-
+      keyboard:currRoute.data.keyboard,
+      baseFileId:currRoute.data.baseFileId
     })
 }
 
@@ -158,6 +158,7 @@ export function getFileUploadUrl(env: string, sessionToken: string, path: string
   const urls = _.find(config.urls, { 'env': env });
    const apiBaseUrl = urls.ApiBaseUrl; 
    folderId = (typeof (folderId) == 'undefined' || folderId == null || folderId == '') ? '00000000-0000-0000-0000-000000000000' : folderId;
+   baseFileId = (typeof (baseFileId) == 'undefined' || baseFileId == null || baseFileId == '') ? '00000000-0000-0000-0000-000000000000' : baseFileId;
    return  `${apiBaseUrl}/KDocuments.svc/UploadFile?t=${sessionToken}&p=${path}&fd=${fileDescription}&fk=${fileKeyword}&fid=${folderId}&bid=${baseFileId}&ud=${userData}`;
 }
 
