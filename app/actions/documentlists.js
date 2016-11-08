@@ -398,7 +398,31 @@ export function downloadDocument(id: string, fileName: string){
         }
 }
 
-function uploadFile(url,file){
+
+function uploadFile(url, file){
+ RNFetchBlob.fetch('PUT', url, {
+      'Content-Type' : 'multipart/form-data',
+    }, 
+    [ file ]
+    )
+    // listen to upload progress event
+    .uploadProgress((written, total) => {
+        console.log('uploaded', written / total)
+    })
+    // listen to download progress event
+    .progress((received, total) => {
+        console.log('progress', received / total)
+    })
+    .then((resp) => {
+      // ...
+    })
+    .catch((err) => {
+      // ...
+    })
+
+}
+
+function uploadFileOld(url,file){
 	
 	       return new Promise((resolve, reject) => {
 	
@@ -408,10 +432,18 @@ function uploadFile(url,file){
 	      console.log(e);
 	      reject();
 	    };
+
 	
 	    xhr.upload.addEventListener('progress', function (e) {
+        alert('ffffffffffffffffffffffffff')
 	      // handle notifications about upload progress: e.loaded / e.total
+       // console.log('progress: ' + e.loaded + "/" + e.total);
 	    }, false);
+
+      xhr.upload.onprogress = function(e) {
+           // it will never come inside here
+           alert('fdfsdf')
+        }
 	
 	    xhr.onreadystatechange = function () {
 	        if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -431,7 +463,7 @@ function uploadFile(url,file){
     // var formData = new FormData();
   //   formData.append('file', file);
 	    
-       xhr.open('PUT', url);
+       xhr.open('PUT', url, true);
         xhr.setRequestHeader('Content-Type', 'multipart/form-data');
      
 
@@ -467,31 +499,74 @@ function uploadFile(url,file){
               else {
                  var AccessUrl = json.ResponseData.AccessUrl;
 
-               //  alert(JSON.stringify(fileObject))
-                // const completeUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, AccessUrl);
-              // alert(imageData.path)
 
-              //alert(fileObject.name + ' ' + fileObject.fileName);
 
-                 uploadFile(AccessUrl,fileObject)
-                 .then((url) => {
-                    //    alert(completed)
-                         const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, url);
-                          fetch(thisCompletedUrl)
-                                .then(response => response.json())
-                                .then(json => {
-                                  //dispatch(updateIsFetching(false)); 
+
+
+
+
+
+                //  uploadFile(AccessUrl,fileObject)
+                //  .then((url) => {
+                //     //    alert(completed)
+                //          const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, url);
+                //           fetch(thisCompletedUrl)
+                //                 .then(response => response.json())
+                //                 .then(json => {
+                //                   //dispatch(updateIsFetching(false)); 
 
                                  
-                                  if(json.ResponseStatus == 'OK')
-                                  {
+                //                   if(json.ResponseStatus == 'OK')
+                //                   {
                                      
-                                        dispatch(navActions.emitToast("success","file successfully uploaded",""));
-                                  }
-                                  else {
-                                         dispatch(navActions.emitToast("info","coudn't upload file",""));
-                                  }
-                                  dispatch(navActions.pop());
+                //                         dispatch(navActions.emitToast("success","file successfully uploaded",""));
+                //                   }
+                //                   else {
+                //                          dispatch(navActions.emitToast("info","coudn't upload file",""));
+                //                   }
+                //                   dispatch(navActions.pop());
+
+                //                 })
+                //                 .catch((error) => {
+                //                   console.log("error:" + JSON.stringify(error))
+                //                   dispatch(navActions.emitError("Failed",JSON.stringify(error)))
+
+
+                //                 }) 
+                                
+                //   })
+                //  .catch(err => {alert(err)});
+
+
+
+
+                              RNFetchBlob.fetch('PUT', AccessUrl, {
+                                'Content-Type' : 'multipart/form-data',
+                              }, 
+                              [ fileObject ]
+                              )
+                              // listen to upload progress event
+                              .uploadProgress((written, total) => {
+                                  console.log('uploaded', written / total)
+                              })
+                              // listen to download progress event
+                              // .progress((received, total) => {
+                              //     console.log('progress', received / total)
+                              // })
+                              //.then(response => response.json())
+                               .then(resp => {
+                                  //dispatch(updateIsFetching(false)); 
+
+                                 alert(JSON.stringify(resp))
+                                  // if(json.ResponseStatus == 'OK')
+                                  // {
+                                     
+                                  //       dispatch(navActions.emitToast("success","file successfully uploaded",""));
+                                  // }
+                                  // else {
+                                  //        dispatch(navActions.emitToast("info","coudn't upload file",""));
+                                  // }
+                                  // dispatch(navActions.pop());
 
                                 })
                                 .catch((error) => {
@@ -500,60 +575,10 @@ function uploadFile(url,file){
 
 
                                 }) 
-                                
-                  })
-                 .catch(err => {alert(err)});
 
 
-                  // RNFetchBlob.fetch('PUT', AccessUrl, {
-                  //       'Content-Type' : 'multipart/form-data',
-                  //     }, [
-                  //       // element with property `filename` will be transformed into `file` in form data
-                  //       { name : fileObject.name, filename :fileObject.fileName, data: fileObject.data},
-                  // ,
-                  //     ]).then((resp) => {
-                  //       alert(JSON.stringify(resp))
-                  //       // ...
-                  //     }).catch((err) => {
-                  //       alert('error')
-                  //       // ...
-                  //     })
-                      
-                // var xhr = new XMLHttpRequest();
-                //       xhr.onerror = function (e) {
-                //   // handle failture
-                //  // console.log(e);
-                //  alert(e);
-                // //  reject();
-                // };
 
-                // xhr.upload.addEventListener('progress', function (e) {
-                //   // handle notifications about upload progress: e.loaded / e.total
-                // }, false);
 
-                // xhr.onreadystatechange = function () {
-                //     if (xhr.readyState === XMLHttpRequest.DONE) {
-                //       if (xhr.status >= 200 && xhr.status <= 299) {
-                //         // upload completed//
-                //      //  resolve(signedUrlToKeep);
-
-                //         alert('uploaded');
-                //       } else {
-
-                //         alert('error: ' + xhr.status);
-                //         // failed with error messge from server
-                //        // reject();
-                //       }
-                //     }
-                // };
-
-              // xhr.processData = false;  
-              // xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-
-              // xhr.open('GET', 'http://images1.ynet.co.il/PicServer4/2015/11/23/6652242/665223901000100640360no.jpg', false);
-              //  // xhr.open('PUT', url, false);
-              //   xhr.send();
-                    
               }
             })
             .catch((error) => {
