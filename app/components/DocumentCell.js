@@ -30,11 +30,13 @@ var {
 var moment = require('moment');
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MartialExtendedConf from '../assets/icons/config.json';
+import customConfig from '../assets/icons/customConfig.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {updateSelectedObject,getDocumentPermissions} from '../actions/documentlists'
 import {connect} from 'react-redux'
 import {getIconNameFromExtension} from '../utils/documentsUtils'
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
+const CustomIcon = createIconSetFromFontello(customConfig);
 
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
@@ -66,16 +68,22 @@ var DocumentCell = React.createClass({
     else {
       if (this.props.document.FamilyCode == 'FOLDER'){
         if(this.props.document.IsVault)
-          elementIcon = <KenestoIcon name="safe" style={styles.icon} />
+          elementIcon = <CustomIcon name="safe" style={styles.icon} />
         else
           elementIcon = <KenestoIcon name="folder" style={styles.icon} />
       }
       else {
-        // const iconName = this.props.document.IconName == 'word'? 'file-music' : this.props.document.IconName;
-        // console.log(getIconNameFromExtension(this.props.document.FileExtension))
-        // 
-        if (typeof this.props.document.IconName != 'undefined')
-          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={getIconNameFromExtension(this.props.document.FileExtension)} style={styles.icon} /></View>
+        if (typeof this.props.document.IconName != 'undefined') {
+          var iconName = getIconNameFromExtension(this.props.document.FileExtension);
+          elementIcon = <View style={styles.iconFiletype}>
+            { iconName === 'solidw' ? 
+              <CustomIcon name={iconName} style={styles.icon} />
+              :
+              <KenestoIcon name={iconName} style={styles.icon} />
+            }
+
+          </View>
+        }
         else
           elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
       }

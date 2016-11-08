@@ -22,6 +22,7 @@ import * as navActions from '../actions/navActions'
 import * as docActions from '../actions/documentlists'
 import ProggressBar from "../components/ProgressBar";
 import ViewContainer from './ViewContainer';
+import {getIconNameFromExtension} from '../utils/documentsUtils'
 
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 const CustomIcon = createIconSetFromFontello(customConfig);
@@ -102,7 +103,7 @@ let styles = StyleSheet.create({
     kenestoIcon: {
         fontSize: 22,
         color: '#888',
-        marginTop: -13
+        marginTop: -12
     },
     customIconContainer: {
         alignItems: 'center', 
@@ -294,7 +295,7 @@ class ItemMenu extends React.Component{
             {
                 return( <TouchableHighlight onPress={this.checkinDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <CustomIcon name="lock-open" style={styles.icon} />
+                        <KenestoIcon name="login-variant" style={styles.kenestoIcon} />
                         <Text style={styles.actionName}>Check In</Text>
                     </View>
                 </TouchableHighlight>)
@@ -328,7 +329,7 @@ class ItemMenu extends React.Component{
             {
                 return( <TouchableHighlight onPress={this.checkoutDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <View style={styles.customIconContainer}><CustomIcon name="lock" style={styles.icon} /></View>
+                        <View style={styles.customIconContainer}><KenestoIcon name="logout-variant" style={styles.kenestoIcon} /></View>
                         <Text style={styles.actionName}>Check Out</Text>
                     </View>
                 </TouchableHighlight>)
@@ -380,8 +381,16 @@ class ItemMenu extends React.Component{
                 elementIcon = <KenestoIcon name="folder" style={styles.icon} />
             }
             else {
-                if (typeof this.state.document.IconName != 'undefined')
-                    elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={this.state.document.IconName} style={styles.icon} /></View>
+                if (typeof this.state.document.IconName != 'undefined') {
+                    var iconName = getIconNameFromExtension(this.state.document.FileExtension);
+                    elementIcon = <View style={styles.iconFiletype}>
+                        { iconName === 'solidw' ?
+                            <CustomIcon name={iconName} style={styles.icon} />
+                            :
+                            <KenestoIcon name={iconName} style={styles.icon} />
+                        }
+                    </View>
+                }
                 else
                     elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
             }
