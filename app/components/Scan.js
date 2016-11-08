@@ -55,7 +55,7 @@ class Scan extends React.Component {
  
   this.setState({uploading : true});
 
-  this.props.dispatch(uploadToKenesto({name: name, uri : this.state.image.path, type: this.state.image.type},url));
+  this.props.dispatch(uploadToKenesto({name: name, uri : this.state.image.path, type: this.state.image.type, data: this.state.image.data,fileName : fileName},url));
     
   }
 
@@ -85,18 +85,20 @@ class Scan extends React.Component {
     ImagePicker.openPicker({
       width: 400,
       height: 400,
-      cropping : true,
-       includeBase64: true
+      cropping : false,
+       includeBase64: false
     }).then(image => {
 
 
       
     const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
+
+    alert(imageName);
            
-      this.setState({
-        initial: false, 
-        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
-        images: null});
+      // this.setState({
+      //   initial: false, 
+      //   image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
+      //   images: null});
 
     }).catch(e => alert(JSON.stringify(e)));
 
