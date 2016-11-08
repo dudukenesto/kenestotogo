@@ -215,6 +215,7 @@ export function geDiscardCheckOutDocumentUrl(env: string, sessionToken: string, 
 
 export function getIconNameFromExtension(extension: string){
    var iconName = "";
+   var customStyle = "";
    
    switch (extension.toLowerCase())
   
@@ -260,6 +261,7 @@ export function getIconNameFromExtension(extension: string){
                 case ".swj":
                 case ".swp":
                     iconName = "solidw";
+                    customStyle = {color: "#87CEFA"}
                     break;
                 case "link":
                     iconName = "web";
@@ -275,9 +277,11 @@ export function getIconNameFromExtension(extension: string){
                 case ".xlam":
                 case ".xls":
                     iconName = "file-excel";
+                    customStyle = {color: "#2C9963"}
                     break;
                 case ".pdf":
                     iconName = "file-pdf";
+                    customStyle = {color: "#BB0706"}
                     break;
                 case ".ppt":
                 case ".pps":
@@ -289,6 +293,7 @@ export function getIconNameFromExtension(extension: string){
                 case ".ppsx":
                 case ".ppsm":
                     iconName = "file-powerpoint";
+                    customStyle = {color: "#E74B3E"}
                     break;
                 case ".docx":
                 case ".docm":
@@ -296,6 +301,7 @@ export function getIconNameFromExtension(extension: string){
                 case ".dotm":
                 case ".doc":
                     iconName = "file-word";
+                    customStyle = {color: "#1672B7"}
                     break;
                 case "sldx": // autocad
                 case ".sldm":
@@ -320,6 +326,7 @@ export function getIconNameFromExtension(extension: string){
                     break;
                 case ".mp3":
                     iconName = "file-music";
+                    customStyle = {color: "#FF9900"}
                     break;
                 case ".mp4":
                 case ".webm":
@@ -345,5 +352,8 @@ export function getIconNameFromExtension(extension: string){
                     break;
             }
    
-     return  iconName;
+   return { 
+     iconName: iconName,
+     customStyle: customStyle
+   }
 }

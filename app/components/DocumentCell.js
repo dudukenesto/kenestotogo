@@ -70,22 +70,23 @@ var DocumentCell = React.createClass({
         if(this.props.document.IsVault)
           elementIcon = <CustomIcon name="safe" style={styles.icon} />
         else
-          elementIcon = <KenestoIcon name="folder" style={styles.icon} />
+          elementIcon = <KenestoIcon name="folder" style={styles.kenestoIcon} />
       }
       else {
         if (typeof this.props.document.IconName != 'undefined') {
-          var iconName = getIconNameFromExtension(this.props.document.FileExtension);
+          var iconName = getIconNameFromExtension(this.props.document.FileExtension).iconName;
+          var customStyle = getIconNameFromExtension(this.props.document.FileExtension).customStyle;
           elementIcon = <View style={styles.iconFiletype}>
             { iconName === 'solidw' ? 
-              <CustomIcon name={iconName} style={styles.icon} />
+              <CustomIcon name={iconName} style={[styles.icon, customStyle]} />
               :
-              <KenestoIcon name={iconName} style={styles.icon} />
+              <KenestoIcon name={iconName} style={[styles.kenestoIcon, customStyle]} />
             }
 
           </View>
         }
         else
-          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
+          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.kenestoIcon} /></View>
       }
     }
       
@@ -158,8 +159,12 @@ var styles = StyleSheet.create({
   icon: {
     fontSize: 22,
     color: '#888',    
-    
   },
+  kenestoIcon: {
+        fontSize: 22,
+        color: '#888',
+        marginTop: -12
+    },
   iconFiletype: {
     height: 40,
     width: 55,

@@ -400,16 +400,17 @@ class ItemMenu extends React.Component{
         }
         else {
             if (this.state.document.FamilyCode == 'FOLDER') {
-                elementIcon = <KenestoIcon name="folder" style={styles.icon} />
+                elementIcon = <KenestoIcon name="folder" style={styles.kenestoIcon} />
             }
             else {
                 if (typeof this.state.document.IconName != 'undefined') {
-                    var iconName = getIconNameFromExtension(this.state.document.FileExtension);
+                    var iconName = getIconNameFromExtension(this.state.document.FileExtension).iconName;
+                    var customStyle = getIconNameFromExtension(this.state.document.FileExtension).customStyle;
                     elementIcon = <View style={styles.iconFiletype}>
                         { iconName === 'solidw' ?
-                            <CustomIcon name={iconName} style={styles.icon} />
+                            <CustomIcon name={iconName} style={[styles.icon, customStyle]} />
                             :
-                            <KenestoIcon name={iconName} style={styles.icon} />
+                            <KenestoIcon name={iconName} style={[styles.kenestoIcon, customStyle]} />
                         }
                     </View>
                 }
