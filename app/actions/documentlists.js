@@ -402,10 +402,10 @@ export function downloadDocument(id: string, fileName: string){
                   .then( (res) => {
                     
                     })
-                  writeToLog(env, sessionToken, constans.ERROR, `function downloadDocument - error downloading document`, error)
+
               }).catch(error => { 
                   dispatch(navActions.emitToast('error downloading document'))
-
+                  writeToLog(env, sessionToken, constans.ERROR, `function downloadDocument - error downloading document`, error)
 
               })
               .done();
@@ -582,12 +582,12 @@ function uploadFileOld(url,file){
                                   //        dispatch(navActions.emitToast("info","coudn't upload file",""));
                                   // }
                                   // dispatch(navActions.pop());
-                                  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto`, error)
+
                                 })
                                 .catch((error) => {
                                   console.log("error:" + JSON.stringify(error))
                                   dispatch(navActions.emitError("Failed",JSON.stringify(error)))
-
+                                  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto`, error)
 
                                 }) 
 
