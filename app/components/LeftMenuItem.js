@@ -2,6 +2,9 @@ import React from "react";
 import {View, Text, StyleSheet,Image,Platform, TouchableHighlight, TouchableNativeFeedback} from "react-native";
 import Button from "react-native-button";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { createIconSetFromFontello } from  'react-native-vector-icons';
+import customConfig from '../assets/icons/customConfig.json';
+const CustomIcon = createIconSetFromFontello(customConfig);
 
 const styles = StyleSheet.create({
     container: {
@@ -40,9 +43,12 @@ const styles = StyleSheet.create({
     },
     itemCount: {
       flex: 1,
-      textAlign: 'right',
-         
-    }
+      textAlign: 'right', 
+    },
+    customIconContainer: {
+        alignItems: 'center', 
+        marginLeft: 1
+    },
 });
 
 
@@ -76,7 +82,13 @@ export default class LeftMenuItem extends React.Component {
                         onShowUnderlay={this.props.onHighlight}
                         onHideUnderlay={this.props.onUnhighlight}>
                         <View style={rowStyle}>
+                        {
+                            this.props.listItem.iconType === 'regular' ?
                             <Icon name={this.props.listItem.itemIcon} style={iconStyle} />
+                            :
+                            <View style={styles.customIconContainer}><CustomIcon name={this.props.listItem.itemIcon} style={iconStyle} /></View>
+                        }
+                            
                             <Text style={itemTitleStyle} >
                                 {this.props.listItem.itemTitle}
                             </Text>
@@ -89,7 +101,5 @@ export default class LeftMenuItem extends React.Component {
             
         );
     }
-    
-
 }
 
