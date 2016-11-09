@@ -13,6 +13,7 @@ import _ from "lodash";
 const Android_Download_Path = '/storage/emulated/0/download';
 let React = require('react-native')
 import RNFetchBlob from 'react-native-fetch-blob'
+
 const android = RNFetchBlob.android
 let {
   Alert,
@@ -399,30 +400,9 @@ export function downloadDocument(id: string, fileName: string){
 }
 
 
-function uploadFile(url, file){
- RNFetchBlob.fetch('PUT', url, {
-      'Content-Type' : 'multipart/form-data',
-    }, 
-    [ file ]
-    )
-    // listen to upload progress event
-    .uploadProgress((written, total) => {
-        console.log('uploaded', written / total)
-    })
-    // listen to download progress event
-    .progress((received, total) => {
-        console.log('progress', received / total)
-    })
-    .then((resp) => {
-      // ...
-    })
-    .catch((err) => {
-      // ...
-    })
 
-}
 
-function uploadFileOld(url,file){
+function uploadFile(url,file){
 	
 	       return new Promise((resolve, reject) => {
 	
@@ -432,18 +412,10 @@ function uploadFileOld(url,file){
 	      console.log(e);
 	      reject();
 	    };
-
 	
 	    xhr.upload.addEventListener('progress', function (e) {
-        alert('ffffffffffffffffffffffffff')
 	      // handle notifications about upload progress: e.loaded / e.total
-       // console.log('progress: ' + e.loaded + "/" + e.total);
 	    }, false);
-
-      xhr.upload.onprogress = function(e) {
-           // it will never come inside here
-           alert('fdfsdf')
-        }
 	
 	    xhr.onreadystatechange = function () {
 	        if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -463,7 +435,7 @@ function uploadFileOld(url,file){
     // var formData = new FormData();
   //   formData.append('file', file);
 	    
-       xhr.open('PUT', url, true);
+       xhr.open('PUT', url);
         xhr.setRequestHeader('Content-Type', 'multipart/form-data');
      
 
@@ -480,9 +452,10 @@ function uploadFileOld(url,file){
 	       });
 	}
 
-
  
   export function uploadToKenesto(fileObject: object, url: string){
+
+    alert(JSON.stringify(fileObject))
 
   return (dispatch, getState) => {
           //dispatch(updateIsFetching(true)); 
@@ -499,74 +472,84 @@ function uploadFileOld(url,file){
               else {
                  var AccessUrl = json.ResponseData.AccessUrl;
 
+//                     try {
+//                           var XMLHttpRequest = require('xhr2');
+// //alret('fdfdfd')
+//                       var xhr = new XMLHttpRequest();
+
+//                 xhr.onreadystatechange = function () {
+//                     if (xhr.readyState === XMLHttpRequest.DONE) {
+//                       if (xhr.status >= 200 && xhr.status <= 299) {
+//                         // upload completed//
+//                       // alert(xhr.status)
+//                         //resolve(url);
+//                         alert('done')
+//                       } else {
+//                         // failed with error messge from server
+//                       //  reject(xhr.status + ": " + url);
+//                       alert('problem')
+//                       }
+//                     }
+//                 };
+
+//                 xhr.upload.addEventListener("loadstart", function (evt) {
+//                   alert('starting')
+//               }, false);
 
 
+                // xhr.processData = false;  
+              //   xhr.cache = false; 
+              // var formData = new FormData();
+            //   formData.append('file', file);
+            //    xhr.addEventListener('progress',updateProgress);
+
+              // xhr.addEventListener("progress", updateProgress, false);
+
+                // xhr.open('PUT', AccessUrl);
+                //   xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+
+              
+                
+              
+                //   alert(file.name + ' ' + file.fileName );
+
+              // resolve(file.name + ' ' + file.fileName );
+
+            //  alert(file.path)
+              // var asset = RNFetchBlob.fs.asset(file.path)
+
+              // alert(file)
+                // var x = new File(file.path);
+                // xhr.send(fileObject);
 
 
+                      
+                //     } catch (error) {
+                //       alert(error);
+                //     }
+
+                  
 
 
-
-                //  uploadFile(AccessUrl,fileObject)
-                //  .then((url) => {
-                //     //    alert(completed)
-                //          const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, url);
-                //           fetch(thisCompletedUrl)
-                //                 .then(response => response.json())
-                //                 .then(json => {
-                //                   //dispatch(updateIsFetching(false)); 
-
-                                 
-                //                   if(json.ResponseStatus == 'OK')
-                //                   {
-                                     
-                //                         dispatch(navActions.emitToast("success","file successfully uploaded",""));
-                //                   }
-                //                   else {
-                //                          dispatch(navActions.emitToast("info","coudn't upload file",""));
-                //                   }
-                //                   dispatch(navActions.pop());
-
-                //                 })
-                //                 .catch((error) => {
-                //                   console.log("error:" + JSON.stringify(error))
-                //                   dispatch(navActions.emitError("Failed",JSON.stringify(error)))
-
-
-                //                 }) 
-                                
-                //   })
-                //  .catch(err => {alert(err)});
-
-
-
-
-                              RNFetchBlob.fetch('PUT', AccessUrl, {
-                                'Content-Type' : 'multipart/form-data',
-                              }, 
-                              [ fileObject ]
-                              )
-                              // listen to upload progress event
-                              .uploadProgress((written, total) => {
-                                  console.log('uploaded', written / total)
-                              })
-                              // listen to download progress event
-                              // .progress((received, total) => {
-                              //     console.log('progress', received / total)
-                              // })
-                              //.then(response => response.json())
-                               .then(resp => {
+                 uploadFile(AccessUrl,fileObject)
+                 .then((url) => {
+                
+                         const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, url);
+                          fetch(thisCompletedUrl)
+                                .then(response => response.json())
+                                .then(json => {
                                   //dispatch(updateIsFetching(false)); 
 
-                                 alert(JSON.stringify(resp))
-                                  // if(json.ResponseStatus == 'OK')
-                                  // {
+                                 
+                                  if(json.ResponseStatus == 'OK')
+                                  {
                                      
-                                  //       dispatch(navActions.emitToast("success","file successfully uploaded",""));
-                                  // }
-                                  // else {
-                                  //        dispatch(navActions.emitToast("info","coudn't upload file",""));
-                                  // }
-                                  // dispatch(navActions.pop());
+                                        dispatch(navActions.emitToast("success","file successfully uploaded",""));
+                                  }
+                                  else {
+                                         dispatch(navActions.emitToast("info","coudn't upload file",""));
+                                  }
+                                  dispatch(navActions.pop());
 
                                 })
                                 .catch((error) => {
@@ -575,6 +558,49 @@ function uploadFileOld(url,file){
 
 
                                 }) 
+                                
+                  })
+                 .catch(err => {alert(err)});
+
+
+
+
+                              // RNFetchBlob.fetch('PUT', AccessUrl, {
+                              //   'Content-Type' : 'multipart/form-data',
+                              // },
+                              //      JSON.stringify(fileObject),
+                              
+                                 
+                              // )
+              
+                              // // listen to download progress event
+                              // // .progress((received, total) => {
+                              // //     console.log('progress', received / total)
+                              // // })
+                              // //.then(response => response.json())r
+                              //    .then(response => response.json())
+                              //     .then(json => {
+                              
+                              //     //dispatch(updateIsFetching(false)); 
+                              //       alert(json);
+                            
+                              //     if(json.ResponseStatus == 'OK')
+                              //     {
+                                     
+                              //           dispatch(navActions.emitToast("success","file successfully uploaded",""));
+                              //     }
+                              //     else {
+                              //            dispatch(navActions.emitToast("info","coudn't upload file",""));
+                              //     }
+                              //     dispatch(navActions.pop());
+
+                              //   })
+                              //   .catch((error) => {
+                              //     console.log("error:" + JSON.stringify(error))
+                              //     dispatch(navActions.emitError("Failed",JSON.stringify(error)))
+
+
+                              //   }) 
 
 
 
