@@ -92,14 +92,14 @@ export function retrieveStatistics() {
  
   return (dispatch, getState) => {
     const url = getRetrieveStatisticsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, getState().accessReducer.tenantId)
-    writeToLog(env, getState().accessReducer.sessionToken, constans.DEBUG, `function retrieveStatistics- fetch url:${url}`)
+    writeToLog(getState().accessReducer.env, getState().accessReducer.sessionToken, constans.DEBUG, `function retrieveStatistics- fetch url:${url}`)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
         
         if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve statistics",""))
-           writeToLog(env, getState().accessReducer.sessionToken, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`)
+           writeToLog(getState().accessReducer.env, getState().accessReducer.sessionToken, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`)
         }
         else {
          var totalMyDocuments = json.ResponseData.MyDocuments;
@@ -115,13 +115,13 @@ export function retrieveStatistics() {
        // console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve statistics",""))
 
-        writeToLog(env, getState().accessReducer.sessionToken, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`, error)
+        writeToLog(getState().accessReducer.env, getState().accessReducer.sessionToken, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`, error)
       })
   }
 }
 
 export function ActivateForgotPassword(username : string, env : string = 'dev') {
-     return (dispatch, getstate) => {
+     return (dispatch, getState) => {
         if (env == null)
         {
              const {stateEnv} = getState(); 
@@ -156,8 +156,8 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
 }
 
 export function logOut() {
-    return (dispatch, getstate) => {
-        writeToLog(env, getState().accessReducer.sessionToken, constans.DEBUG, `function logOut - clearCredentials`) 
+    return (dispatch, getState) => {
+        writeToLog(getState().accessReducer.env, getState().accessReducer.sessionToken, constans.DEBUG, `function logOut - clearCredentials`) 
         clearCredentials();
         dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
         dispatch(clearAllDocumentlists());
@@ -166,7 +166,7 @@ export function logOut() {
 }
 
 export function login(userId : string, password: string, env: string = 'dev')  {
-    return (dispatch, getstate) => {
+    return (dispatch, getState) => {
      writeToLog(env, "", constans.DEBUG, `function login - userId: ${userId}, password:${"*****"}`)
      dispatch(updateIsFetching(true)); 
 
