@@ -46,17 +46,17 @@ class Scan extends React.Component {
 
 
   upload(){
-      
-
-    const documentsContext = getDocumentsContext(this.props.navReducer);
-    const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.image.name, "", "",  documentsContext.fId);
+  
+  const documentsContext = getDocumentsContext(this.props.navReducer);
+  const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.image.name, "", "",  documentsContext.fId, this.props.baseFileId);
 
   const fileName = this.state.image.path.substring(this.state.image.path.lastIndexOf('/') + 1); 
   const name = fileName.substring(0,  fileName.lastIndexOf('.'));
  
-this.setState({uploading : true});
+  this.setState({uploading : true});
 
 this.props.dispatch(uploadToKenesto({name: name, uri : this.state.image.path, type: this.state.image.type},url));
+
     
   }
 
