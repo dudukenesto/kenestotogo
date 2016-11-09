@@ -92,14 +92,16 @@ export function retrieveStatistics() {
  
   return (dispatch, getState) => {
     const url = getRetrieveStatisticsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, getState().accessReducer.tenantId)
-    writeToLog(getState().accessReducer.env, getState().accessReducer.sessionToken, constans.DEBUG, `function retrieveStatistics- fetch url:${url}`)
+    let env =  getState().accessReducer.env;
+    let token = getState().accessReducer.sessionToken;
+    writeToLog(env, token, constans.DEBUG, `function retrieveStatistics- fetch url:${url}`)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
         
         if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve statistics",""))
-           writeToLog(getState().accessReducer.env, getState().accessReducer.sessionToken, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`)
+           writeToLog(env, token, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`)
         }
         else {
          var totalMyDocuments = json.ResponseData.MyDocuments;
@@ -115,34 +117,36 @@ export function retrieveStatistics() {
        // console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve statistics",""))
 
-        writeToLog(getState().accessReducer.env, getState().accessReducer.sessionToken, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`, error)
+        writeToLog(env, token, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`, error)
       })
   }
 }
 
 export function ActivateForgotPassword(username : string, env : string = 'dev') {
      return (dispatch, getState) => {
+        let token = getState().accessReducer.sessionToken;
         if (env == null)
         {
              const {stateEnv} = getState(); 
              env = stateEnv;
         }
-
+     
         dispatch(updateIsFetching(true)); 
-        writeToLog(env, getState().accessReducer.sessionToken, constans.DEBUG, `function ActivateForgotPassword - start`)
+       
         var forgotPasswordUrl = getForgotPasswordUrl(env, username);
+         writeToLog(env, token, constans.DEBUG, `function ActivateForgotPassword - url:${forgotPasswordUrl}`)
         return fetch(forgotPasswordUrl)
         .then((response) => response.json())
         .catch((error) => {
              dispatch(emitError('Failed to reset password'))
-              writeToLog(env, getState().accessReducer.sessionToken, constans.ERROR, `function ActivateForgotPassword- Failed to reset password`,error)
+              writeToLog(env, token, constans.ERROR, `function ActivateForgotPassword- Failed to reset password`,error)
         })
         .then( (responseData) => {
             if (responseData.ResponseStatus == "FAILED")
             {
                  dispatch(updateIsFetching(false)); 
                  dispatch(emitError("Reset password failed", ""))
-                 writeToLog(env, getState().accessReducer.sessionToken, constans.ERROR, `function ActivateForgotPassword- Reset password failed`)
+                 writeToLog(env, token, constans.ERROR, `function ActivateForgotPassword- Reset password failed`)
             }
             else{
                    dispatch(updateIsFetching(false)); 
@@ -157,7 +161,9 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
 
 export function logOut() {
     return (dispatch, getState) => {
-        writeToLog(getState().accessReducer.env, getState().accessReducer.sessionToken, constans.DEBUG, `function logOut - clearCredentials`) 
+        let env =  getState().accessReducer.env;
+        let token = getState().accessReducer.sessionToken;
+        writeToLog(env, token, constans.DEBUG, `function logOut - clearCredentials`) 
         clearCredentials();
         dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
         dispatch(clearAllDocumentlists());
