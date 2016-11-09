@@ -455,7 +455,6 @@ function uploadFile(url,file){
  
   export function uploadToKenesto(fileObject: object, url: string){
 
-    alert(JSON.stringify(fileObject))
 
   return (dispatch, getState) => {
           //dispatch(updateIsFetching(true)); 
@@ -549,7 +548,7 @@ function uploadFile(url,file){
                                   else {
                                          dispatch(navActions.emitToast("info","coudn't upload file",""));
                                   }
-                                  dispatch(navActions.pop());
+                                 // dispatch(navActions.pop());
 
                                 })
                                 .catch((error) => {
