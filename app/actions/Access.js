@@ -6,6 +6,8 @@ import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
 import {clearAllDocumentlists} from '../actions/documentlists'
 import {getDocumentsTitle} from '../utils/documentsUtils'
+import {writeToLog} from '../utils/ObjectUtils'
+
 
 var stricturiEncode = require('strict-uri-encode');
 
@@ -90,13 +92,16 @@ export function retrieveStatistics() {
  
   return (dispatch, getState) => {
     const url = getRetrieveStatisticsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, getState().accessReducer.tenantId)
-  
+    let env =  getState().accessReducer.env;
+    let token = getState().accessReducer.sessionToken;
+    writeToLog(env, token, constans.DEBUG, `function retrieveStatistics- fetch url:${url}`)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
         
         if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve statistics",""))
+           writeToLog(env, token, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`)
         }
         else {
          var totalMyDocuments = json.ResponseData.MyDocuments;
@@ -112,32 +117,36 @@ export function retrieveStatistics() {
        // console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve statistics",""))
 
-
+        writeToLog(env, token, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`, error)
       })
   }
 }
 
 export function ActivateForgotPassword(username : string, env : string = 'dev') {
-     return (dispatch, getstate) => {
+     return (dispatch, getState) => {
+        let token = getState().accessReducer.sessionToken;
         if (env == null)
         {
              const {stateEnv} = getState(); 
              env = stateEnv;
         }
-
-         dispatch(updateIsFetching(true)); 
-
+     
+        dispatch(updateIsFetching(true)); 
+       
         var forgotPasswordUrl = getForgotPasswordUrl(env, username);
+         writeToLog(env, token, constans.DEBUG, `function ActivateForgotPassword - url:${forgotPasswordUrl}`)
         return fetch(forgotPasswordUrl)
         .then((response) => response.json())
         .catch((error) => {
-             dispatch(emitError('Fialed to reset password'))
+             dispatch(emitError('Failed to reset password'))
+              writeToLog(env, token, constans.ERROR, `function ActivateForgotPassword- Failed to reset password`,error)
         })
         .then( (responseData) => {
             if (responseData.ResponseStatus == "FAILED")
             {
                  dispatch(updateIsFetching(false)); 
                  dispatch(emitError("Reset password failed", ""))
+                 writeToLog(env, token, constans.ERROR, `function ActivateForgotPassword- Reset password failed`)
             }
             else{
                    dispatch(updateIsFetching(false)); 
@@ -151,7 +160,10 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
 }
 
 export function logOut() {
-    return (dispatch, getstate) => {
+    return (dispatch, getState) => {
+        let env =  getState().accessReducer.env;
+        let token = getState().accessReducer.sessionToken;
+        writeToLog(env, token, constans.DEBUG, `function logOut - clearCredentials`) 
         clearCredentials();
         dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
         dispatch(clearAllDocumentlists());
@@ -160,8 +172,8 @@ export function logOut() {
 }
 
 export function login(userId : string, password: string, env: string = 'dev')  {
-    return (dispatch, getstate) => {
-
+    return (dispatch, getState) => {
+     writeToLog(env, "", constans.DEBUG, `function login - userId: ${userId}, password:${"*****"}`)
      dispatch(updateIsFetching(true)); 
 
         if (env == null)
@@ -177,7 +189,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
             .then((response) => response.json())
             .catch((error) => {
                  dispatch(emitError('Failed to Login')); 
-           
+                 writeToLog(env, "", constans.ERROR, `function login - Failed to Login`, error)
             })
             .then( (responseData) => {
                 if (responseData.ResponseStatus == "FAILED")
@@ -186,6 +198,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                     clearCredentials();
                     //dispatch(updateIsFetching(false));
                      dispatch(emitError('Failed to Login')); 
+                     writeToLog(env, "", constans.ERROR, `function login - Failed to Login`)
                 }
   
                 else{
@@ -194,7 +207,8 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                         const loginUrl = getLoginUrl(env, organizationId, token);
                        fetch(loginUrl).then((response) => response.json())
                         .catch((error) => {
-                             dispatch(emitError('Failed to Login')); 
+                             dispatch(emitError('Failed to Login'));
+                             writeToLog(env, token, constans.ERROR, `function login - Failed to Login, loginUrl:${loginUrl}`, error) 
                         })
                         .then( (responseData) => {
                             setCredentials(userId, password, env);
@@ -220,8 +234,6 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                                 var rr = routes.documentsRoute(data)
                             
                             dispatch(push(rr.route));
-                         
-
                         })
                 }
             

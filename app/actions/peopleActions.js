@@ -1,7 +1,7 @@
 import * as types from '../constants/ActionTypes';
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
-import {getRetrieveShareObjectInfoUrl} from '../utils/ObjectUtil'
+import {getRetrieveShareObjectInfoUrl,writeToLog} from '../utils/ObjectUtils'
 import { push, emitError} from './navActions'
 import _ from "lodash";
 export function updateIsFetching(isFetching: boolean){
@@ -63,13 +63,16 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
   return (dispatch, getState) => {
 
       dispatch(updateIsFetching(true));
-    const url = getRetrieveShareObjectInfoUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, objectId, familyCode);
+    const {sessionToken, env} = getState().accessReducer;
+    const url = getRetrieveShareObjectInfoUrl(env, sessionToken, objectId, familyCode);
+    writeToLog(env, sessionToken, constans.DEBUG, `function RequestShareObjectInfo - url: ${url}`)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
        // alert(json.ResponseData.ObjectInfo);
         if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve sharing info",""))
+        writeToLog(env, sessionToken, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info`)
         }
         else {
             const ObjectInfo = json.ResponseData.ObjectInfo; 
@@ -89,8 +92,7 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
       .catch((error) => {
         //console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve sharing info" ,""))
-
-
+        writeToLog(env, sessionToken, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info`,error)
       })
   }
 }

@@ -115,6 +115,7 @@ class TabView extends React.Component {
                 itemTitle: getDocumentsTitle(constans.MY_DOCUMENTS),
                 itemCount: accessReducer.statistics.totalMyDocuments,
                 itemIcon: 'folder',
+                iconType: 'regular',
                 selected: documentlist.catId == constans.MY_DOCUMENTS ? true : false,
                 customStyle: ''
             },
@@ -123,6 +124,7 @@ class TabView extends React.Component {
                 itemTitle: getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME),
                 itemCount: accessReducer.statistics.totalSharedWithMe,
                 itemIcon: 'folder',
+                iconType: 'regular',
                 selected: documentlist.catId == constans.DOCUMENTS_SHARE_WITH_ME ? true : false,
                 customStyle: ''
             },
@@ -131,6 +133,7 @@ class TabView extends React.Component {
                 itemTitle: getDocumentsTitle(constans.ALL_DOCUMENTS),
                 itemCount: accessReducer.statistics.totalAllDocuments,
                 itemIcon: 'folder',
+                iconType: 'regular',
                 selected: documentlist.catId == constans.ALL_DOCUMENTS ? true : false,
                 customStyle: ''
             },
@@ -139,6 +142,7 @@ class TabView extends React.Component {
                 itemTitle: getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS),
                 itemCount: accessReducer.statistics.totalCheckedoutDocuments,
                 itemIcon: 'android',
+                iconType: 'regular',
                 selected: documentlist.catId == constans.CHECKED_OUT_DOCUMENTS ? true : false,
                 customStyle: ''
             },
@@ -154,7 +158,8 @@ class TabView extends React.Component {
                 Index: 5,
                 itemTitle: 'My usage space '+accessReducer.statistics.totalUsageSpace,
                 itemCount: null,
-                itemIcon: 'android',
+                itemIcon: 'disk-usage',
+                iconType: 'custom',
                 selected: false,
                 customStyle: ''
             },
@@ -163,6 +168,7 @@ class TabView extends React.Component {
                 itemTitle: 'Logout',
                 itemCount: null,
                 itemIcon: 'power-settings-new',
+                iconType: 'regular',
                 selected: false,
                 customStyle: { color: "#FA8302" }
             }
