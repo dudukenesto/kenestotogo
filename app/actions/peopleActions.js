@@ -1,7 +1,7 @@
 import * as types from '../constants/ActionTypes';
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
-import {getRetrieveShareObjectInfoUrl} from '../utils/ObjectUtil'
+import {getRetrieveShareObjectInfoUrl} from '../utils/ObjectUtils'
 import { push, emitError} from './navActions'
 import _ from "lodash";
 export function updateIsFetching(isFetching: boolean){

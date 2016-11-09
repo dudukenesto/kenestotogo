@@ -6,7 +6,7 @@ import {
   constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
   getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
   getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl,
-  getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl, getEditDocumentUrl, geDiscardCheckOutDocumentUrl
+  getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl, getEditDocumentUrl, getDiscardCheckOutDocumentUrl
 } from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
@@ -723,7 +723,7 @@ export function DiscardCheckOut() {
     const navReducer = getState().navReducer;
     var document = getSelectedDocument(documentLists, navReducer);
 
-    const url = geDiscardCheckOutDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, document.Id);
+    const url = getDiscardCheckOutDocumentUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, document.Id);
     dispatch(updateIsFetching(true));
     fetch(url)
       .then(response => response.json())

@@ -8,3 +8,11 @@ export const ASCENDING = 'asc'
 export const DESCENDING = 'desc'
 export const ASSET_NAME = 'asset_name'
 export const MODIFICATION_DATE = 'modification_date'
+export const ERROR = 'Error'
+export const INFO = 'Info'
+export const WARNING = 'Warning'
+export const FATAL = 'Fatal'
+export const DEBUG = 'Debug'
+export const GENERAL = 'General'
+
+
