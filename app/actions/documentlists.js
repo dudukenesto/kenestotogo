@@ -59,8 +59,6 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
         }
       })
       .catch((error) => {
-        console.log("error:" + JSON.stringify(error))
-        //dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
         dispatch(navActions.emitError("Failed to get document permissions", ""))
         dispatch(updateIsFetchingSelectedObject(false))
         writeToLog(env, sessionToken, constans.ERROR, `function getDocumentPermissions - Failed to get document permissions , url: ${url}`,error)
@@ -110,7 +108,6 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
-          var sortBarTitle = `Folders`
           if (totalFolders > 0 && totalFiles > 0) {
             dataBlob["ID1"] = `Folders (${totalFolders})`
             dataBlob["ID2"] = `Files (${totalFiles})`
@@ -193,8 +190,6 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
         }
       })
       .catch((error) => {
-        console.log("error:" + JSON.stringify(error))
-        //dispatch(failedToFetchDocumentsList(documentlist, url, "Failed to retrieve documents"))
         dispatch(navActions.emitError("Failed to retrieve documents", ""))
         writeToLog(env, sessionToken, constans.ERROR, `function fetchDocumentsTable - Failed to retrieve documents - url: ${url}`,error)
 
@@ -423,19 +418,15 @@ function uploadFile(url,file){
 	    var xhr = new XMLHttpRequest();
 	    xhr.onerror = function (e) {
 	      // handle failture
-	      console.log(e);
+	      console.log('file upload error');
 	      reject();
 	    };
-	
-	    xhr.upload.addEventListener('progress', function (e) {
-	      // handle notifications about upload progress: e.loaded / e.total
-	    }, false);
-	
 	    xhr.onreadystatechange = function () {
 	        if (xhr.readyState === XMLHttpRequest.DONE) {
 	          if (xhr.status >= 200 && xhr.status <= 299) {
 	            // upload completed//
              // alert(xhr.status)
+             console.log('finished upload status: ' + xhr.status);
 	            resolve(url);
 	          } else {
 	            // failed with error messge from server
@@ -443,25 +434,15 @@ function uploadFile(url,file){
 	          }
 	        }
 	    };
-
-      // xhr.processData = false;  
-    //   xhr.cache = false; 
-    // var formData = new FormData();
-  //   formData.append('file', file);
-	    
        xhr.open('PUT', url);
         xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-     
 
-      //   alert(file.name + ' ' + file.fileName );
+        xhr.upload.addEventListener('progress', function(e){
+         console.log('upload progress = ' + e.loaded + "/" + e.total);
+      }, false);
 
-     // resolve(file.name + ' ' + file.fileName );
-
-   //  alert(file.path)
-     // var asset = RNFetchBlob.fs.asset(file.path)
-
-     // alert(file)
-      // var x = new File(file.path);
+   //   var formData = new FormData(); 
+   //   formData.append('file', file);
 	     xhr.send(file);
 	       });
 	}
@@ -567,7 +548,6 @@ function uploadFile(url,file){
 
                                 })
                                 .catch((error) => {
-                                  console.log("error:" + JSON.stringify(error))
                                   dispatch(navActions.emitError("Failed",JSON.stringify(error)))
                                   writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, error)
 
@@ -846,8 +826,6 @@ export function CheckIn(comment :string) {
         Comment : comment
       }
     }
-    console.log(url)
-    console.log(JSON.stringify(jsonObject))
     var request = new Request(url, {
       method: 'post',
       headers: new Headers({
