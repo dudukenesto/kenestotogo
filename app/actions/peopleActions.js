@@ -72,7 +72,7 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
        // alert(json.ResponseData.ObjectInfo);
         if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve sharing info",""))
-        writeToLog(env, sessionToken, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info`)
+        writeToLog(env, sessionToken, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info - url: ${url}`)
         }
         else {
             const ObjectInfo = json.ResponseData.ObjectInfo; 
@@ -92,7 +92,7 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
       .catch((error) => {
         //console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve sharing info" ,""))
-        writeToLog(env, sessionToken, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info`,error)
+        writeToLog(env, sessionToken, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info - url: ${url}`,error)
       })
   }
 }

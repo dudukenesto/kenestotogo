@@ -297,7 +297,6 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
-    if (typeof nextprops.HasToast != 'undefined')
     if (nextprops.navReducer.HasError) {
       this.openModal("errorModal");
     }

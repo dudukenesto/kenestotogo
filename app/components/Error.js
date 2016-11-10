@@ -101,8 +101,6 @@ class Error extends React.Component {
         this.props.dispatch(navActions.clearError());
     }
 
-     
-
     render(){
 
         return (

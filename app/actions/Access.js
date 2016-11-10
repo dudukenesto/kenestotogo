@@ -101,7 +101,7 @@ export function retrieveStatistics() {
         
         if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve statistics",""))
-           writeToLog(env, token, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`)
+           writeToLog(env, token, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics - url: ${url}`)
         }
         else {
          var totalMyDocuments = json.ResponseData.MyDocuments;
@@ -117,7 +117,7 @@ export function retrieveStatistics() {
        // console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve statistics",""))
 
-        writeToLog(env, token, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics`, error)
+        writeToLog(env, token, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics - url: ${url}`, error)
       })
   }
 }
@@ -139,14 +139,14 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
         .then((response) => response.json())
         .catch((error) => {
              dispatch(emitError('Failed to reset password'))
-              writeToLog(env, token, constans.ERROR, `function ActivateForgotPassword- Failed to reset password`,error)
+              writeToLog(env, token, constans.ERROR, `function ActivateForgotPassword- Failed to reset password - url: ${url}`,error)
         })
         .then( (responseData) => {
             if (responseData.ResponseStatus == "FAILED")
             {
                  dispatch(updateIsFetching(false)); 
                  dispatch(emitError("Reset password failed", ""))
-                 writeToLog(env, token, constans.ERROR, `function ActivateForgotPassword- Reset password failed`)
+                 writeToLog(env, token, constans.ERROR, `function ActivateForgotPassword- Reset password failed - url: ${url}`)
             }
             else{
                    dispatch(updateIsFetching(false)); 
@@ -189,7 +189,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
             .then((response) => response.json())
             .catch((error) => {
                  dispatch(emitError('Failed to Login')); 
-                 writeToLog(env, "", constans.ERROR, `function login - Failed to Login`, error)
+                 writeToLog(env, "", constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`, error)
             })
             .then( (responseData) => {
                 if (responseData.ResponseStatus == "FAILED")
@@ -198,10 +198,15 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                     clearCredentials();
                     //dispatch(updateIsFetching(false));
                      dispatch(emitError('Failed to Login')); 
-                     writeToLog(env, "", constans.ERROR, `function login - Failed to Login`)
+                     writeToLog(env, "", constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`)
                 }
-  
-                else{
+                else if(responseData.AuthenticateJsonResult.ErrorMessage != "")
+                {
+                     dispatch(emitError('Failed to login : The authentication are currently down for maintenance')); 
+                     writeToLog(env, "", constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`,responseData.AuthenticateJsonResult.ErrorMessage)
+                }
+                else
+                {
                         var organizationId = responseData.AuthenticateJsonResult.Organizations[0].OrganizationIdentifier; 
                         var token = responseData.AuthenticateJsonResult.Token;
                         const loginUrl = getLoginUrl(env, organizationId, token);
