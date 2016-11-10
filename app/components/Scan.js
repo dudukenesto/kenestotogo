@@ -55,7 +55,8 @@ class Scan extends React.Component {
  
   this.setState({uploading : true});
 
-  this.props.dispatch(uploadToKenesto({name: name, uri : this.state.image.path, type: this.state.image.type, data: this.state.image.data,fileName : fileName},url));
+this.props.dispatch(uploadToKenesto({name: name, uri : this.state.image.path, type: this.state.image.type},url));
+
     
   }
 
@@ -86,19 +87,14 @@ class Scan extends React.Component {
       width: 400,
       height: 400,
       cropping : false,
-       includeBase64: false
-    }).then(image => {
-
-
-      
-    const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
-
-    alert(imageName);
-           
-      // this.setState({
-      //   initial: false, 
-      //   image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
-      //   images: null});
+       includeBase64: true
+    }).then(file => {
+    
+     const fileName = file.path.substring(file.path.lastIndexOf("/") + 1);
+      this.setState({
+        initial: false, 
+        image: { name: fileName, path: file.path, type: file.mime},
+        images: null});
 
     }).catch(e => alert(JSON.stringify(e)));
 
@@ -141,10 +137,7 @@ componentDidMount(){
           </View>);
 
     return <View style={styles.container}>
-      <ScrollView>
-        {this.state.image ? <Image style={{width: 300, height: 300, resizeMode: 'contain'}} source={this.state.image} /> : null}
-        {this.state.images ? this.state.images.map(i => <Image key={i.uri} style={{width: 300, height: this.scaledHeight(i.width, i.height, 300)}} source={i} />) : null}
-      </ScrollView>
+     
       <Text>
         {this.state.initial}
       </Text>

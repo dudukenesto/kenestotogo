@@ -2,7 +2,7 @@ import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, C
   SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST, UPDATE_DROPDOWN_DATA,UPDATE_SELECTED_TRIGGER_VALUE} from '../constants/ActionTypes'
 import * as peopleActions from '../actions/peopleActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
-import {isRouteKeyExists} from '../utils/ObjectUtil'
+import {isRouteKeyExists} from '../utils/ObjectUtils'
 export function push (route) {
    return (dispatch, getState) => {
       const navReducer = getState().navReducer;

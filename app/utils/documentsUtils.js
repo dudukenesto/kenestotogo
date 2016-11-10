@@ -207,7 +207,7 @@ export function getCheckOutDocumentUrl(env: string, sessionToken: string, docume
 
 
 
-export function geDiscardCheckOutDocumentUrl(env: string, sessionToken: string, documentId:string, userData: string = ''){
+export function getDiscardCheckOutDocumentUrl(env: string, sessionToken: string, documentId:string, userData: string = ''){
    const urls = _.find(config.urls, { 'env': env });
    const apiBaseUrl = urls.ApiBaseUrl; 
      return  `${apiBaseUrl}/KDocuments.svc/DiscardCheckOut?t=${sessionToken}&dId=${documentId}&ud=${userData}`;
