@@ -54,7 +54,6 @@ export default class KenestoTagAutocomplete extends Component {
 
   componentDidMount() {
     
-    console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
     this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       this.setState({ showList: true });
@@ -111,7 +110,6 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _addTag(tagName, tagID, iconType, iconName, aditionalData) {
-    console.log('_addTag', tagName)
     var newTags = this.state.tags.concat({
       tagName: tagName,
       tagID: tagID,
@@ -276,7 +274,6 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   _removeTag(tagID) {
-    console.log('_removeTag', tagID)
     var newTags = this.state.tags.filter((t) => (t.tagID !== tagID));
     var filteredList = this.props.suggestions.filter((listElement) => {
       if (this.props.autocompleteField && this.props.uniqueField) {

@@ -55,7 +55,7 @@ function documentlist(state = {
   }
 }
 
-export default function documentlists(state = {isFetching: false,isFetchingSelectedObject:false}, action) {
+export default function documentlists(state = {isFetching: false,isFetchingSelectedObject:false, uploadItems: {}}, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
       return Object.assign({}, state, {

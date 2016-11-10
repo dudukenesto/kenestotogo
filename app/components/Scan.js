@@ -126,7 +126,6 @@ componentDidMount(){
 
      }
 
-     console.log('render scan: ' + this.state.initial)
        const buttons = this.state.initial? null : (<View>
             <TouchableOpacity onPress={() => {this.takePhoto.bind(this)(true)}} style={styles.button}>
                 <Text style={styles.text}>Shoot again</Text>

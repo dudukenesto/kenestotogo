@@ -73,7 +73,6 @@ class Documents extends Component {
 
   componentWillMount() {
     const {dispatch} = this.props
-    console.log("documents componentWillMount")
     dispatch(fetchTableIfNeeded())
   }
 
@@ -84,7 +83,6 @@ class Documents extends Component {
 
   onEndReached() {
     const {dispatch} = this.props
-    console.log("documents onEndReached")
     dispatch(fetchTableIfNeeded())
   }
 
@@ -199,11 +197,16 @@ class Documents extends Component {
     this.context.plusMenuContext.open();
   }
 
+  _renderUploadsList(){
+
+  }
+
 
   _renderTableContent(dataSource, isFetching) {
     const {documentlists, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
+    itemsLength+= documentlists.uploadItems.length;
 
     if (itemsLength == 0) {
 
@@ -231,8 +234,6 @@ class Documents extends Component {
               return (<DocumentCell
                 key={document.Id}
                 onSelect={this.selectItem.bind(this, document) }
-                //onHighlight={this.highlightRowFunc(sectionID, rowID)}
-                //onUnhighlight={this.highlightRowFunc(null, null)}
                 dispatch = {this.props.dispatch}
                 document={document}/>
               )
