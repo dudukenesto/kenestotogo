@@ -18,37 +18,29 @@ import customConfig from '../assets/icons/customConfig.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {updateSelectedObject,getDocumentPermissions} from '../actions/documentlists'
 import {connect} from 'react-redux'
-import {getIconNameFromExtension} from '../utils/documentsUtils'
+import {getIconNameFromExtension} from '../utils/documentsUtils';
+import * as Progress from 'react-native-progress';
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 const CustomIcon = createIconSetFromFontello(customConfig);
 
-// * * * * * * * * DUMMY STATIC VALUES * * * * * * * * * * *
-var uploadingInProgress = true;//                          *
-var progress = Math.random();//                      *
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
 var DocumentUploadCell = React.createClass({
 
-    toggleUpload: function (id, familyCode, document){
+    toggleUpload: function (id, familyCode){
       var {dispatch} = this.props; 
    
       dispatch(updateSelectedObject(id, familyCode, ""));
       dispatch(getDocumentPermissions(id, familyCode))
       // this.context.itemMenuContext.open();
-      
-      console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-      console.log(document)
-      console.log('\n\n\n\n\n\n ================== MY LOG END ==================  \n\n\n\n\n\n')
     },
     
     cancelUpload: function(id, familyCode){
       alert('cancel: \n\n'+id)
     },
     
-    renderActions: function (TouchableElement) {
+    renderActions: function (TouchableElement, uploadingInProgress) {
       return (
         uploadingInProgress ?
-          <TouchableElement onPress={ (() => { this.toggleUpload(this.props.document.Id, this.props.document.FamilyCode, this.props.document) }).bind(this) }>
+          <TouchableElement onPress={ (() => { this.toggleUpload(this.props.document.Id, this.props.document.FamilyCode) }).bind(this) }>
             <View style={styles.actionContainer}>
               <Icon name="pause" style={styles.moreMenu} />
             </View>
@@ -61,7 +53,7 @@ var DocumentUploadCell = React.createClass({
               </View>
             </TouchableElement>
 
-            <TouchableElement onPress={ (() => { this.toggleUpload(this.props.document.Id, this.props.document.FamilyCode, this.props.document) }).bind(this) }>
+            <TouchableElement onPress={ (() => { this.toggleUpload(this.props.document.Id, this.props.document.FamilyCode) }).bind(this) }>
               <View style={styles.actionContainer}>
                 <Icon name="refresh" style={styles.moreMenu} />
               </View>
@@ -71,6 +63,18 @@ var DocumentUploadCell = React.createClass({
     },
 
   render: function() {
+    
+    // * * * * * * * * DUMMY STATIC VALUES, PER DOCUMENT * * * * * * * *
+    var uploadingInProgress = true;//                                  *
+    var documentSize = Math.floor(Math.random()*100)//                 *
+    var progress = Math.random();//                                    *
+    var uploaded = Math.floor(documentSize * progress);//              *
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    var realProgressBar = <View style={styles.progressBarContainer}><Progress.Bar progress={progress} width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+    var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+    // var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Circle size={20} indeterminate={true} /></View> // circle; crashes the app
+    // var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.CircleSnail size={20} colors={['red', 'green', 'blue']}  /></View> // circleSnail; crashes the app
+    
 
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
@@ -108,7 +112,9 @@ var DocumentUploadCell = React.createClass({
       }
     }
       
-
+    // console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
+    // console.log(document)
+    // console.log('\n\n\n\n\n\n ================== MY LOG END ==================  \n\n\n\n\n\n')
     return (
       <View>  
         <TouchableElement>
@@ -120,19 +126,20 @@ var DocumentUploadCell = React.createClass({
               <Text style={styles.documentTitle} numberOfLines={1}>
                 {this.props.document.Name}
               </Text>
-              {uploadingInProgress ?
-                <Text style={styles.documentYear} numberOfLines={1}>
-                  XX MB / YY MB
-                </Text>
-                :
-                <Text style={styles.documentYear} numberOfLines={1}>
-                  Upload paused
-                </Text>
-              }
-
-              
+              <View style={{ flexDirection: "row" }}>
+                {uploadingInProgress ?
+                  <Text style={styles.documentYear} numberOfLines={1}>
+                    {uploaded} MB / {documentSize} MB
+                  </Text>
+                  :
+                  <Text style={styles.documentYear} numberOfLines={1}>
+                    Upload paused
+                  </Text>
+                }
+                {dummyProgressBar}
+              </View>
             </View>
-            {this.renderActions(TouchableElement)}            
+            {this.renderActions(TouchableElement, uploadingInProgress)}            
           </View>
         </TouchableElement>
       </View>
@@ -200,6 +207,10 @@ var styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row"
+  },
+  progressBarContainer: {
+    justifyContent: "center",
+    marginHorizontal: 15,
   },
   
 });
