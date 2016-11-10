@@ -200,7 +200,7 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                      dispatch(emitError('Failed to Login')); 
                      writeToLog(env, "", constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`)
                 }
-                else if(responseData.AuthenticateJsonResult.ErrorMessage != "")
+                else if(responseData.AuthenticateJsonResult.ErrorMessage != "" && responseData.AuthenticateJsonResult.ErrorMessage != null &&  responseData.AuthenticateJsonResult.ErrorMessage != 'null')
                 {
                      dispatch(emitError('Failed to login : The authentication are currently down for maintenance')); 
                      writeToLog(env, "", constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`,responseData.AuthenticateJsonResult.ErrorMessage)
