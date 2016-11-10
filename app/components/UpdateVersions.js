@@ -1,8 +1,9 @@
 import React from 'react'
 import {
-    View,
-    Text,
-    StyleSheet
+  View,
+  Text,
+  StyleSheet,
+  NativeModules
 } from 'react-native'
 import Button from './Button'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -10,8 +11,9 @@ import { connect } from 'react-redux'
 import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from 'react-native-vector-icons'
 import * as navActions from '../actions/navActions'
-import { scanRoute } from '../constants/routes'
-import { getDocumentsContext, getSelectedDocument } from '../utils/documentsUtils'
+import { getDocumentsContext, getSelectedDocument, getFileUploadUrl } from '../utils/documentsUtils'
+import {uploadToKenesto} from '../actions/documentlists'
+var ImagePicker = NativeModules.ImageCropPicker;
 const KenestoIcon = createIconSetFromFontello(fontelloConfig);
 
 let styles = StyleSheet.create({
@@ -43,40 +45,84 @@ let styles = StyleSheet.create({
 class UpdateVersions extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            file: null
+        };
     }
 
-    scan(isCameraScan: boolean) {
-        this.props.closeModal();
-        const documentsContext = getDocumentsContext(this.props.navReducer);
-        var document = getSelectedDocument(this.props.documentlists, this.props.navReducer);
-        var data = {
-            key: "scan",
-            catId: documentsContext.catId,
-            baseFileId:document.Id,
-            fId: documentsContext.fId,
-            sortDirection: documentsContext.sortDirection,
-            sortBy: documentsContext.sortBy,
-            isCameraScan: isCameraScan,
-            name: 'Image to upload'
-        }
-        this.props.dispatch(navActions.push(scanRoute(data).route));
-    }
 
+  upload(){
+      
+    const documentsContext = getDocumentsContext(this.props.navReducer);
+    var document = getSelectedDocument(this.props.documentlists, this.props.navReducer);
+    const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.file.name, "", "",  documentsContext.fId, document.Id);
+
+    const fileName = this.state.file.path.substring(this.state.file.path.lastIndexOf('/') + 1); 
+    const name = fileName.substring(0,  fileName.lastIndexOf('.'));
+    this.props.dispatch(uploadToKenesto({name: name, uri : this.state.file.path, type: this.state.file.type}, url, true));
+    this.props.closeModal();
+  }
+
+ takePhoto(cropping : boolean){
+
+        ImagePicker.openCamera({
+        cropping: cropping,
+        width: 400,
+        height: 400,
+            includeBase64: true
+        }).then(image => {
+//alert(image.path);
+        const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
+            
+        this.setState({
+            file: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
+        });
+
+       this.upload();
+
+        }).catch(e => alert(JSON.stringify(e)));
+
+    
+  }
+
+  
+    selectFromLib(cropping : boolean){
+
+            ImagePicker.openPicker({
+            width: 400,
+            height: 400,
+            cropping : false,
+            includeBase64: true
+            }).then(file => {
+           
+             const fileName = file.path.substring(file.path.lastIndexOf("/") + 1);
+
+          
+            this.setState({
+                file: { name: fileName, path: file.path, type: file.mime},
+            });
+
+             this.upload();
+
+            }).catch(e => alert(JSON.stringify(e)));
+
+    
+  }
     render() {
 
 
 
         return (
-            <View style={styles.container}>
+            <View style={styles.container}>                
                 <View style={styles.actionHolder}>
-                    <Icon name="file-upload" style={styles.actionButtonIcon} onPress={() => { this.scan.bind(this)(false) } } />
+                    <Icon name="file-upload" style={styles.actionButtonIcon} onPress={()=> {this.selectFromLib.bind(this)(true)}}/>
                     <Text style={styles.actionName}>Upload File</Text>
                 </View>
-
+                
                 <View style={styles.actionHolder}>
-                    <Icon name="photo-camera" style={styles.actionButtonIcon} onPress={() => { this.scan.bind(this)(true) } } />
+                    <Icon name="photo-camera" style={styles.actionButtonIcon} onPress={()=> {this.takePhoto.bind(this)(false)}} />
                     <Text style={styles.actionName}>Scan</Text>
-                </View>
+                </View>                
             </View>
         )
     }
@@ -92,7 +138,9 @@ function mapStateToProps(state) {
 
     return {
         navReducer: navReducer,
-        documentlists:documentlists
+        documentlists:documentlists,
+        env: state.accessReducer.env, 
+        sessionToken: state.accessReducer.sessionToken,
     }
 }
 

@@ -11,7 +11,6 @@ import {connect} from 'react-redux'
 import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import * as navActions from '../actions/navActions'
-import {scanRoute} from '../constants/routes'
 import {getFileUploadUrl, getDocumentsContext} from '../utils/documentsUtils'
 import {uploadToKenesto} from '../actions/documentlists'
 var ImagePicker = NativeModules.ImageCropPicker;
@@ -66,7 +65,7 @@ class PlusMenu extends React.Component{
 
     const fileName = this.state.file.path.substring(this.state.file.path.lastIndexOf('/') + 1); 
     const name = fileName.substring(0,  fileName.lastIndexOf('.'));
-    this.props.dispatch(uploadToKenesto({name: name, uri : this.state.file.path, type: this.state.file.type},url));
+    this.props.dispatch(uploadToKenesto({name: name, uri : this.state.file.path, type: this.state.file.type}, url, false));
 
      this.props.closeMenuModal("modalPlusMenu");
     

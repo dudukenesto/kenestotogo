@@ -467,14 +467,14 @@ function uploadFile(url,file){
 	}
 
  
-  export function uploadToKenesto(fileObject: object, url: string){
+  export function uploadToKenesto(fileObject: object, url: string, isUpdateVersion: boolean=false){
 
 
   return (dispatch, getState) => {
           //dispatch(updateIsFetching(true)); 
             const {sessionToken, env} = getState().accessReducer;
-            writeToLog(env, sessionToken, constans.DEBUG, `function uploadToKenesto - url: ${url}`)
-           fetch(url)
+            writeToLog(env, sessionToken, constans.DEBUG, `function uploadToKenesto - url: ${url}, isUpdateVersion${isUpdateVersion}`)
+            fetch(url)
             .then(response => response.json())
             .then(json => {
              
@@ -553,23 +553,34 @@ function uploadFile(url,file){
                                 .then(response => response.json())
                                 .then(json => {
                                   //dispatch(updateIsFetching(false)); 
-
+                                
                                  
                                   if(json.ResponseStatus == 'OK')
                                   {
-                                     
-                                        dispatch(navActions.emitToast("success","file successfully uploaded",""));
+                                       let message = ""
+                                      if(isUpdateVersion)
+                                        message = "Successfully updated document version"
+                                      else
+                                        message = "File successfully uploaded"
+
+                                        dispatch(navActions.emitToast("success",message,""));
                                   }
                                   else {
-                                         dispatch(navActions.emitToast("info","coudn't upload file",""));
+                                     if(isUpdateVersion)
+                                        message = `Error. failed to upload file ${fileObject.name}`
+                                      else
+                                        message = "Error. failed to update version"
+
+                                         dispatch(navActions.emitToast("info",message,""));
+                                         writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject))
                                   }
                                  // dispatch(navActions.pop());
 
                                 })
                                 .catch((error) => {
                                   console.log("error:" + JSON.stringify(error))
-                                  dispatch(navActions.emitError("Failed",JSON.stringify(error)))
-                                  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, error)
+                                  dispatch(navActions.emitError("Failed",`Error. failed to upload file ${fileObject.name}`))
+                                  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
 
                                 }) 
                                 
@@ -623,8 +634,8 @@ function uploadFile(url,file){
             })
             .catch((error) => {
               //console.log("error:" + JSON.stringify(error))
-              dispatch(navActions.emitError("Failed to upload file to kenesto",""))
-              writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, error)
+               dispatch(navActions.emitError("Failed",`Error. failed to upload file ${fileObject.name}`))
+               writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
             })
   }
 
