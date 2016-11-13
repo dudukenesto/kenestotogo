@@ -141,8 +141,8 @@ class TabView extends React.Component {
                 Index: 3,
                 itemTitle: getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS),
                 itemCount: accessReducer.statistics.totalCheckedoutDocuments,
-                itemIcon: 'android',
-                iconType: 'regular',
+                itemIcon: 'logout-variant',
+                iconType: 'custom',
                 selected: documentlist.catId == constans.CHECKED_OUT_DOCUMENTS ? true : false,
                 customStyle: ''
             },
