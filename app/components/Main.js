@@ -28,6 +28,7 @@ import Info from './Info'
 import Confirm from './Confirm'
 import CheckInDocument from './CheckInDocument'
 
+
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 import DropDownOptions from './DropDownOptions';

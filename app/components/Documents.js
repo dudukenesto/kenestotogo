@@ -205,8 +205,8 @@ class Documents extends Component {
   _renderTableContent(dataSource, isFetching) {
     const {documentlists, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
-    const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
-    itemsLength+= documentlists.uploadItems.length;
+    var itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
+    //itemsLength+= documentlists.uploadItems.length;
 
     if (itemsLength == 0) {
 
