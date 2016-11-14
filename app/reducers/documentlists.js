@@ -20,7 +20,12 @@ function documentlist(state = {
         hasError: false,
         errorMessage: ''
       }
-
+  case types.UPDATE_UPLOAD_LIST:
+      return {
+        ...state,
+        dataSource: action.datasource,
+      }
+    
     case types.REQUEST_DOCUMENTS:
       return {
         ...state,
@@ -56,10 +61,12 @@ function documentlist(state = {
 }
 
 function setUploaded(){
-  var uploadItems = []; 
-   uploadItems.push({ Id: 'scanned_1', FamilyCode: 'UPLOAD_PROGRESS', Name: 'scanned_1'}); 
-          uploadItems.push({ Id: 'scanned_2', FamilyCode: 'UPLOAD_PROGRESS', Name: 'scanned_2'}); 
-          return uploadItems;
+  // var uploadItems = []; 
+  //  uploadItems.push({ Id: 'scanned_1', FamilyCode: 'UPLOAD_PROGRESS', Name: 'scanned_1'}); 
+  //         uploadItems.push({ Id: 'scanned_2', FamilyCode: 'UPLOAD_PROGRESS', Name: 'scanned_2'}); 
+  //         return uploadItems;
+
+          return [];
 }
 
 export default function documentlists(state = {isFetching: false,isFetchingSelectedObject:false, uploadItems:setUploaded()}, action) {
@@ -118,6 +125,23 @@ export default function documentlists(state = {isFetching: false,isFetchingSelec
           ...state,
         isFetching: action.isFetching
       }
+       case types.UPDATE_UPLOAD_LIST:
+
+       //action.dataSource
+       //action.catId
+    //   uploadItems: action.uploadItems, 
+      //   [action.catId]: documentlist(action.dataSource, action)
+       return {
+          ...state, 
+          uploadItems: action.uploadItems,
+           [action.catId]: documentlist(state[action.catId], action)
+         
+       }
+
+
+
+
+      
     default:
       return state
   }

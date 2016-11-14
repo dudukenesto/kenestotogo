@@ -202,11 +202,15 @@ class Documents extends Component {
   }
 
 
-  _renderTableContent(dataSource, isFetching) {
+  _renderTableContent(isFetching) {
+
     const {documentlists, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     var itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
 
+    let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
+    let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
+   itemsLength+= documentlists.uploadItems.length;
     if (itemsLength == 0) {
 
         return (<NoDocuments
@@ -216,6 +220,7 @@ class Documents extends Component {
           documentlist={documentlist}/>)
     }
     else {
+  
       return (
           <ListView
             ref="listview"
@@ -292,15 +297,14 @@ class Documents extends Component {
     //const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
     const isFetching = documentlists.isFetching;
     var additionalStyle = {};
-    let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
-    let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
+
     let showCustomButton = documentlist.catId == constans.SEARCH_DOCUMENTS ? false : true
     return (
 
       <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
         <View style={styles.separator} elevation={5}/>
 
-        {this._renderTableContent(dataSource, isFetching) }
+        {this._renderTableContent(isFetching) }
         {showCustomButton?  <ActionButton buttonColor="#FF811B" onPress={() => this.openModal()} >            
         </ActionButton> : <View></View>}
        
