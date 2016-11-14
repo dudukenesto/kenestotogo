@@ -66,27 +66,10 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
   }
 }
 
-function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
-  return (dispatch, getState) => {
-    
-    dispatch(requestDocumentsList(documentlist))
-    const {sessionToken, env} = getState().accessReducer;
-    writeToLog(env, sessionToken, constans.DEBUG, `function fetchDocumentsTable - url: ${url}`)
-    return fetch(url)
-      .then(response => response.json())
-      .then(json => {
-        const nextUrl = json.ResponseData.next_href
-        if (json.ResponseStatus == "FAILED") {
-          //dispatch(failedToFetchDocumentsList(documentlist, url, json.ErrorMessage))
-          dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
-          dispatch(navActions.emitError(json.ErrorMessage, ""))
-          writeToLog(env, sessionToken, constans.ERROR, `function fetchDocumentsTable - error details  - url: ${url}`)
-        }
-        else {
-          var prevState = getState();
-          var items,
-            totalFiles,
-            dataBlob = {},
+
+function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders){
+
+         var dataBlob = {},
             sectionIDs = [],
             rowIDs = [],
             foldersSection,
@@ -96,19 +79,11 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             i,
             j;
 
-          var totalFiles = json.ResponseData.TotalFiles;
-          var totalFolders = json.ResponseData.TotalFolders;
-
-          if (actionType == types.RECEIVE_DOCUMENTS) {
-            items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
-          }
-          else {
-            items = [...json.ResponseData.DocumentsList]
-          }
-
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
-          var uploadItems = getState().documentlists.uploadItems;
+
+      
+       
 
         if (totalFolders > 0 && totalFiles > 0) {
            if (uploadItems.length > 0){
@@ -148,6 +123,8 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
            }
             else{
+
+               
                   dataBlob["ID1"] = `Folders (${totalFolders})`
                   dataBlob["ID2"] = `Files (${totalFiles})`
                   sectionIDs[0] = "ID1";
@@ -252,38 +229,95 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
           }
           else if (totalFiles == 0 && totalFolders == 0){
             if (uploadItems.length > 0){
-                 dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+
+               dataBlob["ID1"] = `Uploads (${uploadItems.length})`
                   sectionIDs[0] = "ID1";
-                      rowIDs[0] = [];
-                     for (j = 0; j < uploadItems.length; j++) {
+
+                  rowIDs[0] = [];
+                   for (j = 0; j < uploadItems.length; j++) {
                           uploadItem = uploadItems[j]; 
                           rowIDs[0].push(uploadItem.Id); 
                           dataBlob['ID1:' + uploadItem.Id] = uploadItem;
-                  }  
+                   }  
             }
           }
 
+
           var getSectionData = (dataBlob, sectionID) => {
             return dataBlob[sectionID];
+
+          }
+          var getRowData = (dataBlob, sectionID, rowID) => {
+
+            return dataBlob[sectionID + ':' + rowID];
+
           }
 
-          var getRowData = (dataBlob, sectionID, rowID) => {
-            return dataBlob[sectionID + ':' + rowID];
-          }
           let ds = new ListView.DataSource({
+
             getSectionData: getSectionData,
+
             getRowData: getRowData,
+
             rowHasChanged: (row1, row2) => row1 !== row2,
+
             sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+
           })
 
-          let dataSource = ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs)
+        return {ret:ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) } 
+
+}
+
+function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
+  return (dispatch, getState) => {
+    
+    dispatch(requestDocumentsList(documentlist))
+    const {sessionToken, env} = getState().accessReducer;
+    writeToLog(env, sessionToken, constans.DEBUG, `function fetchDocumentsTable - url: ${url}`)
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        const nextUrl = json.ResponseData.next_href
+        if (json.ResponseStatus == "FAILED") {
+          //dispatch(failedToFetchDocumentsList(documentlist, url, json.ErrorMessage))
+          dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
+          dispatch(navActions.emitError(json.ErrorMessage, ""))
+          writeToLog(env, sessionToken, constans.ERROR, `function fetchDocumentsTable - error details  - url: ${url}`)
+        }
+        else {
+          var prevState = getState();
+            var items,
+            totalFiles,
+            dataBlob = {},
+            sectionIDs = [],
+            rowIDs = [],
+            foldersSection,
+            docuemntsSection,
+            folders,
+            documents,
+            i,
+            j;
+
+          var totalFiles = json.ResponseData.TotalFiles;
+          var totalFolders = json.ResponseData.TotalFolders;
+
+          if (actionType == types.RECEIVE_DOCUMENTS) {
+            items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
+          }
+          else {
+            items = [...json.ResponseData.DocumentsList]
+          }
+
+          var uploadItems = getState().documentlists.uploadItems;
+          var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret; 
+
           switch (actionType) {
             case types.RECEIVE_DOCUMENTS:
-              dispatch(receiveDocumentsList(items, nextUrl, documentlist, dataSource))
+              dispatch(receiveDocumentsList(items, nextUrl, documentlist, datasource))
               break
             case types.REFRESH_DOCUMENTS_LIST:
-              dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
+              dispatch(refreshDocumentsList(items, nextUrl, documentlist, datasource))
               break
           }
 
@@ -355,7 +389,6 @@ function getNextUrl(env: string, sessionToken: string, documentlists: Object, do
 
 
 function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
-
   return {
     type: types.RECEIVE_DOCUMENTS,
     nextUrl,
@@ -548,14 +581,54 @@ function uploadFile(url,file){
 	       });
 	}
 
+  export function updateUploadDocument(datasource : object, uploadItems: object, catId: string){
+      return {
+            type: types.UPDATE_UPLOAD_LIST,
+            datasource,
+            uploadItems, 
+            catId
+      }
+  }
+
+  export function removeUploadDocument(Id: string){
+  return (dispatch, getState) => {
+        var documentlist = getDocumentsContext(getState().navReducer);
+        const items =getState().documentlists[documentlist.catId].items; 
+        var uploads = [...getState().documentlists.uploadItems]; 
+      _.remove(uploads, {
+            Id: Id
+        });
+        var datasource = AssembleTableDatasource(items, uploads, 0, 0).ret;
+        dispatch(updateUploadDocument(datasource, uploads, documentlist.catId)); 
+        dispatch(refreshTable(documentlist));    
+  }
+      
+  }
+  
+
+
  
   export function uploadToKenesto(fileObject: object, url: string, isUpdateVersion: boolean=false){
 
 
   return (dispatch, getState) => {
           //dispatch(updateIsFetching(true)); 
+
+          const uploadId = fileObject.name + "_" + Date.now();
             const {sessionToken, env} = getState().accessReducer;
+              var documentlist = getDocumentsContext(getState().navReducer);
             writeToLog(env, sessionToken, constans.DEBUG, `function uploadToKenesto - url: ${url}, isUpdateVersion${isUpdateVersion}`)
+            if (!isUpdateVersion)
+            {
+             
+                const items =getState().documentlists[documentlist.catId].items; 
+              //  alert(getState().documentlists.uploadItems)
+                var newUploadItems = [...getState().documentlists.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name}]; 
+                var datasource = AssembleTableDatasource(items, newUploadItems, 0, 0).ret;
+                dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId)); 
+
+            }
+               
             fetch(url)
             .then(response => response.json())
             .then(json => {
@@ -567,66 +640,6 @@ function uploadFile(url,file){
               }
               else {
                  var AccessUrl = json.ResponseData.AccessUrl;
-
-//                     try {
-//                           var XMLHttpRequest = require('xhr2');
-// //alret('fdfdfd')
-//                       var xhr = new XMLHttpRequest();
-
-//                 xhr.onreadystatechange = function () {
-//                     if (xhr.readyState === XMLHttpRequest.DONE) {
-//                       if (xhr.status >= 200 && xhr.status <= 299) {
-//                         // upload completed//
-//                       // alert(xhr.status)
-//                         //resolve(url);
-//                         alert('done')
-//                       } else {
-//                         // failed with error messge from server
-//                       //  reject(xhr.status + ": " + url);
-//                       alert('problem')
-//                       }
-//                     }
-//                 };
-
-//                 xhr.upload.addEventListener("loadstart", function (evt) {
-//                   alert('starting')
-//               }, false);
-
-
-                // xhr.processData = false;  
-              //   xhr.cache = false; 
-              // var formData = new FormData();
-            //   formData.append('file', file);
-            //    xhr.addEventListener('progress',updateProgress);
-
-              // xhr.addEventListener("progress", updateProgress, false);
-
-                // xhr.open('PUT', AccessUrl);
-                //   xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-
-              
-                
-              
-                //   alert(file.name + ' ' + file.fileName );
-
-              // resolve(file.name + ' ' + file.fileName );
-
-            //  alert(file.path)
-              // var asset = RNFetchBlob.fs.asset(file.path)
-
-              // alert(file)
-                // var x = new File(file.path);
-                // xhr.send(fileObject);
-
-
-                      
-                //     } catch (error) {
-                //       alert(error);
-                //     }
-
-                  
-
-
                  uploadFile(AccessUrl,fileObject)
                  .then((url) => {
                 
@@ -634,8 +647,6 @@ function uploadFile(url,file){
                           fetch(thisCompletedUrl)
                                 .then(response => response.json())
                                 .then(json => {
-                                  //dispatch(updateIsFetching(false)); 
-                                
                                  
                                   if(json.ResponseStatus == 'OK')
                                   {
@@ -644,8 +655,9 @@ function uploadFile(url,file){
                                         message = "Successfully updated document version"
                                       else
                                         message = "File successfully uploaded"
-
-                                        dispatch(navActions.emitToast("success",message,""));
+                                        dispatch(removeUploadDocument(uploadId));
+                                       // dispatch(navActions.emitToast("success",message,""));
+                                       
                                   }
                                   else {
                                      if(isUpdateVersion)
