@@ -30,6 +30,8 @@ let deviceHeight = Dimensions.get('window').height
 
 var dismissKeyboard = require('dismissKeyboard');
 var DocumentCell = require('../components/DocumentCell');
+var DocumentUploadCell = require('../components/DocumentUploadCell');
+
 const splitChars = '|';
 
 
@@ -90,7 +92,9 @@ class Documents extends Component {
   selectItem(document) {
     const {dispatch, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
-    if (document.FamilyCode == 'FOLDER') {
+    if (document.FamilyCode == 'UPLOAD_PROGRESS')
+      return false;
+    else if (document.FamilyCode == 'FOLDER') {
       var newId;
       var newName = document.Name;
       var fId = document.Id;
@@ -197,16 +201,13 @@ class Documents extends Component {
     this.context.plusMenuContext.open();
   }
 
-  _renderUploadsList(){
-
-  }
-
 
   _renderTableContent(dataSource, isFetching) {
     const {documentlists, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
-    const itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
-    itemsLength+= documentlists.uploadItems.length;
+    var itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
+  //  itemsLength += documentlists.uploadItems.length;
+
 
     if (itemsLength == 0) {
 
@@ -231,12 +232,21 @@ class Documents extends Component {
             dataSource={dataSource}
             renderSectionHeader={this._renderSectionHeader.bind(this) }
             renderRow={(document, sectionID, rowID, highlightRowFunc) => {
-              return (<DocumentCell
-                key={document.Id}
-                onSelect={this.selectItem.bind(this, document) }
-                dispatch = {this.props.dispatch}
-                document={document}/>
-              )
+
+           
+              
+              var documentCell = document.FamilyCode == 'UPLOAD_PROGRESS'? <DocumentUploadCell
+                    key={document.Id}
+                    onSelect={this.selectItem.bind(this, document) }
+                    dispatch = {this.props.dispatch}
+                    document={document}/> : 
+                    <DocumentCell
+                    key={document.Id}
+                    onSelect={this.selectItem.bind(this, document) }
+                    dispatch = {this.props.dispatch}
+                    document={document}/>
+                    
+              return (documentCell)
             } }
             renderFooter={() => {return <View style={{height: 100}}></View>}}
             onEndReached={this.onEndReached}

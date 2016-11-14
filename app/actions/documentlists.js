@@ -68,6 +68,7 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
   return (dispatch, getState) => {
+    
     dispatch(requestDocumentsList(documentlist))
     const {sessionToken, env} = getState().accessReducer;
     writeToLog(env, sessionToken, constans.DEBUG, `function fetchDocumentsTable - url: ${url}`)
@@ -107,60 +108,160 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
           folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
           documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
+          var uploadItems = getState().documentlists.uploadItems;
 
-          if (totalFolders > 0 && totalFiles > 0) {
-            dataBlob["ID1"] = `Folders (${totalFolders})`
-            dataBlob["ID2"] = `Files (${totalFiles})`
-            sectionIDs[0] = "ID1";
-            sectionIDs[1] = "ID2";
-            rowIDs[0] = [];
-            for (j = 0; j < folders.length; j++) {
-              folder = folders[j];
-              // Add Unique Row ID to RowID Array for Section
-              rowIDs[0].push(folder.Id);
+        if (totalFolders > 0 && totalFiles > 0) {
+           if (uploadItems.length > 0){
+                  dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+                  dataBlob["ID2"] = `Folders (${totalFolders})`
+                  dataBlob["ID3"] = `Files (${totalFiles})`
+                  sectionIDs[0] = "ID1";
+                  sectionIDs[1] = "ID2";
+                  sectionIDs[2] = "ID3";
 
-              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-              dataBlob['ID1:' + folder.Id] = folder;
+                  rowIDs[0] = [];
+                   for (j = 0; j < uploadItems.length; j++) {
+                          uploadItem = uploadItems[j]; 
+
+                          rowIDs[0].push(uploadItem.Id); 
+                          dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+                   }  
+                   rowIDs[1] = [];
+                  for (j = 0; j < folders.length; j++) {
+                    folder = folders[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[1].push(folder.Id);
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID2:' + folder.Id] = folder;
+                  }
+
+               
+                      rowIDs[2] = [];
+                      for (j = 0; j < documents.length; j++) {
+                        document = documents[j];
+                        // Add Unique Row ID to RowID Array for Section
+                        rowIDs[2].push(document.Id);
+
+                        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                        dataBlob['ID3:' + document.Id] = document;
+                      }
+
+           }
+            else{
+                  dataBlob["ID1"] = `Folders (${totalFolders})`
+                  dataBlob["ID2"] = `Files (${totalFiles})`
+                  sectionIDs[0] = "ID1";
+                  sectionIDs[1] = "ID2";
+                  rowIDs[0] = [];
+                  for (j = 0; j < folders.length; j++) {
+                    folder = folders[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[0].push(folder.Id);
+
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID1:' + folder.Id] = folder;
+                  }
+
+                  rowIDs[1] = [];
+                  for (j = 0; j < documents.length; j++) {
+                    document = documents[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[1].push(document.Id);
+
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID2:' + document.Id] = document;
+
+                  }
             }
+        
+         }
+          else if (totalFolders > 0 && totalFiles == 0) {
+            if (uploadItems.length > 0)
+            {
+                  dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+                  dataBlob["ID2"] = `Folders (${totalFolders})`
+                  sectionIDs[0] = "ID1";
+                  sectionIDs[1] = "ID2";
+                  rowIDs[0] = [];
+                  for (j = 0; j < uploadItems.length; j++) {
+                          uploadItem = uploadItems[j]; 
+                          rowIDs[0].push(uploadItem.Id); 
+                          dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+                  }  
+                  rowIDs[1] = [];
+                  for (j = 0; j < folders.length; j++) {
+                    folder = folders[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[1].push(folder.Id);
 
-            rowIDs[1] = [];
-            for (j = 0; j < documents.length; j++) {
-              document = documents[j];
-              // Add Unique Row ID to RowID Array for Section
-              rowIDs[1].push(document.Id);
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID2:' + folder.Id] = folder;
+                  }
+            }
+            else{
+                  dataBlob["ID1"] = `Folders (${totalFolders})`
+                  sectionIDs[0] = "ID1";
+                  rowIDs[0] = [];
+                  for (j = 0; j < folders.length; j++) {
+                    folder = folders[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[0].push(folder.Id);
 
-              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-              dataBlob['ID2:' + document.Id] = document;
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID1:' + folder.Id] = folder;
+                  }
+            }
+          
+          }
+          else if (totalFiles > 0 && totalFolders == 0) {
+              if (uploadItems.length > 0){
+                   dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+                  dataBlob["ID2"] = `Files (${totalFiles})`
+                  sectionIDs[0] = "ID1";
+                  sectionIDs[1] = "ID2";
+                  rowIDs[0] = [];
+                  for (j = 0; j < uploadItems.length; j++) {
+                          uploadItem = uploadItems[j]; 
+                          rowIDs[0].push(uploadItem.Id); 
+                          dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+                  }  
+                  rowIDs[1] = [];
+                  for (j = 0; j < documents.length; j++) {
+                        document = documents[j];
+                        // Add Unique Row ID to RowID Array for Section
+                        rowIDs[1].push(document.Id);
+
+                        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                        dataBlob['ID2:' + document.Id] = document;
+                      }
+              }
+              else{
+                      dataBlob["ID1"] = `Files (${totalFiles})`
+                      sectionIDs[0] = "ID1";
+                      rowIDs[0] = [];
+                      for (j = 0; j < documents.length; j++) {
+                        document = documents[j];
+                        // Add Unique Row ID to RowID Array for Section
+                        rowIDs[0].push(document.Id);
+
+                        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                        dataBlob['ID1:' + document.Id] = document;
+                      }
+              }
+          
+          }
+          else if (totalFiles == 0 && totalFolders == 0){
+            if (uploadItems.length > 0){
+                 dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+                  sectionIDs[0] = "ID1";
+                      rowIDs[0] = [];
+                     for (j = 0; j < uploadItems.length; j++) {
+                          uploadItem = uploadItems[j]; 
+                          rowIDs[0].push(uploadItem.Id); 
+                          dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+                  }  
             }
           }
-          else if (totalFolders > 0) {
-            dataBlob["ID1"] = `Folders (${totalFolders})`
-            sectionIDs[0] = "ID1";
-            rowIDs[0] = [];
-            for (j = 0; j < folders.length; j++) {
-              folder = folders[j];
-              // Add Unique Row ID to RowID Array for Section
-              rowIDs[0].push(folder.Id);
-
-              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-              dataBlob['ID1:' + folder.Id] = folder;
-            }
-          }
-          else if (totalFiles > 0) {
-            dataBlob["ID1"] = `Files (${totalFiles})`
-            sectionIDs[0] = "ID1";
-            rowIDs[0] = [];
-            for (j = 0; j < documents.length; j++) {
-              document = documents[j];
-              // Add Unique Row ID to RowID Array for Section
-              rowIDs[0].push(document.Id);
-
-              // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-              dataBlob['ID1:' + document.Id] = document;
-            }
-          }
-
-
 
           var getSectionData = (dataBlob, sectionID) => {
             return dataBlob[sectionID];
@@ -169,15 +270,14 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
           var getRowData = (dataBlob, sectionID, rowID) => {
             return dataBlob[sectionID + ':' + rowID];
           }
-
           let ds = new ListView.DataSource({
             getSectionData: getSectionData,
             getRowData: getRowData,
             rowHasChanged: (row1, row2) => row1 !== row2,
             sectionHeaderHasChanged: (s1, s2) => s1 !== s2
           })
-          let dataSource = ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs)
 
+          let dataSource = ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs)
           switch (actionType) {
             case types.RECEIVE_DOCUMENTS:
               dispatch(receiveDocumentsList(items, nextUrl, documentlist, dataSource))
@@ -186,6 +286,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
               dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
               break
           }
+
 
         }
       })

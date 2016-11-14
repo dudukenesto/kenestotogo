@@ -7,7 +7,6 @@ import {connect} from 'react-redux'
 import RNFetchBlob from 'react-native-fetch-blob'
 import ProggressBar from "../components/ProgressBar";
 var ImagePicker = NativeModules.ImageCropPicker;
-import {CameraKitCamera, CameraKitGalleryView} from 'react-native-camera-kit'
 var FilePickerModule = NativeModules.FilePickerModule;
 
 const styles = StyleSheet.create({

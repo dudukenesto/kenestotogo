@@ -84,33 +84,10 @@ var DocumentUploadCell = React.createClass({
     var imageSource = require('../assets/thumbnail_img.png'); 
           
     var elementIcon;
-    if (this.props.document.HasThumbnail){
-      elementIcon = <Image source = {{uri: this.props.document.ThumbnailUrl}} style={styles.previewThumbnail} />
-    }
-    else {
-      if (this.props.document.FamilyCode == 'FOLDER'){
-        if(this.props.document.IsVault)
-          elementIcon = <CustomIcon name="safe" style={styles.icon} />
-        else
-          elementIcon = <KenestoIcon name="folder" style={styles.kenestoIcon} />
-      }
-      else {
-        if (typeof this.props.document.IconName != 'undefined') {
-          var iconName = getIconNameFromExtension(this.props.document.FileExtension).iconName;
-          var customStyle = getIconNameFromExtension(this.props.document.FileExtension).customStyle;
-          elementIcon = <View style={styles.iconFiletype}>
-            { iconName === 'solidw' ? 
-              <CustomIcon name={iconName} style={[styles.icon, customStyle]} />
-              :
-              <KenestoIcon name={iconName} style={[styles.kenestoIcon, customStyle]} />
-            }
 
-          </View>
-        }
-        else
-          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.kenestoIcon} /></View>
-      }
-    }
+    elementIcon = <KenestoIcon name="folder" style={styles.kenestoIcon} />
+
+    
       
     // console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
     // console.log(document)

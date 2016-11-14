@@ -7,7 +7,7 @@ function documentlist(state = {
   errorMessage: '',
   hasError: false,
   dataSource: {}, 
-  sharingPermissions: null
+  sharingPermissions: null, 
 }, action) {
   switch (action.type) {
     
@@ -55,7 +55,14 @@ function documentlist(state = {
   }
 }
 
-export default function documentlists(state = {isFetching: false,isFetchingSelectedObject:false, uploadItems: {}}, action) {
+function setUploaded(){
+  var uploadItems = []; 
+   uploadItems.push({ Id: 'scanned_1', FamilyCode: 'UPLOAD_PROGRESS', Name: 'scanned_1'}); 
+          uploadItems.push({ Id: 'scanned_2', FamilyCode: 'UPLOAD_PROGRESS', Name: 'scanned_2'}); 
+          return uploadItems;
+}
+
+export default function documentlists(state = {isFetching: false,isFetchingSelectedObject:false, uploadItems:setUploaded()}, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
       return Object.assign({}, state, {
@@ -99,7 +106,7 @@ export default function documentlists(state = {isFetching: false,isFetchingSelec
         selectedObject: action.selectedObject
       }
     case types.CLEAR_ALL_DOCUMENTS_LIST:
-      return state ={}
+      return state ={isFetching: false,isFetchingSelectedObject:false, uploadItems: setUploaded() }
  
    case types.UPDATE_IS_FETCHING_SELECTED_OBJECT:
       return {
