@@ -144,7 +144,7 @@ class TabView extends React.Component {
                 itemIcon: 'logout-variant',
                 iconType: 'custom',
                 selected: documentlist.catId == constans.CHECKED_OUT_DOCUMENTS ? true : false,
-                customStyle: ''
+                customStyle: {marginRight: 16, marginLeft: -1}
             },
             // {
             //     Index: 4,
