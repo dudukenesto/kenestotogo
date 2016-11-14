@@ -206,8 +206,6 @@ class Documents extends Component {
     const {documentlists, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     var itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
-  //  itemsLength += documentlists.uploadItems.length;
-
 
     if (itemsLength == 0) {
 
