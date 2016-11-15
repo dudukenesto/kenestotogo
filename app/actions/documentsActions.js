@@ -632,6 +632,7 @@ function uploadFile(url,file){
                 const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
 
                 var newUploadItems = [...getState().documentsReducer.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name}]; 
+                var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
                 dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId)); 
 
             }
