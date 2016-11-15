@@ -3,6 +3,8 @@ import {getDocumentsTitle} from '../utils/documentsUtils'
 let React = require('react-native')
 function documentlist(state = {
   items: [],
+  totalFiles :0,
+  totalFolders :0,
   nextUrl: false,
   errorMessage: '',
   hasError: false,
@@ -15,6 +17,8 @@ function documentlist(state = {
       return {
         ...state,
         items: [...action.documents],
+        totalFiles: action.totalFiles,
+        totalFolders:action.totalFolders,
         dataSource: action.dataSource,
         nextUrl: action.nextUrl,
         hasError: false,
@@ -48,6 +52,8 @@ function documentlist(state = {
     case types.REFRESH_DOCUMENTS_LIST:
       return {
         items: [...action.documents],
+        totalFiles: action.totalFiles,
+        totalFolders:action.totalFolders,
         dataSource: action.dataSource,
         nextUrl: action.nextUrl,
         hasError: false,

@@ -314,10 +314,10 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
           switch (actionType) {
             case types.RECEIVE_DOCUMENTS:
-              dispatch(receiveDocumentsList(items, nextUrl, documentlist, datasource))
+              dispatch(receiveDocumentsList(items, nextUrl, documentlist, datasource, totalFiles, totalFolders))
               break
             case types.REFRESH_DOCUMENTS_LIST:
-              dispatch(refreshDocumentsList(items, nextUrl, documentlist, datasource))
+              dispatch(refreshDocumentsList(items, nextUrl, documentlist, datasource, totalFiles, totalFolders))
               break
           }
 
@@ -388,18 +388,20 @@ function getNextUrl(env: string, sessionToken: string, documentsReducer: Object,
 }
 
 
-function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
+function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object, totalFiles:number, totalFolders:number) {
   return {
     type: types.RECEIVE_DOCUMENTS,
     nextUrl,
     catId: documentlist.catId,
     documents,
-    dataSource
+    dataSource,
+    totalFiles,
+    totalFolders
   }
 }
 
 
-function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object) {
+function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object, totalFiles:number, totalFolders:number) {
 
   return {
     type: types.REFRESH_DOCUMENTS_LIST,
@@ -407,6 +409,8 @@ function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: 
     catId: documentlist.catId,
     documents,
     dataSource,
+    totalFiles,
+    totalFolders
   }
 }
 export function UpdateCreateingFolderState(creating: int) {
@@ -593,12 +597,15 @@ function uploadFile(url,file){
   export function removeUploadDocument(Id: string){
   return (dispatch, getState) => {
         var documentlist = getDocumentsContext(getState().navReducer);
-        const items =getState().documentsReducer[documentlist.catId].items; 
+        const items =getState().documentsReducer[documentlist.catId].items;
+        const totalFiles= getState().documentsReducer[documentlist.catId].totalFiles;
+        const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
+
         var uploads = [...getState().documentsReducer.uploadItems]; 
       _.remove(uploads, {
             Id: Id
         });
-        var datasource = AssembleTableDatasource(items, uploads, 0, 0).ret;
+        var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
         dispatch(updateUploadDocument(datasource, uploads, documentlist.catId)); 
         dispatch(refreshTable(documentlist));    
   }
@@ -620,11 +627,11 @@ function uploadFile(url,file){
             writeToLog(env, sessionToken, constans.DEBUG, `function uploadToKenesto - url: ${url}, isUpdateVersion${isUpdateVersion}`)
             if (!isUpdateVersion)
             {
-             
                 const items =getState().documentsReducer[documentlist.catId].items; 
-              //  alert(getState().documentsReducer.uploadItems)
+                const totalFiles= getState().documentsReducer[documentlist.catId].totalFiles;
+                const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
+
                 var newUploadItems = [...getState().documentsReducer.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name}]; 
-                var datasource = AssembleTableDatasource(items, newUploadItems, 0, 0).ret;
                 dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId)); 
 
             }
