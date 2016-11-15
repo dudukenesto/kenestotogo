@@ -14,12 +14,12 @@ import {connect} from 'react-redux'
 // import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import {getSelectedDocument, getDocumentsContext} from '../utils/documentsUtils'
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import MartialExtendedConf from '../assets/icons/config.json';
 import customConfig from '../assets/icons/customConfig.json';
 import * as routes from '../constants/routes'
 import * as navActions from '../actions/navActions'
-import * as docActions from '../actions/documentlists'
+import * as docActions from '../actions/documentsActions'
 import ProggressBar from "../components/ProgressBar";
 import ViewContainer from './ViewContainer';
 import {getIconNameFromExtension} from '../utils/documentsUtils'
@@ -228,13 +228,13 @@ class ItemMenu extends React.Component{
     }
 
   componentWillMount(){
-        var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
+        var document = getSelectedDocument(this.props.documentsReducer, this.props.navReducer); 
         this.setState({ document: document});
     }
    
    _renderShareAction(document)
     {
-            if(this.props.documentlists.selectedObject.permissions.AllowShare)
+            if(this.props.documentsReducer.selectedObject.permissions.AllowShare)
             {
                 return(<TouchableHighlight onPress={this.shareDocument.bind(this) } underlayColor="#E9EAEC">
                                 <View style={styles.actionHolder}>
@@ -251,7 +251,7 @@ class ItemMenu extends React.Component{
    
     _renderEditAction(document)
     {
-            if(this.props.documentlists.selectedObject.permissions.IsOwnedByRequestor)
+            if(this.props.documentsReducer.selectedObject.permissions.IsOwnedByRequestor)
             {
                 if (this.state.document.FamilyCode == 'FOLDER') {
                     return( <TouchableHighlight onPress={this.editFolder.bind(this)} underlayColor="#E9EAEC">
@@ -279,7 +279,7 @@ class ItemMenu extends React.Component{
 
     _renderDeleteAction(document)
     {
-            if(this.props.documentlists.selectedObject.permissions.IsOwnedByRequestor)
+            if(this.props.documentsReducer.selectedObject.permissions.IsOwnedByRequestor)
             {
                 return( <TouchableHighlight onPress={this.deleteDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
@@ -296,7 +296,7 @@ class ItemMenu extends React.Component{
    
     _renderUpdateVersionsAction(document)
     {
-            if(this.props.documentlists.selectedObject.permissions.AllowUpdateVersions)
+            if(this.props.documentsReducer.selectedObject.permissions.AllowUpdateVersions)
             {
                 return( <TouchableHighlight onPress={this.updateVersions.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
@@ -312,7 +312,7 @@ class ItemMenu extends React.Component{
     }
     _renderCheckinAction(document)
     {
-            if(this.props.documentlists.selectedObject.permissions.AllowCheckin)
+            if(this.props.documentsReducer.selectedObject.permissions.AllowCheckin)
             {
                 return( <TouchableHighlight onPress={this.checkinDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
@@ -329,7 +329,7 @@ class ItemMenu extends React.Component{
 
     _renderDiscardCheckOutAction(document)
     {
-            if(this.props.documentlists.selectedObject.permissions.AllowDiscardCheckout)
+            if(this.props.documentsReducer.selectedObject.permissions.AllowDiscardCheckout)
             {
                 return( <TouchableHighlight onPress={this.discardCheckOut.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
@@ -346,7 +346,7 @@ class ItemMenu extends React.Component{
     
     _renderCheckoutAction(document)
     {
-            if(this.props.documentlists.selectedObject.permissions.AllowCheckout)
+            if(this.props.documentsReducer.selectedObject.permissions.AllowCheckout)
             {
                 return( <TouchableHighlight onPress={this.checkoutDocument.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
@@ -361,7 +361,7 @@ class ItemMenu extends React.Component{
             }
     }
     _renderMenuItemActions(isFetching) {
-         var document = getSelectedDocument(this.props.documentlists, this.props.navReducer);
+         var document = getSelectedDocument(this.props.documentsReducer, this.props.navReducer);
         if (!isFetching) {
               
               
@@ -393,7 +393,7 @@ class ItemMenu extends React.Component{
         var elementIcon;
         const {navReducer} = this.props
         var currRouteData = getDocumentsContext(navReducer);
-        const isFetching = this.props.documentlists.isFetchingSelectedObject;
+        const isFetching = this.props.documentsReducer.isFetchingSelectedObject;
 
         if (this.state.document.HasThumbnail) {
             elementIcon = <Image source = {{ uri: this.state.document.ThumbnailUrl }} style={styles.previewThumbnail} />
@@ -465,10 +465,10 @@ ItemMenu.contextTypes = {
 
 
 function mapStateToProps(state) {
-  const { documentlists, navReducer } = state
+  const { documentsReducer, navReducer } = state
    const {env } = state.accessReducer;
   return {
-      documentlists : documentlists, 
+      documentsReducer : documentsReducer, 
       navReducer: navReducer, 
       env: env
 

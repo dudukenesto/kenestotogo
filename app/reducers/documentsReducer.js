@@ -69,7 +69,7 @@ function setUploaded(){
           return [];
 }
 
-export default function documentlists(state = {isFetching: false,isFetchingSelectedObject:false, uploadItems:setUploaded()}, action) {
+export default function documentsReducer(state = {isFetching: false,isFetchingSelectedObject:false, uploadItems:setUploaded()}, action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
       return Object.assign({}, state, {

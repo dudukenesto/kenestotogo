@@ -4,7 +4,7 @@ import { push, pop, emitInfo, emitError, navigateReset} from './navActions'
 
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
-import {clearAllDocumentlists} from '../actions/documentlists'
+import {clearAllDocumentlists} from '../actions/documentsActions'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 import {writeToLog} from '../utils/ObjectUtils'
 

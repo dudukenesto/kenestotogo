@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import MartialExtendedConf from '../assets/icons/config.json';
 import customConfig from '../assets/icons/customConfig.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
-import {updateSelectedObject,getDocumentPermissions} from '../actions/documentlists'
+import {updateSelectedObject,getDocumentPermissions} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {getIconNameFromExtension} from '../utils/documentsUtils';
 import * as Progress from 'react-native-progress';

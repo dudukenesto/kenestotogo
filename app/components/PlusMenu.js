@@ -12,7 +12,7 @@ import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import * as navActions from '../actions/navActions'
 import {getFileUploadUrl, getDocumentsContext} from '../utils/documentsUtils'
-import {uploadToKenesto} from '../actions/documentlists'
+import {uploadToKenesto} from '../actions/documentsActions'
 var ImagePicker = NativeModules.ImageCropPicker;
 const KenestoIcon = createIconSetFromFontello(fontelloConfig);
 

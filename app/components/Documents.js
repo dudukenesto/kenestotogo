@@ -37,7 +37,7 @@ const splitChars = '|';
 
 
 import _ from "lodash";
-import {fetchTableIfNeeded, refreshTable} from '../actions/documentlists'
+import {fetchTableIfNeeded, refreshTable} from '../actions/documentsActions'
 import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
@@ -184,10 +184,10 @@ class Documents extends Component {
   }
 
   _showStatusBar() {
-    const {documentlists, navReducer} = this.props
+    const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
-    const hasError = documentlist.catId in documentlists ? documentlists[documentlist.catId].hasError : false;
-    const errorMessage = documentlist.catId in documentlists ? documentlists[documentlist.catId].errorMessage : "";
+    const hasError = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].hasError : false;
+    const errorMessage = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].errorMessage : "";
     if (hasError && this.refs.masterView != undefined) {
       //this.refs.masterView.showMessage("success", errorMessage);
       this.props.dispatch(emitToast("error", "", "Error loading documents list"));
@@ -204,13 +204,13 @@ class Documents extends Component {
 
   _renderTableContent(isFetching) {
 
-    const {documentlists, navReducer} = this.props
+    const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
-    var itemsLength = documentlist.catId in documentlists ? documentlists[documentlist.catId].items.length : 0;
+    var itemsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].items.length : 0;
 
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
-    let dataSource = documentlist.catId in documentlists ? documentlists[documentlist.catId].dataSource : ds.cloneWithRows([])
-   itemsLength+= documentlists.uploadItems.length;
+    let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([])
+   itemsLength+= documentsReducer.uploadItems.length;
     if (itemsLength == 0) {
 
         return (<NoDocuments
@@ -265,7 +265,7 @@ class Documents extends Component {
 
   render() {
 
-    const {dispatch, documentlists, navReducer } = this.props
+    const {dispatch, documentsReducer, navReducer } = this.props
     
     
     // const CustomButton = new MKButton.coloredFab()
@@ -294,8 +294,8 @@ class Documents extends Component {
     //var currRoute = navReducer.routes[navReducer.index];
     var documentlist = getDocumentsContext(navReducer);
     // console.log("render documents page: " +JSON.stringify(documentlist))
-    //const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
-    const isFetching = documentlists.isFetching;
+    //const isFetching = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].isFetching : false
+    const isFetching = documentsReducer.isFetching;
     var additionalStyle = {};
 
     let showCustomButton = documentlist.catId == constans.SEARCH_DOCUMENTS ? false : true

@@ -19,7 +19,7 @@ import EditFolder from './EditFolder'
 import UpdateVersions from './UpdateVersions'
 import {connect} from 'react-redux'
 import KenestoToolbar from './KenestoToolbar'
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import {pop, updateRouteData, clearToast} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
@@ -375,7 +375,7 @@ class Main extends React.Component {
             onPressPopupMenu={this.onPressPopupMenu}
             onIconClicked = {this.onNavIconClicked.bind(this) }
             navReducer={this.props.navReducer}
-            documentlists = {this.props.documentlists}
+            documentsReducer = {this.props.documentsReducer}
             isPopupMenuOpen={this.state.isPopupMenuOpen}
             dispatch={this.props.dispatch}
             />
@@ -474,11 +474,11 @@ Main.contextTypes = {
 
 function mapStateToProps(state) {
 
-  const { documentlists, navReducer} = state
+  const { documentsReducer, navReducer} = state
   const {env, sessionToken } = state.accessReducer;
   //alert(sessionToken);
   return {
-    documentlists,
+    documentsReducer,
     navReducer,
     env,
     sessionToken, 

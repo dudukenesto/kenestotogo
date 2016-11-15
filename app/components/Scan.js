@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity} from 'react-native';
 import {getFileUploadUrl,getDocumentsContext} from '../utils/documentsUtils'
-import {uploadToKenesto} from '../actions/documentlists'
+import {uploadToKenesto} from '../actions/documentsActions'
 import {NativeModules, Dimensions} from 'react-native';
 import {connect} from 'react-redux'
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -146,7 +146,7 @@ var {navReducer} = state;
   return {
       env: state.accessReducer.env, 
       sessionToken: state.accessReducer.sessionToken,
-      isFetching: state.documentlists.isFetching,
+      isFetching: state.documentsReducer.isFetching,
       navReducer : navReducer
   
   }

@@ -150,7 +150,7 @@ export function updatedSelectedTrigerValue(value: string){
 
 export function requestUpdateTrigger(value: string){
    return (dispatch, getState) => {
-      const documentLists = getState().documentlists; 
+      const documentLists = getState().documentsReducer; 
       const navReducer = getState().navReducer;
       const document = getSelectedDocument(documentLists, navReducer);
       const triggerSelectedValue = navReducer.triggerSelectedValue;

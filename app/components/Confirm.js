@@ -4,7 +4,7 @@ import Button from "react-native-button";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import * as navActions from '../actions/navActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'

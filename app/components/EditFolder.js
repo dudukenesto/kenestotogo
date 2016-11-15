@@ -5,7 +5,7 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -91,7 +91,7 @@ var styles = StyleSheet.create({
 class EditFolder extends React.Component {
     constructor(props){
         super (props);
-        var document = getSelectedDocument(this.props.documentlists, this.props.navReducer); 
+        var document = getSelectedDocument(this.props.documentsReducer, this.props.navReducer); 
         this.state = {
             isVault: document.IsVault,
             folderName: document.Name,
@@ -151,9 +151,9 @@ class EditFolder extends React.Component {
 
  
 function mapStateToProps(state) {
-    const { documentlists,navReducer} = state
+    const { documentsReducer,navReducer} = state
     return {
-        documentlists,
+        documentsReducer,
         navReducer
     }
 }

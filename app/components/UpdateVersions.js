@@ -12,7 +12,7 @@ import fontelloConfig from '../assets/icons/config.json';
 import { createIconSetFromFontello } from 'react-native-vector-icons'
 import * as navActions from '../actions/navActions'
 import { getDocumentsContext, getSelectedDocument, getFileUploadUrl } from '../utils/documentsUtils'
-import {uploadToKenesto} from '../actions/documentlists'
+import {uploadToKenesto} from '../actions/documentsActions'
 var ImagePicker = NativeModules.ImageCropPicker;
 const KenestoIcon = createIconSetFromFontello(fontelloConfig);
 
@@ -54,7 +54,7 @@ class UpdateVersions extends React.Component {
   upload(){
       
     const documentsContext = getDocumentsContext(this.props.navReducer);
-    var document = getSelectedDocument(this.props.documentlists, this.props.navReducer);
+    var document = getSelectedDocument(this.props.documentsReducer, this.props.navReducer);
     const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.file.name, "", "",  documentsContext.fId, document.Id);
 
     const fileName = this.state.file.path.substring(this.state.file.path.lastIndexOf('/') + 1); 
@@ -134,11 +134,11 @@ UpdateVersions.contextTypes = {
 }
 
 function mapStateToProps(state) {
-    const { navReducer, documentlists } = state
+    const { navReducer, documentsReducer } = state
 
     return {
         navReducer: navReducer,
-        documentlists:documentlists,
+        documentsReducer:documentsReducer,
         env: state.accessReducer.env, 
         sessionToken: state.accessReducer.sessionToken,
     }

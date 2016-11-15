@@ -8,7 +8,7 @@ import * as constans from '../constants/GlobalConstans'
 import {getDocumentsTitle, getDocumentsContext} from '../utils/documentsUtils'
 import * as accessActions from '../actions/Access'
 import * as navActions from '../actions/navActions'
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import MartialExtendedConf from '../assets/icons/config.json';
@@ -302,10 +302,10 @@ class TabView extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { documentlists, navReducer, accessReducer} = state
+    const { documentsReducer, navReducer, accessReducer} = state
 
     return {
-        documentlists,
+        documentsReducer,
         navReducer,
         accessReducer
     }

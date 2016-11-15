@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import navReducer from './navReducer'
-import documentlists from './documentlists'
+import documentsReducer from './documentsReducer'
 import tabReducer from './tabReducer'
 import accessReducer from './accessReducer'
 import peopleReducer from './peopleReducer'
@@ -8,7 +8,7 @@ import peopleReducer from './peopleReducer'
 const rootReducer = combineReducers({
   navReducer, 
   accessReducer,
-  documentlists, 
+  documentsReducer, 
   peopleReducer
 })
 

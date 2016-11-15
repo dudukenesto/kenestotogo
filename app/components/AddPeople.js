@@ -11,7 +11,7 @@ import {getSelectedDocument} from '../utils/documentsUtils';
 import ProgressBar from './ProgressBar'
 var ReactNative = require('react-native');
 import * as navActions from '../actions/navActions'
-import * as docActions from '../actions/documentlists'
+import * as docActions from '../actions/documentsActions'
 var {
   View,
   Text,
@@ -142,7 +142,7 @@ class AddPeople extends Component {
 
   componentWillMount() {
     //  alert(JSON.stringify(this.props.navReducer));
-    var document = getSelectedDocument(this.props.documentlists, this.props.navReducer);
+    var document = getSelectedDocument(this.props.documentsReducer, this.props.navReducer);
     this.setState({ document: document });
 
     this.props.dispatch(peopleAcions.RequestShareObjectInfo(document.Id, document.FamilyCode, document.Name));
@@ -501,12 +501,12 @@ var styles = StyleSheet.create({
 
 function mapStateToProps(state) {
 
-  const { peopleReducer, documentlists, navReducer  } = state
+  const { peopleReducer, documentsReducer, navReducer  } = state
   var thisUsersPermission = peopleReducer.ObjectInfo === null ||  peopleReducer.ObjectInfo.UsersPermissions === null ? [] : peopleReducer.ObjectInfo.UsersPermissions
 
   return {
     isFetching: peopleReducer.isFetching,
-    documentlists,
+    documentsReducer,
     navReducer,
     UsersPermissions:  thisUsersPermission,
     UsersAndGroups: peopleReducer.UsersAndGroups,

@@ -142,14 +142,14 @@ export function getDocumentsTitle(categoryType: String) {
   }
 }
 
-export function getSelectedDocument(documentlists: Object, navReducer: Object){
+export function getSelectedDocument(documentsReducer: Object, navReducer: Object){
 
 
     var context = getDocumentsContext(navReducer);
     var catId = context.catId;
-    var items = documentlists[catId].items;
+    var items = documentsReducer[catId].items;
 
-    const selectedId = documentlists.selectedObject.id; 
+    const selectedId = documentsReducer.selectedObject.id; 
    return selectedId == '' || selectedId == null ? null : _.find(items, { 'Id': selectedId }); 
 }
 

@@ -303,13 +303,13 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
           var totalFolders = json.ResponseData.TotalFolders;
 
           if (actionType == types.RECEIVE_DOCUMENTS) {
-            items = [...prevState.documentlists[documentlist.catId].items, ...json.ResponseData.DocumentsList]
+            items = [...prevState.documentsReducer[documentlist.catId].items, ...json.ResponseData.DocumentsList]
           }
           else {
             items = [...json.ResponseData.DocumentsList]
           }
 
-          var uploadItems = getState().documentlists.uploadItems;
+          var uploadItems = getState().documentsReducer.uploadItems;
           var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret; 
 
           switch (actionType) {
@@ -337,10 +337,10 @@ export function fetchTableIfNeeded() {
   return (dispatch, getState) => {
 
     var documentlist = getDocumentsContext(getState().navReducer);
-    const {documentlists} = getState()
-    //  console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentlists, documentlist))
-    if (shouldFetchDocuments(documentlists, documentlist)) {
-      const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlists, documentlist)
+    const {documentsReducer} = getState()
+    //  console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentsReducer, documentlist))
+    if (shouldFetchDocuments(documentsReducer, documentlist)) {
+      const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentsReducer, documentlist)
       return dispatch(fetchDocumentsTable(nextUrl, documentlist, types.RECEIVE_DOCUMENTS))
     }
   }
@@ -378,9 +378,9 @@ export function clearDocuments(documentlist: Object) {
  }
 }
 
-function getNextUrl(env: string, sessionToken: string, documentlists: Object, documentlist: Object) {
+function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
 
-  const activeDocumentsList = documentlists[documentlist.catId]
+  const activeDocumentsList = documentsReducer[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
     return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId,documentlist.keyboard)
   }
@@ -433,8 +433,8 @@ function requestDocumentsList(documentlist: Object) {
   }
 }
 
-function shouldFetchDocuments(documentlists: Object, documentlist: Object) {
-  const activeDocumentsList = documentlists[documentlist.catId]
+function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
+  const activeDocumentsList = documentsReducer[documentlist.catId]
   if (!activeDocumentsList || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
     return true
   }
@@ -593,8 +593,8 @@ function uploadFile(url,file){
   export function removeUploadDocument(Id: string){
   return (dispatch, getState) => {
         var documentlist = getDocumentsContext(getState().navReducer);
-        const items =getState().documentlists[documentlist.catId].items; 
-        var uploads = [...getState().documentlists.uploadItems]; 
+        const items =getState().documentsReducer[documentlist.catId].items; 
+        var uploads = [...getState().documentsReducer.uploadItems]; 
       _.remove(uploads, {
             Id: Id
         });
@@ -621,9 +621,9 @@ function uploadFile(url,file){
             if (!isUpdateVersion)
             {
              
-                const items =getState().documentlists[documentlist.catId].items; 
-              //  alert(getState().documentlists.uploadItems)
-                var newUploadItems = [...getState().documentlists.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name}]; 
+                const items =getState().documentsReducer[documentlist.catId].items; 
+              //  alert(getState().documentsReducer.uploadItems)
+                var newUploadItems = [...getState().documentsReducer.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name}]; 
                 var datasource = AssembleTableDatasource(items, newUploadItems, 0, 0).ret;
                 dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId)); 
 
@@ -813,7 +813,7 @@ export function SetSharingPermissions(tags: object){
 
 export function UpdateDocumentSharingPermission(){
   return (dispatch, getState) => {
-      const documentLists = getState().documentlists; 
+      const documentLists = getState().documentsReducer; 
       const navReducer = getState().navReducer;
       const document = getSelectedDocument(documentLists, navReducer);
       const triggerSelectedValue = navReducer.triggerSelectedValue;
@@ -866,7 +866,7 @@ export function UpdateDocumentSharingPermission(){
 export function DiscardCheckOut() {
 
   return (dispatch, getState) => {
-    const documentLists = getState().documentlists;
+    const documentLists = getState().documentsReducer;
     const navReducer = getState().navReducer;
     var document = getSelectedDocument(documentLists, navReducer);
     const {sessionToken, env} = getState().accessReducer;
@@ -901,7 +901,7 @@ export function DiscardCheckOut() {
 export function CheckOut() {
 
   return (dispatch, getState) => {
-    const documentLists = getState().documentlists;
+    const documentLists = getState().documentsReducer;
     const navReducer = getState().navReducer;
     var document = getSelectedDocument(documentLists, navReducer);
     const {sessionToken, env} = getState().accessReducer;
@@ -938,7 +938,7 @@ export function CheckOut() {
 export function CheckIn(comment :string) {
 
   return (dispatch, getState) => {
-    const documentLists = getState().documentlists;
+    const documentLists = getState().documentsReducer;
     const navReducer = getState().navReducer;
     var document = getSelectedDocument(documentLists, navReducer);
     const {sessionToken, env} = getState().accessReducer;
@@ -1063,7 +1063,7 @@ export function EditDocument(documentId: string, documentName: string) {
 export function ShareDocument(){
 
    return (dispatch, getState) => {
-      const documentLists = getState().documentlists; 
+      const documentLists = getState().documentsReducer; 
       const navReducer = getState().navReducer;
       var document = getSelectedDocument(documentLists, navReducer); 
       const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue; 

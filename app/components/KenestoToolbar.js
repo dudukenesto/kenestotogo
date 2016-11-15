@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import * as constans from '../constants/GlobalConstans'
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import * as navActions from '../actions/navActions'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
@@ -254,8 +254,8 @@ class KenestoToolbar extends Component {
   
 
   addPeople() {
-    const {documentlists} = this.props
-    if (documentlists.sharingPermissions.length === 0) {
+    const {documentsReducer} = this.props
+    if (documentsReducer.sharingPermissions.length === 0) {
       return false;
     }
     this.props.dispatch(documentsActions.ShareDocument());

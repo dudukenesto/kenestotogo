@@ -5,8 +5,8 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
-import * as documentsActions from '../actions/documentlists'
-import {CheckIn} from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
+import {CheckIn} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
@@ -117,9 +117,9 @@ class CheckInDocument extends React.Component {
 
 
 function mapStateToProps(state) {
-    const { documentlists} = state
+    const { documentsReducer} = state
     return {
-        documentlists
+        documentsReducer
     }
 }
 
