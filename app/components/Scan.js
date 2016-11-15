@@ -67,13 +67,7 @@ this.props.dispatch(uploadToKenesto({name: name, uri : this.state.image.path, ty
       height: 400,
         includeBase64: true
     }).then(image => {
-
-     const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
-           
-      this.setState({
-        initial: false, 
-        image: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
-        images: null});
+          alert('kuku');
 
     }).catch(e => alert(JSON.stringify(e)));
 

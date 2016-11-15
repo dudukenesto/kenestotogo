@@ -156,12 +156,12 @@ class PlusMenu extends React.Component{
                 </View>
                 
                 <View style={styles.actionHolder}>
-                    <Icon name="file-upload" style={styles.actionButtonIcon} onPress={()=> {this.selectFromLib.bind(this)(true)}}/>
+                    <Icon name="file-upload" style={styles.actionButtonIcon} onPress={()=> {this.selectFromLib.bind(this)(false)}}/>
                     <Text style={styles.actionName}>Upload File</Text>
                 </View>
                 
                 <View style={styles.actionHolder}>
-                    <Icon name="photo-camera" style={styles.actionButtonIcon} onPress={()=> {this.takePhoto.bind(this)(false)}} />
+                    <Icon name="photo-camera" style={styles.actionButtonIcon} onPress={()=> {this.takePhoto.bind(this)(true)}} />
                     <Text style={styles.actionName}>Scan</Text>
                 </View>                
             </View>
