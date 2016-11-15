@@ -176,7 +176,7 @@ class AddPeople extends Component {
         <View style={[styles.roundIcon, { marginLeft: -5.5 }]}>
           {tag.iconType == 'icon' ? <Icon name={tag.iconName} style={styles.iconMedium} /> : <Image source = {{ uri: tag.iconName }} style={styles.thumbnail} />}
         </View>
-        <View style={{ flex: 1 }}><Text style={styles.tagText} numberOfLines={1}>{tag.tagName}</Text></View>
+        <View><Text style={styles.tagText} numberOfLines={1}>{tag.tagName}</Text></View>
         <Icon name="close" style={styles.closeIcon} onPress={removeTag.bind(this, tag)} />
       </View>
     )
@@ -406,8 +406,8 @@ var styles = StyleSheet.create({
   iconMedium: {
     fontSize: 22,
     color: "#999",
-    borderWidth: 1,
-    marginLeft: 2
+    // borderWidth: 1,
+    // marginLeft: 2
   },
   roundIcon: {
     borderWidth: 0.5,
