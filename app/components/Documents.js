@@ -272,12 +272,6 @@ class Documents extends Component {
             } }
             renderFooter={() => {return <View style={{height: 100}}>
             
-            <TouchableOpacity
-              onPress={() => {this.scrollToTop()}}
-              // onPress={() => {this.scrollToItem('70495ea3-c713-48fd-9c51-82c143712284')}}                
-              >
-              <Text>Scroll to top</Text>
-            </TouchableOpacity>
 
             </View>}}
             onEndReached={this.onEndReached}
