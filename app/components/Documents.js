@@ -200,8 +200,27 @@ class Documents extends Component {
     //this.refs.modal3.open();
     this.context.plusMenuContext.open();
   }
-
-
+  
+  scrollToTop(){
+    const {documentsReducer, navReducer} = this.props
+    var uploadingScrollPosition = documentsReducer.uploadItems.length > 3 ? (documentsReducer.uploadItems.length-1)*67+52 : 0;
+    this.refs.listview.scrollTo({y: uploadingScrollPosition})
+  }
+  
+  scrollToItem(id){
+    const {documentsReducer, navReducer} = this.props;
+    const documents = this.props.documentsReducer.MY_DOCUMENTS.items;
+    const document = documents.find(d => (d.Id === id));
+    const index = documents.indexOf(document);
+    const sectionHeaderHeights = index > 0 && documents[0].FamilyCode != document.FamilyCode ? 104 : 52
+    const position = index * 67 + sectionHeaderHeights;
+    this.refs.listview.scrollTo({y: position});
+    console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
+    console.log(document.Name);
+    console.log('\n\n\n\n\n\n ================== MY LOG END ==================  \n\n\n\n\n\n')
+  }
+  
+ 
   _renderTableContent(isFetching) {
 
     const {documentsReducer, navReducer} = this.props
@@ -251,7 +270,16 @@ class Documents extends Component {
                     
               return (documentCell)
             } }
-            renderFooter={() => {return <View style={{height: 100}}></View>}}
+            renderFooter={() => {return <View style={{height: 100}}>
+            
+            <TouchableOpacity
+              onPress={() => {this.scrollToTop()}}
+              // onPress={() => {this.scrollToItem('70495ea3-c713-48fd-9c51-82c143712284')}}                
+              >
+              <Text>Scroll to top</Text>
+            </TouchableOpacity>
+
+            </View>}}
             onEndReached={this.onEndReached}
             automaticallyAdjustContentInsets={false}
             keyboardDismissMode="on-drag"
