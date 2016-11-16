@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import {config} from './app.config'
-
+var moment = require('moment');
+var DeviceInfo = require('react-native-device-info');
 import PubNub from 'pubnub'
 const pubnub = new PubNub({
     subscribeKey: "demo",
@@ -39,8 +40,12 @@ export function isRouteKeyExists(key:string, routes:Object)
 }
 
 
-export function writeToLog(env: string, token: string = "", category: string = "", ...values) {
+export function writeToLog(userEmail: string, category: string = "", ...values) {
     try {
+       
+       var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+       var logRow = `${DeviceInfo.getUniqueID()} - ${userEmail} [${date}][${category}] ${values.join(';')} ; Device Info: ${DeviceInfo.getUserAgent()} ${DeviceInfo.getDeviceCountry()}`
+       console.log(logRow)
         // const url = getWriteToLogUrl(env, token);
         // const jsonObject = {
         //     logMessage: {
@@ -72,6 +77,5 @@ export function writeToLog(env: string, token: string = "", category: string = "
         // });
     }
     catch (err) {
-      
     }
 }

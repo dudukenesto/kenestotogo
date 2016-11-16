@@ -63,16 +63,16 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
   return (dispatch, getState) => {
 
       dispatch(updateIsFetching(true));
-    const {sessionToken, env} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     const url = getRetrieveShareObjectInfoUrl(env, sessionToken, objectId, familyCode);
-    writeToLog(env, sessionToken, constans.DEBUG, `function RequestShareObjectInfo - url: ${url}`)
+    writeToLog(email, constans.DEBUG, `function RequestShareObjectInfo - url: ${url}`)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
        // alert(json.ResponseData.ObjectInfo);
         if (json.ResponseStatus == "FAILED") {
            dispatch(emitError("Failed to retrieve sharing info",""))
-        writeToLog(env, sessionToken, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info - url: ${url}`)
+        writeToLog(email, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info - url: ${url}`)
         }
         else {
             const ObjectInfo = json.ResponseData.ObjectInfo; 
@@ -92,7 +92,7 @@ export function RequestShareObjectInfo(objectId : string, familyCode: string, ob
       .catch((error) => {
         //console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve sharing info" ,""))
-        writeToLog(env, sessionToken, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info - url: ${url}`,error)
+        writeToLog(email, constans.ERROR, `function RequestShareObjectInfo - Failed to retrieve sharing info - url: ${url}`,error)
       })
   }
 }

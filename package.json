@@ -36,6 +36,7 @@
     "redux-thunk": "^2.1.0",
     "strict-uri-encode": "^1.1.0",
     "tcomb-form-native": "^0.6.0",
-    "pubnub": "4.2.5"
+    "pubnub": "4.2.5",
+    "react-native-device-info":"^0.9.6"
   }
 }

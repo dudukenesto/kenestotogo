@@ -39,10 +39,10 @@ export function updateIsFetchingSelectedObject(isFetching: boolean) {
 
 export function getDocumentPermissions(documentId: string, familyCode: string) {
   return (dispatch, getState) => {
-    const {sessionToken, env} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     dispatch(updateIsFetchingSelectedObject(true))
     var url = getDocumentPermissionsUrl(env, sessionToken, documentId, familyCode);
-    writeToLog(env, sessionToken, constans.DEBUG, `function getDocumentPermissions - url: ${url}`)
+    writeToLog(email, constans.DEBUG, `function getDocumentPermissions - url: ${url}`)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
@@ -50,7 +50,7 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
           dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
           dispatch(navActions.emitError(json.ErrorMessage, ""))
           dispatch(updateIsFetchingSelectedObject(false))
-          writeToLog(env, sessionToken, constans.ERROR, `function getDocumentPermissions - error details- url: ${url}`)
+          writeToLog(email, constans.ERROR, `function getDocumentPermissions - error details- url: ${url}`)
         }
         else {
           var permissions = json.ResponseData.ObjectPermissions;
@@ -61,7 +61,7 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
       .catch((error) => {
         dispatch(navActions.emitError("Failed to get document permissions", ""))
         dispatch(updateIsFetchingSelectedObject(false))
-        writeToLog(env, sessionToken, constans.ERROR, `function getDocumentPermissions - Failed to get document permissions , url: ${url}`,error)
+        writeToLog(email, constans.ERROR, `function getDocumentPermissions - Failed to get document permissions , url: ${url}`,error)
       })
   }
 }
@@ -273,8 +273,8 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
   return (dispatch, getState) => {
     
     dispatch(requestDocumentsList(documentlist))
-    const {sessionToken, env} = getState().accessReducer;
-    writeToLog(env, sessionToken, constans.DEBUG, `function fetchDocumentsTable - url: ${url}`)
+    const {sessionToken, env, email} = getState().accessReducer;
+    writeToLog(email, constans.DEBUG, `function fetchDocumentsTable - url: ${url}`)
     return fetch(url)
       .then(response => response.json())
       .then(json => {
@@ -283,7 +283,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
           //dispatch(failedToFetchDocumentsList(documentlist, url, json.ErrorMessage))
           dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
           dispatch(navActions.emitError(json.ErrorMessage, ""))
-          writeToLog(env, sessionToken, constans.ERROR, `function fetchDocumentsTable - error details  - url: ${url}`)
+          writeToLog(email, constans.ERROR, `function fetchDocumentsTable - error details  - url: ${url}`)
         }
         else {
           var prevState = getState();
@@ -326,7 +326,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
       })
       .catch((error) => {
         dispatch(navActions.emitError("Failed to retrieve documents", ""))
-        writeToLog(env, sessionToken, constans.ERROR, `function fetchDocumentsTable - Failed to retrieve documents - url: ${url}`,error)
+        writeToLog(email, constans.ERROR, `function fetchDocumentsTable - Failed to retrieve documents - url: ${url}`,error)
 
       })
   }
@@ -348,8 +348,8 @@ export function fetchTableIfNeeded() {
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
-     const {sessionToken, env} = getState().accessReducer;
-    writeToLog(env, sessionToken, constans.DEBUG, `function refreshTable - url: ${url}`)
+     const {sessionToken, env, email} = getState().accessReducer;
+    writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
     dispatch(navActions.updateRouteData(documentlist))
     dispatch(Access.retrieveStatistics());
     return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
@@ -462,11 +462,11 @@ export function createFolder(folderName: string, isVault: boolean) {
 
   return (dispatch, getState) => {
     var documentlist = getDocumentsContext(getState().navReducer);
-    const {sessionToken, env} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     const folderId = documentlist.fId;
     const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName, isVault);
     dispatch(UpdateCreateingFolderState(1))
-    writeToLog(env, sessionToken, constans.DEBUG, `function createFolder - url: ${createFolderUrl}`)
+    writeToLog(email, constans.DEBUG, `function createFolder - url: ${createFolderUrl}`)
     return fetch(createFolderUrl)
       .then(response => response.json())
       .then(json => {
@@ -476,12 +476,12 @@ export function createFolder(folderName: string, isVault: boolean) {
           if(json.ErrorMessage.indexOf('VAL10357') > -1)
           {
             dispatch(navActions.emitError("Folder Name already exists"))
-            writeToLog(env, sessionToken, constans.ERROR, `function createFolder - Folder Name already exists - url: ${createFolderUrl}`)
+            writeToLog(email, constans.ERROR, `function createFolder - Folder Name already exists - url: ${createFolderUrl}`)
           }
           else
           {
             dispatch(navActions.emitError("Error creating new folder"))
-            writeToLog(env, sessionToken, constans.ERROR, `function createFolder - Error creating new folder - url: ${createFolderUrl}`)
+            writeToLog(email, constans.ERROR, `function createFolder - Error creating new folder - url: ${createFolderUrl}`)
           }
           
           dispatch(UpdateCreateingFolderState(2))
@@ -498,7 +498,7 @@ export function createFolder(folderName: string, isVault: boolean) {
       .catch((error) => {
         dispatch(navActions.emitError("Error creating new folder"))
         dispatch(UpdateCreateingFolderState(0))
-        writeToLog(env, sessionToken, constans.ERROR, `function createFolder - Error creating new folder - url: ${createFolderUrl}`, error)
+        writeToLog(email, constans.ERROR, `function createFolder - Error creating new folder - url: ${createFolderUrl}`, error)
       })
   }
 }
@@ -506,11 +506,11 @@ export function createFolder(folderName: string, isVault: boolean) {
 
 export function downloadDocument(id: string, fileName: string){
    return (dispatch, getState) => {
-        const {sessionToken, env} = getState().accessReducer;
+        const {sessionToken, env, email} = getState().accessReducer;
         //dispatch(updateIsFetching(true)); 
         dispatch(navActions.emitToast('info', 'Document will be downloaded shortly'));
         const url = getDownloadFileUrl(env, sessionToken, id);
-         writeToLog(env, sessionToken, constans.DEBUG, `function downloadDocument - url: ${url}`)
+         writeToLog(email, constans.DEBUG, `function downloadDocument - url: ${url}`)
          fetch(url)
             .then(response => response.json())
             .then(json => {
@@ -539,7 +539,7 @@ export function downloadDocument(id: string, fileName: string){
 
               }).catch(error => { 
                   dispatch(navActions.emitToast('error downloading document'))
-                  writeToLog(env, sessionToken, constans.ERROR, `function downloadDocument - error downloading document - url: ${url}`, error)
+                  writeToLog(email, constans.ERROR, `function downloadDocument - error downloading document - url: ${url}`, error)
 
               })
               .done();
@@ -622,9 +622,9 @@ function uploadFile(url,file){
           //dispatch(updateIsFetching(true)); 
 
           const uploadId = fileObject.name + "_" + Date.now();
-            const {sessionToken, env} = getState().accessReducer;
+            const {sessionToken, env, email} = getState().accessReducer;
               var documentlist = getDocumentsContext(getState().navReducer);
-            writeToLog(env, sessionToken, constans.DEBUG, `function uploadToKenesto - url: ${url}, isUpdateVersion${isUpdateVersion}`)
+            writeToLog(email, constans.DEBUG, `function uploadToKenesto - url: ${url}, isUpdateVersion${isUpdateVersion}`)
             if (!isUpdateVersion)
             {
                 const items =getState().documentsReducer[documentlist.catId].items; 
@@ -674,7 +674,7 @@ function uploadFile(url,file){
                                         message = "Error. failed to update version"
 
                                          dispatch(navActions.emitToast("info",message,""));
-                                         writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject))
+                                         writeToLog(email, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject))
                                   }
                                  // dispatch(navActions.pop());
 
@@ -683,7 +683,7 @@ function uploadFile(url,file){
 
                                   console.log("error:" + JSON.stringify(error))
                                   dispatch(navActions.emitError("Failed",`Error. failed to upload file ${fileObject.name}`))
-                                  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
+                                  writeToLog(email, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
                                 }) 
                                 
                   })
@@ -737,7 +737,7 @@ function uploadFile(url,file){
             .catch((error) => {
               //console.log("error:" + JSON.stringify(error))
                dispatch(navActions.emitError("Failed",`Error. failed to upload file ${fileObject.name}`))
-               writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
+               writeToLog(email, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
             })
   }
 
@@ -748,17 +748,17 @@ function uploadFile(url,file){
 export function deleteAsset(id: string, familyCode: string){
    return (dispatch, getState) => {
         dispatch(updateIsFetching(true)); 
-        const {sessionToken, env} = getState().accessReducer;
+        const {sessionToken, env, email} = getState().accessReducer;
            
         const url = getDeleteAssetUrl(env, sessionToken, id, familyCode);
-        writeToLog(env, sessionToken, constans.DEBUG, `function deleteAsset - url: ${url}`)
+        writeToLog(email, constans.DEBUG, `function deleteAsset - url: ${url}`)
             return fetch(url)
                 .then(response => response.json())
                 .then(json => {
                    dispatch(updateIsFetching(false)); 
                   if (json.ResponseStatus == "FAILED") {
                       dispatch(navActions.emitToast("error", "", "Error deleting asset"))
-                      writeToLog(env, sessionToken, constans.ERROR, `function deleteAsset - Error deleting asset - url: ${url}`)
+                      writeToLog(email, constans.ERROR, `function deleteAsset - Error deleting asset - url: ${url}`)
                   }
                   else {
                         dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
@@ -768,7 +768,7 @@ export function deleteAsset(id: string, familyCode: string){
       })
       .catch((error) => {
           dispatch(navActions.emitToast("error", "", "Failed to delete asset"))
-          writeToLog(env, sessionToken, constans.ERROR, `function deleteAsset - Failed to delete asset - url: ${url}`,error)
+          writeToLog(email, constans.ERROR, `function deleteAsset - Failed to delete asset - url: ${url}`,error)
       })
 
    }
@@ -777,16 +777,16 @@ export function deleteAsset(id: string, familyCode: string){
 export function deleteFolder(id: string){
    return (dispatch, getState) => {
         dispatch(updateIsFetching(true)); 
-        const {sessionToken, env} = getState().accessReducer;
+        const {sessionToken, env, email} = getState().accessReducer;
         const url = getDeleteFolderUrl(env, sessionToken, id);
-        writeToLog(env, sessionToken, constans.DEBUG, `function deleteFolder - url: ${url}`)
+        writeToLog(email, constans.DEBUG, `function deleteFolder - url: ${url}`)
             return fetch(url)
                 .then(response => response.json())
                 .then(json => {
                    dispatch(updateIsFetching(false)); 
                   if (json.ResponseStatus == "FAILED") {
                       dispatch(navActions.emitToast("error", "", "Error deleting folder"))
-                      writeToLog(env, sessionToken, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`)
+                      writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`)
                   }
                   else {
                         dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
@@ -796,7 +796,7 @@ export function deleteFolder(id: string){
       })
       .catch((error) => {
            dispatch(navActions.emitToast("error",error, "Failed to delete folder"))
-           writeToLog(env, sessionToken, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`,error)
+           writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`,error)
       })
 
    }
@@ -840,9 +840,9 @@ export function UpdateDocumentSharingPermission(){
           }
       }
 
-        const {sessionToken, env} = getState().accessReducer;
+        const {sessionToken, env, email} = getState().accessReducer;
         const url = getShareDocumentUrl(env, sessionToken);
-        writeToLog(env, sessionToken, constans.DEBUG, `function UpdateDocumentSharingPermission - ParticipantUniqueID:${ParticipantUniqueID} ID:${document.Id} url: ${url}`)
+        writeToLog(email, constans.DEBUG, `function UpdateDocumentSharingPermission - ParticipantUniqueID:${ParticipantUniqueID} ID:${document.Id} url: ${url}`)
 
         var request = new Request(url, {
           method: 'post', 
@@ -863,7 +863,7 @@ export function UpdateDocumentSharingPermission(){
 
         }).catch((error) => {
                 dispatch(navActions.emitError(error,""))
-                writeToLog(env, sessionToken, constans.ERROR, `function UpdateDocumentSharingPermission - Failed! ParticipantUniqueID:${ParticipantUniqueID} ID:${document.Id} url: ${url}`,error)
+                writeToLog(email, constans.ERROR, `function UpdateDocumentSharingPermission - Failed! ParticipantUniqueID:${ParticipantUniqueID} ID:${document.Id} url: ${url}`,error)
             }).done();
 
     
@@ -877,9 +877,9 @@ export function DiscardCheckOut() {
     const documentLists = getState().documentsReducer;
     const navReducer = getState().navReducer;
     var document = getSelectedDocument(documentLists, navReducer);
-    const {sessionToken, env} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     const url = getDiscardCheckOutDocumentUrl(env, sessionToken, document.Id);
-    writeToLog(env, sessionToken, constans.DEBUG, `function DiscardCheckOut - url: ${url}`)
+    writeToLog(email, constans.DEBUG, `function DiscardCheckOut - url: ${url}`)
 
     dispatch(updateIsFetching(true));
     fetch(url)
@@ -888,7 +888,7 @@ export function DiscardCheckOut() {
         if (json.ResponseStatus == "FAILED") {
            dispatch(updateIsFetching(false));
            dispatch(navActions.emitError("Failed to discard Check-Out document", ""))
-           writeToLog(env, sessionToken, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`)
+           writeToLog(email, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`)
         }
         else {
           dispatch(updateIsFetching(false));
@@ -900,7 +900,7 @@ export function DiscardCheckOut() {
       }).catch((error) => {
         dispatch(updateIsFetching(false));
         dispatch(navActions.emitError("Failed to discard Check-Out document", ""))
-        writeToLog(env, sessionToken, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`,error)
+        writeToLog(email, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`,error)
        
       }).done();
   }
@@ -912,9 +912,9 @@ export function CheckOut() {
     const documentLists = getState().documentsReducer;
     const navReducer = getState().navReducer;
     var document = getSelectedDocument(documentLists, navReducer);
-    const {sessionToken, env} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     const url = getCheckOutDocumentUrl(env, sessionToken, document.Id);
-    writeToLog(env, sessionToken, constans.DEBUG, `function CheckOut - url: ${url}`)
+    writeToLog(email, constans.DEBUG, `function CheckOut - url: ${url}`)
     dispatch(updateIsFetching(true));
     fetch(url)
       .then(response => response.json())
@@ -922,7 +922,7 @@ export function CheckOut() {
         if (json.ResponseStatus == "FAILED") {
            dispatch(updateIsFetching(false));
            dispatch(navActions.emitError("Failed to Check-Out document", ""))
-           writeToLog(env, sessionToken, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`)
+           writeToLog(email, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`)
         }
         else {
           dispatch(updateIsFetching(false));
@@ -935,7 +935,7 @@ export function CheckOut() {
       }).catch((error) => {
         dispatch(updateIsFetching(false));
         dispatch(navActions.emitError("Failed to Check-Out document", ""))
-        writeToLog(env, sessionToken, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`, error)
+        writeToLog(email, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`, error)
         
       }).done();
   }
@@ -949,9 +949,9 @@ export function CheckIn(comment :string) {
     const documentLists = getState().documentsReducer;
     const navReducer = getState().navReducer;
     var document = getSelectedDocument(documentLists, navReducer);
-    const {sessionToken, env} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     const url = getCheckInDocumentUrl(env, sessionToken);
-    writeToLog(env, sessionToken, constans.DEBUG, `function CheckIn - url: ${url}`)
+    writeToLog(email, constans.DEBUG, `function CheckIn - url: ${url}`)
     dispatch(updateIsFetching(true));
     const jsonObject = {
       asset: {
@@ -973,7 +973,7 @@ export function CheckIn(comment :string) {
         if (json.ResponseStatus == "FAILED") {
            dispatch(updateIsFetching(false));
            dispatch(navActions.emitError("Failed to Check-In document", ""))
-           writeToLog(env, sessionToken, constans.ERROR, `function CheckIn - Failed to Check-In document! - url: ${url}`)
+           writeToLog(email, constans.ERROR, `function CheckIn - Failed to Check-In document! - url: ${url}`)
         }
         else {
           dispatch(updateIsFetching(false));
@@ -986,7 +986,7 @@ export function CheckIn(comment :string) {
       }).catch((error) => {
         dispatch(updateIsFetching(false));
         dispatch(navActions.emitError("Failed to Check-In document", ""))
-        writeToLog(env, sessionToken, constans.ERROR, `function CheckIn - Failed to Check-In document! - url: ${url}`, error)
+        writeToLog(email, constans.ERROR, `function CheckIn - Failed to Check-In document! - url: ${url}`, error)
       }).done();
   }
 
@@ -996,9 +996,9 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 
   return (dispatch, getState) => {
     var documentlist = getDocumentsContext(getState().navReducer);
-    const {sessionToken, env} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     const url = getEditFolderUrl(env, sessionToken, fId, folderName, isVault);
-    writeToLog(env, sessionToken, constans.DEBUG, `function EditFolder - url: ${url}`)
+    writeToLog(email, constans.DEBUG, `function EditFolder - url: ${url}`)
 
     dispatch(updateIsFetching(true));
     fetch(url)
@@ -1010,12 +1010,12 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
            if(json.ErrorMessage.indexOf('VAL10357') > -1)
             {
               dispatch(navActions.emitError("Folder Name already exists"))
-              writeToLog(env, sessionToken, constans.ERROR, `function EditFolder - Folder Name already exists! - url: ${url}`)
+              writeToLog(email, constans.ERROR, `function EditFolder - Folder Name already exists! - url: ${url}`)
             }
             else
             {
               dispatch(navActions.emitError("Failed to edit folder", ""))
-              writeToLog(env, sessionToken, constans.ERROR, `function EditFolder - Failed to edit folder! - url: ${url}`)
+              writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit folder! - url: ${url}`)
             }
           
         }
@@ -1029,7 +1029,7 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
       }).catch((error) => {
         dispatch(updateIsFetching(false));
         dispatch(navActions.emitError("Failed to edit folder", ""))
-        writeToLog(env, sessionToken, constans.ERROR, `function EditFolder - Failed to edit folder! - url: ${url}`, error)
+        writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit folder! - url: ${url}`, error)
       }).done();
   }
 
@@ -1038,9 +1038,9 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 export function EditDocument(documentId: string, documentName: string) {
   return (dispatch, getState) => {
     var documentlist = getDocumentsContext(getState().navReducer);
-    const {sessionToken, env} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     const url = getEditDocumentUrl(env, sessionToken, documentId, documentName);
-    writeToLog(env, sessionToken, constans.DEBUG, `function EditDocument - url: ${url}`)
+    writeToLog(email, constans.DEBUG, `function EditDocument - url: ${url}`)
 
     dispatch(updateIsFetching(true));
     fetch(url)
@@ -1049,7 +1049,7 @@ export function EditDocument(documentId: string, documentName: string) {
         if (json.ResponseStatus == "FAILED") {
            dispatch(updateIsFetching(false));
            dispatch(navActions.emitError("Failed to edit document", ""))
-            writeToLog(env, sessionToken, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`)
+            writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`)
         }
         else {
           dispatch(updateIsFetching(false));
@@ -1061,7 +1061,7 @@ export function EditDocument(documentId: string, documentName: string) {
       }).catch((error) => {
         dispatch(updateIsFetching(false));
         dispatch(navActions.emitError("Failed to edit document", ""))
-        writeToLog(env, sessionToken, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`, error)
+        writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`, error)
       }).done();
   }
 
@@ -1076,7 +1076,7 @@ export function ShareDocument(){
       var document = getSelectedDocument(documentLists, navReducer); 
       const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue; 
       const sharingPermissions = documentLists.sharingPermissions; 
-      const {sessionToken, env} = getState().accessReducer;
+      const {sessionToken, env, email} = getState().accessReducer;
      
      for (var i=0; i< sharingPermissions.length; i++){
         sharingPermissions[i].PermissionTypeValue = addPeopleTriggerValue;
@@ -1089,7 +1089,7 @@ export function ShareDocument(){
       }
 
       const url = getShareDocumentUrl(env, sessionToken);
-      writeToLog(env, sessionToken, constans.DEBUG, `function ShareDocument - ID:${document.Id} url: ${url}`)
+      writeToLog(email, constans.DEBUG, `function ShareDocument - ID:${document.Id} url: ${url}`)
 
           
                       var request = new Request(url, {
@@ -1109,7 +1109,7 @@ export function ShareDocument(){
                          .then(json => {
                                if (json.ResponseStatus == "FAILED") {
                                     dispatch(navActions.emitError("Failed to share document",""))
-                                    writeToLog(env, sessionToken, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`)
+                                    writeToLog(email, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`)
                                   }
                                 else{
                                      dispatch(navActions.pop());
@@ -1119,7 +1119,7 @@ export function ShareDocument(){
 
                       }).catch((error) => {
                               dispatch(navActions.emitError("Failed to share object",""))
-                              writeToLog(env, sessionToken, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`, error)
+                              writeToLog(email, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`, error)
                           }).done();
    }
  
