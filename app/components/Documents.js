@@ -285,33 +285,8 @@ class Documents extends Component {
 
   render() {
 
+try {
     const {dispatch, documentsReducer, navReducer } = this.props
-    
-    
-    // const CustomButton = new MKButton.coloredFab()
-    //   .withBackgroundColor('#FF811B')
-    //   // .withShadowRadius(2)
-    //   // .withShadowOffset({ width: 0, height: 2 })
-    //   // .withShadowOpacity(.7)
-    //   // .withShadowColor('black')
-    //   .withOnPress(() => {
-    //     this.openModal();
-    //   })
-    //   .withTextStyle({
-    //     color: 'white',
-    //     fontSize: 28
-    //   })
-    //   .withStyle({
-    //     position: "absolute",
-    //     right: 20,
-    //     bottom: 20,
-    //     width: 60,
-    //     height: 60,
-    //   })
-    //   .withText('+')
-    //   .build();
-
-    //var currRoute = navReducer.routes[navReducer.index];
     var documentlist = getDocumentsContext(navReducer);
     // console.log("render documents page: " +JSON.stringify(documentlist))
     //const isFetching = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].isFetching : false
@@ -330,6 +305,12 @@ class Documents extends Component {
        
       </ViewContainer>
     )
+} catch (error) {
+  
+  console.log('documents render error: ' + error)
+  return null; 
+}
+  
   }
 
 }

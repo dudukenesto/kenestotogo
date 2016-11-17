@@ -154,16 +154,17 @@ export function getSelectedDocument(documentsReducer: Object, navReducer: Object
 
 export function getFileUploadUrl(env: string, sessionToken: string, path: string, fileDescription: string = "", fileKeyword: string = "", folderId: string = '00000000-0000-0000-0000-000000000000', baseFileId: string = '00000000-0000-0000-0000-000000000000', userData: string = '') {
   const urls = _.find(config.urls, { 'env': env });
-  const apiBaseUrl = urls.ApiBaseUrl;
-  folderId = (typeof (folderId) == 'undefined' || folderId == null || folderId == '') ? '00000000-0000-0000-0000-000000000000' : folderId;
-  baseFileId = (typeof (baseFileId) == 'undefined' || baseFileId == null || baseFileId == '') ? '00000000-0000-0000-0000-000000000000' : baseFileId;
-  return `${apiBaseUrl}/KDocuments.svc/UploadFile?t=${sessionToken}&p=${path}&fd=${fileDescription}&fk=${fileKeyword}&fid=${folderId}&bid=${baseFileId}&ud=${userData}`;
+   const apiBaseUrl = urls.ApiBaseUrl; 
+   folderId = (typeof (folderId) == 'undefined' || folderId == null || folderId == '') ? '00000000-0000-0000-0000-000000000000' : folderId;
+   baseFileId = (typeof (baseFileId) == 'undefined' || baseFileId == null || baseFileId == '') ? '00000000-0000-0000-0000-000000000000' : baseFileId;
+   return  `${apiBaseUrl}/KDocuments.svc/UploadFile?t=${sessionToken}&p=${path}&fd=${fileDescription}&fk=${fileKeyword}&fid=${folderId}&bid=${baseFileId}`;
 }
 
-export function getUploadFileCompletedUrl(env: string, sessionToken: string, url: string, userData: string = '') {
-  const urls = _.find(config.urls, { 'env': env });
-  const apiBaseUrl = urls.ApiBaseUrl;
-  return `${apiBaseUrl}/KDocuments.svc/UploadFileCompleted?t=${sessionToken}&u=${url}&ud=${userData}`;
+export function getUploadFileCompletedUrl(env: string, sessionToken: string,url: string, uploadId: string = ''){
+
+   const urls = _.find(config.urls, { 'env': env });
+   const apiBaseUrl = urls.ApiBaseUrl; 
+     return  `${apiBaseUrl}/KDocuments.svc/UploadFileCompleted?t=${sessionToken}&u=${url}&ui=${uploadId}`;
 }
 
 export function getDownloadFileUrl(env: string, sessionToken: string, assetId: string, userData: string = '') {

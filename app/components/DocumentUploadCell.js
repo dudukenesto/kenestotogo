@@ -80,18 +80,21 @@ var DocumentUploadCell = React.createClass({
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
     }
-    
-    var imageSource = require('../assets/thumbnail_img.png'); 
-          
-    var elementIcon;
 
-    elementIcon = <KenestoIcon name="folder" style={styles.kenestoIcon} />
+    // var imageSource = require('../assets/thumbnail_img.png'); 
 
-    
-      
-    // console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-    // console.log(document)
-    // console.log('\n\n\n\n\n\n ================== MY LOG END ==================  \n\n\n\n\n\n')
+
+    var iconName = getIconNameFromExtension(this.props.document.fileExtension).iconName;
+    var customStyle = getIconNameFromExtension(this.props.document.fileExtension).customStyle;
+    var elementIcon = <View style={styles.iconFiletype}>
+      { iconName === 'solidw' ?
+        <CustomIcon name={iconName} style={[styles.icon, customStyle]} />
+        :
+        <KenestoIcon name={iconName} style={[styles.kenestoIcon, customStyle]} />
+      }
+    </View>
+
+ 
     return (
       <View>  
         <TouchableElement>
@@ -106,7 +109,7 @@ var DocumentUploadCell = React.createClass({
               <View style={{ flexDirection: "row" }}>
                 {uploadingInProgress ?
                   <Text style={styles.documentYear} numberOfLines={1}>
-                    {uploaded} MB / {documentSize} MB
+                    File Size:  {this.props.document.Size} 
                   </Text>
                   :
                   <Text style={styles.documentYear} numberOfLines={1}>

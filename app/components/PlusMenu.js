@@ -57,16 +57,21 @@ class PlusMenu extends React.Component{
             };
     }
 
+        bytesToSize(bytes) {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 Byte';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+        };
+
     
   upload(){
       
     
      const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.file.name, "", "",  this.state.documentsContext.fId);
-
     const fileName = this.state.file.path.substring(this.state.file.path.lastIndexOf('/') + 1); 
     const name = fileName.substring(0,  fileName.lastIndexOf('.'));
-    this.props.dispatch(uploadToKenesto({name: name, uri : this.state.file.path, type: this.state.file.type}, url, false));
-
+    this.props.dispatch(uploadToKenesto({name: name, uri : this.state.file.path, type: this.state.file.type, size: this.state.file.size, fileExtension: this.state.file.extension}, url, false));
      this.props.closeMenuModal("modalPlusMenu");
     
   }
@@ -79,12 +84,15 @@ class PlusMenu extends React.Component{
         height: 400,
             includeBase64: true
         }).then(image => {
-//alert(image.path);
+
         const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
+
+      
             
         this.setState({
-            file: {uri: `data:${image.mime};base64,`+ image.data, width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
+            file: {uri: `data:${image.mime};base64,`+ image.data, size: this.bytesToSize(file.size), width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
         });
+
 
        this.upload();
 
@@ -94,27 +102,30 @@ class PlusMenu extends React.Component{
   }
 
   
+
+  
     selectFromLib(cropping : boolean){
 
             ImagePicker.openPicker({
             width: 400,
             height: 400,
             cropping : false,
-            includeBase64: true
+            includeBase64: false
             }).then(file => {
-           
+
+
              const fileName = file.path.substring(file.path.lastIndexOf("/") + 1);
 
-          
+             const fileExtension =  file.path.substring(file.path.lastIndexOf("."));
+
             this.setState({
-                file: { name: fileName, path: file.path, type: file.mime},
+                file: { name: fileName, path: file.path, type: file.mime, size: this.bytesToSize(file.size), extension: fileExtension},
             });
 
              this.upload();
 
-            }).catch(e => alert(JSON.stringify(e)));
-
-    
+            }).catch(e => this.props.dispatch(navActions.emitToast("error", "File selection failed"))
+            );
   }
 
 
