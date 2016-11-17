@@ -68,7 +68,7 @@ var DocumentCell = React.createClass({
     else {
       if (this.props.document.FamilyCode == 'FOLDER'){
         if(this.props.document.IsVault)
-          elementIcon = <CustomIcon name="safe" style={styles.icon} />
+          elementIcon = <CustomIcon name="vault" style={styles.icon} />
         else
           elementIcon = <KenestoIcon name="folder" style={styles.kenestoIcon} />
       }
