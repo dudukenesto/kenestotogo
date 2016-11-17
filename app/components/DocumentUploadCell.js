@@ -63,35 +63,38 @@ var DocumentUploadCell = React.createClass({
     },
 
   render: function() {
-    
-    // * * * * * * * * DUMMY STATIC VALUES, PER DOCUMENT * * * * * * * *
-    var uploadingInProgress = true;//                                  *
-    var documentSize = Math.floor(Math.random()*100)//                 *
-    var progress = Math.random();//                                    *
-    var uploaded = Math.floor(documentSize * progress);//              *
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    var realProgressBar = <View style={styles.progressBarContainer}><Progress.Bar progress={progress} width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
-    var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
-    // var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Circle size={20} indeterminate={true} /></View> // circle; crashes the app
-    // var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.CircleSnail size={20} colors={['red', 'green', 'blue']}  /></View> // circleSnail; crashes the app
-    
 
-    var TouchableElement = TouchableHighlight;
-    if (Platform.OS === 'android') {
-      TouchableElement = TouchableNativeFeedback;
-    }
-    
-    var imageSource = require('../assets/thumbnail_img.png'); 
+              // * * * * * * * * DUMMY STATIC VALUES, PER DOCUMENT * * * * * * * *
+          var uploadingInProgress = true;//                                  *
+          var documentSize = Math.floor(Math.random()*100)//                 *
+          var progress = Math.random();//                                    *
+          var uploaded = Math.floor(documentSize * progress);//              *
+          // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+          //var realProgressBar = <View style={styles.progressBarContainer}><Progress.Bar progress={progress} width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+          var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+          // var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Circle size={20} indeterminate={true} /></View> // circle; crashes the app
+          // var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.CircleSnail size={20} colors={['red', 'green', 'blue']}  /></View> // circleSnail; crashes the app
           
-    var elementIcon;
 
-    elementIcon = <KenestoIcon name="folder" style={styles.kenestoIcon} />
+          var TouchableElement = TouchableHighlight;
+          if (Platform.OS === 'android') {
+            TouchableElement = TouchableNativeFeedback;
+          }
+          
+          var imageSource = require('../assets/thumbnail_img.png'); 
 
-    
-      
-    // console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-    // console.log(document)
-    // console.log('\n\n\n\n\n\n ================== MY LOG END ==================  \n\n\n\n\n\n')
+          
+        var iconName = getIconNameFromExtension(this.props.document.fileExtension).iconName;
+        var customStyle = getIconNameFromExtension(this.props.document.fileExtension).customStyle;
+        var elementIcon = <View style={styles.iconFiletype}>
+          { iconName === 'solidw' ? 
+            <CustomIcon name={iconName} style={[styles.icon, customStyle]} />
+            :
+            <KenestoIcon name={iconName} style={[styles.kenestoIcon, customStyle]} />
+          }
+        </View>
+
+ 
     return (
       <View>  
         <TouchableElement>
@@ -106,7 +109,7 @@ var DocumentUploadCell = React.createClass({
               <View style={{ flexDirection: "row" }}>
                 {uploadingInProgress ?
                   <Text style={styles.documentYear} numberOfLines={1}>
-                    {uploaded} MB / {documentSize} MB
+                    File Size:  {this.props.document.Size} 
                   </Text>
                   :
                   <Text style={styles.documentYear} numberOfLines={1}>

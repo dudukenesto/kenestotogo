@@ -338,7 +338,6 @@ export function fetchTableIfNeeded() {
 
     var documentlist = getDocumentsContext(getState().navReducer);
     const {documentsReducer} = getState()
-    //  console.log("fetchTableIfNeeded "+shouldFetchDocuments(documentsReducer, documentlist))
     if (shouldFetchDocuments(documentsReducer, documentlist)) {
       const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentsReducer, documentlist)
       return dispatch(fetchDocumentsTable(nextUrl, documentlist, types.RECEIVE_DOCUMENTS))
@@ -548,16 +547,13 @@ export function downloadDocument(id: string, fileName: string){
 
 
 
-
-function uploadFile(url,file){
+function uploadFile(data,file){
 	
-	       return new Promise((resolve, reject) => {
-	
+	  return new Promise((resolve, reject) => {
 	    var xhr = new XMLHttpRequest();
 	    xhr.onerror = function (e) {
 	      // handle failture
-	      console.log('file upload error');
-	      reject();
+	      reject(e);
 	    };
 	    xhr.onreadystatechange = function () {
 	        if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -565,14 +561,14 @@ function uploadFile(url,file){
 	            // upload completed//
              // alert(xhr.status)
              console.log('finished upload status: ' + xhr.status);
-	            resolve(url);
+	            resolve(data);
 	          } else {
 	            // failed with error messge from server
-	            reject(xhr.status + ": " + url);
+	            reject(xhr.status + ": " + data.url);
 	          }
 	        }
 	    };
-       xhr.open('PUT', url);
+       xhr.open('PUT', data.url, true);
         xhr.setRequestHeader('Content-Type', 'multipart/form-data');
 
         xhr.upload.addEventListener('progress', function(e){
@@ -616,128 +612,90 @@ function uploadFile(url,file){
 
  
   export function uploadToKenesto(fileObject: object, url: string, isUpdateVersion: boolean=false){
-
-
   return (dispatch, getState) => {
           //dispatch(updateIsFetching(true)); 
 
           const uploadId = fileObject.name + "_" + Date.now();
+          url = url + "&ud=" + encodeURIComponent(uploadId);
             const {sessionToken, env} = getState().accessReducer;
               var documentlist = getDocumentsContext(getState().navReducer);
-            writeToLog(env, sessionToken, constans.DEBUG, `function uploadToKenesto - url: ${url}, isUpdateVersion${isUpdateVersion}`)
+            //writeToLog(env, sessionToken, constans.DEBUG, `function uploadToKenesto - url: ${url}, isUpdateVersion${isUpdateVersion}`)
             if (!isUpdateVersion)
             {
                 const items =getState().documentsReducer[documentlist.catId].items; 
                 const totalFiles= getState().documentsReducer[documentlist.catId].totalFiles;
                 const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
-
-                var newUploadItems = [...getState().documentsReducer.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name}]; 
+                var newUploadItems = [...getState().documentsReducer.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension : fileObject.fileExtension}]; 
                 var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
                 dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId)); 
-
             }
                
             fetch(url)
             .then(response => response.json())
             .then(json => {
-             
               if (json.ResponseStatus == "FAILED") {
-               //   alert(failed)
-                // dispatch(emitError(json.ResponseData.ErrorMessage,'error details'))
-                 dispatch(navActions.emitError(json.ErrorMessage,""))
+
+                dispatch(emitToast("error", "failed to upload file"))
               }
               else {
-                 var AccessUrl = json.ResponseData.AccessUrl;
-                 uploadFile(AccessUrl,fileObject)
-                 .then((url) => {
-                
-                         const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, url);
+` `
+                 var AccessUrl = json.ResponseData.AccessUrl; 
+                 var currUploadId = json.ResponseData.uploadId; 
+                 uploadFile({ uploadId: currUploadId, url: AccessUrl},fileObject)
+                 .then((data) => {
+
+                         const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, data.url, encodeURIComponent(data.uploadId));
+
+                         
                           fetch(thisCompletedUrl)
                                 .then(response => response.json())
                                 .then(json => {
-                                 
-                                  if(json.ResponseStatus == 'OK')
-                                  {
-                                       let message = ""
-                                      if(isUpdateVersion)
-                                        message = "Successfully updated document version"
-                                      else
-                                        message = "File successfully uploaded"
-                                        dispatch(removeUploadDocument(uploadId));
-                                       // dispatch(navActions.emitToast("success",message,""));
-                                       
-                                  }
-                                  else {
-                                     if(isUpdateVersion)
-                                        message = `Error. failed to upload file ${fileObject.name}`
-                                      else
-                                        message = "Error. failed to update version"
+                                      finalUploadId = json.ResponseData.uploadId;
+                                      dispatch(removeUploadDocument(finalUploadId));
+                                      if(json.ResponseStatus == 'OK')
+                                      {
 
-                                         dispatch(navActions.emitToast("info",message,""));
-                                         writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject))
+                                          let message = ""
+                                          if(isUpdateVersion)
+                                            message = "Successfully updated document version"
+                                          else
+                                            message = "File successfully uploaded"
+
+                                            dispatch(navActions.emitToast("info",message));
+                                          
+                                      }
+                                      else {
+
+                                        if(!isUpdateVersion)
+                                            message = `Error. failed to upload file ${fileObject.name}`
+                                          else
+                                            message = "Error. failed to update version"
+
+                                         dispatch(navActions.emitToast("error",message));
+                                       //  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject))
                                   }
-                                 // dispatch(navActions.pop());
+
+                               
 
                                 })
                                 .catch((error) => {
-
-                                  console.log("error:" + JSON.stringify(error))
-                                  dispatch(navActions.emitError("Failed",`Error. failed to upload file ${fileObject.name}`))
+                                  dispatch(removeUploadDocument(json.ResponseData.uploadId));
+                                  dispatch(navActions.emitToast("info","Error. failed to upload file"))
                                   writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
                                 }) 
                                 
                   })
-                 .catch(err => {alert(err)});
-
-
-
-
-                              // RNFetchBlob.fetch('PUT', AccessUrl, {
-                              //   'Content-Type' : 'multipart/form-data',
-                              // },
-                              //      JSON.stringify(fileObject),
-                              
-                                 
-                              // )
-              
-                              // // listen to download progress event
-                              // // .progress((received, total) => {
-                              // //     console.log('progress', received / total)
-                              // // })
-                              // //.then(response => response.json())r
-                              //    .then(response => response.json())
-                              //     .then(json => {
-                              
-                              //     //dispatch(updateIsFetching(false)); 
-                              //       alert(json);
-                            
-                              //     if(json.ResponseStatus == 'OK')
-                              //     {
-                                     
-                              //           dispatch(navActions.emitToast("success","file successfully uploaded",""));
-                              //     }
-                              //     else {
-                              //            dispatch(navActions.emitToast("info","coudn't upload file",""));
-                              //     }
-                              //     dispatch(navActions.pop());
-
-                              //   })
-                              //   .catch((error) => {
-                              //     console.log("error:" + JSON.stringify(error))
-                              //     dispatch(navActions.emitError("Failed",JSON.stringify(error)))
-
-
-                              //   }) 
-
-
+                 .catch(err => {
+                        dispatch(removeUploadDocument(json.ResponseData.uploadId));
+                        dispatch(navActions.emitToast("error","Error. failed to upload file"))
+                  });
 
 
               }
             })
             .catch((error) => {
-              //console.log("error:" + JSON.stringify(error))
-               dispatch(navActions.emitError("Failed",`Error. failed to upload file ${fileObject.name}`))
-               writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
+                dispatch(removeUploadDocument(json.ResponseData.uploadId));
+                dispatch(navActions.emitToast("error","Error. failed to upload file"))
             })
   }
 
