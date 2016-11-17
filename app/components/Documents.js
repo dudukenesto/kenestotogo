@@ -24,6 +24,7 @@ import * as constans from '../constants/GlobalConstans'
 import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
+import {getIconNameFromMimeType} from '../utils/documentsUtils'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -215,9 +216,6 @@ class Documents extends Component {
     const sectionHeaderHeights = index > 0 && documents[0].FamilyCode != document.FamilyCode ? 104 : 52
     const position = index * 67 + sectionHeaderHeights;
     this.refs.listview.scrollTo({y: position});
-    console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
-    console.log(document.Name);
-    console.log('\n\n\n\n\n\n ================== MY LOG END ==================  \n\n\n\n\n\n')
   }
   
  
