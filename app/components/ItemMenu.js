@@ -333,7 +333,7 @@ class ItemMenu extends React.Component{
             {
                 return( <TouchableHighlight onPress={this.discardCheckOut.bind(this) } underlayColor="#E9EAEC">
                     <View style={styles.actionHolder}>
-                        <CustomIcon name="lock-alt" style={styles.icon} />
+                        <CustomIcon name="checkout_discard_1cp" style={styles.icon} />
                         <Text style={styles.actionName}>Discard Check Out</Text>
                     </View>
                 </TouchableHighlight>)

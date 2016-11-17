@@ -24,6 +24,7 @@ import * as constans from '../constants/GlobalConstans'
 import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
+import {getIconNameFromMimeType} from '../utils/documentsUtils'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -200,8 +201,24 @@ class Documents extends Component {
     //this.refs.modal3.open();
     this.context.plusMenuContext.open();
   }
-
-
+  
+  scrollToTop(){
+    const {documentsReducer, navReducer} = this.props
+    var uploadingScrollPosition = documentsReducer.uploadItems.length > 3 ? (documentsReducer.uploadItems.length-1)*67+52 : 0;
+    this.refs.listview.scrollTo({y: uploadingScrollPosition})
+  }
+  
+  scrollToItem(id){
+    const {documentsReducer, navReducer} = this.props;
+    const documents = this.props.documentsReducer.MY_DOCUMENTS.items;
+    const document = documents.find(d => (d.Id === id));
+    const index = documents.indexOf(document);
+    const sectionHeaderHeights = index > 0 && documents[0].FamilyCode != document.FamilyCode ? 104 : 52
+    const position = index * 67 + sectionHeaderHeights;
+    this.refs.listview.scrollTo({y: position});
+  }
+  
+ 
   _renderTableContent(isFetching) {
 
     const {documentsReducer, navReducer} = this.props
@@ -251,7 +268,10 @@ class Documents extends Component {
                     
               return (documentCell)
             } }
-            renderFooter={() => {return <View style={{height: 100}}></View>}}
+            renderFooter={() => {return <View style={{height: 100}}>
+            
+
+            </View>}}
             onEndReached={this.onEndReached}
             automaticallyAdjustContentInsets={false}
             keyboardDismissMode="on-drag"
