@@ -2,7 +2,7 @@ import * as types from '../constants/ActionTypes'
 import * as navActions from '../actions/navActions'
 import * as Access from '../actions/Access'
 import * as peopleActions from '../actions/peopleActions'
-import {writeToLog} from '../utils/ObjectUtils'
+import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
 import {
   constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
@@ -33,7 +33,7 @@ export function updateIsFetching(isFetching: boolean) {
 export function updateIsFetchingSelectedObject(isFetching: boolean) {
   return {
     type: types.UPDATE_IS_FETCHING_SELECTED_OBJECT,
-    isFetchingSelectedObject:isFetching
+    isFetchingSelectedObject: isFetching
   }
 }
 
@@ -61,217 +61,216 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
       .catch((error) => {
         dispatch(navActions.emitError("Failed to get document permissions", ""))
         dispatch(updateIsFetchingSelectedObject(false))
-        writeToLog(email, constans.ERROR, `function getDocumentPermissions - Failed to get document permissions , url: ${url}`,error)
+        writeToLog(email, constans.ERROR, `function getDocumentPermissions - Failed to get document permissions , url: ${url}`, error)
       })
   }
 }
 
 
-function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders){
+function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders) {
 
-         var dataBlob = {},
-            sectionIDs = [],
-            rowIDs = [],
-            foldersSection,
-            docuemntsSection,
-            folders,
-            documents,
-            i,
-            j;
+  var dataBlob = {},
+    sectionIDs = [],
+    rowIDs = [],
+    foldersSection,
+    docuemntsSection,
+    folders,
+    documents,
+    i,
+    j;
 
-          folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
-          documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
-
-      
-       
-
-        if (totalFolders > 0 && totalFiles > 0) {
-           if (uploadItems.length > 0){
-                  dataBlob["ID1"] = `Uploads (${uploadItems.length})`
-                  dataBlob["ID2"] = `Folders (${totalFolders})`
-                  dataBlob["ID3"] = `Files (${totalFiles})`
-                  sectionIDs[0] = "ID1";
-                  sectionIDs[1] = "ID2";
-                  sectionIDs[2] = "ID3";
-
-                  rowIDs[0] = [];
-                   for (j = 0; j < uploadItems.length; j++) {
-                          uploadItem = uploadItems[j]; 
-
-                          rowIDs[0].push(uploadItem.Id); 
-                          dataBlob['ID1:' + uploadItem.Id] = uploadItem;
-                   }  
-                   rowIDs[1] = [];
-                  for (j = 0; j < folders.length; j++) {
-                    folder = folders[j];
-                    // Add Unique Row ID to RowID Array for Section
-                    rowIDs[1].push(folder.Id);
-                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                    dataBlob['ID2:' + folder.Id] = folder;
-                  }
-
-               
-                      rowIDs[2] = [];
-                      for (j = 0; j < documents.length; j++) {
-                        document = documents[j];
-                        // Add Unique Row ID to RowID Array for Section
-                        rowIDs[2].push(document.Id);
-
-                        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                        dataBlob['ID3:' + document.Id] = document;
-                      }
-
-           }
-            else{
-
-               
-                  dataBlob["ID1"] = `Folders (${totalFolders})`
-                  dataBlob["ID2"] = `Files (${totalFiles})`
-                  sectionIDs[0] = "ID1";
-                  sectionIDs[1] = "ID2";
-                  rowIDs[0] = [];
-                  for (j = 0; j < folders.length; j++) {
-                    folder = folders[j];
-                    // Add Unique Row ID to RowID Array for Section
-                    rowIDs[0].push(folder.Id);
-
-                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                    dataBlob['ID1:' + folder.Id] = folder;
-                  }
-
-                  rowIDs[1] = [];
-                  for (j = 0; j < documents.length; j++) {
-                    document = documents[j];
-                    // Add Unique Row ID to RowID Array for Section
-                    rowIDs[1].push(document.Id);
-
-                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                    dataBlob['ID2:' + document.Id] = document;
-
-                  }
-            }
-        
-         }
-          else if (totalFolders > 0 && totalFiles == 0) {
-            if (uploadItems.length > 0)
-            {
-                  dataBlob["ID1"] = `Uploads (${uploadItems.length})`
-                  dataBlob["ID2"] = `Folders (${totalFolders})`
-                  sectionIDs[0] = "ID1";
-                  sectionIDs[1] = "ID2";
-                  rowIDs[0] = [];
-                  for (j = 0; j < uploadItems.length; j++) {
-                          uploadItem = uploadItems[j]; 
-                          rowIDs[0].push(uploadItem.Id); 
-                          dataBlob['ID1:' + uploadItem.Id] = uploadItem;
-                  }  
-                  rowIDs[1] = [];
-                  for (j = 0; j < folders.length; j++) {
-                    folder = folders[j];
-                    // Add Unique Row ID to RowID Array for Section
-                    rowIDs[1].push(folder.Id);
-
-                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                    dataBlob['ID2:' + folder.Id] = folder;
-                  }
-            }
-            else{
-                  dataBlob["ID1"] = `Folders (${totalFolders})`
-                  sectionIDs[0] = "ID1";
-                  rowIDs[0] = [];
-                  for (j = 0; j < folders.length; j++) {
-                    folder = folders[j];
-                    // Add Unique Row ID to RowID Array for Section
-                    rowIDs[0].push(folder.Id);
-
-                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                    dataBlob['ID1:' + folder.Id] = folder;
-                  }
-            }
-          
-          }
-          else if (totalFiles > 0 && totalFolders == 0) {
-              if (uploadItems.length > 0){
-                   dataBlob["ID1"] = `Uploads (${uploadItems.length})`
-                  dataBlob["ID2"] = `Files (${totalFiles})`
-                  sectionIDs[0] = "ID1";
-                  sectionIDs[1] = "ID2";
-                  rowIDs[0] = [];
-                  for (j = 0; j < uploadItems.length; j++) {
-                          uploadItem = uploadItems[j]; 
-                          rowIDs[0].push(uploadItem.Id); 
-                          dataBlob['ID1:' + uploadItem.Id] = uploadItem;
-                  }  
-                  rowIDs[1] = [];
-                  for (j = 0; j < documents.length; j++) {
-                        document = documents[j];
-                        // Add Unique Row ID to RowID Array for Section
-                        rowIDs[1].push(document.Id);
-
-                        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                        dataBlob['ID2:' + document.Id] = document;
-                      }
-              }
-              else{
-                      dataBlob["ID1"] = `Files (${totalFiles})`
-                      sectionIDs[0] = "ID1";
-                      rowIDs[0] = [];
-                      for (j = 0; j < documents.length; j++) {
-                        document = documents[j];
-                        // Add Unique Row ID to RowID Array for Section
-                        rowIDs[0].push(document.Id);
-
-                        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                        dataBlob['ID1:' + document.Id] = document;
-                      }
-              }
-          
-          }
-          else if (totalFiles == 0 && totalFolders == 0){
-            if (uploadItems.length > 0){
-
-               dataBlob["ID1"] = `Uploads (${uploadItems.length})`
-                  sectionIDs[0] = "ID1";
-
-                  rowIDs[0] = [];
-                   for (j = 0; j < uploadItems.length; j++) {
-                          uploadItem = uploadItems[j]; 
-                          rowIDs[0].push(uploadItem.Id); 
-                          dataBlob['ID1:' + uploadItem.Id] = uploadItem;
-                   }  
-            }
-          }
+  folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
+  documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
 
 
-          var getSectionData = (dataBlob, sectionID) => {
-            return dataBlob[sectionID];
 
-          }
-          var getRowData = (dataBlob, sectionID, rowID) => {
 
-            return dataBlob[sectionID + ':' + rowID];
+  if (totalFolders > 0 && totalFiles > 0) {
+    if (uploadItems.length > 0) {
+      dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+      dataBlob["ID2"] = `Folders (${totalFolders})`
+      dataBlob["ID3"] = `Files (${totalFiles})`
+      sectionIDs[0] = "ID1";
+      sectionIDs[1] = "ID2";
+      sectionIDs[2] = "ID3";
 
-          }
+      rowIDs[0] = [];
+      for (j = 0; j < uploadItems.length; j++) {
+        uploadItem = uploadItems[j];
 
-          let ds = new ListView.DataSource({
+        rowIDs[0].push(uploadItem.Id);
+        dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+      }
+      rowIDs[1] = [];
+      for (j = 0; j < folders.length; j++) {
+        folder = folders[j];
+        // Add Unique Row ID to RowID Array for Section
+        rowIDs[1].push(folder.Id);
+        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+        dataBlob['ID2:' + folder.Id] = folder;
+      }
 
-            getSectionData: getSectionData,
 
-            getRowData: getRowData,
+      rowIDs[2] = [];
+      for (j = 0; j < documents.length; j++) {
+        document = documents[j];
+        // Add Unique Row ID to RowID Array for Section
+        rowIDs[2].push(document.Id);
 
-            rowHasChanged: (row1, row2) => row1 !== row2,
+        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+        dataBlob['ID3:' + document.Id] = document;
+      }
 
-            sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+    }
+    else {
 
-          })
 
-        return {ret:ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) } 
+      dataBlob["ID1"] = `Folders (${totalFolders})`
+      dataBlob["ID2"] = `Files (${totalFiles})`
+      sectionIDs[0] = "ID1";
+      sectionIDs[1] = "ID2";
+      rowIDs[0] = [];
+      for (j = 0; j < folders.length; j++) {
+        folder = folders[j];
+        // Add Unique Row ID to RowID Array for Section
+        rowIDs[0].push(folder.Id);
+
+        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+        dataBlob['ID1:' + folder.Id] = folder;
+      }
+
+      rowIDs[1] = [];
+      for (j = 0; j < documents.length; j++) {
+        document = documents[j];
+        // Add Unique Row ID to RowID Array for Section
+        rowIDs[1].push(document.Id);
+
+        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+        dataBlob['ID2:' + document.Id] = document;
+
+      }
+    }
+
+  }
+  else if (totalFolders > 0 && totalFiles == 0) {
+    if (uploadItems.length > 0) {
+      dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+      dataBlob["ID2"] = `Folders (${totalFolders})`
+      sectionIDs[0] = "ID1";
+      sectionIDs[1] = "ID2";
+      rowIDs[0] = [];
+      for (j = 0; j < uploadItems.length; j++) {
+        uploadItem = uploadItems[j];
+        rowIDs[0].push(uploadItem.Id);
+        dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+      }
+      rowIDs[1] = [];
+      for (j = 0; j < folders.length; j++) {
+        folder = folders[j];
+        // Add Unique Row ID to RowID Array for Section
+        rowIDs[1].push(folder.Id);
+
+        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+        dataBlob['ID2:' + folder.Id] = folder;
+      }
+    }
+    else {
+      dataBlob["ID1"] = `Folders (${totalFolders})`
+      sectionIDs[0] = "ID1";
+      rowIDs[0] = [];
+      for (j = 0; j < folders.length; j++) {
+        folder = folders[j];
+        // Add Unique Row ID to RowID Array for Section
+        rowIDs[0].push(folder.Id);
+
+        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+        dataBlob['ID1:' + folder.Id] = folder;
+      }
+    }
+
+  }
+  else if (totalFiles > 0 && totalFolders == 0) {
+    if (uploadItems.length > 0) {
+      dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+      dataBlob["ID2"] = `Files (${totalFiles})`
+      sectionIDs[0] = "ID1";
+      sectionIDs[1] = "ID2";
+      rowIDs[0] = [];
+      for (j = 0; j < uploadItems.length; j++) {
+        uploadItem = uploadItems[j];
+        rowIDs[0].push(uploadItem.Id);
+        dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+      }
+      rowIDs[1] = [];
+      for (j = 0; j < documents.length; j++) {
+        document = documents[j];
+        // Add Unique Row ID to RowID Array for Section
+        rowIDs[1].push(document.Id);
+
+        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+        dataBlob['ID2:' + document.Id] = document;
+      }
+    }
+    else {
+      dataBlob["ID1"] = `Files (${totalFiles})`
+      sectionIDs[0] = "ID1";
+      rowIDs[0] = [];
+      for (j = 0; j < documents.length; j++) {
+        document = documents[j];
+        // Add Unique Row ID to RowID Array for Section
+        rowIDs[0].push(document.Id);
+
+        // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+        dataBlob['ID1:' + document.Id] = document;
+      }
+    }
+
+  }
+  else if (totalFiles == 0 && totalFolders == 0) {
+    if (uploadItems.length > 0) {
+
+      dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+      sectionIDs[0] = "ID1";
+
+      rowIDs[0] = [];
+      for (j = 0; j < uploadItems.length; j++) {
+        uploadItem = uploadItems[j];
+        rowIDs[0].push(uploadItem.Id);
+        dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+      }
+    }
+  }
+
+
+  var getSectionData = (dataBlob, sectionID) => {
+    return dataBlob[sectionID];
+
+  }
+  var getRowData = (dataBlob, sectionID, rowID) => {
+
+    return dataBlob[sectionID + ':' + rowID];
+
+  }
+
+  let ds = new ListView.DataSource({
+
+    getSectionData: getSectionData,
+
+    getRowData: getRowData,
+
+    rowHasChanged: (row1, row2) => row1 !== row2,
+
+    sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+
+  })
+
+  return { ret: ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) }
 
 }
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
   return (dispatch, getState) => {
-    
+
     dispatch(requestDocumentsList(documentlist))
     const {sessionToken, env, email} = getState().accessReducer;
     writeToLog(email, constans.DEBUG, `function fetchDocumentsTable - url: ${url}`)
@@ -287,7 +286,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
         }
         else {
           var prevState = getState();
-            var items,
+          var items,
             totalFiles,
             dataBlob = {},
             sectionIDs = [],
@@ -310,7 +309,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
           }
 
           var uploadItems = getState().documentsReducer.uploadItems;
-          var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret; 
+          var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
 
           switch (actionType) {
             case types.RECEIVE_DOCUMENTS:
@@ -326,7 +325,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
       })
       .catch((error) => {
         dispatch(navActions.emitError("Failed to retrieve documents", ""))
-        writeToLog(email, constans.ERROR, `function fetchDocumentsTable - Failed to retrieve documents - url: ${url}`,error)
+        writeToLog(email, constans.ERROR, `function fetchDocumentsTable - Failed to retrieve documents - url: ${url}`, error)
 
       })
   }
@@ -347,7 +346,7 @@ export function fetchTableIfNeeded() {
 export function refreshTable(documentlist: Object) {
   return (dispatch, getState) => {
     const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
-     const {sessionToken, env, email} = getState().accessReducer;
+    const {sessionToken, env, email} = getState().accessReducer;
     writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
     dispatch(navActions.updateRouteData(documentlist))
     dispatch(Access.retrieveStatistics());
@@ -357,8 +356,8 @@ export function refreshTable(documentlist: Object) {
 
 export function initializeSearchBox(documentlist: Object) {
   return (dispatch, getState) => {
-      dispatch(clearDocuments(documentlist));
-      return dispatch(navActions.push(routes.documentsRoute(documentlist).route));
+    dispatch(clearDocuments(documentlist));
+    return dispatch(navActions.push(routes.documentsRoute(documentlist).route));
   }
 }
 
@@ -370,24 +369,24 @@ export function clearAllDocumentlists() {
 
 export function clearDocuments(documentlist: Object) {
   return (dispatch, getState) => {
-    var items= [];
-    var nextUrl= ""
-    var dataSource ={};    
-  dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
- }
+    var items = [];
+    var nextUrl = ""
+    var dataSource = {};
+    dispatch(refreshDocumentsList(items, nextUrl, documentlist, dataSource))
+  }
 }
 
 function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
 
   const activeDocumentsList = documentsReducer[documentlist.catId]
   if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
-    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId,documentlist.keyboard)
+    return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
   }
   return activeDocumentsList.nextUrl
 }
 
 
-function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object, totalFiles:number, totalFolders:number) {
+function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object, totalFiles: number, totalFolders: number) {
   return {
     type: types.RECEIVE_DOCUMENTS,
     nextUrl,
@@ -400,7 +399,7 @@ function receiveDocumentsList(documents: Object, nextUrl: string, documentlist: 
 }
 
 
-function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object, totalFiles:number, totalFolders:number) {
+function refreshDocumentsList(documents: Object, nextUrl: string, documentlist: Object, dataSource: Object, totalFiles: number, totalFolders: number) {
 
   return {
     type: types.REFRESH_DOCUMENTS_LIST,
@@ -472,25 +471,23 @@ export function createFolder(folderName: string, isVault: boolean) {
         if (json.ResponseStatus == "FAILED") {
           // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
 
-          if(json.ErrorMessage.indexOf('VAL10357') > -1)
-          {
+          if (json.ErrorMessage.indexOf('VAL10357') > -1) {
             dispatch(navActions.emitError("Folder Name already exists"))
             writeToLog(email, constans.ERROR, `function createFolder - Folder Name already exists - url: ${createFolderUrl}`)
           }
-          else
-          {
+          else {
             dispatch(navActions.emitError("Error creating new folder"))
             writeToLog(email, constans.ERROR, `function createFolder - Error creating new folder - url: ${createFolderUrl}`)
           }
-          
+
           dispatch(UpdateCreateingFolderState(2))
 
-         
+
         }
         else {
           dispatch(UpdateCreateingFolderState(2))
           dispatch(refreshTable(documentlist))
-         
+
         }
 
       })
@@ -503,115 +500,133 @@ export function createFolder(folderName: string, isVault: boolean) {
 }
 
 
-export function downloadDocument(id: string, fileName: string){
-   return (dispatch, getState) => {
-        const {sessionToken, env, email} = getState().accessReducer;
-        //dispatch(updateIsFetching(true)); 
-        dispatch(navActions.emitToast('info', 'Document will be downloaded shortly'));
-        const url = getDownloadFileUrl(env, sessionToken, id);
-         writeToLog(email, constans.DEBUG, `function downloadDocument - url: ${url}`)
-         fetch(url)
-            .then(response => response.json())
-            .then(json => {
-                  const downloadUrl = json.ResponseData.AccessUrl;
-                  
-                  RNFetchBlob.config({
-                    fileCache : true,
-                    // android only options, these options be a no-op on IOS
-                    addAndroidDownloads : {
-                      useDownloadManager : true,
-                      // Show notification when response data transmitted
-                      notification : true,
-                      // Title of download notification
-                      title : fileName,
-                      // File description (not notification description)
-                      description : 'Download completed',
-                     // mime : 'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                      // Make the file scannable  by media scanner
-                      meidaScannable : true,
-                    }
-                  })
-                  .fetch('GET', downloadUrl)
-                  .then( (res) => {
-                    
-                    })
+export function downloadDocument(id: string, fileName: string) {
+  return (dispatch, getState) => {
+    const {sessionToken, env, email} = getState().accessReducer;
+    //dispatch(updateIsFetching(true)); 
+    dispatch(navActions.emitToast('info', 'Document will be downloaded shortly'));
+    const url = getDownloadFileUrl(env, sessionToken, id);
+    writeToLog(email, constans.DEBUG, `function downloadDocument - url: ${url}`)
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        const downloadUrl = json.ResponseData.AccessUrl;
 
-              }).catch(error => { 
-                  dispatch(navActions.emitToast('error downloading document'))
-                  writeToLog(email, constans.ERROR, `function downloadDocument - error downloading document - url: ${url}`, error)
+        RNFetchBlob.config({
+          fileCache: true,
+          // android only options, these options be a no-op on IOS
+          addAndroidDownloads: {
+            useDownloadManager: true,
+            // Show notification when response data transmitted
+            notification: true,
+            // Title of download notification
+            title: fileName,
+            // File description (not notification description)
+            description: 'Download completed',
+            // mime : 'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            // Make the file scannable  by media scanner
+            meidaScannable: true,
+          }
+        })
+          .fetch('GET', downloadUrl)
+          .then((res) => {
 
-              })
-              .done();
-        }
+          })
+
+      }).catch(error => {
+        dispatch(navActions.emitToast('error downloading document'))
+        writeToLog(email, constans.ERROR, `function downloadDocument - error downloading document - url: ${url}`, error)
+
+      })
+      .done();
+  }
 }
 
 
 
-function uploadFile(data,file){
-	
-	  return new Promise((resolve, reject) => {
-	    var xhr = new XMLHttpRequest();
-	    xhr.onerror = function (e) {
-	      // handle failture
-	      reject(e);
-	    };
-	    xhr.onreadystatechange = function () {
-	        if (xhr.readyState === XMLHttpRequest.DONE) {
-	          if (xhr.status >= 200 && xhr.status <= 299) {
-	            // upload completed//
-             // alert(xhr.status)
-             console.log('finished upload status: ' + xhr.status);
-	            resolve(data);
-	          } else {
-	            // failed with error messge from server
-	            reject(xhr.status + ": " + data.url);
-	          }
-	        }
-	    };
-       xhr.open('PUT', data.url, true);
-        xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+function uploadFile(data, file) {
 
-        xhr.upload.addEventListener('progress', function(e){
-         console.log('upload progress = ' + e.loaded + "/" + e.total);
-      }, false);
-
-   //   var formData = new FormData(); 
-   //   formData.append('file', file);
-	     xhr.send(file);
-	       });
-	}
-
-  export function updateUploadDocument(datasource : object, uploadItems: object, catId: string){
-      return {
-            type: types.UPDATE_UPLOAD_LIST,
-            datasource,
-            uploadItems, 
-            catId
+  return new Promise((resolve, reject) => {
+    var xhr = new XMLHttpRequest();
+    xhr.onerror = function (e) {
+      // handle failture
+      reject(e);
+    };
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status >= 200 && xhr.status <= 299) {
+          // upload completed//
+          // alert(xhr.status)
+          console.log('finished upload status: ' + xhr.status);
+          resolve(data);
+        } else {
+          // failed with error messge from server
+          reject(xhr.status + ": " + data.url);
+        }
       }
-  }
+    };
+    xhr.open('PUT', data.url, true);
+    xhr.setRequestHeader('Content-Type', 'multipart/form-data');
 
-  export function removeUploadDocument(Id: string){
+    xhr.upload.addEventListener('progress', function (e) {
+      console.log('upload progress = ' + e.loaded + "/" + e.total);
+    }, false);
+
+    //   var formData = new FormData(); 
+    //   formData.append('file', file);
+    xhr.send(file);
+  });
+}
+
+export function updateUploadDocument(datasource: object, uploadItems: object, catId: string) {
+  return {
+    type: types.UPDATE_UPLOAD_LIST,
+    datasource,
+    uploadItems,
+    catId
+  }
+}
+
+export function updateVersionList(datasource: object, versionItems: object, catId: string) {
+  return {
+    type: types.UPDATE_VERSION_LIST,
+    datasource,
+    versionItems,
+    catId
+  }
+}
+
+export function updateVersionItems(versionItems: object) {
   return (dispatch, getState) => {
-        var documentlist = getDocumentsContext(getState().navReducer);
-        const items =getState().documentsReducer[documentlist.catId].items;
-        const totalFiles= getState().documentsReducer[documentlist.catId].totalFiles;
-        const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
-
-        var uploads = [...getState().documentsReducer.uploadItems]; 
-      _.remove(uploads, {
-            Id: Id
-        });
-        var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
-        dispatch(updateUploadDocument(datasource, uploads, documentlist.catId)); 
-        dispatch(refreshTable(documentlist));    
+    var documentlist = getDocumentsContext(getState().navReducer);
+    const items = getState().documentsReducer[documentlist.catId].items;
+    const totalFiles = getState().documentsReducer[documentlist.catId].totalFiles;
+    const totalFolders = getState().documentsReducer[documentlist.catId].totalFolders;
+    var uploadItems = getState().documentsReducer.uploadItems;
+    var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
+    dispatch(updateVersionList(datasource, versionItems, documentlist.catId));
   }
-      
+
+}
+
+export function removeUploadDocument(Id: string) {
+  return (dispatch, getState) => {
+    var documentlist = getDocumentsContext(getState().navReducer);
+    const items = getState().documentsReducer[documentlist.catId].items;
+    const totalFiles = getState().documentsReducer[documentlist.catId].totalFiles;
+    const totalFolders = getState().documentsReducer[documentlist.catId].totalFolders;
+
+    var uploads = [...getState().documentsReducer.uploadItems];
+    _.remove(uploads, {
+      Id: Id
+    });
+    var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
+    dispatch(updateUploadDocument(datasource, uploads, documentlist.catId));
+    dispatch(refreshTable(documentlist));
   }
-  
 
+}
 
- 
-  
   export function uploadToKenesto(fileObject: object, url: string, isUpdateVersion: boolean=false){
   return (dispatch, getState) => {
           //dispatch(updateIsFetching(true)); 
@@ -639,7 +654,6 @@ function uploadFile(data,file){
                 dispatch(emitToast("error", "failed to upload file"))
               }
               else {
-` `
                  var AccessUrl = json.ResponseData.AccessUrl; 
                  var currUploadId = json.ResponseData.uploadId; 
                  uploadFile({ uploadId: currUploadId, url: AccessUrl},fileObject)
@@ -705,130 +719,135 @@ function uploadFile(data,file){
 
 
 // getDeleteFolderUrl
-export function deleteAsset(id: string, familyCode: string){
-   return (dispatch, getState) => {
-        dispatch(updateIsFetching(true)); 
-        const {sessionToken, env, email} = getState().accessReducer;
-           
-        const url = getDeleteAssetUrl(env, sessionToken, id, familyCode);
-        writeToLog(email, constans.DEBUG, `function deleteAsset - url: ${url}`)
-            return fetch(url)
-                .then(response => response.json())
-                .then(json => {
-                   dispatch(updateIsFetching(false)); 
-                  if (json.ResponseStatus == "FAILED") {
-                      dispatch(navActions.emitToast("error", "", "Error deleting asset"))
-                      writeToLog(email, constans.ERROR, `function deleteAsset - Error deleting asset - url: ${url}`)
-                  }
-                  else {
-                        dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
-                         var documentlist = getDocumentsContext(getState().navReducer);
-                         dispatch(refreshTable(documentlist))    
-                    }
-      })
-      .catch((error) => {
-          dispatch(navActions.emitToast("error", "", "Failed to delete asset"))
-          writeToLog(email, constans.ERROR, `function deleteAsset - Failed to delete asset - url: ${url}`,error)
-      })
-
-   }
-}
-
-export function deleteFolder(id: string){
-   return (dispatch, getState) => {
-        dispatch(updateIsFetching(true)); 
-        const {sessionToken, env, email} = getState().accessReducer;
-        const url = getDeleteFolderUrl(env, sessionToken, id);
-        writeToLog(email, constans.DEBUG, `function deleteFolder - url: ${url}`)
-            return fetch(url)
-                .then(response => response.json())
-                .then(json => {
-                   dispatch(updateIsFetching(false)); 
-                  if (json.ResponseStatus == "FAILED") {
-                      dispatch(navActions.emitToast("error", "", "Error deleting folder"))
-                      writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`)
-                  }
-                  else {
-                        dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
-                         var documentlist = getDocumentsContext(getState().navReducer);
-                         dispatch(refreshTable(documentlist))    
-                    }
-      })
-      .catch((error) => {
-           dispatch(navActions.emitToast("error",error, "Failed to delete folder"))
-           writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`,error)
-      })
-
-   }
-}
-
-
-
-export function SetSharingPermissions(tags: object){
-
-    var permissions = []; 
-     tags.map((t) => (
-      permissions.push({ParticipantUniqueID: t.tagID, FamilyCode: t.aditionalData, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
-       ForUpdate: "true",  PermissionTypeValue : 'VIEW_ONLY', AllowShare: "false",  AllowUpload: "false" })
-      ))
-      
-       return {
-            type: types.SET_SHARING_PERMISSIONS,
-            sharingPermissions : permissions
-        }
-}
-
-
-export function UpdateDocumentSharingPermission(){
+export function deleteAsset(id: string, familyCode: string) {
   return (dispatch, getState) => {
-      const documentLists = getState().documentsReducer; 
-      const navReducer = getState().navReducer;
-      const document = getSelectedDocument(documentLists, navReducer);
-      const triggerSelectedValue = navReducer.triggerSelectedValue;
-      const uersDetails = getState().navReducer.clickedTrigger.split('_');
-      const ParticipantUniqueID = uersDetails[1];
-      const familyCode = uersDetails[2];
-      const triggerId = 'trigger_' + ParticipantUniqueID; 
+    dispatch(updateIsFetching(true));
+    const {sessionToken, env, email} = getState().accessReducer;
 
-      var sharingPermissions = []; 
-      sharingPermissions.push({ParticipantUniqueID: ParticipantUniqueID, FamilyCode: familyCode, AccessLinkID: '00000000-0000-0000-0000-000000000000', 
-       ForUpdate: "true",  PermissionTypeValue : triggerSelectedValue, AllowShare: "false",  AllowUpload: "false" }); 
+    const url = getDeleteAssetUrl(env, sessionToken, id, familyCode);
+    writeToLog(email, constans.DEBUG, `function deleteAsset - url: ${url}`)
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(updateIsFetching(false));
+        if (json.ResponseStatus == "FAILED") {
+          dispatch(navActions.emitToast("error", "", "Error deleting asset"))
+          writeToLog(email, constans.ERROR, `function deleteAsset - Error deleting asset - url: ${url}`)
+        }
+        else {
+          dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
+          var documentlist = getDocumentsContext(getState().navReducer);
+          dispatch(refreshTable(documentlist))
+        }
+      })
+      .catch((error) => {
+        dispatch(navActions.emitToast("error", "", "Failed to delete asset"))
+        writeToLog(email, constans.ERROR, `function deleteAsset - Failed to delete asset - url: ${url}`, error)
+      })
 
-       const sharingObject = { asset: {
-          ID: document.Id, 
-          UsersPermissions : sharingPermissions
-          }
+  }
+}
+
+export function deleteFolder(id: string) {
+  return (dispatch, getState) => {
+    dispatch(updateIsFetching(true));
+    const {sessionToken, env, email} = getState().accessReducer;
+    const url = getDeleteFolderUrl(env, sessionToken, id);
+    writeToLog(email, constans.DEBUG, `function deleteFolder - url: ${url}`)
+    return fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(updateIsFetching(false));
+        if (json.ResponseStatus == "FAILED") {
+          dispatch(navActions.emitToast("error", "", "Error deleting folder"))
+          writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`)
+        }
+        else {
+          dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
+          var documentlist = getDocumentsContext(getState().navReducer);
+          dispatch(refreshTable(documentlist))
+        }
+      })
+      .catch((error) => {
+        dispatch(navActions.emitToast("error", error, "Failed to delete folder"))
+        writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`, error)
+      })
+
+  }
+}
+
+
+
+export function SetSharingPermissions(tags: object) {
+
+  var permissions = [];
+  tags.map((t) => (
+    permissions.push({
+      ParticipantUniqueID: t.tagID, FamilyCode: t.aditionalData, AccessLinkID: '00000000-0000-0000-0000-000000000000',
+      ForUpdate: "true", PermissionTypeValue: 'VIEW_ONLY', AllowShare: "false", AllowUpload: "false"
+    })
+  ))
+
+  return {
+    type: types.SET_SHARING_PERMISSIONS,
+    sharingPermissions: permissions
+  }
+}
+
+
+export function UpdateDocumentSharingPermission() {
+  return (dispatch, getState) => {
+    const documentLists = getState().documentsReducer;
+    const navReducer = getState().navReducer;
+    const document = getSelectedDocument(documentLists, navReducer);
+    const triggerSelectedValue = navReducer.triggerSelectedValue;
+    const uersDetails = getState().navReducer.clickedTrigger.split('_');
+    const ParticipantUniqueID = uersDetails[1];
+    const familyCode = uersDetails[2];
+    const triggerId = 'trigger_' + ParticipantUniqueID;
+
+    var sharingPermissions = [];
+    sharingPermissions.push({
+      ParticipantUniqueID: ParticipantUniqueID, FamilyCode: familyCode, AccessLinkID: '00000000-0000-0000-0000-000000000000',
+      ForUpdate: "true", PermissionTypeValue: triggerSelectedValue, AllowShare: "false", AllowUpload: "false"
+    });
+
+    const sharingObject = {
+      asset: {
+        ID: document.Id,
+        UsersPermissions: sharingPermissions
       }
-
-        const {sessionToken, env, email} = getState().accessReducer;
-        const url = getShareDocumentUrl(env, sessionToken);
-        writeToLog(email, constans.DEBUG, `function UpdateDocumentSharingPermission - ParticipantUniqueID:${ParticipantUniqueID} ID:${document.Id} url: ${url}`)
-
-        var request = new Request(url, {
-          method: 'post', 
-          mode: 'cors', 
-          redirect: 'follow',
-          processData: false,
-          cache: false,
-          headers: new Headers({
-            'Content-Type': 'application/json'
-          }),
-            body:  JSON.stringify(sharingObject)
-        });
-                    
-        fetch(request).then(response => {
-        //  setTimeout(function(){ dispatch(peopleActions.RemoveFromFetchingList(triggerId));}, 3000);
-         dispatch(peopleActions.RemoveFromFetchingList(triggerId));
-            //     alert(JSON.stringify(response))
-
-        }).catch((error) => {
-                dispatch(navActions.emitError(error,""))
-                writeToLog(email, constans.ERROR, `function UpdateDocumentSharingPermission - Failed! ParticipantUniqueID:${ParticipantUniqueID} ID:${document.Id} url: ${url}`,error)
-            }).done();
-
-    
-
     }
+
+    const {sessionToken, env, email} = getState().accessReducer;
+    const url = getShareDocumentUrl(env, sessionToken);
+    writeToLog(email, constans.DEBUG, `function UpdateDocumentSharingPermission - ParticipantUniqueID:${ParticipantUniqueID} ID:${document.Id} url: ${url}`)
+
+    var request = new Request(url, {
+      method: 'post',
+      mode: 'cors',
+      redirect: 'follow',
+      processData: false,
+      cache: false,
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify(sharingObject)
+    });
+
+    fetch(request).then(response => {
+      //  setTimeout(function(){ dispatch(peopleActions.RemoveFromFetchingList(triggerId));}, 3000);
+      dispatch(peopleActions.RemoveFromFetchingList(triggerId));
+      //     alert(JSON.stringify(response))
+
+    }).catch((error) => {
+      dispatch(navActions.emitError(error, ""))
+      writeToLog(email, constans.ERROR, `function UpdateDocumentSharingPermission - Failed! ParticipantUniqueID:${ParticipantUniqueID} ID:${document.Id} url: ${url}`, error)
+    }).done();
+
+
+
+  }
 }
 
 export function DiscardCheckOut() {
@@ -846,9 +865,9 @@ export function DiscardCheckOut() {
       .then(response => response.json())
       .then(json => {
         if (json.ResponseStatus == "FAILED") {
-           dispatch(updateIsFetching(false));
-           dispatch(navActions.emitError("Failed to discard Check-Out document", ""))
-           writeToLog(email, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`)
+          dispatch(updateIsFetching(false));
+          dispatch(navActions.emitError("Failed to discard Check-Out document", ""))
+          writeToLog(email, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`)
         }
         else {
           dispatch(updateIsFetching(false));
@@ -860,8 +879,8 @@ export function DiscardCheckOut() {
       }).catch((error) => {
         dispatch(updateIsFetching(false));
         dispatch(navActions.emitError("Failed to discard Check-Out document", ""))
-        writeToLog(email, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`,error)
-       
+        writeToLog(email, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`, error)
+
       }).done();
   }
 
@@ -880,30 +899,30 @@ export function CheckOut() {
       .then(response => response.json())
       .then(json => {
         if (json.ResponseStatus == "FAILED") {
-           dispatch(updateIsFetching(false));
-           dispatch(navActions.emitError("Failed to Check-Out document", ""))
-           writeToLog(email, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`)
+          dispatch(updateIsFetching(false));
+          dispatch(navActions.emitError("Failed to Check-Out document", ""))
+          writeToLog(email, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`)
         }
         else {
           dispatch(updateIsFetching(false));
           dispatch(navActions.emitToast("success", "Document successfully checked out.", ""));
           dispatch(navActions.clearToast());
           dispatch(Access.retrieveStatistics());
-         
+
         }
 
       }).catch((error) => {
         dispatch(updateIsFetching(false));
         dispatch(navActions.emitError("Failed to Check-Out document", ""))
         writeToLog(email, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`, error)
-        
+
       }).done();
   }
 
 }
 
 
-export function CheckIn(comment :string) {
+export function CheckIn(comment: string) {
 
   return (dispatch, getState) => {
     const documentLists = getState().documentsReducer;
@@ -916,7 +935,7 @@ export function CheckIn(comment :string) {
     const jsonObject = {
       asset: {
         ID: document.Id,
-        Comment : comment
+        Comment: comment
       }
     }
     var request = new Request(url, {
@@ -931,16 +950,16 @@ export function CheckIn(comment :string) {
       .then(response => response.json())
       .then(json => {
         if (json.ResponseStatus == "FAILED") {
-           dispatch(updateIsFetching(false));
-           dispatch(navActions.emitError("Failed to Check-In document", ""))
-           writeToLog(email, constans.ERROR, `function CheckIn - Failed to Check-In document! - url: ${url}`)
+          dispatch(updateIsFetching(false));
+          dispatch(navActions.emitError("Failed to Check-In document", ""))
+          writeToLog(email, constans.ERROR, `function CheckIn - Failed to Check-In document! - url: ${url}`)
         }
         else {
           dispatch(updateIsFetching(false));
           dispatch(navActions.emitToast("success", "Document successfully checked in.", ""));
           dispatch(navActions.clearToast());
           dispatch(Access.retrieveStatistics());
-         
+
         }
 
       }).catch((error) => {
@@ -965,19 +984,17 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
       .then(response => response.json())
       .then(json => {
         if (json.ResponseStatus == "FAILED") {
-           dispatch(updateIsFetching(false));
-           
-           if(json.ErrorMessage.indexOf('VAL10357') > -1)
-            {
-              dispatch(navActions.emitError("Folder Name already exists"))
-              writeToLog(email, constans.ERROR, `function EditFolder - Folder Name already exists! - url: ${url}`)
-            }
-            else
-            {
-              dispatch(navActions.emitError("Failed to edit folder", ""))
-              writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit folder! - url: ${url}`)
-            }
-          
+          dispatch(updateIsFetching(false));
+
+          if (json.ErrorMessage.indexOf('VAL10357') > -1) {
+            dispatch(navActions.emitError("Folder Name already exists"))
+            writeToLog(email, constans.ERROR, `function EditFolder - Folder Name already exists! - url: ${url}`)
+          }
+          else {
+            dispatch(navActions.emitError("Failed to edit folder", ""))
+            writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit folder! - url: ${url}`)
+          }
+
         }
         else {
           dispatch(updateIsFetching(false));
@@ -1007,9 +1024,9 @@ export function EditDocument(documentId: string, documentName: string) {
       .then(response => response.json())
       .then(json => {
         if (json.ResponseStatus == "FAILED") {
-           dispatch(updateIsFetching(false));
-           dispatch(navActions.emitError("Failed to edit document", ""))
-            writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`)
+          dispatch(updateIsFetching(false));
+          dispatch(navActions.emitError("Failed to edit document", ""))
+          writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`)
         }
         else {
           dispatch(updateIsFetching(false));
@@ -1028,59 +1045,60 @@ export function EditDocument(documentId: string, documentName: string) {
 }
 
 
-export function ShareDocument(){
+export function ShareDocument() {
 
-   return (dispatch, getState) => {
-      const documentLists = getState().documentsReducer; 
-      const navReducer = getState().navReducer;
-      var document = getSelectedDocument(documentLists, navReducer); 
-      const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue; 
-      const sharingPermissions = documentLists.sharingPermissions; 
-      const {sessionToken, env, email} = getState().accessReducer;
-     
-     for (var i=0; i< sharingPermissions.length; i++){
-        sharingPermissions[i].PermissionTypeValue = addPeopleTriggerValue;
-     }
+  return (dispatch, getState) => {
+    const documentLists = getState().documentsReducer;
+    const navReducer = getState().navReducer;
+    var document = getSelectedDocument(documentLists, navReducer);
+    const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue;
+    const sharingPermissions = documentLists.sharingPermissions;
+    const {sessionToken, env, email} = getState().accessReducer;
 
-      const sharingObject = { asset: {
-          ID: document.Id, 
-          UsersPermissions : sharingPermissions
-          }
+    for (var i = 0; i < sharingPermissions.length; i++) {
+      sharingPermissions[i].PermissionTypeValue = addPeopleTriggerValue;
+    }
+
+    const sharingObject = {
+      asset: {
+        ID: document.Id,
+        UsersPermissions: sharingPermissions
       }
+    }
 
-      const url = getShareDocumentUrl(env, sessionToken);
-      writeToLog(email, constans.DEBUG, `function ShareDocument - ID:${document.Id} url: ${url}`)
+    const url = getShareDocumentUrl(env, sessionToken);
+    writeToLog(email, constans.DEBUG, `function ShareDocument - ID:${document.Id} url: ${url}`)
 
-          
-                      var request = new Request(url, {
-                        method: 'post', 
-                        mode: 'cors', 
-                        redirect: 'follow',
-                        processData: false,
-                        cache: false,
-                        headers: new Headers({
-                          'Content-Type': 'application/json'
-                        }),
-                         body:  JSON.stringify(sharingObject)
-                      });
-                                  
-                      fetch(request)
-                         .then(response => response.json())
-                         .then(json => {
-                               if (json.ResponseStatus == "FAILED") {
-                                    dispatch(navActions.emitError("Failed to share document",""))
-                                    writeToLog(email, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`)
-                                  }
-                                else{
-                                     dispatch(navActions.pop());
-                                     dispatch(navActions.emitToast("success","Sharing settings updated",""));
-                                   
-                                }
 
-                      }).catch((error) => {
-                              dispatch(navActions.emitError("Failed to share object",""))
-                              writeToLog(email, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`, error)
-                          }).done();
-   }
- 
+    var request = new Request(url, {
+      method: 'post',
+      mode: 'cors',
+      redirect: 'follow',
+      processData: false,
+      cache: false,
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify(sharingObject)
+    });
+
+    fetch(request)
+      .then(response => response.json())
+      .then(json => {
+        if (json.ResponseStatus == "FAILED") {
+          dispatch(navActions.emitError("Failed to share document", ""))
+          writeToLog(email, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`)
+        }
+        else {
+          dispatch(navActions.pop());
+          dispatch(navActions.emitToast("success", "Sharing settings updated", ""));
+
+        }
+
+      }).catch((error) => {
+        dispatch(navActions.emitError("Failed to share object", ""))
+        writeToLog(email, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`, error)
+      }).done();
+  }
+
 } 

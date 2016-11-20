@@ -215,6 +215,14 @@ export function getDiscardCheckOutDocumentUrl(env: string, sessionToken: string,
 export function getIconNameFromExtension(extension: string) {
   var iconName = "";
   var customStyle = "";
+  
+  if (typeof (extension) == 'undefined' || extension == "") 
+  {
+    return {
+        iconName: "file",
+        customStyle: ""
+      }
+  }
 
   switch (extension.toLowerCase()) {
     case ".asmdot":

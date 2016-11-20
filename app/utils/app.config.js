@@ -2,7 +2,7 @@ export const config = {
       pubnub: {
         publishKey: 'pub-03a8abcf-0dfd-4b0a-9cfd-9ec784b7c3e3',
         subscribeKey: 'sub-d845eb59-37da-11e2-ba0b-c7df1d04ae4a',
-        ssl: false,
+        ssl: true,
         channel_info:'KENESTO_MOBILE_INFO',
         channel_error:'KENESTO_MOBILE_ERRORS',
     },
