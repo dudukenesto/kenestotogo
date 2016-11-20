@@ -259,11 +259,12 @@ class Documents extends Component {
                     key={document.Id}
                     onSelect={this.selectItem.bind(this, document) }
                     dispatch = {this.props.dispatch}
-                    document={document}/> : 
+                    document={document} documentsReducer={this.props.documentsReducer}/> : 
                     <DocumentCell
                     key={document.Id}
                     onSelect={this.selectItem.bind(this, document) }
                     dispatch = {this.props.dispatch}
+                    documentsReducer={this.props.documentsReducer}
                     document={document}/>
                     
               return (documentCell)
