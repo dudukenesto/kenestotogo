@@ -51,13 +51,13 @@ export function writeToLog(userEmail: string, category: string = "", ...values) 
         var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
         // var logRow = `${DeviceInfo.getUniqueID()} - ${userEmail} [${date}][${category}] ${values.join(';')} ; Device Info: ${DeviceInfo.getUserAgent()} ${DeviceInfo.getDeviceCountry()}`
         var data = {
-            Id: DeviceInfo.getUniqueID(),
-            Email: userEmail,
             Date: date,
+            Id: DeviceInfo.getUniqueID(),
+            Message: values.join(';'),
+            Email: userEmail,
             Category: category,
             UserAgent: DeviceInfo.getUserAgent(),
             DeviceCountry: DeviceInfo.getDeviceCountry(),
-            Message: values.join(';')
         }
 
 
