@@ -106,9 +106,14 @@ var DocumentCell = React.createClass({
               {elementIcon}
             </View>
             <View style={styles.textContainer}>
-              <Text style={styles.documentTitle} numberOfLines={2}>
-                {this.props.document.Name}
-              </Text>
+              <View style={{ flexDirection: "row" }}>
+                {this.props.document.IsCheckedOut && <View style={styles.customIconContainer}>
+                  <KenestoIcon name="logout-variant" style={[styles.kenestoIcon, styles.smallIcon]} />
+                </View>}
+                <Text style={styles.documentTitle} numberOfLines={2}>
+                  {this.props.document.Name}
+                </Text>
+              </View>
               <Text style={styles.documentYear} numberOfLines={1}>
                 {  "Modified "+ moment(this.props.document.ModificationDate).format('MMM DD, YYYY')}
               </Text>
@@ -193,6 +198,17 @@ var styles = StyleSheet.create({
     justifyContent: "center",
     marginHorizontal: 15,
   },
+  customIconContainer: {
+        justifyContent: 'center', 
+        marginTop: 3,
+        marginRight: 5,
+        width: 16,
+        height: 16,
+    },
+    smallIcon: {
+      fontSize: 16,
+      color: "#fa8302"
+    }
 });
 
 DocumentCell.contextTypes = {
