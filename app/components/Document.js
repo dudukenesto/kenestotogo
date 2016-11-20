@@ -24,6 +24,8 @@ import WebViewBridge from 'react-native-webview-bridge';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 var Orientation = require('./KenestoDeviceOrientation');
 import {createResponder} from 'react-native-gesture-responder';
+import { writeToLog } from '../utils/ObjectUtils'
+import * as constans from '../constants/GlobalConstans'
 
 class Document extends React.Component{
   constructor(props){

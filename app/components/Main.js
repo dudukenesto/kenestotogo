@@ -27,7 +27,7 @@ import Error from './Error'
 import Info from './Info'
 import Confirm from './Confirm'
 import CheckInDocument from './CheckInDocument'
-
+import { writeToLog } from '../utils/ObjectUtils'
 
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;

@@ -25,6 +25,7 @@ import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
 import {getIconNameFromMimeType} from '../utils/documentsUtils'
+import { writeToLog } from '../utils/ObjectUtils'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height

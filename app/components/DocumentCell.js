@@ -39,7 +39,8 @@ const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 const CustomIcon = createIconSetFromFontello(customConfig);
 import _ from "lodash";
 import * as Progress from 'react-native-progress';
-
+import { writeToLog } from '../utils/ObjectUtils'
+import * as constans from '../constants/GlobalConstans'
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
 //var getTextFromScore = require('./getTextFromScore');
@@ -93,7 +94,6 @@ var DocumentCell = React.createClass({
           elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.kenestoIcon} /></View>
       }
     }
-      
 
     return (
       <View>  
