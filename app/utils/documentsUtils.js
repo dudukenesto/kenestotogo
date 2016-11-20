@@ -52,7 +52,7 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
       return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}`
     }
     else {
-      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}}&ao=${asOwner}`
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}`
     }
   }
 }
