@@ -329,21 +329,25 @@ class Main extends React.Component {
   }
   
   showMessage(type: string, message: string, title: string){
+    const alertProps = {
+      title: title,
+      // titleStyle: {textAlign: 'center', color: '#fff', margin: 5},
 
-     MessageBarManager.showAlert({
-        title: title,
-        message: message,
-        alertType: type,
-        position: 'bottom',
-        // avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/ISO_7010_W001.svg/120px-ISO_7010_W001.svg.png',
-        messageStyle: {textAlign: 'center', color: '#fff', margin: 5},
-        titleStyle: {textAlign: 'center', color: '#fff', margin: 5},
-        stylesheetSuccess: {backgroundColor: '#3290F1', strokeColor: '#3290F1'},
-        stylesheetWarning: {backgroundColor: '#F2B702', strokeColor: '#F2B702'},
-        stylesheetError: {backgroundColor: '#f00', strokeColor: '#f00'},
-        stylesheetInfo: {backgroundColor: '#333', strokeColor: '#333'},
-        // avatarStyle: { height: 17.5, width: 20, alignSelf: 'center'  }
-    });
+      message: message,
+      alertType: type,
+      position: 'bottom',
+      messageStyle: { textAlign: 'center', color: '#fff', margin: 5, marginLeft: -5 },
+      stylesheetSuccess: { backgroundColor: '#3290F1', strokeColor: '#3290F1' },
+      stylesheetWarning: { backgroundColor: '#F2B702', strokeColor: '#F2B702' },
+      stylesheetError: { backgroundColor: '#f00', strokeColor: '#f00' },
+      stylesheetInfo: { backgroundColor: '#333', strokeColor: '#333' },
+    }
+    if (type === 'error') {
+      alertProps.avatar = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/ISO_7010_W001.svg/120px-ISO_7010_W001.svg.png';
+      alertProps.avatarStyle = { height: 17.5, width: 20, alignSelf: 'center', marginLeft: 5 };
+    }
+
+     MessageBarManager.showAlert(alertProps);
   }
 
     componentWillMount(){
