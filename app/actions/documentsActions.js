@@ -534,7 +534,7 @@ export function downloadDocument(id: string, fileName: string) {
           })
 
       }).catch(error => {
-        dispatch(navActions.emitToast('error downloading document'))
+        dispatch(navActions.emitToast('error', 'Error downloading document'))
         writeToLog(email, constans.ERROR, `function downloadDocument - error downloading document - url: ${url}`, error)
 
       })
@@ -651,7 +651,7 @@ export function removeUploadDocument(Id: string) {
             .then(json => {
               if (json.ResponseStatus == "FAILED") {
 
-                dispatch(emitToast("error", "failed to upload file"))
+                dispatch(emitToast("error", "Failed to upload file"))
               }
               else {
                  var AccessUrl = json.ResponseData.AccessUrl; 
@@ -695,14 +695,14 @@ export function removeUploadDocument(Id: string) {
                                 })
                                 .catch((error) => {
                                   dispatch(removeUploadDocument(json.ResponseData.uploadId));
-                                  dispatch(navActions.emitToast("info","Error. failed to upload file"))
+                                  dispatch(navActions.emitToast("info","Error. Failed to upload file"))
                                   writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
                                 }) 
                                 
                   })
                  .catch(err => {
                         dispatch(removeUploadDocument(json.ResponseData.uploadId));
-                        dispatch(navActions.emitToast("error","Error. failed to upload file"))
+                        dispatch(navActions.emitToast("error","Error. Failed to upload file"))
                   });
 
 
@@ -710,7 +710,7 @@ export function removeUploadDocument(Id: string) {
             })
             .catch((error) => {
                 dispatch(removeUploadDocument(json.ResponseData.uploadId));
-                dispatch(navActions.emitToast("error","Error. failed to upload file"))
+                dispatch(navActions.emitToast("error","Error. Failed to upload file"))
             })
   }
 
@@ -731,17 +731,17 @@ export function deleteAsset(id: string, familyCode: string) {
       .then(json => {
         dispatch(updateIsFetching(false));
         if (json.ResponseStatus == "FAILED") {
-          dispatch(navActions.emitToast("error", "", "Error deleting asset"))
+          dispatch(navActions.emitToast("error", "Error deleting asset"))
           writeToLog(email, constans.ERROR, `function deleteAsset - Error deleting asset - url: ${url}`)
         }
         else {
-          dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
+          dispatch(navActions.emitToast("success", "Successfully deleted the asset"))
           var documentlist = getDocumentsContext(getState().navReducer);
           dispatch(refreshTable(documentlist))
         }
       })
       .catch((error) => {
-        dispatch(navActions.emitToast("error", "", "Failed to delete asset"))
+        dispatch(navActions.emitToast("error", "Failed to delete asset"))
         writeToLog(email, constans.ERROR, `function deleteAsset - Failed to delete asset - url: ${url}`, error)
       })
 
@@ -759,17 +759,17 @@ export function deleteFolder(id: string) {
       .then(json => {
         dispatch(updateIsFetching(false));
         if (json.ResponseStatus == "FAILED") {
-          dispatch(navActions.emitToast("error", "", "Error deleting folder"))
+          dispatch(navActions.emitToast("error", "Error deleting folder"))
           writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`)
         }
         else {
-          dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
+          dispatch(navActions.emitToast("success", "Successfully deleted the folder"))
           var documentlist = getDocumentsContext(getState().navReducer);
           dispatch(refreshTable(documentlist))
         }
       })
       .catch((error) => {
-        dispatch(navActions.emitToast("error", error, "Failed to delete folder"))
+        dispatch(navActions.emitToast("error", error + "Failed to delete folder"))
         writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`, error)
       })
 
@@ -871,7 +871,7 @@ export function DiscardCheckOut() {
         }
         else {
           dispatch(updateIsFetching(false));
-          dispatch(navActions.emitToast("success", "Check-Out successfully discarded", ""));
+          dispatch(navActions.emitToast("success", "Check-Out successfully discarded"));
           dispatch(navActions.clearToast());
           dispatch(Access.retrieveStatistics());
         }
@@ -905,7 +905,7 @@ export function CheckOut() {
         }
         else {
           dispatch(updateIsFetching(false));
-          dispatch(navActions.emitToast("success", "Document successfully checked out.", ""));
+          dispatch(navActions.emitToast("success", "Document successfully checked out."));
           dispatch(navActions.clearToast());
           dispatch(Access.retrieveStatistics());
 
@@ -956,7 +956,7 @@ export function CheckIn(comment: string) {
         }
         else {
           dispatch(updateIsFetching(false));
-          dispatch(navActions.emitToast("success", "Document successfully checked in.", ""));
+          dispatch(navActions.emitToast("success", "Document successfully checked in."));
           dispatch(navActions.clearToast());
           dispatch(Access.retrieveStatistics());
 
@@ -999,7 +999,7 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
         else {
           dispatch(updateIsFetching(false));
           dispatch(refreshTable(documentlist));
-          dispatch(navActions.emitToast("success", "folder successfully updated.", ""));
+          dispatch(navActions.emitToast("success", "Folder successfully updated."));
           dispatch(navActions.clearToast());
         }
 
@@ -1031,7 +1031,7 @@ export function EditDocument(documentId: string, documentName: string) {
         else {
           dispatch(updateIsFetching(false));
           dispatch(refreshTable(documentlist));
-          dispatch(navActions.emitToast("success", "document successfully updated.", ""));
+          dispatch(navActions.emitToast("success", "Document successfully updated."));
           dispatch(navActions.clearToast());
         }
 
@@ -1091,7 +1091,7 @@ export function ShareDocument() {
         }
         else {
           dispatch(navActions.pop());
-          dispatch(navActions.emitToast("success", "Sharing settings updated", ""));
+          dispatch(navActions.emitToast("success", "Sharing settings updated"));
 
         }
 
