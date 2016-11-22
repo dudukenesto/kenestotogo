@@ -330,9 +330,6 @@ class Main extends React.Component {
   
   showMessage(type: string, message: string, title: string){
     const alertProps = {
-      title: title,
-      // titleStyle: {textAlign: 'center', color: '#fff', margin: 5},
-
       message: message,
       alertType: type,
       position: 'bottom',
@@ -343,8 +340,8 @@ class Main extends React.Component {
       stylesheetInfo: { backgroundColor: '#333', strokeColor: '#333' },
     }
     if (type === 'error') {
-      alertProps.avatar = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/ISO_7010_W001.svg/120px-ISO_7010_W001.svg.png';
-      alertProps.avatarStyle = { height: 17.5, width: 20, alignSelf: 'center', marginLeft: 5 };
+      alertProps.avatar = require('../assets/icn_error_toast.png');      
+      alertProps.avatarStyle = { height: 20, width: 20, alignSelf: 'center', marginLeft: 5 };
     }
 
      MessageBarManager.showAlert(alertProps);
