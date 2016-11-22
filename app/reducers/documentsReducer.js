@@ -1,6 +1,7 @@
 import * as types from '../constants/ActionTypes'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 let React = require('react-native')
+import _ from "lodash";
 function documentlist(state = {
   items: [],
   totalFiles :0,
@@ -59,7 +60,6 @@ function documentlist(state = {
         hasError: false,
         errorMessage: ''
       }
- 
 
     default:
       return state
@@ -145,7 +145,54 @@ export default function documentsReducer(state = {isFetching: false,isFetchingSe
        }
 
 
+   case types.UPDATE_UPLOAD_ITEM:
+    console.log('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')
+             var items = [...state.uploadItems];
+              console.log('dddddddddddddddddddddddddddddddd items.legth' + items.length)
+              var obj =   _.find(items, 
+                    {'Id': action.uploadId}
+                );
 
+                console.log('fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+
+             //   console.log(JSON.stringify(obj));
+           //     console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+
+
+               obj.uploadStatus = action.status
+
+                _.remove(items, {
+                     Id: action.uploadId
+                 });
+
+                 items.push(obj)
+
+    return {
+      ...state, 
+      uploadItems : items
+    }
+   
+
+
+//              console('------------------ 2')
+//                 obj.status = action.status
+//               _.remove(items, {
+//                     Id: Id
+//                 });
+
+//  console('------------------ 3')
+
+//                   return {
+//                     ...state, 
+//                     uploadItems : items
+//                   }
+//       } catch (error) {
+//               console.log(error)
+//               return {
+//                 ...state
+//               }
+//       }
+    
 
       
     default:

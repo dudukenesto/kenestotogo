@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import MartialExtendedConf from '../assets/icons/config.json';
 import customConfig from '../assets/icons/customConfig.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
-import {updateSelectedObject,getDocumentPermissions} from '../actions/documentsActions'
+import {updateSelectedObject,getDocumentPermissions, removeUploadDocument,resumeUploadToKenesto} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {getIconNameFromExtension} from '../utils/documentsUtils';
 import * as Progress from 'react-native-progress';
@@ -24,36 +24,43 @@ const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 const CustomIcon = createIconSetFromFontello(customConfig);
 
 var DocumentUploadCell = React.createClass({
-
+    pauseUpload: function(){
+        this.props.document.xhr.abort();
+    },
     toggleUpload: function (id, familyCode){
-      var {dispatch} = this.props; 
+      //var {dispatch} = this.props; 
    
-      dispatch(updateSelectedObject(id, familyCode, ""));
-      dispatch(getDocumentPermissions(id, familyCode))
+    //  dispatch(updateSelectedObject(id, familyCode, ""));
+    //  dispatch(getDocumentPermissions(id, familyCode))
       // this.context.itemMenuContext.open();
     },
     
-    cancelUpload: function(id, familyCode){
-      alert('cancel: \n\n'+id)
+    cancelUpload: function(){
+      //alert('cancel: \n\n'+id)
+      this.props.dispatch(removeUploadDocument(this.props.document.Id));
     },
-    
+
+    resumeUpload : function(){
+            this.props.dispatch(resumeUploadToKenesto(this.props.document.Id));
+       //  this.props.dispatch(resumeUploadDocument(this.props.document.Id));
+    },
     renderActions: function (TouchableElement, uploadingInProgress) {
       return (
         uploadingInProgress ?
-          <TouchableElement onPress={ (() => { this.toggleUpload(this.props.document.Id, this.props.document.FamilyCode) }).bind(this) }>
+          <TouchableElement onPress={ () => { this.pauseUpload() }}>
             <View style={styles.actionContainer}>
               <Icon name="pause" style={styles.moreMenu} />
             </View>
           </TouchableElement>
           :
           <View style={styles.actions}>
-            <TouchableElement onPress={ (() => { this.cancelUpload(this.props.document.Id, this.props.document.FamilyCode) }).bind(this) }>
+            <TouchableElement onPress={ () => { this.cancelUpload() }}>
               <View style={styles.actionContainer}>
                 <Icon name="close" style={styles.moreMenu} />
               </View>
             </TouchableElement>
 
-            <TouchableElement onPress={ (() => { this.toggleUpload(this.props.document.Id, this.props.document.FamilyCode) }).bind(this) }>
+            <TouchableElement onPress={ () => { this.resumeUpload() }}>
               <View style={styles.actionContainer}>
                 <Icon name="refresh" style={styles.moreMenu} />
               </View>
@@ -64,6 +71,7 @@ var DocumentUploadCell = React.createClass({
 
   render: function() {
 
+   
               // * * * * * * * * DUMMY STATIC VALUES, PER DOCUMENT * * * * * * * *
           var uploadingInProgress = true;//                                  *
           var documentSize = Math.floor(Math.random()*100)//                 *
@@ -96,6 +104,7 @@ var DocumentUploadCell = React.createClass({
 
  
     return (
+
       <View>  
         <TouchableElement>
           <View style={styles.row}>
@@ -107,7 +116,7 @@ var DocumentUploadCell = React.createClass({
                 {this.props.document.Name}
               </Text>
               <View style={{ flexDirection: "row" }}>
-                {uploadingInProgress ?
+                {this.props.document.uploadStatus == -1 ?
                   <Text style={styles.documentYear} numberOfLines={1}>
                     File Size:  {this.props.document.Size} 
                   </Text>
@@ -116,10 +125,10 @@ var DocumentUploadCell = React.createClass({
                     Upload paused
                   </Text>
                 }
-                {dummyProgressBar}
+                 {this.props.document.uploadStatus == -1 ? dummyProgressBar: null}
               </View>
             </View>
-            {this.renderActions(TouchableElement, uploadingInProgress)}            
+            {this.renderActions(TouchableElement, this.props.document.uploadStatus == -1)}            
           </View>
         </TouchableElement>
       </View>

@@ -259,7 +259,8 @@ function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders){
 
             getRowData: getRowData,
 
-            rowHasChanged: (row1, row2) => row1 !== row2,
+            rowHasChanged: (row1, row2) => {
+              row1["Id"] !== row2["Id"] ||  row1["uploadStatus"] !== row2["uploadStatus"] },
 
             sectionHeaderHasChanged: (s1, s2) => s1 !== s2
 
@@ -548,36 +549,33 @@ export function downloadDocument(id: string, fileName: string){
 
 
 function uploadFile(data,file){
-	
+
 	  return new Promise((resolve, reject) => {
-	    var xhr = new XMLHttpRequest();
-	    xhr.onerror = function (e) {
+	    data.xhr.onerror = function (e) {
+            console.log('error uploading: ' + JSON.stringify(e));
 	      // handle failture
 	      reject(e);
 	    };
-	    xhr.onreadystatechange = function () {
-	        if (xhr.readyState === XMLHttpRequest.DONE) {
-	          if (xhr.status >= 200 && xhr.status <= 299) {
-	            // upload completed//
-             // alert(xhr.status)
-             console.log('finished upload status: ' + xhr.status);
+	    data.xhr.onreadystatechange = function () {
+	        if (data.xhr.readyState === XMLHttpRequest.DONE) {
+	          if ( (data.xhr.status >= 200 && data.xhr.status <= 299) || data.xhr.status == 0) {
 	            resolve(data);
 	          } else {
 	            // failed with error messge from server
-	            reject(xhr.status + ": " + data.url);
+	            reject(data.xhr.status + ": " + data.url);
 	          }
 	        }
 	    };
-       xhr.open('PUT', data.url, true);
-        xhr.setRequestHeader('Content-Type', 'multipart/form-data');
-
-        xhr.upload.addEventListener('progress', function(e){
+       data.xhr.open('PUT', data.url, true);
+   data.xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+   
+        data.xhr.upload.addEventListener('progress', function(e){
          console.log('upload progress = ' + e.loaded + "/" + e.total);
       }, false);
 
    //   var formData = new FormData(); 
    //   formData.append('file', file);
-	     xhr.send(file);
+	     data.xhr.send(file);
 	       });
 	}
 
@@ -591,47 +589,36 @@ function uploadFile(data,file){
   }
 
   export function removeUploadDocument(Id: string){
-  return (dispatch, getState) => {
-        var documentlist = getDocumentsContext(getState().navReducer);
-        const items =getState().documentsReducer[documentlist.catId].items;
-        const totalFiles= getState().documentsReducer[documentlist.catId].totalFiles;
-        const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
+        return (dispatch, getState) => {
+              var documentlist = getDocumentsContext(getState().navReducer);
+              const items =getState().documentsReducer[documentlist.catId].items;
+              const totalFiles= getState().documentsReducer[documentlist.catId].totalFiles;
+              const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
 
-        var uploads = [...getState().documentsReducer.uploadItems]; 
-      _.remove(uploads, {
-            Id: Id
-        });
-        var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
-        dispatch(updateUploadDocument(datasource, uploads, documentlist.catId)); 
-        dispatch(refreshTable(documentlist));    
-  }
+              var uploads = [...getState().documentsReducer.uploadItems]; 
+
+            var uploadObj = _.find(uploads, 'Id', Id);
+          //  uploadObj.xhr = null;
+
+            _.remove(uploads, {
+                  Id: Id
+              });
+              var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
+              dispatch(updateUploadDocument(datasource, uploads, documentlist.catId)); 
+              dispatch(refreshTable(documentlist));    
+        }
       
   }
-  
 
+  function uploadDocumentObject(fileObject : object, uploadId : string){
+     return (dispatch, getState) => {
+            let uploadObj = _.find(getState().documentsReducer.uploadItems, {'Id': uploadId}); 
+             const {sessionToken, env} = getState().accessReducer;
 
- 
-  
-  export function uploadToKenesto(fileObject: object, url: string, isUpdateVersion: boolean=false){
-  return (dispatch, getState) => {
-          //dispatch(updateIsFetching(true)); 
-
-          const uploadId = fileObject.name + "_" + Date.now();
-          url = url + "&ud=" + encodeURIComponent(uploadId);
-            const {sessionToken, env} = getState().accessReducer;
-              var documentlist = getDocumentsContext(getState().navReducer);
-            //writeToLog(env, sessionToken, constans.DEBUG, `function uploadToKenesto - url: ${url}, isUpdateVersion${isUpdateVersion}`)
-            if (!isUpdateVersion)
-            {
-                const items =getState().documentsReducer[documentlist.catId].items; 
-                const totalFiles= getState().documentsReducer[documentlist.catId].totalFiles;
-                const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
-                var newUploadItems = [...getState().documentsReducer.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension : fileObject.fileExtension}]; 
-                var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
-                dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId)); 
-            }
-               
-            fetch(url)
+             console.log('-----------------------------------------------------------')
+            
+             
+            fetch(uploadObj.url)
             .then(response => response.json())
             .then(json => {
               if (json.ResponseStatus == "FAILED") {
@@ -639,14 +626,18 @@ function uploadFile(data,file){
                 dispatch(emitToast("error", "failed to upload file"))
               }
               else {
-` `
                  var AccessUrl = json.ResponseData.AccessUrl; 
                  var currUploadId = json.ResponseData.uploadId; 
-                 uploadFile({ uploadId: currUploadId, url: AccessUrl},fileObject)
+                
+                 uploadFile({ xhr: uploadObj.xhr, uploadId: currUploadId, url: AccessUrl},fileObject)
                  .then((data) => {
+                        if (data.xhr.status == 0)  // xhr.abort was triggered from out side => upload paused 
+                        {
+                                 dispatch(updateUploadItems(data.uploadId, 0));
+                                 return; 
+                        }
 
                          const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, data.url, encodeURIComponent(data.uploadId));
-
                          
                           fetch(thisCompletedUrl)
                                 .then(response => response.json())
@@ -657,9 +648,9 @@ function uploadFile(data,file){
                                       {
 
                                           let message = ""
-                                          if(isUpdateVersion)
-                                            message = "Successfully updated document version"
-                                          else
+                                          // if(isUpdateVersion)
+                                          //   message = "Successfully updated document version"
+                                          // else
                                             message = "File successfully uploaded"
 
                                             dispatch(navActions.emitToast("info",message));
@@ -667,11 +658,11 @@ function uploadFile(data,file){
                                       }
                                       else {
 
-                                        if(!isUpdateVersion)
-                                            message = `Error. failed to upload file ${fileObject.name}`
-                                          else
-                                            message = "Error. failed to update version"
-
+                                        // if(!isUpdateVersion)
+                                        //     message = `Error. failed to upload file ${fileObject.name}`
+                                        //   else
+                                          //  message = "Error. failed to update version"
+                                            message = "File successfully uploaded"
                                          dispatch(navActions.emitToast("error",message));
                                        //  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject))
                                   }
@@ -681,24 +672,57 @@ function uploadFile(data,file){
                                 })
                                 .catch((error) => {
                                   dispatch(removeUploadDocument(json.ResponseData.uploadId));
-                                  dispatch(navActions.emitToast("info","Error. failed to upload file"))
-                                  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject), error)
+                                  dispatch(navActions.emitToast("info","Error. failed to upload file 1"))
+                                  console.log('----------------------------------- error: ' + error)
+                                  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${uploadObj.url}`, JSON.stringify(fileObject), error)
                                 }) 
                                 
                   })
                  .catch(err => {
+                   console.log(err)
                         dispatch(removeUploadDocument(json.ResponseData.uploadId));
-                        dispatch(navActions.emitToast("error","Error. failed to upload file"))
+                        dispatch(navActions.emitToast("error","Error. failed to upload file 2"))
                   });
 
 
               }
             })
-            .catch((error) => {
-                dispatch(removeUploadDocument(json.ResponseData.uploadId));
-                dispatch(navActions.emitToast("error","Error. failed to upload file"))
-            })
+              .catch((error) => {
+              dispatch(removeUploadDocument(json.ResponseData.uploadId));
+              dispatch(navActions.emitToast("error","Error. failed to upload file 3"))
+          })
+    }
   }
+
+
+export function resumeUploadToKenesto(uploadId: string){
+       return (dispatch, getState) => {
+              let existingObj = _.find(getState().documentsReducer.uploadItems, {'Id': uploadId});
+              console.log('-------------------------------' + uploadId); 
+              console.log(JSON.stringify(existingObj))
+              dispatch(updateUploadItems(existingObj.Id, -1));
+              dispatch(uploadDocumentObject(existingObj.fileObject, existingObj.Id));
+       }
+}
+
+  export function uploadToKenesto(fileObject: object, url: string){
+      return (dispatch, getState) => {
+              const uploadId = fileObject.name + "_" + Date.now();
+              if (url != '')
+                  url = url + "&ud=" + encodeURIComponent(uploadId);
+              
+                  var documentlist = getDocumentsContext(getState().navReducer);
+                      const items =getState().documentsReducer[documentlist.catId].items; 
+                      const totalFiles= getState().documentsReducer[documentlist.catId].totalFiles;
+                      const totalFolders= getState().documentsReducer[documentlist.catId].totalFolders;
+                      console.log('creating new xhr: ' + uploadId)
+                      var xhr = new XMLHttpRequest(); 
+                      xhr.status = -1;
+                      var newUploadItems = [...getState().documentsReducer.uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension : fileObject.fileExtension, uploadStatus : -1, xhr: xhr, fileObject: fileObject, url: url}]; 
+                      var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
+                      dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId)); 
+                      dispatch(uploadDocumentObject(fileObject, uploadId));
+      }
 
 }
 
@@ -1084,3 +1108,12 @@ export function ShareDocument(){
    }
  
 } 
+
+
+export function updateUploadItems(uploadId: string, status: number){
+    return {
+          type: types.UPDATE_UPLOAD_ITEM,
+          status, 
+          uploadId
+    }
+}

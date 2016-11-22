@@ -225,7 +225,8 @@ class Documents extends Component {
     var documentlist = getDocumentsContext(navReducer);
     var itemsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].items.length : 0;
 
-    let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
+    let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => {
+      r1["Id"] !== r2["Id"] ||  r1["uploadStatus"] !== r2["uploadStatus"] }   })
     let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([])
    itemsLength+= documentsReducer.uploadItems.length;
     if (itemsLength == 0) {

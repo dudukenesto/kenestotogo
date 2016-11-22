@@ -124,7 +124,11 @@ class PlusMenu extends React.Component{
 
              this.upload();
 
-            }).catch(e => this.props.dispatch(navActions.emitToast("error", "File selection failed"))
+            }).catch(e => {
+                            console.log('erorrrrrrr: ' + e)
+                            this.props.dispatch(navActions.emitToast("error", "File selection failed"))
+            }
+        
             );
   }
 
