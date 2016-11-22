@@ -52,7 +52,7 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
       return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}`
     }
     else {
-      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}}&ao=${asOwner}`
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}`
     }
   }
 }
@@ -215,6 +215,14 @@ export function getDiscardCheckOutDocumentUrl(env: string, sessionToken: string,
 export function getIconNameFromExtension(extension: string) {
   var iconName = "";
   var customStyle = "";
+  
+  if (typeof (extension) == 'undefined' || extension == "") 
+  {
+    return {
+        iconName: "file",
+        customStyle: ""
+      }
+  }
 
   switch (extension.toLowerCase()) {
     case ".asmdot":

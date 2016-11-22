@@ -37,7 +37,10 @@ import {connect} from 'react-redux'
 import {getIconNameFromExtension} from '../utils/documentsUtils'
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 const CustomIcon = createIconSetFromFontello(customConfig);
-
+import _ from "lodash";
+import * as Progress from 'react-native-progress';
+import { writeToLog } from '../utils/ObjectUtils'
+import * as constans from '../constants/GlobalConstans'
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
 //var getTextFromScore = require('./getTextFromScore');
@@ -53,7 +56,9 @@ var DocumentCell = React.createClass({
     },
 
   render: function() {
-
+    var {documentsReducer} = this.props;
+    var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+    var uploadingInProgress =  _.some(documentsReducer.versionItems, {id:this.props.document.Id});
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
@@ -89,7 +94,6 @@ var DocumentCell = React.createClass({
           elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.kenestoIcon} /></View>
       }
     }
-      
 
     return (
       <View>  
@@ -102,19 +106,32 @@ var DocumentCell = React.createClass({
               {elementIcon}
             </View>
             <View style={styles.textContainer}>
-              <Text style={styles.documentTitle} numberOfLines={2}>
-                {this.props.document.Name}
-              </Text>
+              <View style={{ flexDirection: "row" }}>
+                {this.props.document.IsCheckedOut && <View style={styles.customIconContainer}>
+                  <KenestoIcon name="logout-variant" style={[styles.kenestoIcon, styles.smallIcon]} />
+                </View>}
+                <Text style={styles.documentTitle} numberOfLines={2}>
+                  {this.props.document.Name}
+                </Text>
+              </View>
               <Text style={styles.documentYear} numberOfLines={1}>
                 {  "Modified "+ moment(this.props.document.ModificationDate).format('MMM DD, YYYY')}
-                
               </Text>
+              {uploadingInProgress?
+                <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+                :
+                <View></View>
+              }
             </View>
-            <TouchableElement onPress={ (()=> { this.menuPressed(this.props.document.Id, this.props.document.FamilyCode)}).bind(this) }>
-              <View style={styles.iconContainer}>
-                <Icon name="more-vert" style={styles.moreMenu} />
-              </View>
-            </TouchableElement>
+            {uploadingInProgress? 
+              <View></View>
+              :
+              <TouchableElement onPress={ (()=> { this.menuPressed(this.props.document.Id, this.props.document.FamilyCode)}).bind(this) }>
+                <View style={styles.iconContainer}>
+                  <Icon name="more-vert" style={styles.moreMenu} />
+                </View>
+              </TouchableElement>
+            }
           </View>
         </TouchableElement>
       </View>
@@ -176,8 +193,22 @@ var styles = StyleSheet.create({
   moreMenu: {
     fontSize: 22,
     color: '#888', 
-  }
-  
+  },
+  progressBarContainer: {
+    justifyContent: "center",
+    marginHorizontal: 15,
+  },
+  customIconContainer: {
+        justifyContent: 'center', 
+        marginTop: 3,
+        marginRight: 5,
+        width: 16,
+        height: 16,
+    },
+    smallIcon: {
+      fontSize: 16,
+      color: "#fa8302"
+    }
 });
 
 DocumentCell.contextTypes = {

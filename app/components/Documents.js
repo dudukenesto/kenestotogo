@@ -25,6 +25,7 @@ import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
 import {getIconNameFromMimeType} from '../utils/documentsUtils'
+import { writeToLog } from '../utils/ObjectUtils'
 
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
@@ -191,7 +192,7 @@ class Documents extends Component {
     const errorMessage = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].errorMessage : "";
     if (hasError && this.refs.masterView != undefined) {
       //this.refs.masterView.showMessage("success", errorMessage);
-      this.props.dispatch(emitToast("error", "", "Error loading documents list"));
+      this.props.dispatch(emitToast("error", "Error loading documents list"));
       this.peops.dispatch(clearToast());
     }
   }
@@ -260,11 +261,12 @@ class Documents extends Component {
                     key={document.Id}
                     onSelect={this.selectItem.bind(this, document) }
                     dispatch = {this.props.dispatch}
-                    document={document}/> : 
+                    document={document} documentsReducer={this.props.documentsReducer}/> : 
                     <DocumentCell
                     key={document.Id}
                     onSelect={this.selectItem.bind(this, document) }
                     dispatch = {this.props.dispatch}
+                    documentsReducer={this.props.documentsReducer}
                     document={document}/>
                     
               return (documentCell)
@@ -287,6 +289,7 @@ class Documents extends Component {
   render() {
 
 try {
+  console.log('Docs render', this.props.data.name)
     const {dispatch, documentsReducer, navReducer } = this.props
     var documentlist = getDocumentsContext(navReducer);
     // console.log("render documents page: " +JSON.stringify(documentlist))

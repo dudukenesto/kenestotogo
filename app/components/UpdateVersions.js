@@ -59,7 +59,7 @@ class UpdateVersions extends React.Component {
 
     const fileName = this.state.file.path.substring(this.state.file.path.lastIndexOf('/') + 1); 
     const name = fileName.substring(0,  fileName.lastIndexOf('.'));
-    this.props.dispatch(uploadToKenesto({name: name, uri : this.state.file.path, type: this.state.file.type}, url, true));
+    this.props.dispatch(uploadToKenesto({name: name, uri : this.state.file.path, type: this.state.file.type}, url, true, document.Id));
     this.props.closeModal();
   }
 

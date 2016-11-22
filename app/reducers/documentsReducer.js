@@ -75,7 +75,7 @@ function setUploaded(){
           return [];
 }
 
-export default function documentsReducer(state = {isFetching: false,isFetchingSelectedObject:false, uploadItems:setUploaded()}, action) {
+export default function documentsReducer(state = initDocumentsReducer(), action) {
   switch (action.type) {
     case types.RECEIVE_DOCUMENTS:
       return Object.assign({}, state, {
@@ -198,4 +198,10 @@ export default function documentsReducer(state = {isFetching: false,isFetchingSe
     default:
       return state
   }
+}
+
+
+function initDocumentsReducer()
+{
+  return {isFetching: false,isFetchingSelectedObject:false, uploadItems:setUploaded(), versionItems:[]}
 }

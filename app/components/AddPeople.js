@@ -133,7 +133,7 @@ class AddPeople extends Component {
   onErrorAddNewTag(tag) {     // show error message/toast
     var errorMessage = tag + ' is not a valid email!'
     //this.refs.mainContainer2.showMessage("info", errorMessage);
-    this.props.dispatch(navActions.emitToast("info", "", errorMessage));
+    this.props.dispatch(navActions.emitToast("info", errorMessage));
   }
 
   submitSelectedTags() {

@@ -23,6 +23,8 @@ import * as docActions from '../actions/documentsActions'
 import ProggressBar from "../components/ProgressBar";
 import ViewContainer from './ViewContainer';
 import {getIconNameFromExtension} from '../utils/documentsUtils'
+import { writeToLog } from '../utils/ObjectUtils'
+import * as constans from '../constants/GlobalConstans'
 
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 const CustomIcon = createIconSetFromFontello(customConfig);
