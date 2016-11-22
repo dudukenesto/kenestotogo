@@ -67,7 +67,6 @@ class PlusMenu extends React.Component{
     
   upload(){
       
-    
      const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.file.name, "", "",  this.state.documentsContext.fId);
     const fileName = this.state.file.path.substring(this.state.file.path.lastIndexOf('/') + 1); 
     const name = fileName.substring(0,  fileName.lastIndexOf('.'));
@@ -82,20 +81,20 @@ class PlusMenu extends React.Component{
         cropping: cropping,
         width: 400,
         height: 400,
-            includeBase64: true
+            includeBase64: false
         }).then(image => {
 
-        const imageName = image.path.substring(image.path.lastIndexOf("/") + 1);
+        const fileName = image.path.substring(image.path.lastIndexOf("/") + 1);
 
-      
-            
-        this.setState({
-            file: {uri: `data:${image.mime};base64,`+ image.data, size: this.bytesToSize(file.size), width: image.width, height: image.height, name: imageName, data: image.data, path: image.path, type: image.mime},
-        });
+        const fileExtension =  image.path.substring(image.path.lastIndexOf("."));
+        
 
+          this.setState({
+                file: { name: fileName, path: image.path, type: image.mime, size: this.bytesToSize(image.size), extension: fileExtension},
+            });
 
        this.upload();
-
+   
         }).catch(e => alert(JSON.stringify(e)));
 
     
@@ -125,7 +124,7 @@ class PlusMenu extends React.Component{
              this.upload();
 
             }).catch(e => {
-                            console.log('erorrrrrrr: ' + e)
+                if (e != 'Error: User cancelled image selection')
                             this.props.dispatch(navActions.emitToast("error", "File selection failed"))
             }
         
