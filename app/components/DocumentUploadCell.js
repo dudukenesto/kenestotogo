@@ -79,7 +79,7 @@ var DocumentUploadCell = React.createClass({
           var uploaded = Math.floor(documentSize * progress);//              *
           // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
           //var realProgressBar = <View style={styles.progressBarContainer}><Progress.Bar progress={progress} width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
-          var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+          var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#e8e8e8"} color={"#fa8302"} /></View>
           // var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Circle size={20} indeterminate={true} /></View> // circle; crashes the app
           // var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.CircleSnail size={20} colors={['red', 'green', 'blue']}  /></View> // circleSnail; crashes the app
           
