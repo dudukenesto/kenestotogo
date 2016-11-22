@@ -1,5 +1,5 @@
 import { PUSH_ROUTE, POP_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO,SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST, TOGGLE_DROPDOWN, UPDATE_DROPDOWN_DATA,UPDATE_SELECTED_TRIGGER_VALUE} from '../constants/ActionTypes'
+  SUBMIT_INFO, CLEAR_INFO,SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST, HIDE_TOAST, TOGGLE_DROPDOWN, UPDATE_DROPDOWN_DATA,UPDATE_SELECTED_TRIGGER_VALUE} from '../constants/ActionTypes'
 import { NavigationExperimental } from 'react-native'
 const {
   StateUtils: NavigationStateUtils
@@ -114,10 +114,19 @@ function navigationState(state = initialState, action) {
         return {
           ...state, 
           HasToast: false, 
+          HideToast: false, 
           GlobalToastType: null,
           GlobalToastTitle:null, 
           GlobalToastMessage: null
         }
+   case HIDE_TOAST:
+     return {
+          ...state,
+       HideToast: true,
+       GlobalToastType: null,
+       GlobalToastTitle: null,
+       GlobalToastMessage: null
+     }
   case TOGGLE_DROPDOWN: 
   return {
     ...state, 

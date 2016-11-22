@@ -317,6 +317,12 @@ class Main extends React.Component {
       this.showMessage(type, message, title);
       this.props.dispatch(clearToast());
     }
+    
+    if (nextprops.navReducer.HideToast)
+    {
+      this.hideMessageBar();
+      this.props.dispatch(clearToast());
+    }
 
   }
   
@@ -345,6 +351,10 @@ class Main extends React.Component {
     }
 
      MessageBarManager.showAlert(alertProps);
+  }
+  
+  hideMessageBar(){
+    MessageBarManager.hideAlert();
   }
 
     componentWillMount(){

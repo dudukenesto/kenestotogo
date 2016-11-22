@@ -1,5 +1,5 @@
 import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST, UPDATE_DROPDOWN_DATA,UPDATE_SELECTED_TRIGGER_VALUE} from '../constants/ActionTypes'
+  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST, HIDE_TOAST, UPDATE_DROPDOWN_DATA,UPDATE_SELECTED_TRIGGER_VALUE} from '../constants/ActionTypes'
 import * as peopleActions from '../actions/peopleActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import {isRouteKeyExists} from '../utils/ObjectUtils'
@@ -62,6 +62,12 @@ export function emitToast(type: string, messge: string, title: string){
     toastTitle: title, 
     toastType: type,
     toastMessage: messge
+  }
+}
+
+export function hideToast() {
+  return {
+    type: HIDE_TOAST
   }
 }
 

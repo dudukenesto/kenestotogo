@@ -6,6 +6,7 @@ import * as documentsActions from '../actions/documentsActions'
 import * as navActions from '../actions/navActions'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
+import {hideToast} from '../actions/navActions'
 
 import {
   View,
@@ -134,6 +135,7 @@ class KenestoToolbar extends Component {
 
   onGoBack() {
     this.props.onActionSelected(1)
+    this.props.dispatch(hideToast());
   }
 
   onSort() {
