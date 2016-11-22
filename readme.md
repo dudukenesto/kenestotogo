@@ -17,3 +17,12 @@ packages with special handling:
     problem: SupportsRtl definitions colides with general definition.
     soution: change the value of parameter "android:supportsRtl" from "true" to "false", 
              in \kenestotogo\node_modules\react-native-fetch-blob\android\src\main\AndroidManifest.xml  
+* react-native-message-bar
+    problem: plugin doesn't allow customizing toast layout (aligning icon with centered text).
+    solution: in render() function inside MessageBar.js replace the TouchableOpacity content with:
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', padding: 10 }} >
+                <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'stretch', justifyContent: 'center', marginLeft: -20 }} >
+                    { this.renderImage() }
+                    { this.renderMessage() }
+                </View>
+            </View>

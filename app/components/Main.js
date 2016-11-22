@@ -333,7 +333,7 @@ class Main extends React.Component {
       message: message,
       alertType: type,
       position: 'bottom',
-      messageStyle: { textAlign: 'center', color: '#fff', margin: 5, marginLeft: -5 },
+      messageStyle: { textAlign: 'center', color: '#fff', margin: 5 },
       stylesheetSuccess: { backgroundColor: '#3290F1', strokeColor: '#3290F1' },
       stylesheetWarning: { backgroundColor: '#F2B702', strokeColor: '#F2B702' },
       stylesheetError: { backgroundColor: '#f00', strokeColor: '#f00' },
