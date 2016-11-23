@@ -442,7 +442,7 @@ function requestDocumentsList(documentlist: Object) {
 
 function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
   const activeDocumentsList = documentsReducer[documentlist.catId]
-  if(!activeDocumentsList)
+  if(!activeDocumentsList || activeDocumentsList.items.length == 0)
   {
     return true;
   }
@@ -595,6 +595,13 @@ function uploadFile(data,file){
       }
   }
 
+  export function clearDocumentList(catId: string){
+      return {
+            type: types.CLEAR_DOCUMENT_LIST,
+            catId
+      }
+  }
+
   export function removeUploadDocument(Id: string, catId: string){
         return (dispatch, getState) => {
               
@@ -614,9 +621,12 @@ function uploadFile(data,file){
               dispatch(updateUploadDocument(datasource, uploads, catId)); 
 
                 var documentlist = getDocumentsContext(getState().navReducer);
-               if (documentlist.catId == catId){
-                   
+               if (documentlist.catId == catId){   
                     dispatch(refreshTable(documentlist)); 
+               }
+               else
+               {
+                  dispatch(clearDocumentList(catId)); 
                }
   
                   
