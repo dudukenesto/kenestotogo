@@ -99,8 +99,6 @@ export function getEditDocumentUrl(env, sessionToken, documentId, documentName) 
 
 
 export function getDocumentsContext(navReducer: Object) {
-  //console.log("getDocumentsContext:" + JSON.stringify(navReducer))
-
 
   if (typeof (navReducer) == 'undefined' || navReducer == "" || navReducer.index == 0 || typeof (navReducer.routes[navReducer.index].data) == 'undefined') {
 
@@ -152,7 +150,7 @@ export function getSelectedDocument(documentsReducer: Object, navReducer: Object
 }
 
 
-export function getFileUploadUrl(env: string, sessionToken: string, path: string, fileDescription: string = "", fileKeyword: string = "", folderId: string = '00000000-0000-0000-0000-000000000000', baseFileId: string = '00000000-0000-0000-0000-000000000000', userData: string = '') {
+export function getFileUploadUrl(env: string, sessionToken: string, path: string, fileDescription: string = "", fileKeyword: string = "", folderId: string = '00000000-0000-0000-0000-000000000000', baseFileId: string = '00000000-0000-0000-0000-000000000000') {
   const urls = _.find(config.urls, { 'env': env });
    const apiBaseUrl = urls.ApiBaseUrl; 
    folderId = (typeof (folderId) == 'undefined' || folderId == null || folderId == '') ? '00000000-0000-0000-0000-000000000000' : folderId;
@@ -160,11 +158,11 @@ export function getFileUploadUrl(env: string, sessionToken: string, path: string
    return  `${apiBaseUrl}/KDocuments.svc/UploadFile?t=${sessionToken}&p=${path}&fd=${fileDescription}&fk=${fileKeyword}&fid=${folderId}&bid=${baseFileId}`;
 }
 
-export function getUploadFileCompletedUrl(env: string, sessionToken: string,url: string, uploadId: string = ''){
+export function getUploadFileCompletedUrl(env: string, sessionToken: string,url: string, userData: string = ''){
 
    const urls = _.find(config.urls, { 'env': env });
    const apiBaseUrl = urls.ApiBaseUrl; 
-     return  `${apiBaseUrl}/KDocuments.svc/UploadFileCompleted?t=${sessionToken}&u=${url}&ui=${uploadId}`;
+     return  `${apiBaseUrl}/KDocuments.svc/UploadFileCompleted?t=${sessionToken}&u=${url}&ud=${userData}`;
 }
 
 export function getDownloadFileUrl(env: string, sessionToken: string, assetId: string, userData: string = '') {
@@ -395,4 +393,20 @@ export function getIconNameFromMimeType(mimeType: string) {
   }
   
   return iconName;
+}
+
+export function parseUploadUserData(userData: string)
+{
+    if (typeof (userData) == 'undefined' || userData == null || userData == '')
+          return { uploadId : '', catId: ''}; 
+    var items = userData.split('~'); 
+    if (items.length < 2)
+      return { uploadId : '', catId: ''}; 
+
+   return { uploadId : items[0], catId: items[1]};
+
+}
+
+export function constrcutUploadUSerData(uploadId: string, catId: string){
+      return uploadId + '~' + catId; 
 }

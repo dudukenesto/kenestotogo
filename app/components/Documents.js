@@ -205,7 +205,9 @@ class Documents extends Component {
   
   scrollToTop(){
     const {documentsReducer, navReducer} = this.props
-    var uploadingScrollPosition = documentsReducer.uploadItems.length > 3 ? (documentsReducer.uploadItems.length-1)*67+52 : 0;
+    var documentlist = getDocumentsContext(navReducer);
+
+    var uploadingScrollPosition = documentsReducer[documentlist.catId].uploadItems.length > 3 ? (documentsReducer[documentlist.catId].uploadItems.length-1)*67+52 : 0;
     this.refs.listview.scrollTo({y: uploadingScrollPosition})
   }
   
@@ -225,11 +227,15 @@ class Documents extends Component {
     const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     var itemsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].items.length : 0;
-
+    var uploadsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].uploadItems.length : 0;
+    itemsLength+=uploadsLength;
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => {
       r1["Id"] !== r2["Id"] ||  r1["uploadStatus"] !== r2["uploadStatus"] }   })
-    let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([])
-   itemsLength+= documentsReducer.uploadItems.length;
+    let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]); 
+
+   //itemsLength+= documentsReducer[documentlist.catId].uploadItems.length;
+
+
     if (itemsLength == 0) {
 
         return (<NoDocuments

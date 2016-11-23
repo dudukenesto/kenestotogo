@@ -4,6 +4,7 @@ let React = require('react-native')
 import _ from "lodash";
 function documentlist(state = {
   items: [],
+  uploadItems:[],
   totalFiles :0,
   totalFolders :0,
   nextUrl: false,
@@ -28,9 +29,14 @@ function documentlist(state = {
   case types.UPDATE_UPLOAD_LIST:
       return {
         ...state,
-        dataSource: action.datasource,
+        dataSource: action.datasource, 
+        uploadItems: action.uploadItems
       }
-    
+     case types.UPDATE_UPLOAD_ITEM:
+     return {
+             ...state,
+        uploadItems: action.uploadItems
+     }
     case types.REQUEST_DOCUMENTS:
       return {
         ...state,
@@ -52,6 +58,7 @@ function documentlist(state = {
             }
     case types.REFRESH_DOCUMENTS_LIST:
       return {
+         ...state,
         items: [...action.documents],
         totalFiles: action.totalFiles,
         totalFolders:action.totalFolders,
@@ -119,7 +126,7 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
         selectedObject: action.selectedObject
       }
     case types.CLEAR_ALL_DOCUMENTS_LIST:
-      return state ={isFetching: false,isFetchingSelectedObject:false, uploadItems: setUploaded() }
+      return state = initDocumentsReducer()
  
    case types.UPDATE_IS_FETCHING_SELECTED_OBJECT:
       return {
@@ -132,69 +139,19 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
         isFetching: action.isFetching
       }
        case types.UPDATE_UPLOAD_LIST:
-
-       //action.dataSource
-       //action.catId
-    //   uploadItems: action.uploadItems, 
-      //   [action.catId]: documentlist(action.dataSource, action)
        return {
           ...state, 
-          uploadItems: action.uploadItems,
            [action.catId]: documentlist(state[action.catId], action)
          
        }
 
 
-   case types.UPDATE_UPLOAD_ITEM:
-    console.log('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')
-             var items = [...state.uploadItems];
-              console.log('dddddddddddddddddddddddddddddddd items.legth' + items.length)
-              var obj =   _.find(items, 
-                    {'Id': action.uploadId}
-                );
-
-                console.log('fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
-
-             //   console.log(JSON.stringify(obj));
-           //     console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
-
-
-               obj.uploadStatus = action.status
-
-                _.remove(items, {
-                     Id: action.uploadId
-                 });
-
-                 items.push(obj)
-
+   case types.UPDATE_UPLOAD_ITEM: 
     return {
       ...state, 
-      uploadItems : items
+     [action.catId]: documentlist(state[action.catId], action)
     }
    
-
-
-//              console('------------------ 2')
-//                 obj.status = action.status
-//               _.remove(items, {
-//                     Id: Id
-//                 });
-
-//  console('------------------ 3')
-
-//                   return {
-//                     ...state, 
-//                     uploadItems : items
-//                   }
-//       } catch (error) {
-//               console.log(error)
-//               return {
-//                 ...state
-//               }
-//       }
-    
-
-      
     default:
       return state
   }
@@ -203,5 +160,5 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
 
 function initDocumentsReducer()
 {
-  return {isFetching: false,isFetchingSelectedObject:false, uploadItems:setUploaded(), versionItems:[]}
+  return {isFetching: false,isFetchingSelectedObject:false}
 }

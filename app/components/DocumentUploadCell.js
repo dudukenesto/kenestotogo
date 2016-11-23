@@ -37,6 +37,7 @@ var DocumentUploadCell = React.createClass({
     
     cancelUpload: function(){
       //alert('cancel: \n\n'+id)
+        this.props.document.xhr.abort();
       this.props.dispatch(removeUploadDocument(this.props.document.Id));
     },
 

@@ -125,7 +125,12 @@ class PlusMenu extends React.Component{
 
             }).catch(e => {
                 if (e != 'Error: User cancelled image selection')
-                            this.props.dispatch(navActions.emitToast("error", "File selection failed"))
+                {
+                    console.log('error ------------------------------ ')
+                    console.log(e)
+                    this.props.dispatch(navActions.emitToast("error", "File selection failed"))
+                }
+                            
             }
         
             );
