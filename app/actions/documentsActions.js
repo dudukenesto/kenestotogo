@@ -310,11 +310,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
                     else {
                         items = [...json.ResponseData.DocumentsList]
                     }
-
                     var uploadItems = getState().documentsReducer[documentlist.catId].uploadItems;
-
-
-
                     var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
                     switch (actionType) {
                         case types.RECEIVE_DOCUMENTS:
@@ -553,8 +549,7 @@ function uploadFile(data, file) {
 
     return new Promise((resolve, reject) => {
         data.xhr.onerror = function(e) {
-            console.log('error uploading: ' + JSON.stringify(e));
-            // handle failture
+           // console.log('error uploading: ' + JSON.stringify(e));
             reject(e);
         };
         data.xhr.onreadystatechange = function() {
@@ -655,15 +650,13 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                     var AccessUrl = json.ResponseData.AccessUrl;
                     var userData = parseUploadUserData(json.UserData);
                     var currUploadId = userData.uploadId;
-                    //alert(currUploadId)
                     var currCatId = userData.catId;
-
                     uploadFile({ xhr: uploadObj.xhr, uploadId: currUploadId, url: AccessUrl, catId: currCatId }, fileObject)
                         .then((data) => {
 
                             if (data.xhr.status == 0)  // xhr.abort was triggered from out side => upload paused 
                             {
-                                dispatch(updateUploadItems(data.uploadId, 0));
+                                dispatch(updateUploadItems(data.uploadId, data.catId, 0));
                                 return;
                             }
                             const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, data.url, constrcutUploadUSerData(encodeURIComponent(data.uploadId), encodeURIComponent(data.catId)));
@@ -706,13 +699,11 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                     var userData = parseUploadUserData(json.UserData);
                                     dispatch(removeUploadDocument(userData.uploadId, userData.catId));
                                     dispatch(navActions.emitToast("info", "Error. failed to upload file 1"))
-                                    console.log('----------------------------------- error: ' + error)
                                     writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${uploadObj.url}`, JSON.stringify(fileObject), error)
                                 })
 
                         })
                         .catch(err => {
-                            console.log(err)
                             var userData = parseUploadUserData(json.UserData);
                             dispatch(removeUploadDocument(userData.uploadId, userData.catId));
                             dispatch(navActions.emitToast("error", "Error. failed to upload file 2"))
@@ -734,7 +725,7 @@ export function resumeUploadToKenesto(uploadId: string) {
     return (dispatch, getState) => {
         var documentlist = getDocumentsContext(getState().navReducer);
         let existingObj = _.find(getState().documentsReducer[documentlist.catId].uploadItems, { 'Id': uploadId });
-        dispatch(updateUploadItems(existingObj.Id, -1));
+        dispatch(updateUploadItems(existingObj.Id,existingObj.catId, -1));
         dispatch(uploadDocumentObject(existingObj.fileObject, existingObj.Id));
     }
 }
@@ -751,10 +742,11 @@ export function uploadToKenesto(fileObject: object, url: string) {
         const totalFolders = getState().documentsReducer[documentlist.catId].totalFolders;
         var xhr = new XMLHttpRequest();
         xhr.status = -1;
-        var newUploadItems = [...getState().documentsReducer[documentlist.catId].uploadItems, { Id: uploadId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension: fileObject.fileExtension, uploadStatus: -1, xhr: xhr, fileObject: fileObject, url: url }];
+        var newUploadItems = [...getState().documentsReducer[documentlist.catId].uploadItems, { Id: uploadId, catId: documentlist.catId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension: fileObject.fileExtension, uploadStatus: -1, xhr: xhr, fileObject: fileObject, url: url }];
         var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
         dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId));
         dispatch(uploadDocumentObject(fileObject, uploadId));
+        
     }
 }
 
@@ -1264,10 +1256,11 @@ export function ShareDocument() {
 }
 
 
-export function updateUploadItemsState(updateItems: object, catId: string) {
+export function updateUploadItemsState(datasource: object, uploadItems: object, catId: string) {
     return {
         type: types.UPDATE_UPLOAD_ITEM,
-        updateItems,
+        datasource,
+        uploadItems,
         catId
     }
 }
@@ -1281,25 +1274,36 @@ export function updateItemsState(datasource: object, items: object, catId: strin
     }
 }
 
-export function updateUploadItems(uploadId: string, status: number) {
+export function updateUploadItems(uploadId: string, catId: string, status: number) {
 
     return (dispatch, getState) => {
-        var documentlist = getDocumentsContext(getState().navReducer);
-        var uploadItems = getState().documentsReducer[documentlist.catId].uploadItems;
+
+      //console.log('baba 3');
+      
+
+        const items = getState().documentsReducer[catId].items;
+        const uploadItems = getState().documentsReducer[catId].uploadItems;
+        const totalFiles = getState().documentsReducer[catId].totalFiles;
+        const totalFolders = getState().documentsReducer[catId].totalFolders;
+
+     //   var documentlist = getDocumentsContext(getState().navReducer);
+      //  var uploadItems = getState().documentsReducer[documentlist.catId].uploadItems;
 
         var obj = _.find(uploadItems,
-            { 'Id': action.uploadId }
+            { 'Id': uploadId }
         );
 
-        obj.uploadStatus = action.status
+        obj.uploadStatus = status
 
-        _.remove(uploadItems, {
-            Id: action.uploadId
-        });
+        // _.remove(uploadItems, {
+        //     Id: action.uploadId
+        // });
 
-        uploadItems.push(obj)
+        // uploadItems.push(obj)
 
-        dispatch(updateUploadItemsState(updateItems, documentlist.catId));
+          var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
+
+        dispatch(updateUploadItemsState(datasource, uploadItems, catId));
 
 
     }

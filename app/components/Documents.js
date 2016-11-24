@@ -227,6 +227,7 @@ class Documents extends Component {
     const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     var itemsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].items.length : 0;
+    
     var uploadsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].uploadItems.length : 0;
     itemsLength+=uploadsLength;
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => {
@@ -295,7 +296,6 @@ class Documents extends Component {
   render() {
 
 try {
-  console.log('Docs render', this.props.data.name)
     const {dispatch, documentsReducer, navReducer } = this.props
     var documentlist = getDocumentsContext(navReducer);
     // console.log("render documents page: " +JSON.stringify(documentlist))
@@ -317,7 +317,6 @@ try {
     )
 } catch (error) {
   
-  console.log('documents render error: ' + error)
   return null; 
 }
   
