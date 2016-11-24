@@ -58,7 +58,7 @@ var DocumentCell = React.createClass({
   render: function() {
     var {documentsReducer} = this.props;
     var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
-    var uploadingInProgress =  _.some(documentsReducer.versionItems, {id:this.props.document.Id});
+    var uploadingInProgress = this.props.document.IsUploading
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;

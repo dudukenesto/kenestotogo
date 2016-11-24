@@ -27,6 +27,12 @@ function documentlist(state = initDocumentList(), action) {
              ...state,
         uploadItems: action.uploadItems
       }
+    case types.UPDATE_ITEMS:
+      return {
+             ...state,
+         dataSource: action.datasource,    
+          items: action.items
+      }
     case types.REQUEST_DOCUMENTS:
       return {
         ...state,
@@ -141,8 +147,13 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
 
       }
 
-
     case types.UPDATE_UPLOAD_ITEM:
+      return {
+      ...state,
+        [action.catId]: documentlist(state[action.catId], action)
+      }
+
+    case types.UPDATE_ITEMS:
       return {
       ...state,
         [action.catId]: documentlist(state[action.catId], action)

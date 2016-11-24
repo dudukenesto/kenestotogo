@@ -230,7 +230,7 @@ class Documents extends Component {
     var uploadsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].uploadItems.length : 0;
     itemsLength+=uploadsLength;
     let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => {
-      r1["Id"] !== r2["Id"] ||  r1["uploadStatus"] !== r2["uploadStatus"] }   })
+      r1["Id"] !== r2["Id"] ||  r1["uploadStatus"] !== r2["uploadStatus"] ||  r1["IsUploading"] !== r2["IsUploading"] }   })
     let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]); 
 
    //itemsLength+= documentsReducer[documentlist.catId].uploadItems.length;
