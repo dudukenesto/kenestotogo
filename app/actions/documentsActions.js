@@ -441,15 +441,12 @@ function requestDocumentsList(documentlist: Object) {
 }
 
 function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
-    const activeDocumentsList = documentsReducer[documentlist.catId]
-    if (!activeDocumentsList || activeDocumentsList.items.length == 0) {
-        return true;
-    }
-
-    if (activeDocumentsList.isFetching || activeDocumentsList.nextUrl == null || activeDocumentsList.nextUrl == "") {
-        return false
-    }
+  const activeDocumentsList = documentsReducer[documentlist.catId]
+  if (!activeDocumentsList || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
     return true
+  }
+
+  return false
 }
 
 export function updateSelectedObject(id: string, familyCode: string, permissions: object) {
@@ -784,8 +781,9 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
 
         var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
         dispatch(updateItemsState(datasource, items, catId));
+
         if (isUploading) {
-            dispatch(uploadDocumentVersion(fileObject, baseFileId));
+            dispatch(uploadNewVersion(fileObject, baseFileId));
         }
         else {
             var documentlist = getDocumentsContext(getState().navReducer);
@@ -801,7 +799,7 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
     }
 }
 
-function uploadDocumentVersion(fileObject: object, baseFileId: string) {
+function uploadNewVersion(fileObject: object, baseFileId: string) {
     return (dispatch, getState) => {
         var documentlist = getDocumentsContext(getState().navReducer);
         let uploadObj = _.find(getState().documentsReducer[documentlist.catId].items, { 'Id': baseFileId });
@@ -839,26 +837,14 @@ function uploadDocumentVersion(fileObject: object, baseFileId: string) {
                                     //alert(finalUploadId)
                                     dispatch(updateDocumentVersion(finalCatId, fileObject, "", finalUploadId, false));
                                     if (json.ResponseStatus == 'OK') {
-
-                                        let message = ""
-                                        // if(isUpdateVersion)
-                                        //   message = "Successfully updated document version"
-                                        // else
-                                        message = "File successfully uploaded"
-
+                                       let message = "Successfully updated document version"
                                         dispatch(navActions.emitToast("info", message));
-
                                     }
                                     else {
-
-                                        // if(!isUpdateVersion)
-                                        //     message = `Error. failed to upload file ${fileObject.name}`
-                                        //   else
-                                        //  message = "Error. failed to update version"
-                                        message = "File successfully uploaded"
+                                       let message = "Error. failed to update version"
                                         dispatch(navActions.emitToast("error", message));
-                                        //  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject))
-                                    }
+                                        writeToLog(email, constans.ERROR, `function uploadNewVersion - Failed to upload file to kenesto - AccessUrl: ${AccessUrl}`, JSON.stringify(fileObject))
+                                    }                                    
 
 
 
@@ -868,9 +854,8 @@ function uploadDocumentVersion(fileObject: object, baseFileId: string) {
                                     var userData = parseUploadUserData(json.UserData);
                                     dispatch(updateDocumentVersion(userData.catId, fileObject, "", userData.uploadId, false));
 
-                                    dispatch(navActions.emitToast("info", "Error. failed to upload file 1"))
-                                    console.log('----------------------------------- error: ' + error)
-                                    writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${uploadObj.url}`, JSON.stringify(fileObject), error)
+                                    dispatch(navActions.emitToast("error", "Error. failed to update version"))
+                                    writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${uthisCompletedUrl}`, error)
                                 })
 
                         })
@@ -878,7 +863,7 @@ function uploadDocumentVersion(fileObject: object, baseFileId: string) {
                             writeToLog(email, constans.ERROR, `function uploadDocumentVersion -failed to upload file`, err)
                             var userData = parseUploadUserData(json.UserData);
                             dispatch(updateDocumentVersion(userData.catId, fileObject, "", userData.uploadId, false));
-                            dispatch(navActions.emitToast("error", "Error. failed to upload file:" + JSON.stringify(err)))
+                            dispatch(navActions.emitToast("error", "Error. failed to update version"))
                         });
 
 
@@ -888,7 +873,7 @@ function uploadDocumentVersion(fileObject: object, baseFileId: string) {
                 writeToLog(email, constans.ERROR, `function uploadDocumentVersion -failed to upload file`, error)
                 var userData = parseUploadUserData(json.UserData);
                 dispatch(updateDocumentVersion(userData.catId, fileObject, "", userData.uploadId, false));
-                dispatch(navActions.emitToast("error", "Error. failed to upload file 3"))
+                dispatch(navActions.emitToast("error", "Error. failed to update version"))
             })
     }
 }
