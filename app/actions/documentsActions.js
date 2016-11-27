@@ -511,9 +511,14 @@ export function downloadDocument(id: string, fileName: string) {
         fetch(url)
             .then(response => response.json())
             .then(json => {
-                const downloadUrl = json.ResponseData.AccessUrl;
+                var downloadUrl = json.ResponseData.AccessUrl;
+              //  downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
+              downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
+                 //  console.log('downloadurl: ' + downloadUrl);
+                //alert(Android_Download_Path + "/" + fileName)
 
                 RNFetchBlob.config({
+                //    path : Android_Download_Path + "/" + fileName,
                     fileCache: true,
                     // android only options, these options be a no-op on IOS
                     addAndroidDownloads: {
