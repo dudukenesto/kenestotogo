@@ -14,7 +14,7 @@ import {View,
   ActivityIndicator,
   RefreshControl
 } from 'react-native'
-import {  emitToast, clearToast} from '../actions/navActions'
+import {emitToast, clearToast} from '../actions/navActions'
 
 import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -79,7 +79,6 @@ class Documents extends Component {
     const {dispatch} = this.props
     dispatch(fetchTableIfNeeded())
   }
-
 
   componentDidUpdate() {
     this._showStatusBar()
