@@ -9,7 +9,8 @@ import {
     getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
     getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl,
     getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl,
-    getDocumentlistByCatId, getEditDocumentUrl, getDiscardCheckOutDocumentUrl, parseUploadUserData, constrcutUploadUSerData
+    getDocumentlistByCatId, getEditDocumentUrl, getDiscardCheckOutDocumentUrl, parseUploadUserData, constrcutUploadUSerData,
+    isDocumentsContextExists, getDocumentsContextByCatId
 } from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
@@ -344,12 +345,15 @@ export function fetchTableIfNeeded() {
         }
     }
 }
-export function refreshTable(documentlist: Object) {
+export function refreshTable(documentlist: Object, updateRouteData: boolean = true) {
     return (dispatch, getState) => {
         const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
         const {sessionToken, env, email} = getState().accessReducer;
         writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
-        dispatch(navActions.updateRouteData(documentlist))
+
+        if (updateRouteData) {
+            dispatch(navActions.updateRouteData(documentlist))
+        }
         dispatch(Access.retrieveStatistics());
         return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
     }
@@ -380,7 +384,7 @@ export function clearDocuments(documentlist: Object) {
 function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
 
     const activeDocumentsList = documentsReducer[documentlist.catId]
-    if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
+    if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == nul) {
         return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
     }
     return activeDocumentsList.nextUrl
@@ -437,12 +441,14 @@ function requestDocumentsList(documentlist: Object) {
 }
 
 function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
-  const activeDocumentsList = documentsReducer[documentlist.catId]
-  if (!activeDocumentsList || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
-    return true
-  }
+    const activeDocumentsList = documentsReducer[documentlist.catId]
 
-  return false
+    if (typeof (activeDocumentsList) == 'undefined' || activeDocumentsList.items.length == 0 || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
+        console.log("shouldFetchDocuments" + !activeDocumentsList + ",true")
+        return true
+    }
+    console.log("shouldFetchDocuments" + !activeDocumentsList + ",false")
+    return false
 }
 
 export function updateSelectedObject(id: string, familyCode: string, permissions: object) {
@@ -487,7 +493,7 @@ export function createFolder(folderName: string, isVault: boolean) {
                 }
                 else {
                     dispatch(UpdateCreateingFolderState(2))
-                    dispatch(refreshTable(documentlist))
+                    dispatch(refreshTable(documentlist, false))
 
                 }
 
@@ -554,7 +560,7 @@ function uploadFile(data, file) {
 
     return new Promise((resolve, reject) => {
         data.xhr.onerror = function(e) {
-           // console.log('error uploading: ' + JSON.stringify(e));
+            // console.log('error uploading: ' + JSON.stringify(e));
             reject(e);
         };
         data.xhr.onreadystatechange = function() {
@@ -624,15 +630,18 @@ export function removeUploadDocument(Id: string, catId: string) {
         dispatch(updateUploadDocument(datasource, uploads, catId));
 
         var documentlist = getDocumentsContext(getState().navReducer);
-        if (documentlist.catId == catId) {
-            dispatch(refreshTable(documentlist));
+        if (catId == documentlist.catId) {
+            dispatch(refreshTable(documentlist, false));
         }
         else {
-            dispatch(clearDocumentList(catId));
+            if (isDocumentsContextExists(getState().navReducer, catId)) {
+                documentlist = getDocumentsContextByCatId(getState().navReducer, catId)
+                dispatch(refreshTable(documentlist, false));
+            }
+            else {
+                dispatch(clearDocumentList(catId));
+            }
         }
-
-
-
     }
 
 }
@@ -730,7 +739,7 @@ export function resumeUploadToKenesto(uploadId: string) {
     return (dispatch, getState) => {
         var documentlist = getDocumentsContext(getState().navReducer);
         let existingObj = _.find(getState().documentsReducer[documentlist.catId].uploadItems, { 'Id': uploadId });
-        dispatch(updateUploadItems(existingObj.Id,existingObj.catId, -1));
+        dispatch(updateUploadItems(existingObj.Id, existingObj.catId, -1));
         dispatch(uploadDocumentObject(existingObj.fileObject, existingObj.Id));
     }
 }
@@ -751,7 +760,7 @@ export function uploadToKenesto(fileObject: object, url: string) {
         var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
         dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId));
         dispatch(uploadDocumentObject(fileObject, uploadId));
-        
+
     }
 }
 
@@ -771,8 +780,8 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
             if (items[i].Id == baseFileId) {
                 items[i].IsUploading = isUploading;
                 items[i].UploadUrl = url,
-                items[i].xhr = xhr,
-                items[i].fileObject = fileObject
+                    items[i].xhr = xhr,
+                    items[i].fileObject = fileObject
             }
         }
 
@@ -784,15 +793,19 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
         }
         else {
             var documentlist = getDocumentsContext(getState().navReducer);
-
-            if (documentlist.catId == catId) {
-                dispatch(refreshTable(documentlist));
+            if (catId == documentlist.catId) {
+                dispatch(refreshTable(documentlist, false));
             }
             else {
-                dispatch(clearDocumentList(catId));
+                if (isDocumentsContextExists(getState().navReducer, catId)) {
+                    documentlist = getDocumentsContextByCatId(getState().navReducer, catId)
+                    dispatch(refreshTable(documentlist, false));
+                }
+                else {
+                    dispatch(clearDocumentList(catId));
+                }
             }
         }
-
     }
 }
 
@@ -834,14 +847,14 @@ function uploadNewVersion(fileObject: object, baseFileId: string) {
                                     //alert(finalUploadId)
                                     dispatch(updateDocumentVersion(finalCatId, fileObject, "", finalUploadId, false));
                                     if (json.ResponseStatus == 'OK') {
-                                       let message = "Successfully updated document version"
+                                        let message = "Successfully updated document version"
                                         dispatch(navActions.emitToast("info", message));
                                     }
                                     else {
-                                       let message = "Error. failed to update version"
+                                        let message = "Error. failed to update version"
                                         dispatch(navActions.emitToast("error", message));
                                         writeToLog(email, constans.ERROR, `function uploadNewVersion - Failed to upload file to kenesto - AccessUrl: ${AccessUrl}`, JSON.stringify(fileObject))
-                                    }                                    
+                                    }
 
 
 
@@ -894,7 +907,7 @@ export function deleteAsset(id: string, familyCode: string) {
                 else {
                     dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
                     var documentlist = getDocumentsContext(getState().navReducer);
-                    dispatch(refreshTable(documentlist))
+                    dispatch(refreshTable(documentlist, false))
                 }
             })
             .catch((error) => {
@@ -922,7 +935,7 @@ export function deleteFolder(id: string) {
                 else {
                     dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
                     var documentlist = getDocumentsContext(getState().navReducer);
-                    dispatch(refreshTable(documentlist))
+                    dispatch(refreshTable(documentlist, false))
                 }
             })
             .catch((error) => {
@@ -1155,7 +1168,7 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
                 }
                 else {
                     dispatch(updateIsFetching(false));
-                    dispatch(refreshTable(documentlist));
+                    dispatch(refreshTable(documentlist, false));
                     dispatch(navActions.emitToast("success", "folder successfully updated.", ""));
                     dispatch(navActions.clearToast());
                 }
@@ -1187,7 +1200,7 @@ export function EditDocument(documentId: string, documentName: string) {
                 }
                 else {
                     dispatch(updateIsFetching(false));
-                    dispatch(refreshTable(documentlist));
+                    dispatch(refreshTable(documentlist, false));
                     dispatch(navActions.emitToast("success", "document successfully updated.", ""));
                     dispatch(navActions.clearToast());
                 }
@@ -1283,16 +1296,16 @@ export function updateUploadItems(uploadId: string, catId: string, status: numbe
 
     return (dispatch, getState) => {
 
-      //console.log('baba 3');
-      
+        //console.log('baba 3');
+
 
         const items = getState().documentsReducer[catId].items;
         const uploadItems = getState().documentsReducer[catId].uploadItems;
         const totalFiles = getState().documentsReducer[catId].totalFiles;
         const totalFolders = getState().documentsReducer[catId].totalFolders;
 
-     //   var documentlist = getDocumentsContext(getState().navReducer);
-      //  var uploadItems = getState().documentsReducer[documentlist.catId].uploadItems;
+        //   var documentlist = getDocumentsContext(getState().navReducer);
+        //  var uploadItems = getState().documentsReducer[documentlist.catId].uploadItems;
 
         var obj = _.find(uploadItems,
             { 'Id': uploadId }
@@ -1306,7 +1319,7 @@ export function updateUploadItems(uploadId: string, catId: string, status: numbe
 
         // uploadItems.push(obj)
 
-          var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
+        var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
 
         dispatch(updateUploadItemsState(datasource, uploadItems, catId));
 

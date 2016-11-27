@@ -200,7 +200,7 @@ class Main extends React.Component {
         sortDirection: currRouteData.sortDirection,
         sortBy: sortBy
       }
-    dispatch(documentsActions.refreshTable(routeData));
+    dispatch(documentsActions.refreshTable(routeData, true));
     this.hidePopupMenu();
   }
 

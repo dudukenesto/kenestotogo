@@ -165,7 +165,7 @@ class Documents extends Component {
   _onRefresh(type, message) {
     const {dispatch, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
-    dispatch(refreshTable(documentlist))
+    dispatch(refreshTable(documentlist, false))
   }
 
   // _onSort(sortDirection, sortBy) {

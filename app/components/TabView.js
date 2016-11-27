@@ -239,27 +239,27 @@ class TabView extends React.Component {
             case 0:
                 routeData.catId = constans.MY_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.MY_DOCUMENTS);
-                dispatch(documentsActions.refreshTable(routeData));
+                dispatch(documentsActions.refreshTable(routeData, true));
                 break;
             case 1:
                 routeData.catId = constans.DOCUMENTS_SHARE_WITH_ME;
                 routeData.name = getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME);
-                dispatch(documentsActions.refreshTable(routeData));
+                dispatch(documentsActions.refreshTable(routeData, true));
                 break;
             case 2:
                 routeData.catId = constans.ALL_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.ALL_DOCUMENTS);
-                 dispatch(documentsActions.refreshTable(routeData));
+                 dispatch(documentsActions.refreshTable(routeData, true));
                  break;
             case 3:
                 routeData.catId = constans.CHECKED_OUT_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS);
-                 dispatch(documentsActions.refreshTable(routeData));
+                 dispatch(documentsActions.refreshTable(routeData, true));
                  break;
             case 4:
                 routeData.catId = constans.ARCHIVED_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.ARCHIVED_DOCUMENTS);
-                dispatch(documentsActions.refreshTable(routeData));
+                dispatch(documentsActions.refreshTable(routeData, true));
                  break;
             case 6:
                 dispatch(navActions.emitConfirm("Log Out", "Are you sure you want to Log Out?", () => dispatch(accessActions.logOut())))
