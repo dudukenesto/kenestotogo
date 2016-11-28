@@ -180,7 +180,7 @@ class KenestoToolbar extends Component {
                 keyboard:text
             }
 
-    this.props.dispatch(documentsActions.refreshTable(routeData));
+    this.props.dispatch(documentsActions.refreshTable(routeData, true));
      this.setState({
       searchText: text
     });

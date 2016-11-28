@@ -24,13 +24,14 @@ import {pop, updateRouteData, clearToast} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
+import Toast from './Toast'
 import Info from './Info'
 import Confirm from './Confirm'
 import CheckInDocument from './CheckInDocument'
 import { writeToLog } from '../utils/ObjectUtils'
 
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
-var MessageBarManager = require('react-native-message-bar').MessageBarManager;
+// var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 import DropDownOptions from './DropDownOptions';
 var Orientation = require('./KenestoDeviceOrientation');
 
@@ -56,6 +57,9 @@ let styles = StyleSheet.create({
   error: {
     height: 280,
     width: 320
+  },
+  toast: {
+    height: 50,
   },
   createFolder: {
     height: 280,
@@ -134,7 +138,7 @@ class Main extends React.Component {
   getChildContext() {
 
     return {
-      plusMenuContext: this.refs.modalPlusMenu, 
+      plusMenuContext: this.refs.modalPlusMenu,
       itemMenuContext: this.refs.modalItemMenu,
       errorModal: this.refs.errorModal,
       dropDownContext: this.refs.dropDownOptionsContainer
@@ -148,7 +152,9 @@ class Main extends React.Component {
           ifCreatingFolder: false,
           isPopupMenuOpen: false,
           orientation: 'unknown',
-          isDropDownOpen: true
+          isDropDownOpen: true,
+          toastMessage: '',
+          toastType: ''
         };
          this.onActionSelected = this.onActionSelected.bind(this);
          this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
@@ -200,7 +206,7 @@ class Main extends React.Component {
         sortDirection: currRouteData.sortDirection,
         sortBy: sortBy
       }
-    dispatch(documentsActions.refreshTable(routeData));
+    dispatch(documentsActions.refreshTable(routeData, true));
     this.hidePopupMenu();
   }
 
@@ -270,17 +276,17 @@ class Main extends React.Component {
   {
     this.openModal("editFolderModal");
   }
-  
+
   openEditDocumentModal()
   {
     this.openModal("editDocumentModal");
   }
-  
+
   openUpdateVersionsModal()
   {
     this.openModal("updateVersionsModal");
   }
-  
+
   openCreateFolder() {
     this.refs.CreateFolder.open();
 
@@ -307,25 +313,25 @@ class Main extends React.Component {
     if (nextprops.navReducer.HasConfirm) {
       this.openModal("confirmModal");
     }
-  
+
     if (nextprops.navReducer.HasToast)
     {
-      const type = nextprops.navReducer.GlobalToastType; 
-      const message = nextprops.navReducer.GlobalToastMessage;
-      const title = nextprops.navReducer.GlobalToastTitle;
+      this.setState({
+        toastType: nextprops.navReducer.GlobalToastType,
+        toastMessage: nextprops.navReducer.GlobalToastMessage
+      })
 
-      this.showMessage(type, message, title);
-      this.props.dispatch(clearToast());
-    }
-    
-    if (nextprops.navReducer.HideToast)
-    {
-      this.hideMessageBar();
+      this.openModal("toastModal");
+      setTimeout(this.closeToast.bind(this), 4000)
       this.props.dispatch(clearToast());
     }
 
   }
   
+  closeToast(){
+    this.refs.toastModal.close();
+  }
+
   _orientationDidChange(orientation) {
     if (orientation == 'LANDSCAPE') {
       this.setState({orientation: 'horizontal'})
@@ -333,32 +339,33 @@ class Main extends React.Component {
       this.setState({orientation: 'vertical'})
     }
   }
-  
-  showMessage(type: string, message: string, title: string){
-    const alertProps = {
-      message: message,
-      alertType: type,
-      position: 'bottom',
-      messageStyle: { textAlign: 'center', color: '#fff', margin: 5 },
-      stylesheetSuccess: { backgroundColor: '#3290F1', strokeColor: '#3290F1' },
-      stylesheetWarning: { backgroundColor: '#F2B702', strokeColor: '#F2B702' },
-      stylesheetError: { backgroundColor: '#f00', strokeColor: '#f00' },
-      stylesheetInfo: { backgroundColor: '#333', strokeColor: '#333' },
-    }
-    if (type === 'error') {
-      alertProps.avatar = require('../assets/icn_error_toast.png');      
-      alertProps.avatarStyle = { height: 20, width: 20, alignSelf: 'center', marginLeft: 5 };
-    }
 
-     MessageBarManager.showAlert(alertProps);
-  }
-  
-  hideMessageBar(){
-    MessageBarManager.hideAlert();
-  }
+  // showMessage(type: string, message: string, title: string){
+  //   const alertProps = {
+  //     duration: 1500,
+  //     message: message,
+  //     alertType: type,
+  //     position: 'bottom',
+  //     messageStyle: { textAlign: 'center', color: '#fff', margin: 5 },
+  //     stylesheetSuccess: { backgroundColor: '#3290F1', strokeColor: '#3290F1' },
+  //     stylesheetWarning: { backgroundColor: '#F2B702', strokeColor: '#F2B702' },
+  //     stylesheetError: { backgroundColor: '#f00', strokeColor: '#f00' },
+  //     stylesheetInfo: { backgroundColor: '#333', strokeColor: '#333' },
+  //   }
+  //   if (type === 'error') {
+  //     alertProps.avatar = require('../assets/icn_error_toast.png');
+  //     alertProps.avatarStyle = { height: 20, width: 20, alignSelf: 'center', marginLeft: 5 };
+  //   }
+
+  //    MessageBarManager.showAlert(alertProps);
+  // }
+
+  // hideMessageBar(){
+  //   MessageBarManager.hideAlert();
+  // }
 
     componentWillMount(){
- MessageBarManager.unregisterMessageBar();
+//  MessageBarManager.unregisterMessageBar();
 
 
 
@@ -366,9 +373,7 @@ class Main extends React.Component {
 
   componentDidMount() {
     Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-    MessageBarManager.registerMessageBar(this.refs.alert);
-    //this.showMessage("info", "asset deleted successfully");
-    //  this.refs.mainContainer.showMessage("info", "asset deleted successfully");
+    // MessageBarManager.registerMessageBar(this.refs.alert);
   }
 
   render() {
@@ -398,7 +403,7 @@ class Main extends React.Component {
         }
         <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) } isItemMenuModalOpen ={this.isItemMenuModalOpen.bind(this) } closeDrawer ={this.closeDrawer.bind(this) } isDrawerOpen ={this.isDrawerOpen.bind(this) } isMenuModalOpen={this.isMenuModalOpen.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)  }/>
         <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
-          <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this) } 
+          <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this) }
             openCreateFolder = {this.openCreateFolder.bind(this) }  createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) }/>
         </Modal>
@@ -427,11 +432,14 @@ class Main extends React.Component {
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>
         </Modal>
-        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}> 
+        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}>
           <Info closeModal = {() => this.closeModal("infoModal") } openModal = {() => this.openModal("infoModal") }/>
         </Modal>
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"confirmModal"} isDisabled={false}>
           <Confirm closeModal = {() => this.closeModal("confirmModal") } openModal = {() => this.openModal("confirmModal") }/>
+        </Modal>
+        <Modal style={[styles.modal, styles.toast]} position={"bottom"}  ref={"toastModal"} isDisabled={false} backdrop={false}>
+          <Toast closeModal = {() => this.closeModal("toastModal") } openModal = {() => this.openModal("toastModal")} toastType={this.state.toastType} toastMessage={this.state.toastMessage} />
         </Modal>
 
         {showPopupMenu ?
@@ -468,7 +476,7 @@ class Main extends React.Component {
 
       <MessageBarAlert ref="alert" />
         <DropDownOptions ref={"dropDownOptionsContainer"} />
-        
+
       </View>
     )
   }
@@ -495,7 +503,7 @@ function mapStateToProps(state) {
     documentsReducer,
     navReducer,
     env,
-    sessionToken, 
+    sessionToken,
 
   }
 }

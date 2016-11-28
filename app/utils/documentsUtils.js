@@ -118,6 +118,51 @@ export function getDocumentsContext(navReducer: Object) {
     })
 }
 
+export function getDocumentsContextByCatId(navReducer: Object, catId: string) {
+
+  if (typeof (navReducer) == 'undefined' || navReducer == "" || navReducer.index == 0 || typeof (navReducer.routes[navReducer.index].data) == 'undefined') {
+
+    return ({})
+  }
+  else {
+    for (i = 0; i < navReducer.routes.length; i++) {
+      var route = navReducer.routes[i];
+      if ((typeof (route.data) != 'undefined') && route.data.catId == catId) {
+        return (
+          {
+            name: route.data.name,
+            catId: route.data.catId,
+            fId: route.data.fId,
+            sortDirection: route.data.sortDirection,
+            sortBy: route.data.sortBy,
+            keyboard: route.data.keyboard,
+            baseFileId: route.data.baseFileId
+          })
+      }
+    }
+    return {};
+  }
+}
+
+
+
+export function isDocumentsContextExists(navReducer: Object, catId: string) {
+
+  if (typeof (navReducer) == 'undefined' || navReducer == "" || navReducer.index == 0 || typeof (navReducer.routes[navReducer.index].data) == 'undefined') {
+    return false
+  }
+  else {
+    for (i = 0; i < navReducer.routes.length; i++) {
+      var route = navReducer.routes[i];
+      if ((typeof (route.data) != 'undefined') && route.data.catId == catId) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+
 export function getDocumentsTitle(categoryType: String) {
   switch (categoryType) {
     case constans.MY_DOCUMENTS:

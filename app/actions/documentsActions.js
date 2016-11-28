@@ -10,7 +10,8 @@ import {
     getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
     getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl,
     getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl,
-    getDocumentlistByCatId, getEditDocumentUrl, getDiscardCheckOutDocumentUrl, parseUploadUserData, constrcutUploadUSerData
+    getDocumentlistByCatId, getEditDocumentUrl, getDiscardCheckOutDocumentUrl, parseUploadUserData, constrcutUploadUSerData,
+    isDocumentsContextExists, getDocumentsContextByCatId
 } from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
@@ -70,205 +71,208 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
 
 
 function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders) {
+    try {
+        var dataBlob = {},
+            sectionIDs = [],
+            rowIDs = [],
+            foldersSection,
+            docuemntsSection,
+            folders,
+            documents,
+            i,
+            j;
 
-    var dataBlob = {},
-        sectionIDs = [],
-        rowIDs = [],
-        foldersSection,
-        docuemntsSection,
-        folders,
-        documents,
-        i,
-        j;
-
-    folders = _.filter(items, function(o) { return o.FamilyCode == 'FOLDER'; });
-    documents = _.filter(items, function(o) { return o.FamilyCode != 'FOLDER'; });
-
-
+        folders = _.filter(items, function(o) { return o.FamilyCode == 'FOLDER'; });
+        documents = _.filter(items, function(o) { return o.FamilyCode != 'FOLDER'; });
 
 
-    if (totalFolders > 0 && totalFiles > 0) {
-        if (uploadItems.length > 0) {
-            dataBlob["ID1"] = `Uploads (${uploadItems.length})`
-            dataBlob["ID2"] = `Folders (${totalFolders})`
-            dataBlob["ID3"] = `Files (${totalFiles})`
-            sectionIDs[0] = "ID1";
-            sectionIDs[1] = "ID2";
-            sectionIDs[2] = "ID3";
 
-            rowIDs[0] = [];
-            for (j = 0; j < uploadItems.length; j++) {
-                uploadItem = uploadItems[j];
 
-                rowIDs[0].push(uploadItem.Id);
-                dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+        if (totalFolders > 0 && totalFiles > 0) {
+            if (uploadItems.length > 0) {
+                dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+                dataBlob["ID2"] = `Folders (${totalFolders})`
+                dataBlob["ID3"] = `Files (${totalFiles})`
+                sectionIDs[0] = "ID1";
+                sectionIDs[1] = "ID2";
+                sectionIDs[2] = "ID3";
+
+                rowIDs[0] = [];
+                for (j = 0; j < uploadItems.length; j++) {
+                    uploadItem = uploadItems[j];
+
+                    rowIDs[0].push(uploadItem.Id);
+                    dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+                }
+                rowIDs[1] = [];
+                for (j = 0; j < folders.length; j++) {
+                    folder = folders[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[1].push(folder.Id);
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID2:' + folder.Id] = folder;
+                }
+
+
+                rowIDs[2] = [];
+                for (j = 0; j < documents.length; j++) {
+                    document = documents[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[2].push(document.Id);
+
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID3:' + document.Id] = document;
+                }
+
             }
-            rowIDs[1] = [];
-            for (j = 0; j < folders.length; j++) {
-                folder = folders[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[1].push(folder.Id);
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID2:' + folder.Id] = folder;
-            }
+            else {
 
 
-            rowIDs[2] = [];
-            for (j = 0; j < documents.length; j++) {
-                document = documents[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[2].push(document.Id);
+                dataBlob["ID1"] = `Folders (${totalFolders})`
+                dataBlob["ID2"] = `Files (${totalFiles})`
+                sectionIDs[0] = "ID1";
+                sectionIDs[1] = "ID2";
+                rowIDs[0] = [];
+                for (j = 0; j < folders.length; j++) {
+                    folder = folders[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[0].push(folder.Id);
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID3:' + document.Id] = document;
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID1:' + folder.Id] = folder;
+                }
+
+                rowIDs[1] = [];
+                for (j = 0; j < documents.length; j++) {
+                    document = documents[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[1].push(document.Id);
+
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID2:' + document.Id] = document;
+
+                }
             }
 
         }
-        else {
+        else if (totalFolders > 0 && totalFiles == 0) {
+            if (uploadItems.length > 0) {
+                dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+                dataBlob["ID2"] = `Folders (${totalFolders})`
+                sectionIDs[0] = "ID1";
+                sectionIDs[1] = "ID2";
+                rowIDs[0] = [];
+                for (j = 0; j < uploadItems.length; j++) {
+                    uploadItem = uploadItems[j];
+                    rowIDs[0].push(uploadItem.Id);
+                    dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+                }
+                rowIDs[1] = [];
+                for (j = 0; j < folders.length; j++) {
+                    folder = folders[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[1].push(folder.Id);
 
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID2:' + folder.Id] = folder;
+                }
+            }
+            else {
+                dataBlob["ID1"] = `Folders (${totalFolders})`
+                sectionIDs[0] = "ID1";
+                rowIDs[0] = [];
+                for (j = 0; j < folders.length; j++) {
+                    folder = folders[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[0].push(folder.Id);
 
-            dataBlob["ID1"] = `Folders (${totalFolders})`
-            dataBlob["ID2"] = `Files (${totalFiles})`
-            sectionIDs[0] = "ID1";
-            sectionIDs[1] = "ID2";
-            rowIDs[0] = [];
-            for (j = 0; j < folders.length; j++) {
-                folder = folders[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[0].push(folder.Id);
-
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID1:' + folder.Id] = folder;
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID1:' + folder.Id] = folder;
+                }
             }
 
-            rowIDs[1] = [];
-            for (j = 0; j < documents.length; j++) {
-                document = documents[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[1].push(document.Id);
+        }
+        else if (totalFiles > 0 && totalFolders == 0) {
+            if (uploadItems.length > 0) {
+                dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+                dataBlob["ID2"] = `Files (${totalFiles})`
+                sectionIDs[0] = "ID1";
+                sectionIDs[1] = "ID2";
+                rowIDs[0] = [];
+                for (j = 0; j < uploadItems.length; j++) {
+                    uploadItem = uploadItems[j];
+                    rowIDs[0].push(uploadItem.Id);
+                    dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+                }
+                rowIDs[1] = [];
+                for (j = 0; j < documents.length; j++) {
+                    document = documents[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[1].push(document.Id);
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID2:' + document.Id] = document;
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID2:' + document.Id] = document;
+                }
+            }
+            else {
+                dataBlob["ID1"] = `Files (${totalFiles})`
+                sectionIDs[0] = "ID1";
+                rowIDs[0] = [];
+                for (j = 0; j < documents.length; j++) {
+                    document = documents[j];
+                    // Add Unique Row ID to RowID Array for Section
+                    rowIDs[0].push(document.Id);
 
+                    // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
+                    dataBlob['ID1:' + document.Id] = document;
+                }
+            }
+
+        }
+        else if (totalFiles == 0 && totalFolders == 0) {
+            if (uploadItems.length > 0) {
+
+                dataBlob["ID1"] = `Uploads (${uploadItems.length})`
+                sectionIDs[0] = "ID1";
+
+                rowIDs[0] = [];
+                for (j = 0; j < uploadItems.length; j++) {
+                    uploadItem = uploadItems[j];
+                    rowIDs[0].push(uploadItem.Id);
+                    dataBlob['ID1:' + uploadItem.Id] = uploadItem;
+                }
             }
         }
 
+
+        var getSectionData = (dataBlob, sectionID) => {
+            return dataBlob[sectionID];
+
+        }
+        var getRowData = (dataBlob, sectionID, rowID) => {
+
+            return dataBlob[sectionID + ':' + rowID];
+
+        }
+
+        let ds = new ListView.DataSource({
+
+            getSectionData: getSectionData,
+
+            getRowData: getRowData,
+
+            rowHasChanged: (row1, row2) => {
+                row1["Id"] !== row2["Id"] || row1["uploadStatus"] !== row2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
+            },
+
+            sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+
+        })
+        return { ret: ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) }
+    } catch (err) {
+        writeToLog("", constans.ERROR, `function AssembleTableDatasource - Failed! , items: ${JSON.stringify(items)}, uploadItems: ${JSON.stringify(uploadItems)}`, err)
     }
-    else if (totalFolders > 0 && totalFiles == 0) {
-        if (uploadItems.length > 0) {
-            dataBlob["ID1"] = `Uploads (${uploadItems.length})`
-            dataBlob["ID2"] = `Folders (${totalFolders})`
-            sectionIDs[0] = "ID1";
-            sectionIDs[1] = "ID2";
-            rowIDs[0] = [];
-            for (j = 0; j < uploadItems.length; j++) {
-                uploadItem = uploadItems[j];
-                rowIDs[0].push(uploadItem.Id);
-                dataBlob['ID1:' + uploadItem.Id] = uploadItem;
-            }
-            rowIDs[1] = [];
-            for (j = 0; j < folders.length; j++) {
-                folder = folders[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[1].push(folder.Id);
 
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID2:' + folder.Id] = folder;
-            }
-        }
-        else {
-            dataBlob["ID1"] = `Folders (${totalFolders})`
-            sectionIDs[0] = "ID1";
-            rowIDs[0] = [];
-            for (j = 0; j < folders.length; j++) {
-                folder = folders[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[0].push(folder.Id);
-
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID1:' + folder.Id] = folder;
-            }
-        }
-
-    }
-    else if (totalFiles > 0 && totalFolders == 0) {
-        if (uploadItems.length > 0) {
-            dataBlob["ID1"] = `Uploads (${uploadItems.length})`
-            dataBlob["ID2"] = `Files (${totalFiles})`
-            sectionIDs[0] = "ID1";
-            sectionIDs[1] = "ID2";
-            rowIDs[0] = [];
-            for (j = 0; j < uploadItems.length; j++) {
-                uploadItem = uploadItems[j];
-                rowIDs[0].push(uploadItem.Id);
-                dataBlob['ID1:' + uploadItem.Id] = uploadItem;
-            }
-            rowIDs[1] = [];
-            for (j = 0; j < documents.length; j++) {
-                document = documents[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[1].push(document.Id);
-
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID2:' + document.Id] = document;
-            }
-        }
-        else {
-            dataBlob["ID1"] = `Files (${totalFiles})`
-            sectionIDs[0] = "ID1";
-            rowIDs[0] = [];
-            for (j = 0; j < documents.length; j++) {
-                document = documents[j];
-                // Add Unique Row ID to RowID Array for Section
-                rowIDs[0].push(document.Id);
-
-                // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-                dataBlob['ID1:' + document.Id] = document;
-            }
-        }
-
-    }
-    else if (totalFiles == 0 && totalFolders == 0) {
-        if (uploadItems.length > 0) {
-
-            dataBlob["ID1"] = `Uploads (${uploadItems.length})`
-            sectionIDs[0] = "ID1";
-
-            rowIDs[0] = [];
-            for (j = 0; j < uploadItems.length; j++) {
-                uploadItem = uploadItems[j];
-                rowIDs[0].push(uploadItem.Id);
-                dataBlob['ID1:' + uploadItem.Id] = uploadItem;
-            }
-        }
-    }
-
-
-    var getSectionData = (dataBlob, sectionID) => {
-        return dataBlob[sectionID];
-
-    }
-    var getRowData = (dataBlob, sectionID, rowID) => {
-
-        return dataBlob[sectionID + ':' + rowID];
-
-    }
-
-    let ds = new ListView.DataSource({
-
-        getSectionData: getSectionData,
-
-        getRowData: getRowData,
-
-        rowHasChanged: (row1, row2) => {
-            row1["Id"] !== row2["Id"] || row1["uploadStatus"] !== row2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
-        },
-
-        sectionHeaderHasChanged: (s1, s2) => s1 !== s2
-
-    })
-
-    return { ret: ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) }
 
 }
 
@@ -345,15 +349,26 @@ export function fetchTableIfNeeded() {
         }
     }
 }
-export function refreshTable(documentlist: Object) {
+export function refreshTable(documentlist: Object, updateRouteData: boolean = true) {
     return (dispatch, getState) => {
-        const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
-        const {sessionToken, env, email} = getState().accessReducer;
-        writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
-        dispatch(navActions.updateRouteData(documentlist))
-        dispatch(Access.retrieveStatistics());
-        return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
+        try {
+            const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
+            const {sessionToken, env, email} = getState().accessReducer;
+            writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
+
+            if (updateRouteData) {
+                dispatch(navActions.updateRouteData(documentlist))
+            }
+            dispatch(Access.retrieveStatistics());
+            return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
+
+
+        }
+        catch (error) {
+            writeToLog(email, constans.ERROR, `function refreshTable - Failed to refreshTable - documentlist: ${JSON.stringify(documentlist)}`, error)
+        }
     }
+
 }
 
 export function initializeSearchBox(documentlist: Object) {
@@ -381,7 +396,7 @@ export function clearDocuments(documentlist: Object) {
 function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
 
     const activeDocumentsList = documentsReducer[documentlist.catId]
-    if (!activeDocumentsList || activeDocumentsList.nextUrl === false) {
+    if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == nul) {
         return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
     }
     return activeDocumentsList.nextUrl
@@ -438,12 +453,14 @@ function requestDocumentsList(documentlist: Object) {
 }
 
 function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
-  const activeDocumentsList = documentsReducer[documentlist.catId]
-  if (!activeDocumentsList || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
-    return true
-  }
+    const activeDocumentsList = documentsReducer[documentlist.catId]
 
-  return false
+    if (typeof (activeDocumentsList) == 'undefined' || activeDocumentsList.items.length == 0 || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
+        console.log("shouldFetchDocuments" + !activeDocumentsList + ",true")
+        return true
+    }
+    console.log("shouldFetchDocuments" + !activeDocumentsList + ",false")
+    return false
 }
 
 export function updateSelectedObject(id: string, familyCode: string, permissions: object) {
@@ -488,7 +505,7 @@ export function createFolder(folderName: string, isVault: boolean) {
                 }
                 else {
                     dispatch(UpdateCreateingFolderState(2))
-                    dispatch(refreshTable(documentlist))
+                    dispatch(refreshTable(documentlist, false))
 
                 }
 
@@ -518,11 +535,12 @@ export function downloadDocument(id: string, fileName: string, mimeType: string)
                 //downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
               //downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
                  //  console.log('downloadurl: ' + downloadUrl);
-                //alert(Android_Download_Path + "/" + fileName)
 
-                
+                //  downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
+                downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
+
                 RNFetchBlob.config({
-                //    path : Android_Download_Path + "/" + fileName,
+                    //    path : Android_Download_Path + "/" + fileName,
                     fileCache: true,
                     // android only options, these options be a no-op on IOS
                     addAndroidDownloads: {
@@ -569,7 +587,7 @@ function uploadFile(data, file) {
 
     return new Promise((resolve, reject) => {
         data.xhr.onerror = function(e) {
-           // console.log('error uploading: ' + JSON.stringify(e));
+            writeToLog("", constans.ERROR, `function uploadFile - error upload File - url: ${data.url}`, e)
             reject(e);
         };
         data.xhr.onreadystatechange = function() {
@@ -578,6 +596,7 @@ function uploadFile(data, file) {
                     resolve(data);
                 } else {
                     // failed with error messge from server
+                    writeToLog("", constans.ERROR, `function uploadFile - error upload File - url: ${data.url}  status:${data.xhr.status}`)
                     reject(data.xhr.status + ": " + data.url);
                 }
             }
@@ -587,6 +606,7 @@ function uploadFile(data, file) {
 
         data.xhr.upload.addEventListener('progress', function(e) {
             console.log('upload progress = ' + e.loaded + "/" + e.total);
+            writeToLog("", constans.DEBUG, `function uploadFile - upload progress = : ${e.loaded} /${e.total}`)
         }, false);
 
         //   var formData = new FormData(); 
@@ -622,32 +642,39 @@ export function clearDocumentList(catId: string) {
 
 export function removeUploadDocument(Id: string, catId: string) {
     return (dispatch, getState) => {
+        try {
+            const items = getState().documentsReducer[catId].items;
+            const totalFiles = getState().documentsReducer[catId].totalFiles;
+            const totalFolders = getState().documentsReducer[catId].totalFolders;
 
-        const items = getState().documentsReducer[catId].items;
-        const totalFiles = getState().documentsReducer[catId].totalFiles;
-        const totalFolders = getState().documentsReducer[catId].totalFolders;
+            var uploads = [...getState().documentsReducer[catId].uploadItems];
 
-        var uploads = [...getState().documentsReducer[catId].uploadItems];
+            var uploadObj = _.find(uploads, 'Id', Id);
+            //  uploadObj.xhr = null;
 
-        var uploadObj = _.find(uploads, 'Id', Id);
-        //  uploadObj.xhr = null;
+            _.remove(uploads, {
+                Id: Id
+            });
+            var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
+            dispatch(updateUploadDocument(datasource, uploads, catId));
 
-        _.remove(uploads, {
-            Id: Id
-        });
-        var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
-        dispatch(updateUploadDocument(datasource, uploads, catId));
-
-        var documentlist = getDocumentsContext(getState().navReducer);
-        if (documentlist.catId == catId) {
-            dispatch(refreshTable(documentlist));
+            var documentlist = getDocumentsContext(getState().navReducer);
+            if (catId == documentlist.catId) {
+                dispatch(refreshTable(documentlist, false));
+            }
+            else {
+                if (isDocumentsContextExists(getState().navReducer, catId)) {
+                    documentlist = getDocumentsContextByCatId(getState().navReducer, catId)
+                    dispatch(refreshTable(documentlist, false));
+                }
+                else {
+                    dispatch(clearDocumentList(catId));
+                }
+            }
         }
-        else {
-            dispatch(clearDocumentList(catId));
+        catch (err) {
+            writeToLog("", constans.ERROR, `function removeUploadDocument - Failed! `, err)
         }
-
-
-
     }
 
 }
@@ -655,16 +682,17 @@ export function removeUploadDocument(Id: string, catId: string) {
 
 function uploadDocumentObject(fileObject: object, uploadId: string) {
     return (dispatch, getState) => {
+
         var documentlist = getDocumentsContext(getState().navReducer);
         let uploadObj = _.find(getState().documentsReducer[documentlist.catId].uploadItems, { 'Id': uploadId });
-        const {sessionToken, env} = getState().accessReducer;
+        const {sessionToken, env, email} = getState().accessReducer;
 
         fetch(uploadObj.url)
             .then(response => response.json())
             .then(json => {
                 if (json.ResponseStatus == "FAILED") {
-
                     dispatch(emitToast("error", "failed to upload file"))
+                    writeToLog(email, constans.ERROR, `function uploadDocumentObject(0) - failed to upload file`)
                 }
                 else {
                     var AccessUrl = json.ResponseData.AccessUrl;
@@ -709,7 +737,8 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                         //  message = "Error. failed to update version"
                                         message = "File successfully uploaded"
                                         dispatch(navActions.emitToast("error", message));
-                                        //  writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${url}`, JSON.stringify(fileObject))
+                                        writeToLog(email, constans.ERROR, `function uploadToKenesto(1) - Error. failed to upload file 0, ${JSON.stringify(json)}`)
+                                        
                                     }
 
 
@@ -718,15 +747,17 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                 .catch((error) => {
                                     var userData = parseUploadUserData(json.UserData);
                                     dispatch(removeUploadDocument(userData.uploadId, userData.catId));
-                                    dispatch(navActions.emitToast("info", "Error. failed to upload file 1"))
-                                    writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${uploadObj.url}`, JSON.stringify(fileObject), error)
+                                    dispatch(navActions.emitToast("info", "Error. failed to upload file"))
+                                    writeToLog(email, constans.ERROR, `function uploadToKenesto(2) - Error. failed to upload file 1 - uploadId: ${userData.uploadId}`, error)
                                 })
 
                         })
                         .catch(err => {
                             var userData = parseUploadUserData(json.UserData);
                             dispatch(removeUploadDocument(userData.uploadId, userData.catId));
-                            dispatch(navActions.emitToast("error", "Error. failed to upload file 2"))
+                            dispatch(navActions.emitToast("error", "Error. failed to upload file"))
+                            writeToLog(email, constans.ERROR, `function uploadToKenesto(3) - Failed to upload file  2- url: ${uploadObj.url}`, err)
+
                         });
 
 
@@ -735,7 +766,8 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
             .catch((error) => {
                 var userData = parseUploadUserData(json.UserData);
                 dispatch(removeUploadDocument(userData.uploadId, userData.catId));
-                dispatch(navActions.emitToast("error", "Error. failed to upload file 3"))
+                dispatch(navActions.emitToast("error", "Error. failed to upload file"))
+                writeToLog(email, constans.ERROR, `function uploadToKenesto(4) - Failed to upload file  3- uploadId:${userData.uploadId}`, error)
             })
     }
 }
@@ -743,74 +775,92 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
 
 export function resumeUploadToKenesto(uploadId: string) {
     return (dispatch, getState) => {
-        var documentlist = getDocumentsContext(getState().navReducer);
-        let existingObj = _.find(getState().documentsReducer[documentlist.catId].uploadItems, { 'Id': uploadId });
-        dispatch(updateUploadItems(existingObj.Id,existingObj.catId, -1));
-        dispatch(uploadDocumentObject(existingObj.fileObject, existingObj.Id));
+        try {
+            const {email} = getState().accessReducer;
+            var documentlist = getDocumentsContext(getState().navReducer);
+            let existingObj = _.find(getState().documentsReducer[documentlist.catId].uploadItems, { 'Id': uploadId });
+            dispatch(updateUploadItems(existingObj.Id, existingObj.catId, -1));
+            dispatch(uploadDocumentObject(existingObj.fileObject, existingObj.Id));
+        }
+        catch (err) {
+            writeToLog(email, constans.ERROR, `function resumeUploadToKenesto - Failed! existingObj ${JSON.stringify(existingObj)}`, err)
+        }
     }
 }
 
 export function uploadToKenesto(fileObject: object, url: string) {
     return (dispatch, getState) => {
-        const uploadId = fileObject.name + "_" + Date.now();
-        var documentlist = getDocumentsContext(getState().navReducer);
-        if (url != '')
-            url = url + "&ud=" + constrcutUploadUSerData(encodeURIComponent(uploadId), encodeURIComponent(documentlist.catId));
+        try {
+            const uploadId = fileObject.name + "_" + Date.now();
+            var documentlist = getDocumentsContext(getState().navReducer);
+            if (url != '')
+                url = url + "&ud=" + constrcutUploadUSerData(encodeURIComponent(uploadId), encodeURIComponent(documentlist.catId));
 
-        const items = getState().documentsReducer[documentlist.catId].items;
-        const totalFiles = getState().documentsReducer[documentlist.catId].totalFiles;
-        const totalFolders = getState().documentsReducer[documentlist.catId].totalFolders;
-        var xhr = new XMLHttpRequest();
-        xhr.status = -1;
-        var newUploadItems = [...getState().documentsReducer[documentlist.catId].uploadItems, { Id: uploadId, catId: documentlist.catId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension: fileObject.fileExtension, uploadStatus: -1, xhr: xhr, fileObject: fileObject, url: url }];
-        var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
-        dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId));
-        dispatch(uploadDocumentObject(fileObject, uploadId));
-        
+            const items = getState().documentsReducer[documentlist.catId].items;
+            const totalFiles = getState().documentsReducer[documentlist.catId].totalFiles;
+            const totalFolders = getState().documentsReducer[documentlist.catId].totalFolders;
+            var xhr = new XMLHttpRequest();
+            xhr.status = -1;
+            var newUploadItems = [...getState().documentsReducer[documentlist.catId].uploadItems, { Id: uploadId, catId: documentlist.catId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension: fileObject.fileExtension, uploadStatus: -1, xhr: xhr, fileObject: fileObject, url: url }];
+            var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
+            dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId));
+            dispatch(uploadDocumentObject(fileObject, uploadId));
+
+        }
+        catch (err) {
+            writeToLog(email, constans.ERROR, `function uploadToKenesto - Failed! fileObject: ${JSON.stringify(fileObject)} url${url}`, err)
+        }
     }
 }
-
 export function updateDocumentVersion(catId: string, fileObject: object, url: string, baseFileId: string, isUploading: boolean) {
     return (dispatch, getState) => {
+        try {
+            if (url != '')
+                url = url + "&ud=" + constrcutUploadUSerData(encodeURIComponent(baseFileId), encodeURIComponent(catId));
 
-        if (url != '')
-            url = url + "&ud=" + constrcutUploadUSerData(encodeURIComponent(baseFileId), encodeURIComponent(catId));
-
-        const items = getState().documentsReducer[catId].items;
-        const uploadItems = getState().documentsReducer[catId].uploadItems;
-        const totalFiles = getState().documentsReducer[catId].totalFiles;
-        const totalFolders = getState().documentsReducer[catId].totalFolders;
-        var xhr = new XMLHttpRequest();
-        xhr.status = -1;
-        for (var i = 0; i < items.length; i++) {
-            if (items[i].Id == baseFileId) {
-                items[i].IsUploading = isUploading;
-                items[i].UploadUrl = url,
-                items[i].xhr = xhr,
-                items[i].fileObject = fileObject
+            const items = getState().documentsReducer[catId].items;
+            const uploadItems = getState().documentsReducer[catId].uploadItems;
+            const totalFiles = getState().documentsReducer[catId].totalFiles;
+            const totalFolders = getState().documentsReducer[catId].totalFolders;
+            var xhr = new XMLHttpRequest();
+            xhr.status = -1;
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].Id == baseFileId) {
+                    items[i].IsUploading = isUploading;
+                    items[i].UploadUrl = url,
+                        items[i].xhr = xhr,
+                        items[i].fileObject = fileObject
+                }
             }
-        }
 
-        var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
-        dispatch(updateItemsState(datasource, items, catId));
+            var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
+            dispatch(updateItemsState(datasource, items, catId));
 
-        if (isUploading) {
-            dispatch(uploadNewVersion(fileObject, baseFileId));
-        }
-        else {
-            var documentlist = getDocumentsContext(getState().navReducer);
-
-            if (documentlist.catId == catId) {
-                dispatch(refreshTable(documentlist));
+            if (isUploading) {
+                dispatch(uploadNewVersion(fileObject, baseFileId));
             }
             else {
-                dispatch(clearDocumentList(catId));
+                var documentlist = getDocumentsContext(getState().navReducer);
+                if (catId == documentlist.catId) {
+                    dispatch(refreshTable(documentlist, false));
+                }
+                else {
+                    if (isDocumentsContextExists(getState().navReducer, catId)) {
+                        documentlist = getDocumentsContextByCatId(getState().navReducer, catId)
+                        dispatch(refreshTable(documentlist, false));
+                    }
+                    else {
+                        dispatch(clearDocumentList(catId));
+                    }
+                }
             }
-        }
 
+        }
+        catch (err) {
+            writeToLog(email, constans.ERROR, `function uploadToKenesto - Failed! fileObject: ${JSON.stringify(fileObject)} url${url}`, err)
+        }
     }
 }
-
 function uploadNewVersion(fileObject: object, baseFileId: string) {
     return (dispatch, getState) => {
         var documentlist = getDocumentsContext(getState().navReducer);
@@ -822,6 +872,7 @@ function uploadNewVersion(fileObject: object, baseFileId: string) {
                 if (json.ResponseStatus == "FAILED") {
 
                     dispatch(emitToast("error", "failed to upload file"))
+                    writeToLog(email, constans.ERROR, `function uploadDocumentVersion(0) -failed to upload file, UploadUrl: ${uploadObj.UploadUrl}`, error)
                 }
                 else {
                     var AccessUrl = json.ResponseData.AccessUrl;
@@ -849,30 +900,28 @@ function uploadNewVersion(fileObject: object, baseFileId: string) {
                                     //alert(finalUploadId)
                                     dispatch(updateDocumentVersion(finalCatId, fileObject, "", finalUploadId, false));
                                     if (json.ResponseStatus == 'OK') {
-                                       let message = "Successfully updated document version"
+                                        let message = "Successfully updated document version"
                                         dispatch(navActions.emitToast("info", message));
                                     }
                                     else {
-                                       let message = "Error. failed to update version"
+                                        let message = "Error. failed to update version"
                                         dispatch(navActions.emitToast("error", message));
-                                        writeToLog(email, constans.ERROR, `function uploadNewVersion - Failed to upload file to kenesto - AccessUrl: ${AccessUrl}`, JSON.stringify(fileObject))
-                                    }                                    
+                                        writeToLog(email, constans.ERROR, `function uploadNewVersion(1) - Failed to upload file to kenesto - AccessUrl: ${AccessUrl}`, JSON.stringify(fileObject))
+                                    }
 
 
 
                                 })
                                 .catch((error) => {
-                                    writeToLog(email, constans.ERROR, `function uploadDocumentVersion -failed to upload file`, error)
+                                    writeToLog(email, constans.ERROR, `function uploadDocumentVersion(2) -failed to upload file`, error)
                                     var userData = parseUploadUserData(json.UserData);
                                     dispatch(updateDocumentVersion(userData.catId, fileObject, "", userData.uploadId, false));
-
                                     dispatch(navActions.emitToast("error", "Error. failed to update version"))
-                                    writeToLog(env, sessionToken, constans.ERROR, `function uploadToKenesto - Failed to upload file to kenesto - url: ${uthisCompletedUrl}`, error)
                                 })
 
                         })
                         .catch(err => {
-                            writeToLog(email, constans.ERROR, `function uploadDocumentVersion -failed to upload file`, err)
+                            writeToLog(email, constans.ERROR, `function uploadDocumentVersion(3) -failed to upload file`, err)
                             var userData = parseUploadUserData(json.UserData);
                             dispatch(updateDocumentVersion(userData.catId, fileObject, "", userData.uploadId, false));
                             dispatch(navActions.emitToast("error", "Error. failed to update version"))
@@ -882,7 +931,7 @@ function uploadNewVersion(fileObject: object, baseFileId: string) {
                 }
             })
             .catch((error) => {
-                writeToLog(email, constans.ERROR, `function uploadDocumentVersion -failed to upload file`, error)
+                writeToLog(email, constans.ERROR, `function uploadDocumentVersion(4) -failed to upload file`, error)
                 var userData = parseUploadUserData(json.UserData);
                 dispatch(updateDocumentVersion(userData.catId, fileObject, "", userData.uploadId, false));
                 dispatch(navActions.emitToast("error", "Error. failed to update version"))
@@ -909,7 +958,7 @@ export function deleteAsset(id: string, familyCode: string) {
                 else {
                     dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
                     var documentlist = getDocumentsContext(getState().navReducer);
-                    dispatch(refreshTable(documentlist))
+                    dispatch(refreshTable(documentlist, false))
                 }
             })
             .catch((error) => {
@@ -937,7 +986,7 @@ export function deleteFolder(id: string) {
                 else {
                     dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
                     var documentlist = getDocumentsContext(getState().navReducer);
-                    dispatch(refreshTable(documentlist))
+                    dispatch(refreshTable(documentlist, false))
                 }
             })
             .catch((error) => {
@@ -1170,7 +1219,7 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
                 }
                 else {
                     dispatch(updateIsFetching(false));
-                    dispatch(refreshTable(documentlist));
+                    dispatch(refreshTable(documentlist, false));
                     dispatch(navActions.emitToast("success", "folder successfully updated.", ""));
                     dispatch(navActions.clearToast());
                 }
@@ -1202,7 +1251,7 @@ export function EditDocument(documentId: string, documentName: string) {
                 }
                 else {
                     dispatch(updateIsFetching(false));
-                    dispatch(refreshTable(documentlist));
+                    dispatch(refreshTable(documentlist, false));
                     dispatch(navActions.emitToast("success", "document successfully updated.", ""));
                     dispatch(navActions.clearToast());
                 }
@@ -1297,36 +1346,26 @@ export function updateItemsState(datasource: object, items: object, catId: strin
 export function updateUploadItems(uploadId: string, catId: string, status: number) {
 
     return (dispatch, getState) => {
-
-      //console.log('baba 3');
-      
-
-        const items = getState().documentsReducer[catId].items;
-        const uploadItems = getState().documentsReducer[catId].uploadItems;
-        const totalFiles = getState().documentsReducer[catId].totalFiles;
-        const totalFolders = getState().documentsReducer[catId].totalFolders;
-
-     //   var documentlist = getDocumentsContext(getState().navReducer);
-      //  var uploadItems = getState().documentsReducer[documentlist.catId].uploadItems;
-
-        var obj = _.find(uploadItems,
-            { 'Id': uploadId }
-        );
-
-        obj.uploadStatus = status
-
-        // _.remove(uploadItems, {
-        //     Id: action.uploadId
-        // });
-
-        // uploadItems.push(obj)
-
-          var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
-
-        dispatch(updateUploadItemsState(datasource, uploadItems, catId));
+        try {
+            const items = getState().documentsReducer[catId].items;
+            const uploadItems = getState().documentsReducer[catId].uploadItems;
+            const totalFiles = getState().documentsReducer[catId].totalFiles;
+            const totalFolders = getState().documentsReducer[catId].totalFolders;
 
 
+            var obj = _.find(uploadItems,
+                { 'Id': uploadId }
+            );
+
+            obj.uploadStatus = status
+
+            var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
+
+            dispatch(updateUploadItemsState(datasource, uploadItems, catId));
+
+        } catch (err) {
+            writeToLog("", constans.ERROR, `function updateUploadItems - Failed! , uploadId: ${JSON.stringify(uploadId)}, catId: ${JSON.stringify(catId)}`, err)
+        }
     }
-
 }
 
