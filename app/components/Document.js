@@ -69,7 +69,10 @@ class Document extends React.Component{
 
  componentDidMount() {
     this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-  }
+
+
+  setTimeout(() => {  this.changeVideoOrientation("LANDSCAPE");}, 4000)
+ }
 
 componentWillMount(){
     if(this.props.data.isExternalLink)
@@ -142,6 +145,7 @@ componentWillMount(){
     this.setState({
       orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
     })
+    this.changeVideoOrientation("orientation");
   }
   
   componentWillUnmount(){
@@ -199,34 +203,48 @@ onBridgeMessage(message){
 
   }
   setZoom(){
-    alert('wawa');
       const { webviewbridge } = this.refs;
       webviewbridge.sendToBridge("setZoom");
+  }
+  changeVideoOrientation(orientation: string){
+      const { webviewbridge } = this.refs;
+      var message = orientation == "PORTRAIT"? "oreintationChanged_portrait" : "oreintationChanged_lanscape";
+      //alert('message to send: ' + message);
+      webviewbridge.sendToBridge(message);
   }
 
 
 
   render(){
-    const injectScript = `
-       (function () {
-                  if (WebViewBridge) {
-                    WebViewBridge.onMessage = function (message) {
-                        switch (message) {
-                          case "zoomIn":
-                                activateZoomIn();
-                            break;
-                          case "zoomOut":
-                                  activateZoomOut();
-                            break;
-                           case "setZoom":
-                                  activateSetZoom(100);
-                            break;
-                        }
-                    }
-                  }
-                  }());
-`;
 
+    const injectScript = `
+      (function () {
+              if (WebViewBridge)
+                   WebViewBridge.onMessage = function (message) {
+                          switch (message) {
+                                    case "zoomIn":
+                                        activateZoomIn();
+                                    break;
+                                    case "zoomOut":
+                                            activateZoomOut();
+                                    break;
+                                    case "setZoom":
+                                            activateSetZoom(100);
+                                    break;
+                                    case "oreintationChanged_portrait":
+                                        orientationChanged("PORTRAIT");
+                                        break;
+                                    case "oreintationChanged_lanscape":
+                                            orientationChanged("LANDSCAPE");
+                                        break;
+                                }
+                        
+
+                   }
+                 
+       }());
+    
+    `; 
     return(
 
     
@@ -236,7 +254,7 @@ onBridgeMessage(message){
            
           </View>
           <View style={{flex: 1, backgroundColor: 'transparent', }}
-            {...this.gestureResponder}>
+             {...this.gestureResponder}>
             <WebViewBridge
               ref="webviewbridge"
               style={styles.webview_body}

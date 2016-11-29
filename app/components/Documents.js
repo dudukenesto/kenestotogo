@@ -24,7 +24,7 @@ import * as constans from '../constants/GlobalConstans'
 import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
-import {getIconNameFromMimeType} from '../utils/documentsUtils'
+import {getDownloadFileUrl} from '../utils/documentsUtils'
 import { writeToLog } from '../utils/ObjectUtils'
 
 let deviceWidth = Dimensions.get('window').width
@@ -120,22 +120,80 @@ class Documents extends Component {
 
     }
     else {
-      var data = {
-        key: "document",
-        name: document.Name,
-        documentId: document.Id,
-        catId: documentlist.catId,
-        fId: documentlist.fId,
-        viewerUrl: document.ViewerUrl, 
-        isExternalLink : document.IsExternalLink,
-        isVault:document.IsVault,
+      if (document.MimeType.indexOf('video') > -1)
+      {
+        // fetch(getDownloadFileUrl(this.props.env, this.props.sessionToken, document.Id))
+        // .then(
+            
+        // )
+            var url = getDownloadFileUrl(this.props.env, this.props.sessionToken, document.Id);
 
-        env: this.props.env
+            fetch(url)
+            .then(response => response.json())
+            .then(json => {
+                var downloadUrl = json.ResponseData.AccessUrl;
+              var orientation = 'PORTRAIT';
+                   var downloadUrl = json.ResponseData.AccessUrl;
+               var longDimension = deviceWidth > deviceHeight ? deviceWidth :deviceHeight;
+                var shortDimension = deviceHeight > deviceWidth ? deviceWidth : deviceHeight;
+                var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
+                var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
+            
+               // alert('shortDimension = ' + shortDimension + 'deviceWidth = ' + deviceWidth + ' deviceHeight = ' + deviceHeight)
+                  document.ViewerUrl = 'http://10.0.0.184/video?h=' + height + '&w=' + width +  '&vu='  + encodeURIComponent(downloadUrl);
+                    console.log(' document.ViewerUrl  = ' +  document.ViewerUrl )
+
+                //  document.ViewerUrl = 'http://10.0.0.184/video?vu='  +  encodeURIComponent(downloadUrl);
+                            var data = {
+                      key: "document",
+                      name: document.Name,
+                      documentId: document.Id,
+                      catId: documentlist.catId,
+                      fId: documentlist.fId,
+                      viewerUrl: document.ViewerUrl, 
+                      isExternalLink : document.IsExternalLink,
+                      isVault:document.IsVault,
+
+                      env: this.props.env
+                    }
+                    this.props._handleNavigate(routes.documentRoute(data));
+
+
+
+            }).catch(error => {
+
+              alert('error: ' + error)
+             //   dispatch(navActions.emitToast('error downloading document'))
+              //  writeToLog(email, constans.ERROR, `function downloadDocument - error downloading document - url: ${url}`, error)
+
+            })
+            .done();
+            
+         
+
       }
-      this.props._handleNavigate(routes.documentRoute(data));
+      else{
+             var data = {
+              key: "document",
+              name: document.Name,
+              documentId: document.Id,
+              catId: documentlist.catId,
+              fId: documentlist.fId,
+              viewerUrl: document.ViewerUrl, 
+              isExternalLink : document.IsExternalLink,
+              isVault:document.IsVault,
 
-    }
+              env: this.props.env
+            }
+            this.props._handleNavigate(routes.documentRoute(data));
 
+      }
+       
+
+     
+    
+
+  }
   }
 
   onSearchChange(event) {
