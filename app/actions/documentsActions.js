@@ -4,6 +4,7 @@ import * as Access from '../actions/Access'
 import * as peopleActions from '../actions/peopleActions'
 import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
+//var mime = require('mime-types')
 import {
     constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
     getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
@@ -517,7 +518,7 @@ export function createFolder(folderName: string, isVault: boolean) {
 }
 
 
-export function downloadDocument(id: string, fileName: string) {
+export function downloadDocument(id: string, fileName: string, mimeType: string) {
     return (dispatch, getState) => {
         const {sessionToken, env, email} = getState().accessReducer;
         //dispatch(updateIsFetching(true)); 
@@ -528,10 +529,14 @@ export function downloadDocument(id: string, fileName: string) {
             .then(response => response.json())
             .then(json => {
                 var downloadUrl = json.ResponseData.AccessUrl;
+               
+              //  config.log('document mime type = ' + mime.lookup(fileName))
+                //downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
+              //downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
+                 //  console.log('downloadurl: ' + downloadUrl);
+
                 //  downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
                 downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
-                //  console.log('downloadurl: ' + downloadUrl);
-                //alert(Android_Download_Path + "/" + fileName)
 
                 RNFetchBlob.config({
                     //    path : Android_Download_Path + "/" + fileName,
@@ -539,21 +544,32 @@ export function downloadDocument(id: string, fileName: string) {
                     // android only options, these options be a no-op on IOS
                     addAndroidDownloads: {
                         useDownloadManager: true,
+                       mime: mimeType,
+                        //mime : 'image/png',
                         // Show notification when response data transmitted
                         notification: true,
                         // Title of download notification
                         title: fileName,
                         // File description (not notification description)
                         description: 'Download completed',
-                        // mime : 'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                       //  mime : 'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                         // Make the file scannable  by media scanner
                         meidaScannable: true,
+                      
                     }
                 })
                     .fetch('GET', downloadUrl)
                     .then((res) => {
+                                RNFetchBlob.android.actionViewIntent( res.path(), 'image/jpg')
+                    }
+                    // RNFetchBlob.fs.scanFile([ { path : res.path(), mime : 'audio/mpeg' } ]
+                    
+                    // )
+                    )
 
-                    })
+                            .catch((err) => {
+                                // scan file error
+                            })
 
             }).catch(error => {
                 dispatch(navActions.emitToast('error downloading document'))
