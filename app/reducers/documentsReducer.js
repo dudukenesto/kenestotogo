@@ -19,8 +19,8 @@ function documentlist(state = initDocumentList(), action) {
     case types.UPDATE_UPLOAD_LIST:
       return {
         ...state,
-        dataSource: action.datasource,
-        uploadItems: action.uploadItems
+        dataSource:  action.datasource,
+        uploadItems:  action.uploadItems
       }
     case types.UPDATE_UPLOAD_ITEM:
       return {
@@ -62,7 +62,8 @@ function documentlist(state = initDocumentList(), action) {
         dataSource: action.dataSource,
         nextUrl: action.nextUrl,
         hasError: false,
-        errorMessage: ''
+        errorMessage: '',
+        lastUploadId: action.lastUploadId
       }
 
     default:
@@ -182,5 +183,6 @@ function initDocumentList() {
     hasError: false,
     dataSource: {},
     sharingPermissions: null,
+    lastUploadId:''
   }
 }

@@ -10,7 +10,7 @@ import {
     getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl,
     getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl,
     getDocumentlistByCatId, getEditDocumentUrl, getDiscardCheckOutDocumentUrl, parseUploadUserData, constrcutUploadUSerData,
-    isDocumentsContextExists, getDocumentsContextByCatId
+    isDocumentsContextExists, getDocumentsContextByCatId, getDocumentIdFromUploadUrl
 } from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
@@ -331,7 +331,6 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
             .catch((error) => {
                 dispatch(navActions.emitError("Failed to retrieve documents", ""))
                 writeToLog(email, constans.ERROR, `function fetchDocumentsTable - Failed to retrieve documents - url: ${url}`, error)
-
             })
     }
 }
@@ -344,6 +343,7 @@ export function fetchTableIfNeeded() {
         const {documentsReducer} = getState()
         if (shouldFetchDocuments(documentsReducer, documentlist)) {
             const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentsReducer, documentlist)
+            dispatch(updateLastUploadId(documentlist.catId, ""));
             return dispatch(fetchDocumentsTable(nextUrl, documentlist, types.RECEIVE_DOCUMENTS))
         }
     }
@@ -395,7 +395,7 @@ export function clearDocuments(documentlist: Object) {
 function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
 
     const activeDocumentsList = documentsReducer[documentlist.catId]
-    if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == nul) {
+    if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl =="false" || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == null || activeDocumentsList.nextUrl == 'null') {
         return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
     }
     return activeDocumentsList.nextUrl
@@ -455,10 +455,9 @@ function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
     const activeDocumentsList = documentsReducer[documentlist.catId]
 
     if (typeof (activeDocumentsList) == 'undefined' || activeDocumentsList.items.length == 0 || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
-        console.log("shouldFetchDocuments" + !activeDocumentsList + ",true")
         return true
     }
-    console.log("shouldFetchDocuments" + !activeDocumentsList + ",false")
+    
     return false
 }
 
@@ -599,12 +598,13 @@ function uploadFile(data, file) {
     });
 }
 
-export function updateUploadDocument(datasource: object, uploadItems: object, catId: string) {
+export function updateUploadDocument(datasource: object, uploadItems: object, catId: string, documentId: string="") {
     return {
         type: types.UPDATE_UPLOAD_LIST,
         datasource,
         uploadItems,
-        catId
+        catId,
+        lastUploadId:documentId
     }
 }
 
@@ -624,7 +624,7 @@ export function clearDocumentList(catId: string) {
     }
 }
 
-export function removeUploadDocument(Id: string, catId: string) {
+export function removeUploadDocument(Id: string, catId: string, documentId: string="") {
     return (dispatch, getState) => {
         try {
             const items = getState().documentsReducer[catId].items;
@@ -640,7 +640,7 @@ export function removeUploadDocument(Id: string, catId: string) {
                 Id: Id
             });
             var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
-            dispatch(updateUploadDocument(datasource, uploads, catId));
+            dispatch(updateUploadDocument(datasource, uploads, catId, documentId));
 
             var documentlist = getDocumentsContext(getState().navReducer);
             if (catId == documentlist.catId) {
@@ -692,7 +692,7 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                 return;
                             }
                             const thisCompletedUrl = getUploadFileCompletedUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, data.url, constrcutUploadUSerData(encodeURIComponent(data.uploadId), encodeURIComponent(data.catId)));
-
+                            const documentId = getDocumentIdFromUploadUrl(thisCompletedUrl);
                             fetch(thisCompletedUrl)
                                 .then(response => response.json())
                                 .then(json => {
@@ -701,7 +701,7 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                     var finalUploadId = userData.uploadId;
                                     var finalCatId = userData.catId;
                                     //alert(finalUploadId)
-                                    dispatch(removeUploadDocument(finalUploadId, finalCatId));
+                                    dispatch(removeUploadDocument(finalUploadId, finalCatId, documentId));
                                     if (json.ResponseStatus == 'OK') {
 
                                         let message = ""
@@ -787,7 +787,7 @@ export function uploadToKenesto(fileObject: object, url: string) {
             xhr.status = -1;
             var newUploadItems = [...getState().documentsReducer[documentlist.catId].uploadItems, { Id: uploadId, catId: documentlist.catId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension: fileObject.fileExtension, uploadStatus: -1, xhr: xhr, fileObject: fileObject, url: url }];
             var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
-            dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId));
+            dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId, ""));
             dispatch(uploadDocumentObject(fileObject, uploadId));
 
         }
@@ -1309,6 +1309,13 @@ export function ShareDocument() {
 }
 
 
+export function updateLastUploadId(lastUploadId: object, catId: string) {
+    return {
+        type: types.UPDATE_LAST_UPLOAD_ID,
+        lastUploadId,
+        catId
+    }
+}
 export function updateUploadItemsState(datasource: object, uploadItems: object, catId: string) {
     return {
         type: types.UPDATE_UPLOAD_ITEM,

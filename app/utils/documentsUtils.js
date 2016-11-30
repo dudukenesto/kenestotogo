@@ -1,4 +1,4 @@
-import {config} from './app.config'
+import { config } from './app.config'
 import _ from 'lodash'
 import stricturiEncode from 'strict-uri-encode'
 import * as constans from '../constants/GlobalConstans'
@@ -197,17 +197,26 @@ export function getSelectedDocument(documentsReducer: Object, navReducer: Object
 
 export function getFileUploadUrl(env: string, sessionToken: string, path: string, fileDescription: string = "", fileKeyword: string = "", folderId: string = '00000000-0000-0000-0000-000000000000', baseFileId: string = '00000000-0000-0000-0000-000000000000') {
   const urls = _.find(config.urls, { 'env': env });
-   const apiBaseUrl = urls.ApiBaseUrl; 
-   folderId = (typeof (folderId) == 'undefined' || folderId == null || folderId == '') ? '00000000-0000-0000-0000-000000000000' : folderId;
-   baseFileId = (typeof (baseFileId) == 'undefined' || baseFileId == null || baseFileId == '') ? '00000000-0000-0000-0000-000000000000' : baseFileId;
-   return  `${apiBaseUrl}/KDocuments.svc/UploadFile?t=${sessionToken}&p=${path}&fd=${fileDescription}&fk=${fileKeyword}&fid=${folderId}&bid=${baseFileId}`;
+  const apiBaseUrl = urls.ApiBaseUrl;
+  folderId = (typeof (folderId) == 'undefined' || folderId == null || folderId == '') ? '00000000-0000-0000-0000-000000000000' : folderId;
+  baseFileId = (typeof (baseFileId) == 'undefined' || baseFileId == null || baseFileId == '') ? '00000000-0000-0000-0000-000000000000' : baseFileId;
+  return `${apiBaseUrl}/KDocuments.svc/UploadFile?t=${sessionToken}&p=${path}&fd=${fileDescription}&fk=${fileKeyword}&fid=${folderId}&bid=${baseFileId}`;
 }
 
-export function getUploadFileCompletedUrl(env: string, sessionToken: string,url: string, userData: string = ''){
+export function getUploadFileCompletedUrl(env: string, sessionToken: string, url: string, userData: string = '') {
 
-   const urls = _.find(config.urls, { 'env': env });
-   const apiBaseUrl = urls.ApiBaseUrl; 
-     return  `${apiBaseUrl}/KDocuments.svc/UploadFileCompleted?t=${sessionToken}&u=${url}&ud=${userData}`;
+  const urls = _.find(config.urls, { 'env': env });
+  const apiBaseUrl = urls.ApiBaseUrl;
+  return `${apiBaseUrl}/KDocuments.svc/UploadFileCompleted?t=${sessionToken}&u=${url}&ud=${userData}`;
+}
+
+export function getDocumentIdFromUploadUrl(url) {
+  var str = url.substring(url.indexOf("Temp/"));
+  var res = str.split("/");
+  if (res.length > 3) {
+    return res[2];
+  }
+  return "";
 }
 
 export function getDownloadFileUrl(env: string, sessionToken: string, assetId: string, userData: string = '') {
@@ -258,13 +267,12 @@ export function getDiscardCheckOutDocumentUrl(env: string, sessionToken: string,
 export function getIconNameFromExtension(extension: string) {
   var iconName = "";
   var customStyle = "";
-  
-  if (typeof (extension) == 'undefined' || extension == "") 
-  {
+
+  if (typeof (extension) == 'undefined' || extension == "") {
     return {
-        iconName: "file",
-        customStyle: ""
-      }
+      iconName: "file",
+      customStyle: ""
+    }
   }
 
   switch (extension.toLowerCase()) {
@@ -436,22 +444,21 @@ export function getIconNameFromMimeType(mimeType: string) {
     default:
       iconName = "file";
   }
-  
+
   return iconName;
 }
 
-export function parseUploadUserData(userData: string)
-{
-    if (typeof (userData) == 'undefined' || userData == null || userData == '')
-          return { uploadId : '', catId: ''}; 
-    var items = userData.split('~'); 
-    if (items.length < 2)
-      return { uploadId : '', catId: ''}; 
+export function parseUploadUserData(userData: string) {
+  if (typeof (userData) == 'undefined' || userData == null || userData == '')
+    return { uploadId: '', catId: '' };
+  var items = userData.split('~');
+  if (items.length < 2)
+    return { uploadId: '', catId: '' };
 
-   return { uploadId : items[0], catId: items[1]};
+  return { uploadId: items[0], catId: items[1] };
 
 }
 
-export function constrcutUploadUSerData(uploadId: string, catId: string){
-      return uploadId + '~' + catId; 
+export function constrcutUploadUSerData(uploadId: string, catId: string) {
+  return uploadId + '~' + catId;
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import {View,
+import {
+  View,
   ScrollView,
   Text,
   TextInput,
@@ -14,17 +15,17 @@ import {View,
   ActivityIndicator,
   RefreshControl
 } from 'react-native'
-import {emitToast, clearToast} from '../actions/navActions'
+import { emitToast, clearToast } from '../actions/navActions'
 
 import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { createIconSetFromFontello } from  'react-native-vector-icons'
+import { createIconSetFromFontello } from 'react-native-vector-icons'
 import fontelloConfig from '../assets/icons/config.json';
 import * as constans from '../constants/GlobalConstans'
 import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
-import {getIconNameFromMimeType} from '../utils/documentsUtils'
+import { getIconNameFromMimeType } from '../utils/documentsUtils'
 import { writeToLog } from '../utils/ObjectUtils'
 
 let deviceWidth = Dimensions.get('window').width
@@ -39,13 +40,13 @@ const splitChars = '|';
 
 
 import _ from "lodash";
-import {fetchTableIfNeeded, refreshTable} from '../actions/documentsActions'
+import { fetchTableIfNeeded, refreshTable } from '../actions/documentsActions'
 import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
 
-import {getDocumentsContext, getDocumentsTitle} from '../utils/documentsUtils'
+import { getDocumentsContext, getDocumentsTitle } from '../utils/documentsUtils'
 
 class Documents extends Component {
   constructor(props) {
@@ -80,8 +81,26 @@ class Documents extends Component {
     dispatch(fetchTableIfNeeded())
   }
 
-  componentDidUpdate() {
+  componentDidUpdate( prevProps,  prevState) {
+    const {documentsReducer, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
     this._showStatusBar()
+
+    if (documentlist.catId in documentsReducer) {
+      if (documentsReducer[documentlist.catId].uploadItems.length > 0) {
+        this.scrollToTop()
+      }
+      // else if (documentsReducer[documentlist.catId].lastUploadId != "") {
+      //   alert(JSON.stringify(this.props.documentsReducer[documentlist.catId].lastUploadId)+",  "+JSON.stringify(prevProps.documentsReducer[documentlist.catId].lastUploadId))
+      //   this.scrollToItem(documentsReducer[documentlist.catId].lastUploadId)
+      // }
+      // else
+      // {
+      //   this.scrollToTop() 
+      // }
+    }
+
+
   }
 
   onEndReached() {
@@ -114,7 +133,7 @@ class Documents extends Component {
         fId: fId,
         sortDirection: constans.ASCENDING,
         sortBy: constans.ASSET_NAME,
-        isVault:document.IsVault
+        isVault: document.IsVault
       }
       this.props._handleNavigate(routes.documentsRoute(data));
 
@@ -126,9 +145,9 @@ class Documents extends Component {
         documentId: document.Id,
         catId: documentlist.catId,
         fId: documentlist.fId,
-        viewerUrl: document.ViewerUrl, 
-        isExternalLink : document.IsExternalLink,
-        isVault:document.IsVault,
+        viewerUrl: document.ViewerUrl,
+        isExternalLink: document.IsExternalLink,
+        isVault: document.IsVault,
 
         env: this.props.env
       }
@@ -155,7 +174,7 @@ class Documents extends Component {
       style = [style, styles.rowSeparatorHide];
     }
     return (
-      <View key={'SEP_' + sectionID + '_' + rowID}  style={style}/>
+      <View key={'SEP_' + sectionID + '_' + rowID} style={style} />
     );
   }
 
@@ -201,124 +220,143 @@ class Documents extends Component {
     //this.refs.modal3.open();
     this.context.plusMenuContext.open();
   }
-  
-  scrollToTop(){
+
+  scrollToTop() {
     const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
+    if (documentsReducer[documentlist.catId].uploadItems.length > 0) {
+      var uploadingScrollPosition = documentsReducer[documentlist.catId].uploadItems.length > 3 ? (documentsReducer[documentlist.catId].uploadItems.length - 1) * 67 + 52 : 0;
+      this.refs.listview.scrollTo({ y: uploadingScrollPosition })
+    }
 
-    var uploadingScrollPosition = documentsReducer[documentlist.catId].uploadItems.length > 3 ? (documentsReducer[documentlist.catId].uploadItems.length-1)*67+52 : 0;
-    this.refs.listview.scrollTo({y: uploadingScrollPosition})
   }
-  
-  scrollToItem(id){
-    const {documentsReducer, navReducer} = this.props;
-    const documents = this.props.documentsReducer.MY_DOCUMENTS.items;
-    const document = documents.find(d => (d.Id === id));
-    const index = documents.indexOf(document);
-    const sectionHeaderHeights = index > 0 && documents[0].FamilyCode != document.FamilyCode ? 104 : 52
-    const position = index * 67 + sectionHeaderHeights;
-    this.refs.listview.scrollTo({y: position});
+
+  scrollToItem(id) {
+    const {documentsReducer, navReducer, dispatch} = this.props;
+    var documentlist = getDocumentsContext(navReducer);
+    try {
+        const documents = documentsReducer[documentlist.catId].items;
+        const document = documents.find(d => (d.Id === id));
+        if(typeof (document) != 'undefined')
+        {
+       
+          const index = documents.indexOf(document);
+          const sectionHeaderHeights = index > 0 && documents[0].FamilyCode != document.FamilyCode ? 104 : 52
+          const position = index * 67 + sectionHeaderHeights;
+          this.refs.listview.scrollTo({ y: position });
+        }
+
+    }
+    catch (err) {
+      writeToLog("", constans.ERROR, `function scrollToItem - Failed! `, err)
+    }
+     
   }
-  
- 
+
+
   _renderTableContent(isFetching) {
 
     const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     var itemsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].items.length : 0;
-    
-    var uploadsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].uploadItems.length : 0;
-    itemsLength+=uploadsLength;
-    let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => {
-      r1["Id"] !== r2["Id"] ||  r1["uploadStatus"] !== r2["uploadStatus"] ||  r1["IsUploading"] !== r2["IsUploading"] }   })
-    let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]); 
 
-   //itemsLength+= documentsReducer[documentlist.catId].uploadItems.length;
+    var uploadsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].uploadItems.length : 0;
+    itemsLength += uploadsLength;
+    let ds = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => {
+        r1["Id"] !== r2["Id"] || r1["uploadStatus"] !== r2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
+      }
+    })
+    let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]);
+
+    //itemsLength+= documentsReducer[documentlist.catId].uploadItems.length;
 
 
     if (itemsLength == 0) {
 
-        return (<NoDocuments
-          filter={this.state.filter}
-          isFetching={isFetching}
-          onRefresh={this._onRefresh.bind(this) }
-          documentlist={documentlist}/>)
+      return (<NoDocuments
+        filter={this.state.filter}
+        isFetching={isFetching}
+        onRefresh={this._onRefresh.bind(this)}
+        documentlist={documentlist} />)
     }
     else {
-  
+
       return (
-          <ListView
-            ref="listview"
-            refreshControl={
-              <RefreshControl
-                refreshing={isFetching}
-                onRefresh={this._onRefresh.bind(this) }
-                />
-            }
-            enableEmptySections={true}
-            renderSeparator={this.renderSeparator}
-            dataSource={dataSource}
-            renderSectionHeader={this._renderSectionHeader.bind(this) }
-            renderRow={(document, sectionID, rowID, highlightRowFunc) => {
+        <ListView
+          ref="listview"
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={this._onRefresh.bind(this)}
+              />
+          }
+          enableEmptySections={true}
+          renderSeparator={this.renderSeparator}
+          dataSource={dataSource}
+          renderSectionHeader={this._renderSectionHeader.bind(this)}
+          renderRow={(document, sectionID, rowID, highlightRowFunc) => {
 
-           
-              
-              var documentCell = document.FamilyCode == 'UPLOAD_PROGRESS'? <DocumentUploadCell
-                    key={document.Id}
-                    onSelect={this.selectItem.bind(this, document) }
-                    dispatch = {this.props.dispatch}
-                    document={document} documentsReducer={this.props.documentsReducer}/> : 
-                    <DocumentCell
-                    key={document.Id}
-                    onSelect={this.selectItem.bind(this, document) }
-                    dispatch = {this.props.dispatch}
-                    documentsReducer={this.props.documentsReducer}
-                    document={document}/>
-                    
-              return (documentCell)
-            } }
-            renderFooter={() => {return <View style={{height: 100}}>
-            
 
-            </View>}}
-            onEndReached={this.onEndReached}
-            automaticallyAdjustContentInsets={false}
-            keyboardDismissMode="on-drag"
-            keyboardShouldPersistTaps={true}
-            showsVerticalScrollIndicator={false}
-            />
-        
+
+            var documentCell = document.FamilyCode == 'UPLOAD_PROGRESS' ? <DocumentUploadCell
+              key={document.Id}
+              onSelect={this.selectItem.bind(this, document)}
+              dispatch={this.props.dispatch}
+              document={document} documentsReducer={this.props.documentsReducer} /> :
+              <DocumentCell
+                key={document.Id}
+                onSelect={this.selectItem.bind(this, document)}
+                dispatch={this.props.dispatch}
+                documentsReducer={this.props.documentsReducer}
+                document={document} />
+
+            return (documentCell)
+          } }
+          renderFooter={() => {
+            return <View style={{ height: 100 }}>
+
+
+            </View>
+          } }
+          onEndReached={this.onEndReached}
+          automaticallyAdjustContentInsets={false}
+          keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps={true}
+          showsVerticalScrollIndicator={false}
+          />
+
       )
     }
   }
 
   render() {
 
-try {
-    const {dispatch, documentsReducer, navReducer } = this.props
-    var documentlist = getDocumentsContext(navReducer);
-    // console.log("render documents page: " +JSON.stringify(documentlist))
-    //const isFetching = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].isFetching : false
-    const isFetching = documentsReducer.isFetching;
-    var additionalStyle = {};
+    try {
+      const {dispatch, documentsReducer, navReducer } = this.props
+      var documentlist = getDocumentsContext(navReducer);
+      // console.log("render documents page: " +JSON.stringify(documentlist))
+      //const isFetching = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].isFetching : false
+      const isFetching = documentsReducer.isFetching;
+      var additionalStyle = {};
 
-    let showCustomButton = documentlist.catId == constans.SEARCH_DOCUMENTS ? false : true
-    return (
+      let showCustomButton = documentlist.catId == constans.SEARCH_DOCUMENTS ? false : true
+      return (
 
-      <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
-        <View style={styles.separator} elevation={5}/>
+        <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
+          <View style={styles.separator} elevation={5} />
 
-        {this._renderTableContent(isFetching) }
-        {showCustomButton?  <ActionButton buttonColor="#FF811B" onPress={() => this.openModal()} >            
-        </ActionButton> : <View></View>}
-       
-      </ViewContainer>
-    )
-} catch (error) {
-  
-  return null; 
-}
-  
+          {this._renderTableContent(isFetching)}
+          {showCustomButton ? <ActionButton buttonColor="#FF811B" onPress={() => this.openModal()} >
+          </ActionButton> : <View></View>}
+
+        </ViewContainer>
+      )
+    } catch (error) {
+
+      return null;
+    }
+
   }
 
 }
@@ -337,30 +375,28 @@ var NoDocuments = React.createClass({
         </View>)
     }
     else {
-       if(this.props.documentlist.catId == constans.SEARCH_DOCUMENTS)
-       {
+      if (this.props.documentlist.catId == constans.SEARCH_DOCUMENTS) {
         return (
-            <View style={[styles.container, styles.centerText]}>
-              <View style={styles.textContainer}>
-                <Text style={styles.noDocumentsText}>{text}</Text>
-              </View>
+          <View style={[styles.container, styles.centerText]}>
+            <View style={styles.textContainer}>
+              <Text style={styles.noDocumentsText}>{text}</Text>
             </View>
-          );
-       }
-       else
-       {
-          return (
-            <View style={[styles.container, styles.centerText]}>
-              <View style={styles.textContainer}>
-                <Text style={styles.noDocumentsText}>{text}</Text>
-              </View>
-              <View style={styles.buttonContainer}>
-                <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
-              </View>
+          </View>
+        );
+      }
+      else {
+        return (
+          <View style={[styles.container, styles.centerText]}>
+            <View style={styles.textContainer}>
+              <Text style={styles.noDocumentsText}>{text}</Text>
             </View>
-          );
-       }
-      
+            <View style={styles.buttonContainer}>
+              <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
+            </View>
+          </View>
+        );
+      }
+
     }
   }
 });
