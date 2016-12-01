@@ -8,15 +8,17 @@
   "dependencies": {
     "lodash": "^4.14.0",
     "moment": "^2.14.1",
+    "pubnub": "4.2.5",
     "react": "^15.3.2",
     "react-native": "^0.36.0",
     "react-native-action-button": "^1.1.5",
     "react-native-android-kit": "^1.1.2",
     "react-native-button": "^1.6.0",
+    "react-native-device-info": "^0.9.6",
     "react-native-drawer": "^2.2.6",
     "react-native-fetch-blob": "^0.10.0",
     "react-native-gesture-responder": "^0.1.1",
-    "react-native-image-crop-picker": "^0.10.2",
+    "react-native-image-crop-picker": "0.10.2",
     "react-native-keyboard-aware-scroll-view": "0.2.0",
     "react-native-keyboardevents": "0.4.5",
     "react-native-menu": "^0.20.1",
@@ -35,8 +37,6 @@
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",
     "strict-uri-encode": "^1.1.0",
-    "tcomb-form-native": "^0.6.0",
-    "pubnub": "4.2.5",
-    "react-native-device-info":"^0.9.6"
+    "tcomb-form-native": "^0.6.0"
   }
 }
