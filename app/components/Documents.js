@@ -145,6 +145,8 @@ class Documents extends Component {
         // .then(
             
         // )
+
+       
             var url = getDownloadFileUrl(this.props.env, this.props.sessionToken, document.Id);
 
             fetch(url)
@@ -159,9 +161,10 @@ class Documents extends Component {
                 var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
             
                // alert('shortDimension = ' + shortDimension + 'deviceWidth = ' + deviceWidth + ' deviceHeight = ' + deviceHeight)
-                  document.ViewerUrl = 'http://10.0.0.184/video?vu='  + encodeURIComponent(downloadUrl);
+                  document.ViewerUrl = 'http://10.0.0.184/video?vu=' + encodeURIComponent(downloadUrl) + '&tu=' + encodeURIComponent(document.ThumbnailUrl) 
+                 alert(document.ViewerUrl.length)
                     console.log(' document.ViewerUrl  = ' +  document.ViewerUrl )
-
+                   
                 //  document.ViewerUrl = 'http://10.0.0.184/video?vu='  +  encodeURIComponent(downloadUrl);
                             var data = {
                       key: "document",
@@ -172,7 +175,7 @@ class Documents extends Component {
                       viewerUrl: document.ViewerUrl, 
                       isExternalLink : document.IsExternalLink,
                       isVault:document.IsVault,
-
+                      ThumbnailUrl : document.ThumbnailUrl,
                       env: this.props.env
                     }
                     this.props._handleNavigate(routes.documentRoute(data));
@@ -198,7 +201,7 @@ class Documents extends Component {
               viewerUrl: document.ViewerUrl, 
               isExternalLink : document.IsExternalLink,
               isVault:document.IsVault,
-
+              ThumbnailUrl : document.ThumbnailUrl,
               env: this.props.env
             }
             this.props._handleNavigate(routes.documentRoute(data));

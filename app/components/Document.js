@@ -40,7 +40,8 @@ class Document extends React.Component{
       orientation: Orientation.getInitialOrientation(),
       url:"", 
       prevPinch: null, 
-      pinchDirection : null
+      pinchDirection : null, 
+      thumbnailUrl: this.props.data.ThumbnailUrl
     };
   }
   
@@ -166,7 +167,7 @@ componentWillMount(){
   }
 
  onLoadEnd(){
-    //this.setState({isLoading: false});
+    this.setState({isLoading: false});
  }
  
  renderLoading(){
@@ -180,17 +181,19 @@ componentWillMount(){
  
 
 onBridgeMessage(message){
-    const { webviewbridge } = this.refs;
 
-    switch (message) {
-      case "hello from webview":
-        webviewbridge.sendToBridge("hello from react-native");
-        break;
-      case "got the message inside webview":
-      //alert("webview");
-    //    console.log("we have got a message from webview! yeah");
-        break;
-    }
+   
+    // const { webviewbridge } = this.refs;
+
+    // switch (message) {
+    //   case "hello from webview":
+    //     webviewbridge.sendToBridge("hello from react-native");
+    //     break;
+    //   case "got the message inside webview":
+    //   //alert("webview");
+    // //    console.log("we have got a message from webview! yeah");
+    //     break;
+    // }
   }
 
   zoomIn(){
@@ -216,6 +219,8 @@ onBridgeMessage(message){
 
 
   render(){
+
+    console.log('thmbnail url: '+ this.state.url)
 
     const injectScript = `
       (function () {
