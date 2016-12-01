@@ -162,7 +162,6 @@ class Documents extends Component {
             
                // alert('shortDimension = ' + shortDimension + 'deviceWidth = ' + deviceWidth + ' deviceHeight = ' + deviceHeight)
                   document.ViewerUrl = 'http://10.0.0.184/video?vu=' + encodeURIComponent(downloadUrl) + '&tu=' + encodeURIComponent(document.ThumbnailUrl) 
-                 alert(document.ViewerUrl.length)
                     console.log(' document.ViewerUrl  = ' +  document.ViewerUrl )
                    
                 //  document.ViewerUrl = 'http://10.0.0.184/video?vu='  +  encodeURIComponent(downloadUrl);
