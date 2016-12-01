@@ -536,16 +536,15 @@ export function downloadDocument(id: string, fileName: string, mimeType: string)
                  //  console.log('downloadurl: ' + downloadUrl);
 
                 //  downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
-                downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
+               // downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
 
                 RNFetchBlob.config({
                     //    path : Android_Download_Path + "/" + fileName,
                     fileCache: true,
                     // android only options, these options be a no-op on IOS
                     addAndroidDownloads: {
-                        useDownloadManager: true,
+                       useDownloadManager: true,
                        mime: mimeType,
-                        //mime : 'image/png',
                         // Show notification when response data transmitted
                         notification: true,
                         // Title of download notification
@@ -560,7 +559,7 @@ export function downloadDocument(id: string, fileName: string, mimeType: string)
                 })
                     .fetch('GET', downloadUrl)
                     .then((res) => {
-                                RNFetchBlob.android.actionViewIntent( res.path(), 'image/jpg')
+                              //  RNFetchBlob.android.actionViewIntent( res.path(), 'image/jpg')
                     }
                     // RNFetchBlob.fs.scanFile([ { path : res.path(), mime : 'audio/mpeg' } ]
                     
