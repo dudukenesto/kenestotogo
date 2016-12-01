@@ -23,6 +23,9 @@ var {
 } = ReactNative;
 var {height, width} = Dimensions.get('window');
 var Orientation = require('./KenestoDeviceOrientation');
+// var Orientation = require('react-native-orientation');
+
+
 
 import ProggressBar from "../components/ProgressBar";
 
@@ -76,7 +79,7 @@ class AddPeople extends Component {
     this.state = {
       showSharingList: true,
       globalPermissions: 'VIEW_ONLY',
-      orientation: Orientation.getInitialOrientation(),
+      orientation: Orientation.getOrientation(this.getInitialOrientation),
       UsersPermissions : this.props.UsersPermissions
     };
   }
@@ -85,6 +88,11 @@ class AddPeople extends Component {
      var tags = [];
      this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
      this.props.dispatch(docActions.SetSharingPermissions(tags));
+  }
+  
+  getInitialOrientation(error, orientation){
+    console.log('initial orientation: ' + orientation);
+    return orientation;
   }
 
   componentWillUnmount() {
@@ -98,8 +106,9 @@ class AddPeople extends Component {
   }
 
   _orientationDidChange(orientation) {
+    console.log('orientation changed to ' + orientation)
     this.setState({
-      orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
+      orientation: orientation
     })
   }
 
@@ -290,7 +299,6 @@ class AddPeople extends Component {
   }
 
   render() {
-
     if (this.props.isFetching) {
       return (<View style={styles.creatingFolder}>
         <ProgressBar isLoading={true}/>

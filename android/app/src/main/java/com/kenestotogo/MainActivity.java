@@ -3,6 +3,9 @@ import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.modules.i18nmanager.I18nUtil;
 
+import android.content.Intent; // <--- import
+import android.content.res.Configuration; // <--- import
+
 public class MainActivity extends ReactActivity {
 
     /**
@@ -15,13 +18,21 @@ public class MainActivity extends ReactActivity {
     }
 
  
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-                            // FORCE LTR
-                I18nUtil sharedI18nUtilInstance = I18nUtil.getInstance();
-                sharedI18nUtilInstance.allowRTL(getApplicationContext(), false);
+                    // FORCE LTR
+        I18nUtil sharedI18nUtilInstance = I18nUtil.getInstance();
+        sharedI18nUtilInstance.allowRTL(getApplicationContext(), false);
 
-            }
+    }
+            
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Intent intent = new Intent("onConfigurationChanged");
+        intent.putExtra("newConfig", newConfig);
+        this.sendBroadcast(intent);
+    }
 }
