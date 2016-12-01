@@ -159,7 +159,7 @@ class Documents extends Component {
                 var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
             
                // alert('shortDimension = ' + shortDimension + 'deviceWidth = ' + deviceWidth + ' deviceHeight = ' + deviceHeight)
-                  document.ViewerUrl = 'http://10.0.0.184/video?h=' + height + '&w=' + width +  '&vu='  + encodeURIComponent(downloadUrl);
+                  document.ViewerUrl = 'http://10.0.0.184/video?vu='  + encodeURIComponent(downloadUrl);
                     console.log(' document.ViewerUrl  = ' +  document.ViewerUrl )
 
                 //  document.ViewerUrl = 'http://10.0.0.184/video?vu='  +  encodeURIComponent(downloadUrl);
