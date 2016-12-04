@@ -144,7 +144,7 @@ componentWillMount(){
 }
   _orientationDidChange(orientation) {
     this.setState({
-      orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
+      orientation: orientation
     })
     this.changeVideoOrientation("orientation");
   }
@@ -167,22 +167,24 @@ componentWillMount(){
   }
 
  onLoadEnd(){
-    this.setState({isLoading: false});
+    // this.setState({isLoading: false});
  }
  
  renderLoading(){
-
-   return(
-    <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80}}>
-      <ProggressBar isLoading={true} />
-    </View>
+   return (
+     this.state.isLoading ?
+       <View style={styles.loading}>
+         <ProggressBar isLoading={true} />
+       </View>
+       :
+       <View></View>
    )
  }
  
 
 onBridgeMessage(message){
+setTimeout(this.hideLoading.bind(this), 300)
 
-   
     // const { webviewbridge } = this.refs;
 
     // switch (message) {
@@ -196,6 +198,9 @@ onBridgeMessage(message){
     // }
   }
 
+hideLoading(){
+  this.setState({isLoading: false});
+}
   zoomIn(){
       const { webviewbridge } = this.refs;
      webviewbridge.sendToBridge("zoomIn");
@@ -220,7 +225,7 @@ onBridgeMessage(message){
 
   render(){
 
-    console.log('thmbnail url: '+ this.state.url)
+    // console.log('thmbnail url: '+ this.state.url)
 
     const injectScript = `
       (function () {
@@ -254,11 +259,12 @@ onBridgeMessage(message){
 
     
     
-      <View style={{ flex: 1}}>
+      <View style={{ flex: 1 }}>
           <View>
            
           </View>
-          <View style={{flex: 1, backgroundColor: 'transparent', }}
+          {this.renderLoading()}
+          <View style={{ flex: 1, backgroundColor: 'transparent', }}
              {...this.gestureResponder}>
             <WebViewBridge
               ref="webviewbridge"
@@ -270,7 +276,6 @@ onBridgeMessage(message){
               startInLoadingState={true}
               scalesPageToFit={true}
               onBridgeMessage={this.onBridgeMessage.bind(this)}
-              renderLoading={this.renderLoading}
               injectedJavaScript={injectScript}
               />
           </View>
@@ -378,32 +383,40 @@ var styles = StyleSheet.create({
   },
   
   webview_header: {
-        paddingLeft: 10,
-        backgroundColor: '#FF6600',
-        flex: 1,
-        justifyContent: 'space-between',
-        flexDirection: 'row'
-    },
-    header_item: {
-        paddingLeft: 10,
-        paddingRight: 10,
-        justifyContent: 'center'
-    },
-    webview_body: {
-        flex: 1,
-        backgroundColor: 'transparent',
-        // width: 300,
-        // height: 400,
-    },
-    
-    page_title: {
-        color: '#FFF'
-    },
-    moreMenu: {
+    paddingLeft: 10,
+    backgroundColor: '#FF6600',
+    flex: 1,
+    justifyContent: 'space-between',
+    flexDirection: 'row'
+  },
+  header_item: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    justifyContent: 'center'
+  },
+  webview_body: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    // width: 300,
+    // height: 400,
+  },
+
+  page_title: {
+    color: '#FFF'
+  },
+  moreMenu: {
     fontSize: 22,
-    color: '#888', 
+    color: '#888',
+  },
+  loading: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#fefefe', 
+    position: "absolute", 
+    zIndex: 1, 
+    top: 0, left: 0, bottom: 0, right: 0
   }
-  
+
 });
 
 module.exports = Document;
