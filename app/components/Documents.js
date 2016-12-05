@@ -160,11 +160,10 @@ class Documents extends Component {
                 var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
                 var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
             
-               // alert('shortDimension = ' + shortDimension + 'deviceWidth = ' + deviceWidth + ' deviceHeight = ' + deviceHeight)
-                  document.ViewerUrl = 'http://10.0.0.184/video?vu=' + encodeURIComponent(downloadUrl) + '&tu=' + encodeURIComponent(document.ThumbnailUrl) 
-                    console.log(' document.ViewerUrl  = ' +  document.ViewerUrl )
+                 document.ViewerUrl =document.ViewerUrl + '&tu='+ encodeURIComponent(document.ThumbnailUrl); 
+               
                    
-                //  document.ViewerUrl = 'http://10.0.0.184/video?vu='  +  encodeURIComponent(downloadUrl);
+            
                             var data = {
                       key: "document",
                       name: document.Name,
