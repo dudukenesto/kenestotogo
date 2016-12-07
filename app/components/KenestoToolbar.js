@@ -69,6 +69,7 @@ let styles = StyleSheet.create({
     flexDirection: "row",
     height: 50,
     alignItems: "center",
+    backgroundColor: "#fff"
   },
   textInputContainer: {
     flex: 1,

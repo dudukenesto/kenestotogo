@@ -66,13 +66,6 @@ let styles = StyleSheet.create({
     height: 280,
     width: 320
   },
-
-  btnModal: {
-    position: "absolute",
-    top: 100,
-    right: 0,
-    backgroundColor: "transparent"
-  },
   ifProcessing: {
     height: 90,
     width: 320,
@@ -84,11 +77,6 @@ let styles = StyleSheet.create({
     width: 320,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  searchBoxContainer: {
-    flexDirection: "row",
-    height: 50,
-    marginBottom: 3,
   },
   popupMenuContainer: {
     position: "absolute",
