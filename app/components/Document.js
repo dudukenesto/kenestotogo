@@ -26,7 +26,7 @@ var Orientation = require('./KenestoDeviceOrientation');
 import {createResponder} from 'react-native-gesture-responder';
 import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
-
+import { toggleToolbar } from '../actions/navActions'
 class Document extends React.Component{
   constructor(props){
   
@@ -98,7 +98,7 @@ componentWillMount(){
          const mod = absDistance % 5; 
          if (mod == 0)
          {
-           console.log('mode = ' + mod)
+           //console.log('mode = ' + mod)
             if (this.state.pinchDirection == "in")
                 this.zoomIn();
             else {
@@ -111,7 +111,7 @@ componentWillMount(){
     },
     onResponderTerminationRequest: (evt, gestureState) => false,
     onResponderRelease: (evt, gestureState) => {
-      console.log('gestureState.doubleTapUp = ' + gestureState.doubleTapUp)
+   //   console.log('gestureState.doubleTapUp = ' + gestureState.doubleTapUp)
        if (gestureState.doubleTapUp)
           this.setZoom(100);
     },
@@ -121,6 +121,7 @@ componentWillMount(){
     
     
     onResponderSingleTapConfirmed: (evt, gestureState) => {
+       this.props.data.dispatch(toggleToolbar());
     },
  moveThreshold: 2,
     debug: false

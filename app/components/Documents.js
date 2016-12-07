@@ -173,7 +173,8 @@ class Documents extends Component {
                       isExternalLink : document.IsExternalLink,
                       isVault:document.IsVault,
                       ThumbnailUrl : document.ThumbnailUrl,
-                      env: this.props.env
+                      env: this.props.env,
+                      dispatch: this.props.dispatch
                     }
                     this.props._handleNavigate(routes.documentRoute(data));
 
@@ -199,7 +200,8 @@ class Documents extends Component {
               isExternalLink : document.IsExternalLink,
               isVault:document.IsVault,
               ThumbnailUrl : document.ThumbnailUrl,
-              env: this.props.env
+              env: this.props.env, 
+              dispatch: this.props.dispatch
             }
             this.props._handleNavigate(routes.documentRoute(data));
 

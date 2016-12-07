@@ -1,5 +1,4 @@
-import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM, SUBMIT_TOAST, CLEAR_TOAST, HIDE_TOAST, UPDATE_DROPDOWN_DATA,UPDATE_SELECTED_TRIGGER_VALUE} from '../constants/ActionTypes'
+import * as actionTypes from '../constants/ActionTypes'
 import * as peopleActions from '../actions/peopleActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import {isRouteKeyExists} from '../utils/ObjectUtils'
@@ -16,33 +15,33 @@ export function push (route) {
 
 export function pushRouth (route) {
   return {
-          type: PUSH_ROUTE,
+          type: actionTypes.PUSH_ROUTE,
           route
     }
 }
 export function pop () {
   return {
-    type: POP_ROUTE
+    type: actionTypes.POP_ROUTE
   }
 }
 
 export function navigateJumpToKey(key) {
   return {
-    type: NAV_JUMP_TO_KEY,
+    type: actionTypes.NAV_JUMP_TO_KEY,
     key
   }
 }
 
 export function navigateJumpToIndex(index) {
   return {
-    type: NAV_JUMP_TO_INDEX,
+    type: actionTypes.NAV_JUMP_TO_INDEX,
     index
   }
 }
 
 export function navigateReset(key,routes, index) {
   return {
-    type: NAV_RESET,
+    type: actionTypes.NAV_RESET,
     key,
     index,
     routes
@@ -51,14 +50,14 @@ export function navigateReset(key,routes, index) {
 
 export function updateRouteData (routeData) {
   return {
-    type: UPDATE_ROUTE_DATA,
+    type: actionTypes.UPDATE_ROUTE_DATA,
     routeData
   }
 }
 
 export function emitToast(type: string, messge: string, title: string){
     return {
-    type: SUBMIT_TOAST, 
+    type: actionTypes.SUBMIT_TOAST, 
     toastTitle: title, 
     toastType: type,
     toastMessage: messge
@@ -67,19 +66,19 @@ export function emitToast(type: string, messge: string, title: string){
 
 export function hideToast() {
   return {
-    type: HIDE_TOAST
+    type: actionTypes.HIDE_TOAST
   }
 }
 
 export function clearToast(){
   return {
-    type: CLEAR_TOAST
+    type: actionTypes.CLEAR_TOAST
   }
 }
 
 export function emitError(errorTitle: string, errorDetails: string, okAction: Object = null){
   return {
-    type: SUBMIT_ERROR, 
+    type: actionTypes.SUBMIT_ERROR, 
     errorTitle: errorTitle, 
     errorDetails: errorDetails,
     errorOkAction: okAction
@@ -94,7 +93,7 @@ export function clearError(){
 
 export function emitConfirm(confirmTitle: string, confirmDetails: string, okAction: Object = null){
   return {
-    type: SUBMIT_CONFIRM, 
+    type: actionTypes.SUBMIT_CONFIRM, 
     confirmTitle: confirmTitle, 
     confirmDetails: confirmDetails,
     confirmOkAction: okAction
@@ -103,13 +102,13 @@ export function emitConfirm(confirmTitle: string, confirmDetails: string, okActi
 }
 export function clearConfirm(){
   return {
-    type: CLEAR_CONFIRM
+    type: actionTypes.CLEAR_CONFIRM
   }
 }
 
 export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object = null){
   return {
-    type: SUBMIT_INFO, 
+    type: actionTypes.SUBMIT_INFO, 
     infoTitle: infoTitle, 
     infoDetails: infoDetails,
     infoOkAction: okAction
@@ -118,27 +117,27 @@ export function emitInfo(infoTitle: string, infoDetails: string, okAction: Objec
 
 export function clearInfo(){
   return {
-    type: CLEAR_INFO
+    type: actionTypes.CLEAR_INFO
 }
 
 }
 export function changeTab (index) {
   return {
-    type: CHANGE_TAB,
+    type: actionTypes.CHANGE_TAB,
     index
   }
 }
 
 export function toggleDropdown(showDropDown: boolean){
   return {
-    type: TOGGLE_DROPDOWN, 
+    type: actionTypes.TOGGLE_DROPDOWN, 
     showDropDown: showDropDown
   }
 }
 
 export function updateDropdownData(clickedTrigger: string, triggerSettings: object, options: object, optionTemplate: object, showDropDown: boolean = true){
   return {
-      type: UPDATE_DROPDOWN_DATA, 
+      type: actionTypes.UPDATE_DROPDOWN_DATA, 
       clickedTrigger: clickedTrigger,
       triggerSettings: triggerSettings, 
       options: options,
@@ -149,7 +148,7 @@ export function updateDropdownData(clickedTrigger: string, triggerSettings: obje
 
 export function updatedSelectedTrigerValue(value: string){
   return{
-    type: UPDATE_SELECTED_TRIGGER_VALUE,
+    type: actionTypes.UPDATE_SELECTED_TRIGGER_VALUE,
     value: value
   }
 }
@@ -168,5 +167,26 @@ export function requestUpdateTrigger(value: string){
       dispatch(updatedSelectedTrigerValue(value));
    }
         
+}
+
+export function hideToolbar(){
+ return{
+    type: actionTypes.TOGGLE_TOOLBAR,
+    toolbarVisible: false
+  }
+}
+
+export function showToolbar(){
+ return{
+    type: actionTypes.TOGGLE_TOOLBAR,
+    toolbarVisible: true
+  }
+}
+
+export function toggleToolbar(){
+ return{
+    type: actionTypes.TOGGLE_TOOLBAR,
+    toolbarVisible: null
+  }
 }
 
