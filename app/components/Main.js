@@ -314,6 +314,13 @@ class Main extends React.Component {
       setTimeout(this.closeToast.bind(this), 4000)
       this.props.dispatch(clearToast());
     }
+    if (nextprops.navReducer.toolbarVisible != this.props.navReducer.toolbarVisible)
+    {
+        if(nextprops.navReducer.toolbarVisible)
+            this.showToolBar(); 
+        else 
+            this.hideToolBar();
+    }
 
   }
   
