@@ -133,7 +133,7 @@ componentWillMount(){
     this.setState({
       orientation: orientation
     })
-    this.changeVideoOrientation("orientation");
+   // this.changeVideoOrientation("orientation");
   }
   
   componentWillUnmount(){
