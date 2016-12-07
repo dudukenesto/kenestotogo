@@ -29,6 +29,7 @@ import Info from './Info'
 import Confirm from './Confirm'
 import CheckInDocument from './CheckInDocument'
 import { writeToLog } from '../utils/ObjectUtils'
+import * as Animatable from 'react-native-animatable';
 
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 // var MessageBarManager = require('react-native-message-bar').MessageBarManager;
@@ -195,7 +196,7 @@ class Main extends React.Component {
         break;
     }
   }
-  onSortBy(sortBy) {
+  onSortBy(sortBy) { 
     const {dispatch, navReducer} = this.props
     var currRouteData = getDocumentsContext(navReducer);
     var routeData =
@@ -367,8 +368,14 @@ class Main extends React.Component {
     componentWillMount(){
 //  MessageBarManager.unregisterMessageBar();
 
-
-
+  }
+  
+  showToolBar(){
+    this.refs.toolBar.fadeInDown(800);
+  }
+  
+  hideToolBar(){
+    this.refs.toolBar.fadeOutUp(800);
   }
 
   componentDidMount() {
@@ -389,15 +396,17 @@ class Main extends React.Component {
     return (
       <View style={styles.container}>
         {showKenestoToolbar ?
-
-          <KenestoToolbar   onActionSelected={this.onActionSelected}
-            onPressPopupMenu={this.onPressPopupMenu}
-            onIconClicked = {this.onNavIconClicked.bind(this) }
-            navReducer={this.props.navReducer}
-            documentsReducer = {this.props.documentsReducer}
-            isPopupMenuOpen={this.state.isPopupMenuOpen}
-            dispatch={this.props.dispatch}
-            />
+          <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic">
+            <KenestoToolbar
+              onActionSelected={this.onActionSelected}
+              onPressPopupMenu={this.onPressPopupMenu}
+              onIconClicked = {this.onNavIconClicked.bind(this) }
+              navReducer={this.props.navReducer}
+              documentsReducer = {this.props.documentsReducer}
+              isPopupMenuOpen={this.state.isPopupMenuOpen}
+              dispatch={this.props.dispatch}
+              />
+          </Animatable.View>
           :
           <View></View>
         }

@@ -37,6 +37,7 @@
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",
     "strict-uri-encode": "^1.1.0",
-    "tcomb-form-native": "^0.6.0"
+    "tcomb-form-native": "^0.6.0",
+    "react-native-animatable": "1.1.0"
   }
 }
