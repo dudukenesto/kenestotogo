@@ -70,7 +70,6 @@ class Toast extends React.Component {
                 break;
         }
         
-        console.log(this.props)
         
         return (
            

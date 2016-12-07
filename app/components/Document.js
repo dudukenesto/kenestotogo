@@ -37,7 +37,7 @@ class Document extends React.Component{
     this.state = {  
       isLoading: true,
       scalingEnabled: true,
-      orientation: Orientation.getInitialOrientation(),
+       orientation: Orientation.getInitialOrientation(),
       url:"", 
       prevPinch: null, 
       pinchDirection : null, 
@@ -45,38 +45,22 @@ class Document extends React.Component{
     };
   }
   
-  
-    //  <ViewTransformer
-    //     onGestureEnd={(e) => {
-    //       console.log('onGestureEnd...' + JSON.stringify(e))
-    //       return false;
-    //     }}
-    //     enableResistance={true}
-    //     maxScale={20}
-    //     style={{flex: 1}}>
-    //       <View style={{ flex: 1}}>
-    //     <WebView
-    //       style={{ backgroundColor: BGWASH, position: 'absolute',top: 0, bottom: 0, left: 0, right: 0}}
-    //      source={{uri: this.state.viewerUrl}}
-          
-    //         javaScriptEnabled={true}
-    //         domStorageEnabled={true}
-         
-    //       scalesPageToFit={true}
-    //     />
-       
-    //   </View>
-    //   </ViewTransformer>
 
  componentDidMount() {
-    this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-
-
-  setTimeout(() => {  this.changeVideoOrientation("LANDSCAPE");}, 4000)
+          this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
  }
 
 componentWillMount(){
-    if(this.props.data.isExternalLink)
+//   console.log('window.height =' + window.height )
+//   var url = ""
+//   if (this.props.data.isExternalLink)
+//       var url =this.props.data.viewerUrl;
+//   else
+//      url = this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env)) + "&w=" + window.width + "&h=" + window.height;
+
+//  this.setState( {url : url });
+   
+  if(this.props.data.isExternalLink)
     {
       var url =this.props.data.viewerUrl;
       this.setState( {url : url });
@@ -86,10 +70,11 @@ componentWillMount(){
       Orientation.getOrientation(this.updateOrientation.bind(this))
     }
 
+
       this.gestureResponder = createResponder({
-    onStartShouldSetResponder: (evt, gestureState) => false,
-    onStartShouldSetResponderCapture: (evt, gestureState) =>false,
-    onMoveShouldSetResponder: (evt, gestureState) => false,
+    onStartShouldSetResponder: (evt, gestureState) => true,
+    onStartShouldSetResponderCapture: (evt, gestureState) =>true,
+    onMoveShouldSetResponder: (evt, gestureState) => true,
     onMoveShouldSetResponderCapture: (evt, gestureState) => true,
     onResponderGrant: (evt, gestureState) => {},
     onResponderMove: (evt, gestureState) => {
@@ -110,9 +95,10 @@ componentWillMount(){
           }
 
          const absDistance =  Math.round(Math.abs(gestureState.pinch -  this.state.startPinch));
-         const mod = absDistance % 11; 
+         const mod = absDistance % 5; 
          if (mod == 0)
          {
+           console.log('mode = ' + mod)
             if (this.state.pinchDirection == "in")
                 this.zoomIn();
             else {
@@ -123,11 +109,11 @@ componentWillMount(){
 
         
     },
-    onResponderTerminationRequest: (evt, gestureState) => true,
+    onResponderTerminationRequest: (evt, gestureState) => false,
     onResponderRelease: (evt, gestureState) => {
-        // if (gestureState.doubleTapUp)
-        //   alert('zaba')
-        this.setState({startPinch: null, pinchDirection : null, doubleTapUp: gestureState.doubleTapUp})
+      console.log('gestureState.doubleTapUp = ' + gestureState.doubleTapUp)
+       if (gestureState.doubleTapUp)
+          this.setZoom(100);
     },
     
     onResponderTerminate: (evt, gestureState) => {
@@ -136,13 +122,13 @@ componentWillMount(){
     
     onResponderSingleTapConfirmed: (evt, gestureState) => {
     },
-
-    moveThreshold: 1,
+ moveThreshold: 2,
     debug: false
   });
     
 }
-  _orientationDidChange(orientation) {
+
+ _orientationDidChange(orientation) {
     this.setState({
       orientation: orientation
     })
@@ -153,8 +139,8 @@ componentWillMount(){
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
   }
-  
-  updateOrientation(error, orientation) {
+ 
+updateOrientation(error, orientation) {
     var longDimension = window.width > window.height ? window.width : window.height;
     var shortDimension = window.height > window.width ? window.width : window.height;
     var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
@@ -183,20 +169,9 @@ componentWillMount(){
  
 
 onBridgeMessage(message){
-setTimeout(this.hideLoading.bind(this), 300)
-
-    // const { webviewbridge } = this.refs;
-
-    // switch (message) {
-    //   case "hello from webview":
-    //     webviewbridge.sendToBridge("hello from react-native");
-    //     break;
-    //   case "got the message inside webview":
-    //   //alert("webview");
-    // //    console.log("we have got a message from webview! yeah");
-    //     break;
-    // }
-  }
+  if (message == 'ViewerDocumentLoaded')
+    setTimeout(this.hideLoading.bind(this), 300)
+    }
 
 hideLoading(){
   this.setState({isLoading: false});
@@ -210,27 +185,23 @@ hideLoading(){
       webviewbridge.sendToBridge("zoomOut");
 
   }
-  setZoom(){
+  setZoom(value){
       const { webviewbridge } = this.refs;
-      webviewbridge.sendToBridge("setZoom");
+      webviewbridge.sendToBridge("setZoom_" + value.toString());
   }
-  changeVideoOrientation(orientation: string){
-      const { webviewbridge } = this.refs;
-      var message = orientation == "PORTRAIT"? "oreintationChanged_portrait" : "oreintationChanged_lanscape";
-      //alert('message to send: ' + message);
-      webviewbridge.sendToBridge(message);
-  }
-
-
 
   render(){
-
-    // console.log('thmbnail url: '+ this.state.url)
 
     const injectScript = `
       (function () {
               if (WebViewBridge)
                    WebViewBridge.onMessage = function (message) {
+                        if (message.indexOf("setZoom") >  -1)
+                        {
+                             var zoomLevel = parseInt(message.split("_")[1]);
+                             activateSetZoom(zoomLevel);
+                        } 
+                        else
                           switch (message) {
                                     case "zoomIn":
                                         activateZoomIn();
@@ -241,12 +212,7 @@ hideLoading(){
                                     case "setZoom":
                                             activateSetZoom(100);
                                     break;
-                                    case "oreintationChanged_portrait":
-                                        orientationChanged("PORTRAIT");
-                                        break;
-                                    case "oreintationChanged_lanscape":
-                                            orientationChanged("LANDSCAPE");
-                                        break;
+                                   
                                 }
                         
 
@@ -257,15 +223,10 @@ hideLoading(){
     `; 
     return(
 
-    
-    
       <View style={{ flex: 1 }}>
-          <View>
-           
-          </View>
-          {this.renderLoading()}
-          <View style={{ flex: 1, backgroundColor: 'transparent', }}
-             {...this.gestureResponder}>
+        
+            {this.renderLoading()}
+      
             <WebViewBridge
               ref="webviewbridge"
               style={styles.webview_body}
@@ -277,8 +238,8 @@ hideLoading(){
               scalesPageToFit={true}
               onBridgeMessage={this.onBridgeMessage.bind(this)}
               injectedJavaScript={injectScript}
+                   {...this.gestureResponder}
               />
-          </View>
 
       </View>
 

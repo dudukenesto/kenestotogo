@@ -153,12 +153,11 @@ class Documents extends Component {
             .then(response => response.json())
             .then(json => {
                 var downloadUrl = json.ResponseData.AccessUrl;
-              var orientation = 'PORTRAIT';
+
                    var downloadUrl = json.ResponseData.AccessUrl;
                var longDimension = deviceWidth > deviceHeight ? deviceWidth :deviceHeight;
                 var shortDimension = deviceHeight > deviceWidth ? deviceWidth : deviceHeight;
-                var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
-                var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
+               
             
                  document.ViewerUrl =document.ViewerUrl + '&tu='+ encodeURIComponent(document.ThumbnailUrl); 
                
