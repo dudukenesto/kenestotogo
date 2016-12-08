@@ -20,7 +20,7 @@ import UpdateVersions from './UpdateVersions'
 import {connect} from 'react-redux'
 import KenestoToolbar from './KenestoToolbar'
 import * as documentsActions from '../actions/documentsActions'
-import {pop, updateRouteData, clearToast} from '../actions/navActions'
+import {pop, updateRouteData, clearToast,updatedOrientation} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
@@ -142,7 +142,8 @@ class Main extends React.Component {
       plusMenuContext: this.refs.modalPlusMenu,
       itemMenuContext: this.refs.modalItemMenu,
       errorModal: this.refs.errorModal,
-      dropDownContext: this.refs.dropDownOptionsContainer
+      dropDownContext: this.refs.dropDownOptionsContainer, 
+      toolBar: this.refs.toolBar
     };
   }
 
@@ -152,7 +153,6 @@ class Main extends React.Component {
         this.state = {
           ifCreatingFolder: false,
           isPopupMenuOpen: false,
-          orientation: 'unknown',
           isDropDownOpen: true,
           toastMessage: '',
           toastType: ''
@@ -305,6 +305,20 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
+ //   if (nextprops.navReducer.toolbarVisible != this.props.navReducer.toolbarVisible)
+  //  {
+  //    console.log('before changing toolbar');
+     //   if(nextprops.navReducer.toolbarVisible)
+   //         this.showToolBar(); 
+      //  else 
+      //      this.hideToolBar();
+ //   }
+
+  // if(nextprops.navReducer.toolbarVisible)
+  // {
+  //    this.showToolBar(); 
+  // }
+      
     if (nextprops.navReducer.HasError) {
       this.openModal("errorModal");
     }
@@ -326,14 +340,7 @@ class Main extends React.Component {
       setTimeout(this.closeToast.bind(this), 4000)
       this.props.dispatch(clearToast());
     }
-    if (nextprops.navReducer.toolbarVisible != this.props.navReducer.toolbarVisible)
-    {
-      console.log('before changing toolbar');
-        if(nextprops.navReducer.toolbarVisible)
-            this.showToolBar(); 
-        else 
-            this.hideToolBar();
-    }
+   
 
   }
   
@@ -341,12 +348,19 @@ class Main extends React.Component {
     this.refs.toastModal.close();
   }
 
+  componentDidMount() {
+    Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+    // MessageBarManager.registerMessageBar(this.refs.alert);
+  }
+
+  componentWillUnmount(){
+    this.orientationListener.remove();
+    Orientation.removeOrientationListener();
+  }
+
   _orientationDidChange(orientation) {
-    if (orientation == 'LANDSCAPE') {
-      this.setState({orientation: 'horizontal'})
-    } else {
-      this.setState({orientation: 'vertical'})
-    }
+    var o =  orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT';
+    this.props.dispatch(updatedOrientation(o));
   }
 
   // showMessage(type: string, message: string, title: string){
@@ -379,17 +393,14 @@ class Main extends React.Component {
   }
   
   showToolBar(){
-    this.refs.toolBar.fadeInDown();
+    this.refs.toolBar.fadeInDown(0);
   }
   
   hideToolBar(){
-    this.refs.toolBar.fadeOutUp();
+    this.refs.toolBar.fadeOutUp(0);
   }
 
-  componentDidMount() {
-    Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-    // MessageBarManager.registerMessageBar(this.refs.alert);
-  }
+
 
   render() {
     const {navReducer} = this.props
@@ -405,7 +416,7 @@ class Main extends React.Component {
     return (
       <View style={styles.container}>
         {showKenestoToolbar ?
-          <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic" style={toolbarStyle}> 
+          <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic" style={toolbarStyle} duration={600}> 
             <KenestoToolbar
               onActionSelected={this.onActionSelected}
               onPressPopupMenu={this.onPressPopupMenu}
@@ -505,7 +516,8 @@ Main.childContextTypes = {
   plusMenuContext: React.PropTypes.object,
   itemMenuContext: React.PropTypes.object,
   errorModal: React.PropTypes.object,
-  dropDownContext: React.PropTypes.object
+  dropDownContext: React.PropTypes.object, 
+  toolBar: React.PropTypes.object, 
 }
 
 Main.contextTypes = {

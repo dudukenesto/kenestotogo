@@ -22,7 +22,6 @@ var {
   Dimensions
 } = ReactNative;
 var {height, width} = Dimensions.get('window');
-var Orientation = require('./KenestoDeviceOrientation');
 // var Orientation = require('react-native-orientation');
 
 
@@ -79,38 +78,21 @@ class AddPeople extends Component {
     this.state = {
       showSharingList: true,
       globalPermissions: 'VIEW_ONLY',
-      orientation: Orientation.getOrientation(this.getInitialOrientation),
       UsersPermissions : this.props.UsersPermissions
     };
   }
 
   componentDidMount() {
      var tags = [];
-     this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
      this.props.dispatch(docActions.SetSharingPermissions(tags));
   }
   
-  getInitialOrientation(error, orientation){
-    console.log('initial orientation: ' + orientation);
-    return orientation;
-  }
-
-  componentWillUnmount() {
-    this.orientationListener.remove();
-    Orientation.removeOrientationListener();
-  }
 
   componentWillReceiveProps(nextprops){
       //  alert(JSON.stringify(nextprops.ObjectInfo))
      this.setState( {UsersPermissions : typeof nextprops.UsersPermissions  != 'undefined' ?nextprops.UsersPermissions : [] });
   }
 
-  _orientationDidChange(orientation) {
-    console.log('orientation changed to ' + orientation)
-    this.setState({
-      orientation: orientation
-    })
-  }
 
   _onChange(tags) {
       this.props.dispatch(docActions.SetSharingPermissions(tags));
@@ -267,8 +249,8 @@ class AddPeople extends Component {
           iconName = permission.IsExternal ? 'person-outline' : 'person'
         }
       }
-      var textWidth = (this.state.orientation == 'PORTRAIT') ? width - 140 : height - 140;
-      
+     
+      var textWidth = (this.props.navReducer.orientation == 'PORTRAIT') ? width - 140 : height - 140;
       return (
         <View style={styles.sharingRow} key={permission.UserId}>
           <View style={styles.roundIcon}>

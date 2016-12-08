@@ -1,6 +1,7 @@
 'use strict';
 var React = require('react');
 var ReactNative = require('react-native');
+import {connect} from 'react-redux'
 var {
   StyleSheet,
   Text,
@@ -22,7 +23,6 @@ var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
 import WebViewBridge from 'react-native-webview-bridge';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-var Orientation = require('./KenestoDeviceOrientation');
 import {createResponder} from 'react-native-gesture-responder';
 import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
@@ -37,18 +37,14 @@ class Document extends React.Component{
     this.state = {  
       isLoading: true,
       scalingEnabled: true,
-       orientation: Orientation.getInitialOrientation(),
       url:"", 
       prevPinch: null, 
       pinchDirection : null, 
-      thumbnailUrl: this.props.data.ThumbnailUrl
+      thumbnailUrl: this.props.data.ThumbnailUrl, 
+      toolbarVisible: true
     };
   }
   
-
- componentDidMount() {
-          this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
- }
 
 componentWillMount(){
 //   console.log('window.height =' + window.height )
@@ -60,15 +56,8 @@ componentWillMount(){
 
 //  this.setState( {url : url });
    
-  if(this.props.data.isExternalLink)
-    {
-      var url =this.props.data.viewerUrl;
-      this.setState( {url : url });
-    }
-    else
-    {
-      Orientation.getOrientation(this.updateOrientation.bind(this))
-    }
+  this.setState( {url : this.props.data.viewerUrl });
+ 
 
 
       this.gestureResponder = createResponder({
@@ -121,8 +110,15 @@ componentWillMount(){
     
     
     onResponderSingleTapConfirmed: (evt, gestureState) => {
-       console.log('singletap - before dispatching toogletoolbar');
-       this.props.data.dispatch(toggleToolbar());
+    
+        if (this.state.toolbarVisible)
+                this.hideToolBar(); 
+            else 
+                this.showToolBar();
+        this.setState({toolbarVisible : !this.state.toolbarVisible});
+        
+      
+      
     },
  moveThreshold: 2,
     debug: false
@@ -130,13 +126,11 @@ componentWillMount(){
     
 }
 
- _orientationDidChange(orientation) {
-    this.setState({
-      orientation: orientation
-    })
-   // this.changeVideoOrientation("orientation");
+   showToolBar(){
+    this.context.toolBar.fadeInDown();
   }
   
+<<<<<<< HEAD
   componentWillUnmount(){
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
@@ -153,7 +147,12 @@ updateOrientation(error, orientation) {
       orientation: orientation,
       url: url
     });
+=======
+  hideToolBar(){
+    this.context.toolBar.fadeOutUp();
+>>>>>>> origin/login_feature
   }
+
 
  onLoadEnd(){
     // this.setState({isLoading: false});
@@ -194,7 +193,7 @@ hideLoading(){
   }
 
   render(){
-
+    writeToLog("", constans.DEBUG, `Document Component - url: ${this.state.url}`)
     const injectScript = `
       (function () {
               if (WebViewBridge)
@@ -383,4 +382,16 @@ var styles = StyleSheet.create({
 
 });
 
-module.exports = Document;
+Document.contextTypes = {
+  toolBar: React.PropTypes.object
+};
+
+function mapStateToProps(state) {
+
+  const { navReducer } = state
+  return {
+    toolbarVisible: navReducer.toolbarVisible,
+  }
+}
+
+export default connect(mapStateToProps)(Document)
