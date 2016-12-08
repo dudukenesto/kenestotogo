@@ -12,7 +12,10 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  ToolbarAndroid
+  ToolbarAndroid,
+  TouchableHighlight,
+  TouchableNativeFeedback,
+  Platform
 } from 'react-native'
 
 
@@ -101,6 +104,10 @@ let styles = StyleSheet.create({
   },
   buttonsActive: {
     flexDirection: "row",
+  },
+   moreMenu: {
+    fontSize: 22,
+    color: '#888', 
   }
 })
 
@@ -188,6 +195,14 @@ class KenestoToolbar extends Component {
     
   }
 
+   menuPressed(id, familyCode){
+      var {dispatch} = this.props; 
+   
+      dispatch(documentsActions.updateSelectedObject(id, familyCode, ""));
+      dispatch(documentsActions.getDocumentPermissions(id, familyCode))
+      this.context.itemMenuContext.open();
+    }
+
   renderSearchBox() {
     return (
       <View style={styles.searchBoxContainer}>
@@ -198,17 +213,16 @@ class KenestoToolbar extends Component {
     )
   }
 
+ 
 
-  renderIconsSet() {
+  renderDocumentsToolbar() {
     const {navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     // const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
     var title =  navReducer.routes[navReducer.index].data != null? navReducer.routes[navReducer.index].data.name: navReducer.routes[navReducer.index].title;
-    var showGoBack = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1 && navReducer.routes[navReducer.index].data.fId != "") 
-              || navReducer.routes[navReducer.index].key === 'document' || navReducer.routes[navReducer.index].key === 'addPeople' || navReducer.routes[navReducer.index].key === 'scan'  ? true : false;
-    var isDocumentsTollbar = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1) ? true : false;
-    var isAddPeoplePage = (navReducer.routes[navReducer.index].key.indexOf('addPeople') > -1) ? true : false;
+    var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
+    
     return (
       <View style= {styles.toolbar} >
         <View>
@@ -222,7 +236,6 @@ class KenestoToolbar extends Component {
         <View style={styles.folderName}>
           <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
         </View>
-        {isDocumentsTollbar ?
           <View style={{ flexDirection: "row" }}>
           <Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
 
@@ -247,13 +260,72 @@ class KenestoToolbar extends Component {
             </View>
           </View>
         </View>
-          :
-          <View></View>
-        }
-        {isAddPeoplePage && <View style={styles.shareIconContainer}><Icon name="send" style={[styles.iconStyle, styles.shareIcon]} onPress={this.addPeople.bind(this)} /></View>}
+        </View>
+    )
+  }
+
+renderDocumentToolbar() {
+
+   var TouchableElement = TouchableHighlight;
+    if (Platform.OS === 'android') {
+      TouchableElement = TouchableNativeFeedback;
+    }
+
+    const {navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    var title =  navReducer.routes[navReducer.index].data != null? navReducer.routes[navReducer.index].data.name: navReducer.routes[navReducer.index].title;
+    var currDoc = navReducer.routes[navReducer.index].data;
+    return (
+      <View style= {styles.toolbar} >
+        <View>
+        <Icon name="arrow-back" style={[styles.iconStyle]} onPress={this.onGoBack.bind(this) } />
+        </View>
+        <View style={styles.folderName}>
+          <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
+        </View>
+        <TouchableElement onPress={ (()=> { this.menuPressed(currDoc.documentId, currDoc.familyCode)}).bind(this) }>
+            <View style={styles.iconContainer}>
+              <Icon name="more-vert" style={styles.moreMenu} />
+            </View>
+        </TouchableElement>
       </View>
     )
   }
+
+  renderAddPeopleToolbar() {
+    const {navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    var title =  navReducer.routes[navReducer.index].data != null? navReducer.routes[navReducer.index].data.name: navReducer.routes[navReducer.index].title;
+   
+    return (
+      <View style= {styles.toolbar} >
+          <View>
+              <Icon name="arrow-back" style={[styles.iconStyle]} onPress={this.onGoBack.bind(this) } />
+          </View>
+          <View style={styles.folderName}>
+            <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
+          </View>
+          <View style={styles.shareIconContainer}><Icon name="send" style={[styles.iconStyle, styles.shareIcon]} onPress={this.addPeople.bind(this)} /></View>
+      </View>
+    )
+  }
+
+  // renderItemMenu(){
+
+  //    var currDoc = navReducer.routes[navReducer.index].data != null? navReducer.routes[navReducer.index].data.name: navReducer.routes[navReducer.index];
+
+  //   return (
+
+      
+  //       navReducer.routes[navReducer.index].key === 'document'?
+  //          <TouchableElement onPress={ (()=> { this.menuPressed(currDoc.Id, currDoc.FamilyCode)}).bind(this) }>
+  //               <View style={styles.iconContainer}>
+  //                 <Icon name="more-vert" style={styles.moreMenu} />
+  //               </View>
+  //          </TouchableElement> :  <View></View>
+  //   )
+
+  // }
   
 
   addPeople() {
@@ -270,23 +342,43 @@ class KenestoToolbar extends Component {
     const sortBy = documentlist.sortBy;
     const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
     var isDocumentsTollbar = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1) ? true : false;
-    
-    if (documentlist.catId == constans.SEARCH_DOCUMENTS && this.state.isSearchBoxOpen && isDocumentsTollbar) {
+    var isDocumentTollbar = navReducer.routes[navReducer.index].key == 'document';
+    var isAddPeoplePage = (navReducer.routes[navReducer.index].key.indexOf('addPeople') > -1) ? true : false;
+    var isSearchToolbar = documentlist.catId == constans.SEARCH_DOCUMENTS && this.state.isSearchBoxOpen && isDocumentsTollbar;
+
+
+
+    if (isSearchToolbar)
       return (<View>
-        {this.renderSearchBox() }
-      </View>)
-    }
-    else {
-      return (<View>
-      
-        {this.renderIconsSet() }
-        
-      </View>)
-    }
+              {this.renderSearchBox() }
+          </View>) 
+    else if (isDocumentsTollbar)
+      return (
+            <View>
+              {this.renderDocumentsToolbar() }
+          </View>
+      )
+     else if (isDocumentTollbar)
+       return (
+            <View>
+              {this.renderDocumentToolbar() }
+          </View>
+       )
+      else if (isAddPeoplePage)
+        return (
+            <View>
+              {this.renderAddPeopleToolbar() }
+          </View>
+        )
+
+
   }
 }
 
 
+KenestoToolbar.contextTypes = {
+    itemMenuContext:  React.PropTypes.object,
+};
 
 
 export default KenestoToolbar
