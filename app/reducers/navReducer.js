@@ -1,5 +1,6 @@
 import * as actionTypes from '../constants/ActionTypes'
 import { NavigationExperimental } from 'react-native'
+var Orientation = require('../components/KenestoDeviceOrientation');
 const {
   StateUtils: NavigationStateUtils
 } = NavigationExperimental
@@ -20,7 +21,8 @@ const initialState = {
   dropDownOptionTemplate: null, 
   triggerSelectedValue: '',
   addPeopleTriggerValue: 'VIEW_ONLY', 
-  toolbarVisible: true
+  toolbarVisible: true,
+  orientation: Orientation.getInitialOrientation()
 }
 
 function navigationState(state = initialState, action) {
@@ -162,6 +164,11 @@ function navigationState(state = initialState, action) {
       return{
           ...state,
           toolbarVisible: thistoolbarVisible,
+      }
+    case  actionTypes.UPDATE_ORIENTATION:
+      return{
+          ...state,
+          orientation: action.orientation,
       }
   
     default:

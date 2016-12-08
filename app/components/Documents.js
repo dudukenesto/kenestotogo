@@ -27,7 +27,9 @@ import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
 import {getDownloadFileUrl, getIconNameFromMimeType} from '../utils/documentsUtils'
 import { writeToLog } from '../utils/ObjectUtils'
+import {getEnvIp} from '../utils/accessUtils'
 
+const window = Dimensions.get('window');
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
 
@@ -36,8 +38,6 @@ var DocumentCell = require('../components/DocumentCell');
 var DocumentUploadCell = require('../components/DocumentUploadCell');
 
 const splitChars = '|';
-
-
 
 import _ from "lodash";
 import { fetchTableIfNeeded, refreshTable } from '../actions/documentsActions'
@@ -75,6 +75,21 @@ class Documents extends Component {
     }
   }
 
+getViewerUrl(document){
+   if(document.isExternalLink)
+    {
+      return document.ViewerUrl;
+    }
+    else
+    {
+      var longDimension = window.width > window.height ? window.width : window.height;
+      var shortDimension = window.height > window.width ? window.width : window.height;
+      var width = this.props.navReducer.orientation === 'PORTRAIT' ? shortDimension : longDimension;
+      var height = this.props.navReducer.orientation === 'PORTRAIT' ? longDimension : shortDimension;
+      var url = document.ViewerUrl.replace('localhost', getEnvIp(this.props.env)) + "&w=" + width + "&h=" + height;
+      return url;
+    }
+}
 
   componentWillMount() {
     const {dispatch} = this.props
@@ -153,23 +168,18 @@ class Documents extends Component {
             .then(response => response.json())
             .then(json => {
                 var downloadUrl = json.ResponseData.AccessUrl;
-
-                   var downloadUrl = json.ResponseData.AccessUrl;
-               var longDimension = deviceWidth > deviceHeight ? deviceWidth :deviceHeight;
+                var downloadUrl = json.ResponseData.AccessUrl;
+                var longDimension = deviceWidth > deviceHeight ? deviceWidth :deviceHeight;
                 var shortDimension = deviceHeight > deviceWidth ? deviceWidth : deviceHeight;
-               
-            
+              
                  document.ViewerUrl =document.ViewerUrl + '&tu='+ encodeURIComponent(document.ThumbnailUrl); 
-               
-                   
-            
-                            var data = {
+                 var data = {
                       key: "document",
                       name: document.Name,
                       documentId: document.Id,
                       catId: documentlist.catId,
                       fId: documentlist.fId,
-                      viewerUrl: document.ViewerUrl, 
+                      viewerUrl: this.getViewerUrl(document),
                       isExternalLink : document.IsExternalLink,
                       isVault:document.IsVault,
                       ThumbnailUrl : document.ThumbnailUrl,
@@ -190,13 +200,14 @@ class Documents extends Component {
             .done();
       }
       else{
-             var data = {
+            
+          var data = {
               key: "document",
               name: document.Name,
               documentId: document.Id,
               catId: documentlist.catId,
               fId: documentlist.fId,
-              viewerUrl: document.ViewerUrl, 
+              viewerUrl: this.getViewerUrl(document), 
               isExternalLink : document.IsExternalLink,
               isVault:document.IsVault,
               ThumbnailUrl : document.ThumbnailUrl,

@@ -22,7 +22,6 @@ var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
 import WebViewBridge from 'react-native-webview-bridge';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-var Orientation = require('./KenestoDeviceOrientation');
 import {createResponder} from 'react-native-gesture-responder';
 import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
@@ -37,7 +36,6 @@ class Document extends React.Component{
     this.state = {  
       isLoading: true,
       scalingEnabled: true,
-       orientation: Orientation.getInitialOrientation(),
       url:"", 
       prevPinch: null, 
       pinchDirection : null, 
@@ -45,10 +43,6 @@ class Document extends React.Component{
     };
   }
   
-
- componentDidMount() {
-          this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
- }
 
 componentWillMount(){
 //   console.log('window.height =' + window.height )
@@ -60,15 +54,8 @@ componentWillMount(){
 
 //  this.setState( {url : url });
    
-  if(this.props.data.isExternalLink)
-    {
-      var url =this.props.data.viewerUrl;
-      this.setState( {url : url });
-    }
-    else
-    {
-      Orientation.getOrientation(this.updateOrientation.bind(this))
-    }
+  this.setState( {url : this.props.data.viewerUrl });
+ 
 
 
       this.gestureResponder = createResponder({
@@ -130,29 +117,7 @@ componentWillMount(){
     
 }
 
- _orientationDidChange(orientation) {
-    this.setState({
-      orientation: orientation
-    })
-   // this.changeVideoOrientation("orientation");
-  }
-  
-  componentWillUnmount(){
-    this.orientationListener.remove();
-    Orientation.removeOrientationListener();
-  }
- 
-updateOrientation(error, orientation) {
-    var longDimension = window.width > window.height ? window.width : window.height;
-    var shortDimension = window.height > window.width ? window.width : window.height;
-    var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
-    var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
-    var url = this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env)) + "&w=" + width + "&h=" + height;
-    this.setState({
-      orientation: orientation,
-      url: url
-    });
-  }
+
 
  onLoadEnd(){
     // this.setState({isLoading: false});
@@ -193,7 +158,7 @@ hideLoading(){
   }
 
   render(){
-
+    writeToLog("", constans.DEBUG, `Document Component - url: ${this.state.url}`)
     const injectScript = `
       (function () {
               if (WebViewBridge)

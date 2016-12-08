@@ -153,6 +153,13 @@ export function updatedSelectedTrigerValue(value: string){
   }
 }
 
+export function updatedOrientation(orientation: string){
+  return{
+    type: actionTypes.UPDATE_ORIENTATION,
+    orientation
+  }
+}
+
 export function requestUpdateTrigger(value: string){
    return (dispatch, getState) => {
       const documentLists = getState().documentsReducer; 

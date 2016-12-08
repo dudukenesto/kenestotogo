@@ -20,7 +20,7 @@ import UpdateVersions from './UpdateVersions'
 import {connect} from 'react-redux'
 import KenestoToolbar from './KenestoToolbar'
 import * as documentsActions from '../actions/documentsActions'
-import {pop, updateRouteData, clearToast} from '../actions/navActions'
+import {pop, updateRouteData, clearToast,updatedOrientation} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
 import Error from './Error'
@@ -152,7 +152,6 @@ class Main extends React.Component {
         this.state = {
           ifCreatingFolder: false,
           isPopupMenuOpen: false,
-          orientation: 'unknown',
           isDropDownOpen: true,
           toastMessage: '',
           toastType: ''
@@ -341,12 +340,19 @@ class Main extends React.Component {
     this.refs.toastModal.close();
   }
 
+  componentDidMount() {
+    Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+    // MessageBarManager.registerMessageBar(this.refs.alert);
+  }
+
+  componentWillUnmount(){
+    this.orientationListener.remove();
+    Orientation.removeOrientationListener();
+  }
+
   _orientationDidChange(orientation) {
-    if (orientation == 'LANDSCAPE') {
-      this.setState({orientation: 'horizontal'})
-    } else {
-      this.setState({orientation: 'vertical'})
-    }
+    var o =  orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT';
+    this.props.dispatch(updatedOrientation(o));
   }
 
   // showMessage(type: string, message: string, title: string){
@@ -386,10 +392,7 @@ class Main extends React.Component {
     this.refs.toolBar.fadeOutUp();
   }
 
-  componentDidMount() {
-    Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-    // MessageBarManager.registerMessageBar(this.refs.alert);
-  }
+
 
   render() {
     const {navReducer} = this.props
