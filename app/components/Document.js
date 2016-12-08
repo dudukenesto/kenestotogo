@@ -146,7 +146,8 @@ updateOrientation(error, orientation) {
     var longDimension = window.width > window.height ? window.width : window.height;
     var shortDimension = window.height > window.width ? window.width : window.height;
     var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
-    var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
+    // var height = orientation === 'PORTRAIT' ? longDimension - 75 : shortDimension - 70;
+    var height = orientation === 'PORTRAIT' ? longDimension : shortDimension;
     var url = this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env)) + "&w=" + width + "&h=" + height;
     this.setState({
       orientation: orientation,
