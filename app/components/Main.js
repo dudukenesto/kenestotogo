@@ -92,8 +92,8 @@ let styles = StyleSheet.create({
       position: 'absolute',
       left: 0,
       top: 0,
+      right: 0,
       height: 50,
-      width: width,
       zIndex: 100,
       opacity: 0.8,
   },
@@ -142,7 +142,8 @@ class Main extends React.Component {
       plusMenuContext: this.refs.modalPlusMenu,
       itemMenuContext: this.refs.modalItemMenu,
       errorModal: this.refs.errorModal,
-      dropDownContext: this.refs.dropDownOptionsContainer
+      dropDownContext: this.refs.dropDownOptionsContainer, 
+      toolBar: this.refs.toolBar
     };
   }
 
@@ -304,6 +305,20 @@ class Main extends React.Component {
   }
 
   componentWillReceiveProps(nextprops) {
+ //   if (nextprops.navReducer.toolbarVisible != this.props.navReducer.toolbarVisible)
+  //  {
+  //    console.log('before changing toolbar');
+     //   if(nextprops.navReducer.toolbarVisible)
+   //         this.showToolBar(); 
+      //  else 
+      //      this.hideToolBar();
+ //   }
+
+  // if(nextprops.navReducer.toolbarVisible)
+  // {
+  //    this.showToolBar(); 
+  // }
+      
     if (nextprops.navReducer.HasError) {
       this.openModal("errorModal");
     }
@@ -325,14 +340,7 @@ class Main extends React.Component {
       setTimeout(this.closeToast.bind(this), 4000)
       this.props.dispatch(clearToast());
     }
-    if (nextprops.navReducer.toolbarVisible != this.props.navReducer.toolbarVisible)
-    {
-      console.log('before changing toolbar');
-        if(nextprops.navReducer.toolbarVisible)
-            this.showToolBar(); 
-        else 
-            this.hideToolBar();
-    }
+   
 
   }
   
@@ -385,11 +393,11 @@ class Main extends React.Component {
   }
   
   showToolBar(){
-    this.refs.toolBar.fadeInDown();
+    this.refs.toolBar.fadeInDown(0);
   }
   
   hideToolBar(){
-    this.refs.toolBar.fadeOutUp();
+    this.refs.toolBar.fadeOutUp(0);
   }
 
 
@@ -408,7 +416,7 @@ class Main extends React.Component {
     return (
       <View style={styles.container}>
         {showKenestoToolbar ?
-          <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic" style={toolbarStyle}> 
+          <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic" style={toolbarStyle} duration={600}> 
             <KenestoToolbar
               onActionSelected={this.onActionSelected}
               onPressPopupMenu={this.onPressPopupMenu}
@@ -508,7 +516,8 @@ Main.childContextTypes = {
   plusMenuContext: React.PropTypes.object,
   itemMenuContext: React.PropTypes.object,
   errorModal: React.PropTypes.object,
-  dropDownContext: React.PropTypes.object
+  dropDownContext: React.PropTypes.object, 
+  toolBar: React.PropTypes.object, 
 }
 
 Main.contextTypes = {
