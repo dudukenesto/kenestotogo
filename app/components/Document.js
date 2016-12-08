@@ -1,6 +1,7 @@
 'use strict';
 var React = require('react');
 var ReactNative = require('react-native');
+import {connect} from 'react-redux'
 var {
   StyleSheet,
   Text,
@@ -41,7 +42,8 @@ class Document extends React.Component{
       url:"", 
       prevPinch: null, 
       pinchDirection : null, 
-      thumbnailUrl: this.props.data.ThumbnailUrl
+      thumbnailUrl: this.props.data.ThumbnailUrl, 
+      toolbarVisible: true
     };
   }
   
@@ -121,8 +123,15 @@ componentWillMount(){
     
     
     onResponderSingleTapConfirmed: (evt, gestureState) => {
-       console.log('singletap - before dispatching toogletoolbar');
-       this.props.data.dispatch(toggleToolbar());
+    
+        if (this.state.toolbarVisible)
+                this.hideToolBar(); 
+            else 
+                this.showToolBar();
+        this.setState({toolbarVisible : !this.state.toolbarVisible});
+        
+      
+      
     },
  moveThreshold: 2,
     debug: false
@@ -137,7 +146,18 @@ componentWillMount(){
    // this.changeVideoOrientation("orientation");
   }
   
+   showToolBar(){
+    this.context.toolBar.fadeInDown();
+  }
+  
+  hideToolBar(){
+    this.context.toolBar.fadeOutUp();
+  }
+
+
   componentWillUnmount(){
+    if (!this.state.toolbarVisible)
+        this.showToolBar()
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
   }
@@ -382,4 +402,16 @@ var styles = StyleSheet.create({
 
 });
 
-module.exports = Document;
+Document.contextTypes = {
+  toolBar: React.PropTypes.object
+};
+
+function mapStateToProps(state) {
+
+  const { navReducer } = state
+  return {
+    toolbarVisible: navReducer.toolbarVisible,
+  }
+}
+
+export default connect(mapStateToProps)(Document)
