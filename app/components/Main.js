@@ -35,6 +35,8 @@ var MessageBarAlert = require('react-native-message-bar').MessageBar;
 // var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 import DropDownOptions from './DropDownOptions';
 var Orientation = require('./KenestoDeviceOrientation');
+var Dimensions = require('Dimensions');
+var { width, height } = Dimensions.get('window');
 
 let styles = StyleSheet.create({
   container: {
@@ -84,6 +86,16 @@ let styles = StyleSheet.create({
     top: 0,
     right: 0,
     bottom: 0,
+  },
+  toolbarContainer:{
+      flex: 1,
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      height: 50,
+      width: width,
+      zIndex: 100,
+      opacity: 0.8,
   },
   popupMenu: {
     flex: 1,
@@ -316,6 +328,7 @@ class Main extends React.Component {
     }
     if (nextprops.navReducer.toolbarVisible != this.props.navReducer.toolbarVisible)
     {
+      console.log('before changing toolbar');
         if(nextprops.navReducer.toolbarVisible)
             this.showToolBar(); 
         else 
@@ -366,11 +379,11 @@ class Main extends React.Component {
   }
   
   showToolBar(){
-    this.refs.toolBar.fadeInDown(800);
+    this.refs.toolBar.fadeInDown();
   }
   
   hideToolBar(){
-    this.refs.toolBar.fadeOutUp(800);
+    this.refs.toolBar.fadeOutUp();
   }
 
   componentDidMount() {
@@ -384,14 +397,15 @@ class Main extends React.Component {
     var modalStyle = this.state.ifCreatingFolder ? styles.ifProcessing : [styles.modal, styles.createFolder]
 
     var showPopupMenu = this.state.isPopupMenuOpen;
-    var showKenestoToolbar = navReducer.routes[navReducer.index].key === 'login' || navReducer.routes[navReducer.index].key === 'forgotPassword' || navReducer.routes[navReducer.index].key === 'KenestoLauncher' ? false : true;
+    var showKenestoToolbar =  navReducer.routes[navReducer.index].key === 'login' || navReducer.routes[navReducer.index].key === 'forgotPassword' || navReducer.routes[navReducer.index].key === 'KenestoLauncher' ? false : true;
     var documentlist = getDocumentsContext(navReducer);
+    var toolbarStyle = navReducer.routes[navReducer.index].key === 'document' ? styles.toolbarContainer : null;
     const sortBy = documentlist.sortBy;
 
     return (
       <View style={styles.container}>
         {showKenestoToolbar ?
-          <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic">
+          <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic" style={toolbarStyle}> 
             <KenestoToolbar
               onActionSelected={this.onActionSelected}
               onPressPopupMenu={this.onPressPopupMenu}

@@ -7,7 +7,6 @@ import * as navActions from '../actions/navActions'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import {hideToast} from '../actions/navActions'
-
 import {
   View,
   Text,
@@ -27,6 +26,7 @@ let styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 9,
   },
+
   iconStyle: {
     fontSize: 24,
     padding: 3,

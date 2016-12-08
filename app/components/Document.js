@@ -121,6 +121,7 @@ componentWillMount(){
     
     
     onResponderSingleTapConfirmed: (evt, gestureState) => {
+       console.log('singletap - before dispatching toogletoolbar');
        this.props.data.dispatch(toggleToolbar());
     },
  moveThreshold: 2,
