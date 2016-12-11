@@ -87,7 +87,7 @@ export function emitError(errorTitle: string, errorDetails: string, okAction: Ob
 }
 export function clearError(){
   return {
-    type: CLEAR_ERROR
+    type: actionTypes.CLEAR_ERROR
   }
 }
 

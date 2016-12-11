@@ -44,6 +44,12 @@ class Document extends React.Component{
       toolbarVisible: true
     };
   }
+
+
+componentWillReceiveProps(nextprops){
+    if (nextprops.orientation != this.props.orientation)
+        this.orientationChanged(nextprops.orientation);
+}
   
 
 componentWillMount(){
@@ -172,6 +178,10 @@ hideLoading(){
       const { webviewbridge } = this.refs;
       webviewbridge.sendToBridge("setZoom_" + value.toString());
   }
+  orientationChanged(orientation){
+     const { webviewbridge } = this.refs;
+     webviewbridge.sendToBridge("onDeviceOriatationChanged_" + orientation);
+  }
 
   render(){
     writeToLog("", constans.DEBUG, `Document Component - url: ${this.state.url}`)
@@ -184,6 +194,11 @@ hideLoading(){
                              var zoomLevel = parseInt(message.split("_")[1]);
                              activateSetZoom(zoomLevel);
                         } 
+                        else if (message.indexOf("onDeviceOriatationChanged") >  -1)
+                        {
+                             var orientation = message.split("_")[1];
+                             onDeviceOriatationChanged(orientation);
+                        } 
                         else
                           switch (message) {
                                     case "zoomIn":
@@ -195,6 +210,7 @@ hideLoading(){
                                     case "setZoom":
                                             activateSetZoom(100);
                                     break;
+
                                    
                                 }
                         
@@ -372,6 +388,7 @@ function mapStateToProps(state) {
   const { navReducer } = state
   return {
     toolbarVisible: navReducer.toolbarVisible,
+    orientation: navReducer.orientation
   }
 }
 
