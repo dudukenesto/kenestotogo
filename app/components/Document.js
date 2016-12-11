@@ -180,7 +180,7 @@ hideLoading(){
   }
   orientationChanged(orientation){
      const { webviewbridge } = this.refs;
-     webviewbridge.sendToBridge("onDeviceOrientationChanged" + orientation);
+     webviewbridge.sendToBridge("onDeviceOrientationChanged_" + orientation);
   }
 
   render(){
