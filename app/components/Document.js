@@ -180,7 +180,7 @@ hideLoading(){
   }
   orientationChanged(orientation){
      const { webviewbridge } = this.refs;
-     webviewbridge.sendToBridge("onDeviceOriatationChanged_" + orientation);
+     webviewbridge.sendToBridge("onDeviceOrientationChanged" + orientation);
   }
 
   render(){
@@ -194,10 +194,10 @@ hideLoading(){
                              var zoomLevel = parseInt(message.split("_")[1]);
                              activateSetZoom(zoomLevel);
                         } 
-                        else if (message.indexOf("onDeviceOriatationChanged") >  -1)
+                        else if (message.indexOf("onDeviceOrientationChanged") >  -1)
                         {
                              var orientation = message.split("_")[1];
-                             onDeviceOriatationChanged(orientation);
+                             onDeviceOrientationChanged(orientation);
                         } 
                         else
                           switch (message) {
