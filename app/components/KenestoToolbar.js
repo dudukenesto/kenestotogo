@@ -197,7 +197,6 @@ class KenestoToolbar extends Component {
 
    menuPressed(id, familyCode){
       var {dispatch} = this.props; 
-   
       dispatch(documentsActions.updateSelectedObject(id, familyCode, ""));
       dispatch(documentsActions.getDocumentPermissions(id, familyCode))
       this.context.itemMenuContext.open();

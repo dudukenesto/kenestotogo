@@ -375,7 +375,7 @@ class Main extends React.Component {
   //     stylesheetError: { backgroundColor: '#f00', strokeColor: '#f00' },
   //     stylesheetInfo: { backgroundColor: '#333', strokeColor: '#333' },
   //   }
-  //   if (type === 'error') {
+  //   if (type === constans.ERROR) {
   //     alertProps.avatar = require('../assets/icn_error_toast.png');
   //     alertProps.avatarStyle = { height: 20, width: 20, alignSelf: 'center', marginLeft: 5 };
   //   }

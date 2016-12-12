@@ -37,7 +37,6 @@ class Document extends React.Component{
     this.state = {  
       isLoading: true,
       scalingEnabled: true,
-      url:"", 
       prevPinch: null, 
       pinchDirection : null, 
       thumbnailUrl: this.props.data.ThumbnailUrl, 
@@ -62,7 +61,7 @@ componentWillMount(){
 
 //  this.setState( {url : url });
    
-  this.setState( {url : this.props.data.viewerUrl });
+ 
  
 
 
@@ -184,7 +183,7 @@ hideLoading(){
   }
 
   render(){
-    writeToLog("", constans.DEBUG, `Document Component - url: ${this.state.url}`)
+    writeToLog("", constans.DEBUG, `Document Component - url: ${this.props.data.viewerUrl}`)
     const injectScript = `
       (function () {
               if (WebViewBridge)
@@ -229,7 +228,7 @@ hideLoading(){
             <WebViewBridge
               ref="webviewbridge"
               style={styles.webview_body}
-              source={{ uri: this.state.url }}
+              source={{ uri: this.props.data.viewerUrl }}
               onLoadEnd={this.onLoadEnd.bind(this) }
               javaScriptEnabled={true}
               domStorageEnabled={true}

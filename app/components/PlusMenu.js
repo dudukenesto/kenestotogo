@@ -15,6 +15,7 @@ import {getFileUploadUrl, getDocumentsContext} from '../utils/documentsUtils'
 import {uploadToKenesto} from '../actions/documentsActions'
 var ImagePicker = NativeModules.ImageCropPicker;
 const KenestoIcon = createIconSetFromFontello(fontelloConfig);
+import * as constans from '../constants/GlobalConstans'
 
 let styles = StyleSheet.create({
     container: {
@@ -126,7 +127,7 @@ class PlusMenu extends React.Component{
             }).catch(e => {
                 if (e != 'Error: User cancelled image selection')
                 {
-                    this.props.dispatch(navActions.emitToast("error", "File selection failed"))
+                    this.props.dispatch(navActions.emitToast(constans.ERROR, "File selection failed"))
                 }
                             
             }

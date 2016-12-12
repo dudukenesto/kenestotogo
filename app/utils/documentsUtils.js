@@ -1,7 +1,16 @@
 import { config } from './app.config'
+import {
+  Dimensions
+} from 'react-native'
+
 import _ from 'lodash'
 import stricturiEncode from 'strict-uri-encode'
 import * as constans from '../constants/GlobalConstans'
+import { getEnvIp } from '../utils/accessUtils'
+
+const window = Dimensions.get('window');
+let deviceWidth = Dimensions.get('window').width
+let deviceHeight = Dimensions.get('window').height
 
 export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId, keyboard) {
   var urls = _.find(config.urls, { 'env': env });
@@ -58,13 +67,13 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
 }
 
 
-export function getDocumentPermissionsUrl(env, sessionToken, documentId, familyCode) {
+export function getObjectInfoUrl(env, sessionToken, documentId, familyCode) {
   var urls = _.find(config.urls, { 'env': env });
   var apiBaseUrl = urls.ApiBaseUrl;
   if (urls == null)
     return null;
 
-  return `${apiBaseUrl}/KDocuments.svc/RetrieveObjectPermissions?t=${sessionToken}&oi=${documentId}&fc=${familyCode}`;
+  return `${apiBaseUrl}/KDocuments.svc/RetrieveObjectInfo?t=${sessionToken}&oi=${documentId}&fc=${familyCode}`;
 }
 
 export function getCreateFolderUrl(env, sessionToken, fId, folderName, isVault) {
@@ -457,6 +466,26 @@ export function parseUploadUserData(userData: string) {
 
   return { uploadId: items[0], catId: items[1] };
 
+}
+
+export function getViewerUrl(env: string, document: Object, orientation) {
+  if (document.isExternalLink) {
+    return document.ViewerUrl;
+  }
+  else {
+    var time = new Date().getTime();
+    var longDimension = window.width > window.height ? window.width : window.height;
+    var shortDimension = window.height > window.width ? window.width : window.height;
+    var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
+    var height = orientation === 'PORTRAIT' ? longDimension : shortDimension;
+    var url = document.ViewerUrl.replace('localhost', getEnvIp(env)) + "&w=" + width + "&h=" + height + "&t=" + time;
+   
+    if (document.MimeType.indexOf('video') > -1) {
+      url = url + '&tu=' + encodeURIComponent(document.ThumbnailUrl);
+    }
+    
+    return url;
+  }
 }
 
 export function constrcutUploadUSerData(uploadId: string, catId: string) {

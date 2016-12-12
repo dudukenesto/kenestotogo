@@ -9,7 +9,7 @@ import * as documentsActions from '../actions/documentsActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-
+import * as constans from '../constants/GlobalConstans'
 var styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -108,6 +108,7 @@ class EditDocument extends React.Component {
 
     _edit() {
         if (this.state.documentName != false) {
+           
             this.props.dispatch(documentsActions.EditDocument(this.state.documentId ,this.state.documentName));
             this.props.closeModal();
         }

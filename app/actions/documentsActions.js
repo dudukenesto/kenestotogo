@@ -9,9 +9,9 @@ import {
     constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
     getDownloadFileUrl, getDocumentsContext, getUploadFileCompletedUrl,
     getDeleteAssetUrl, getDeleteFolderUrl, getSelectedDocument, getShareDocumentUrl,
-    getDocumentPermissionsUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl,
+    getObjectInfoUrl, getCheckOutDocumentUrl, getCheckInDocumentUrl, getEditFolderUrl,
     getDocumentlistByCatId, getEditDocumentUrl, getDiscardCheckOutDocumentUrl, parseUploadUserData, constrcutUploadUSerData,
-    isDocumentsContextExists, getDocumentsContextByCatId, getDocumentIdFromUploadUrl
+    isDocumentsContextExists, getDocumentsContextByCatId, getDocumentIdFromUploadUrl, getViewerUrl
 } from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import _ from "lodash";
@@ -43,8 +43,10 @@ export function updateIsFetchingSelectedObject(isFetching: boolean) {
 export function getDocumentPermissions(documentId: string, familyCode: string) {
     return (dispatch, getState) => {
         const {sessionToken, env, email} = getState().accessReducer;
+        var documentlist = getDocumentsContext(getState().navReducer);
+
         dispatch(updateIsFetchingSelectedObject(true))
-        var url = getDocumentPermissionsUrl(env, sessionToken, documentId, familyCode);
+        var url = getObjectInfoUrl(env, sessionToken, documentId, familyCode);
         writeToLog(email, constans.DEBUG, `function getDocumentPermissions - url: ${url}`)
         return fetch(url)
             .then(response => response.json())
@@ -65,6 +67,50 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
                 dispatch(navActions.emitError("Failed to get document permissions", ""))
                 dispatch(updateIsFetchingSelectedObject(false))
                 writeToLog(email, constans.ERROR, `function getDocumentPermissions - Failed to get document permissions , url: ${url}`, error)
+            })
+    }
+}
+
+
+export function getDocumentInfo(documentId: string, familyCode: string) {
+    return (dispatch, getState) => {
+        const {sessionToken, env, email} = getState().accessReducer;
+        var documentlist = getDocumentsContext(getState().navReducer);
+
+        dispatch(updateIsFetchingSelectedObject(true))
+        var url = getObjectInfoUrl(env, sessionToken, documentId, familyCode);
+        writeToLog(email, constans.DEBUG, `function getDocumentInfo - url: ${url}`)
+        return fetch(url)
+            .then(response => response.json())
+            .then(json => {
+                if (json.ResponseStatus == "FAILED") {
+                    dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
+                    dispatch(navActions.emitError(json.ErrorMessage, ""))
+                    dispatch(updateIsFetchingSelectedObject(false))
+                    writeToLog(email, constans.ERROR, `function getDocumentInfo - error details- url: ${url}`)
+                }
+                else {
+                    var document = json.ResponseData.DocumentInfo;
+                    var data = {
+                        key: "document",
+                        name: document.Name,
+                        documentId: document.Id,
+                        familyCode: json.ResponseData.FamilyCode,
+                        catId: documentlist.catId,
+                        fId: documentlist.fId,
+                        viewerUrl: getViewerUrl(env, document, getState().navReducer.orientation),
+                        isExternalLink: document.IsExternalLink,
+                        isVault: document.IsVault,
+                        ThumbnailUrl: document.ThumbnailUrl,
+                        env: env,
+                        dispatch: dispatch
+                    }
+                    dispatch(navActions.updateRouteData(data))
+                }
+            })
+            .catch((error) => {
+                dispatch(updateIsFetchingSelectedObject(false))
+                writeToLog(email, constans.ERROR, `function getDocumentInfo - Failed to get document info , url: ${url}`, error)
             })
     }
 }
@@ -396,7 +442,7 @@ export function clearDocuments(documentlist: Object) {
 function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
 
     const activeDocumentsList = documentsReducer[documentlist.catId]
-    if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl =="false" || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == null || activeDocumentsList.nextUrl == 'null') {
+    if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl == "false" || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == null || activeDocumentsList.nextUrl == 'null') {
         return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
     }
     return activeDocumentsList.nextUrl
@@ -458,7 +504,7 @@ function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
     if (typeof (activeDocumentsList) == 'undefined' || activeDocumentsList.items.length == 0 || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
         return true
     }
-    
+
     return false
 }
 
@@ -522,56 +568,56 @@ export function downloadDocument(id: string, fileName: string, mimeType: string)
     return (dispatch, getState) => {
         const {sessionToken, env, email} = getState().accessReducer;
         //dispatch(updateIsFetching(true)); 
-        dispatch(navActions.emitToast('info', 'Document will be downloaded shortly'));
+        dispatch(navActions.emitToast(constans.INFO, 'Document will be downloaded shortly'));
         const url = getDownloadFileUrl(env, sessionToken, id);
         writeToLog(email, constans.DEBUG, `function downloadDocument - url: ${url}`)
         fetch(url)
             .then(response => response.json())
             .then(json => {
                 var downloadUrl = json.ResponseData.AccessUrl;
-               
-              //  config.log('document mime type = ' + mime.lookup(fileName))
+
+                //  config.log('document mime type = ' + mime.lookup(fileName))
                 //downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
-              //downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
-                 //  console.log('downloadurl: ' + downloadUrl);
+                //downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
+                //  console.log('downloadurl: ' + downloadUrl);
 
                 //  downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
-               // downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
+                // downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
 
                 RNFetchBlob.config({
                     //    path : Android_Download_Path + "/" + fileName,
                     fileCache: true,
                     // android only options, these options be a no-op on IOS
                     addAndroidDownloads: {
-                       useDownloadManager: true,
-                       mime: mimeType,
+                        useDownloadManager: true,
+                        mime: mimeType,
                         // Show notification when response data transmitted
                         notification: true,
                         // Title of download notification
                         title: fileName,
                         // File description (not notification description)
                         description: 'Download completed',
-                       //  mime : 'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        //  mime : 'vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                         // Make the file scannable  by media scanner
                         meidaScannable: true,
-                      
+
                     }
                 })
                     .fetch('GET', downloadUrl)
                     .then((res) => {
-                              //  RNFetchBlob.android.actionViewIntent( res.path(), 'image/jpg')
+                        //  RNFetchBlob.android.actionViewIntent( res.path(), 'image/jpg')
                     }
                     // RNFetchBlob.fs.scanFile([ { path : res.path(), mime : 'audio/mpeg' } ]
-                    
+
                     // )
                     )
 
-                            .catch((err) => {
-                                // scan file error
-                            })
+                    .catch((err) => {
+                        // scan file error
+                    })
 
             }).catch(error => {
-                dispatch(navActions.emitToast('error downloading document'))
+                dispatch(navActions.emitToast(constans.ERROR, 'error downloading document'))
                 writeToLog(email, constans.ERROR, `function downloadDocument - error downloading document - url: ${url}`, error)
 
             })
@@ -613,13 +659,13 @@ function uploadFile(data, file) {
     });
 }
 
-export function updateUploadDocument(datasource: object, uploadItems: object, catId: string, documentId: string="") {
+export function updateUploadDocument(datasource: object, uploadItems: object, catId: string, documentId: string = "") {
     return {
         type: types.UPDATE_UPLOAD_LIST,
         datasource,
         uploadItems,
         catId,
-        lastUploadId:documentId
+        lastUploadId: documentId
     }
 }
 
@@ -639,9 +685,10 @@ export function clearDocumentList(catId: string) {
     }
 }
 
-export function removeUploadDocument(Id: string, catId: string, documentId: string="") {
+export function removeUploadDocument(Id: string, catId: string, documentId: string = "") {
     return (dispatch, getState) => {
         try {
+            const {navReducer} = getState()
             const items = getState().documentsReducer[catId].items;
             const totalFiles = getState().documentsReducer[catId].totalFiles;
             const totalFolders = getState().documentsReducer[catId].totalFolders;
@@ -670,6 +717,7 @@ export function removeUploadDocument(Id: string, catId: string, documentId: stri
                     dispatch(clearDocumentList(catId));
                 }
             }
+
         }
         catch (err) {
             writeToLog("", constans.ERROR, `function removeUploadDocument - Failed! `, err)
@@ -725,7 +773,7 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                         // else
                                         message = "File successfully uploaded"
 
-                                        dispatch(navActions.emitToast("info", message));
+                                        dispatch(navActions.emitToast(constans.SUCCESS, message));
 
                                     }
                                     else {
@@ -737,7 +785,7 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                         message = "File successfully uploaded"
                                         dispatch(navActions.emitToast("error", message));
                                         writeToLog(email, constans.ERROR, `function uploadToKenesto(1) - Error. failed to upload file 0, ${JSON.stringify(json)}`)
-                                        
+
                                     }
 
 
@@ -746,7 +794,7 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                 .catch((error) => {
                                     var userData = parseUploadUserData(json.UserData);
                                     dispatch(removeUploadDocument(userData.uploadId, userData.catId));
-                                    dispatch(navActions.emitToast("info", "Error. failed to upload file"))
+                                    dispatch(navActions.emitToast("error", "Error. failed to upload file"))
                                     writeToLog(email, constans.ERROR, `function uploadToKenesto(2) - Error. failed to upload file 1 - uploadId: ${userData.uploadId}`, error)
                                 })
 
@@ -817,6 +865,7 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
             if (url != '')
                 url = url + "&ud=" + constrcutUploadUSerData(encodeURIComponent(baseFileId), encodeURIComponent(catId));
 
+            const {navReducer} = getState()
             const items = getState().documentsReducer[catId].items;
             const uploadItems = getState().documentsReducer[catId].uploadItems;
             const totalFiles = getState().documentsReducer[catId].totalFiles;
@@ -841,7 +890,12 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
             else {
                 var documentlist = getDocumentsContext(getState().navReducer);
                 if (catId == documentlist.catId) {
+                    var isDocumentPage = navReducer.routes[navReducer.index].key == 'document';
+                    if (isDocumentPage) {
+                        dispatch(getDocumentInfo(baseFileId, constans.GENERAL_FAMILY));
+                    }
                     dispatch(refreshTable(documentlist, false));
+
                 }
                 else {
                     if (isDocumentsContextExists(getState().navReducer, catId)) {
@@ -853,6 +907,7 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
                     }
                 }
             }
+
 
         }
         catch (err) {
@@ -900,7 +955,7 @@ function uploadNewVersion(fileObject: object, baseFileId: string) {
                                     dispatch(updateDocumentVersion(finalCatId, fileObject, "", finalUploadId, false));
                                     if (json.ResponseStatus == 'OK') {
                                         let message = "Successfully updated document version"
-                                        dispatch(navActions.emitToast("info", message));
+                                        dispatch(navActions.emitToast(constans.SUCCESS, message));
                                     }
                                     else {
                                         let message = "Error. failed to update version"
@@ -942,6 +997,8 @@ function uploadNewVersion(fileObject: object, baseFileId: string) {
 export function deleteAsset(id: string, familyCode: string) {
     return (dispatch, getState) => {
         dispatch(updateIsFetching(true));
+
+        const {navReducer} = getState()
         const {sessionToken, env, email} = getState().accessReducer;
 
         const url = getDeleteAssetUrl(env, sessionToken, id, familyCode);
@@ -951,20 +1008,23 @@ export function deleteAsset(id: string, familyCode: string) {
             .then(json => {
                 dispatch(updateIsFetching(false));
                 if (json.ResponseStatus == "FAILED") {
-                    dispatch(navActions.emitToast("error", "", "Error deleting asset"))
+                    dispatch(navActions.emitToast("error", "", "Error deleting document"))
                     writeToLog(email, constans.ERROR, `function deleteAsset - Error deleting asset - url: ${url}`)
                 }
                 else {
-                    dispatch(navActions.emitToast("success", "", "successfully deleted the asset"))
-                    var documentlist = getDocumentsContext(getState().navReducer);
-                    dispatch(refreshTable(documentlist, false))
+                    var isDocumentPage = navReducer.routes[navReducer.index].key == 'document';
+                    if (isDocumentPage) {
+                        dispatch(navActions.pop());
+                    }
+                    var documentlist = getDocumentsContext(navReducer);
+                    dispatch(refreshTable(documentlist, false));
+                    dispatch(navActions.emitToast(constans.SUCCESS, "successfully deleted the document"))
                 }
             })
             .catch((error) => {
-                dispatch(navActions.emitToast("error", "", "Failed to delete asset"))
+                dispatch(navActions.emitToast("error", "", "Failed to delete document"))
                 writeToLog(email, constans.ERROR, `function deleteAsset - Failed to delete asset - url: ${url}`, error)
             })
-
     }
 }
 
@@ -983,7 +1043,7 @@ export function deleteFolder(id: string) {
                     writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`)
                 }
                 else {
-                    dispatch(navActions.emitToast("success", "", "successfully deleted the folder"))
+                    dispatch(navActions.emitToast(constans.SUCCESS, "", "successfully deleted the folder"))
                     var documentlist = getDocumentsContext(getState().navReducer);
                     dispatch(refreshTable(documentlist, false))
                 }
@@ -1091,7 +1151,7 @@ export function DiscardCheckOut() {
                 }
                 else {
                     dispatch(updateIsFetching(false));
-                    dispatch(navActions.emitToast("success", "Check-Out successfully discarded", ""));
+                    dispatch(navActions.emitToast(constans.SUCCESS, "Check-Out successfully discarded", ""));
                     dispatch(navActions.clearToast());
                     dispatch(Access.retrieveStatistics());
                 }
@@ -1125,7 +1185,7 @@ export function CheckOut() {
                 }
                 else {
                     dispatch(updateIsFetching(false));
-                    dispatch(navActions.emitToast("success", "Document successfully checked out.", ""));
+                    dispatch(navActions.emitToast(constans.SUCCESS, "Document successfully checked out.", ""));
                     dispatch(navActions.clearToast());
                     dispatch(Access.retrieveStatistics());
 
@@ -1176,7 +1236,7 @@ export function CheckIn(comment: string) {
                 }
                 else {
                     dispatch(updateIsFetching(false));
-                    dispatch(navActions.emitToast("success", "Document successfully checked in.", ""));
+                    dispatch(navActions.emitToast(constans.SUCCESS, "Document successfully checked in.", ""));
                     dispatch(navActions.clearToast());
                     dispatch(Access.retrieveStatistics());
 
@@ -1194,7 +1254,8 @@ export function CheckIn(comment: string) {
 export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 
     return (dispatch, getState) => {
-        var documentlist = getDocumentsContext(getState().navReducer);
+        const {navReducer} = getState()
+        var documentlist = getDocumentsContext(navReducer);
         const {sessionToken, env, email} = getState().accessReducer;
         const url = getEditFolderUrl(env, sessionToken, fId, folderName, isVault);
         writeToLog(email, constans.DEBUG, `function EditFolder - url: ${url}`)
@@ -1219,7 +1280,7 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
                 else {
                     dispatch(updateIsFetching(false));
                     dispatch(refreshTable(documentlist, false));
-                    dispatch(navActions.emitToast("success", "folder successfully updated.", ""));
+                    dispatch(navActions.emitToast(constans.SUCCESS, "folder successfully updated.", ""));
                     dispatch(navActions.clearToast());
                 }
 
@@ -1233,13 +1294,15 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 }
 
 export function EditDocument(documentId: string, documentName: string) {
-    return (dispatch, getState) => {
+    return (dispatch, getState) => {          
         var documentlist = getDocumentsContext(getState().navReducer);
         const {sessionToken, env, email} = getState().accessReducer;
         const url = getEditDocumentUrl(env, sessionToken, documentId, documentName);
         writeToLog(email, constans.DEBUG, `function EditDocument - url: ${url}`)
-
-        dispatch(updateIsFetching(true));
+        var isDocumentPage = getState().navReducer.routes[getState().navReducer.index].key == 'document';
+        if (!isDocumentPage) {
+            dispatch(updateIsFetching(true));
+         }
         fetch(url)
             .then(response => response.json())
             .then(json => {
@@ -1249,9 +1312,19 @@ export function EditDocument(documentId: string, documentName: string) {
                     writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`)
                 }
                 else {
-                    dispatch(updateIsFetching(false));
+                    
+                  
+                   
+                    if (isDocumentPage) {
+                        dispatch(getDocumentInfo(documentId, constans.GENERAL_FAMILY));
+                    }
+                    else
+                    {
+                        dispatch(updateIsFetching(false));
+                    }
+
                     dispatch(refreshTable(documentlist, false));
-                    dispatch(navActions.emitToast("success", "document successfully updated.", ""));
+                    dispatch(navActions.emitToast(constans.SUCCESS, "document successfully updated.", ""));
                     dispatch(navActions.clearToast());
                 }
 
@@ -1311,7 +1384,7 @@ export function ShareDocument() {
                 }
                 else {
                     dispatch(navActions.pop());
-                    dispatch(navActions.emitToast("success", "Sharing settings updated", ""));
+                    dispatch(navActions.emitToast(constans.SUCCESS, "Sharing settings updated", ""));
 
                 }
 

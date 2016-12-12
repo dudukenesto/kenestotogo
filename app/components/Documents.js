@@ -25,13 +25,9 @@ import * as constans from '../constants/GlobalConstans'
 import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
-import {getDownloadFileUrl, getIconNameFromMimeType} from '../utils/documentsUtils'
+import { getDownloadFileUrl, getIconNameFromMimeType, getViewerUrl } from '../utils/documentsUtils'
 import { writeToLog } from '../utils/ObjectUtils'
-import {getEnvIp} from '../utils/accessUtils'
-
-const window = Dimensions.get('window');
-let deviceWidth = Dimensions.get('window').width
-let deviceHeight = Dimensions.get('window').height
+import { getEnvIp } from '../utils/accessUtils'
 
 var dismissKeyboard = require('dismissKeyboard');
 var DocumentCell = require('../components/DocumentCell');
@@ -75,28 +71,13 @@ class Documents extends Component {
     }
   }
 
-getViewerUrl(document){
-   if(document.isExternalLink)
-    {
-      return document.ViewerUrl;
-    }
-    else
-    {
-      var longDimension = window.width > window.height ? window.width : window.height;
-      var shortDimension = window.height > window.width ? window.width : window.height;
-      var width = this.props.navReducer.orientation === 'PORTRAIT' ? shortDimension : longDimension;
-      var height = this.props.navReducer.orientation === 'PORTRAIT' ? longDimension : shortDimension;
-      var url = document.ViewerUrl.replace('localhost', getEnvIp(this.props.env)) + "&w=" + width + "&h=" + height;
-      return url;
-    }
-}
 
   componentWillMount() {
     const {dispatch} = this.props
     dispatch(fetchTableIfNeeded())
   }
 
-  componentDidUpdate( prevProps,  prevState) {
+  componentDidUpdate(prevProps, prevState) {
     const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     this._showStatusBar()
@@ -151,74 +132,23 @@ getViewerUrl(document){
         isVault: document.IsVault
       }
       this.props._handleNavigate(routes.documentsRoute(data));
-
     }
     else {
-      if (document.MimeType.indexOf('video') > -1)
-      {
-        // fetch(getDownloadFileUrl(this.props.env, this.props.sessionToken, document.Id))
-        // .then(
-            
-        // )
-
-       
-            var url = getDownloadFileUrl(this.props.env, this.props.sessionToken, document.Id);
-
-            fetch(url)
-            .then(response => response.json())
-            .then(json => {
-                var downloadUrl = json.ResponseData.AccessUrl;
-                var downloadUrl = json.ResponseData.AccessUrl;
-                var longDimension = deviceWidth > deviceHeight ? deviceWidth :deviceHeight;
-                var shortDimension = deviceHeight > deviceWidth ? deviceWidth : deviceHeight;
-              
-                 document.ViewerUrl =document.ViewerUrl + '&tu='+ encodeURIComponent(document.ThumbnailUrl); 
-                 var data = {
-                      key: "document",
-                      name: document.Name,
-                      documentId: document.Id,
-                      familyCode: document.FamilyCode,
-                      catId: documentlist.catId,
-                      fId: documentlist.fId,
-                      viewerUrl: this.getViewerUrl(document),
-                      isExternalLink : document.IsExternalLink,
-                      isVault:document.IsVault,
-                      ThumbnailUrl : document.ThumbnailUrl,
-                      env: this.props.env,
-                      dispatch: this.props.dispatch
-                    }
-                    this.props._handleNavigate(routes.documentRoute(data));
-
-
-
-            }).catch(error => {
-
-              alert('error: ' + error)
-             //   dispatch(navActions.emitToast('error downloading document'))
-              //  writeToLog(email, constans.ERROR, `function downloadDocument - error downloading document - url: ${url}`, error)
-
-            })
-            .done();
+      var data = {
+        key: "document",
+        name: document.Name,
+        documentId: document.Id,
+        familyCode: document.FamilyCode,
+        catId: documentlist.catId,
+        fId: documentlist.fId,
+        viewerUrl: getViewerUrl(this.props.env, document, this.props.navReducer.orientation),
+        isExternalLink: document.IsExternalLink,
+        isVault: document.IsVault,
+        ThumbnailUrl: document.ThumbnailUrl,
+        env: this.props.env,
+        dispatch: this.props.dispatch
       }
-      else{
-            
-          var data = {
-              key: "document",
-              name: document.Name,
-              documentId: document.Id,
-              familyCode: document.FamilyCode,
-              catId: documentlist.catId,
-              fId: documentlist.fId,
-              viewerUrl: this.getViewerUrl(document), 
-              isExternalLink : document.IsExternalLink,
-              isVault:document.IsVault,
-              ThumbnailUrl : document.ThumbnailUrl,
-              env: this.props.env, 
-              dispatch: this.props.dispatch
-            }
-            this.props._handleNavigate(routes.documentRoute(data));
-
-      }
+      this.props._handleNavigate(routes.documentRoute(data));
     }
   }
 
@@ -300,22 +230,21 @@ getViewerUrl(document){
     const {documentsReducer, navReducer, dispatch} = this.props;
     var documentlist = getDocumentsContext(navReducer);
     try {
-        const documents = documentsReducer[documentlist.catId].items;
-        const document = documents.find(d => (d.Id === id));
-        if(typeof (document) != 'undefined')
-        {
-       
-          const index = documents.indexOf(document);
-          const sectionHeaderHeights = index > 0 && documents[0].FamilyCode != document.FamilyCode ? 104 : 52
-          const position = index * 67 + sectionHeaderHeights;
-          this.refs.listview.scrollTo({ y: position });
-        }
+      const documents = documentsReducer[documentlist.catId].items;
+      const document = documents.find(d => (d.Id === id));
+      if (typeof (document) != 'undefined') {
+
+        const index = documents.indexOf(document);
+        const sectionHeaderHeights = index > 0 && documents[0].FamilyCode != document.FamilyCode ? 104 : 52
+        const position = index * 67 + sectionHeaderHeights;
+        this.refs.listview.scrollTo({ y: position });
+      }
 
     }
     catch (err) {
       writeToLog("", constans.ERROR, `function scrollToItem - Failed! `, err)
     }
-     
+
   }
 
 

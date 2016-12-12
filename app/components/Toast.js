@@ -9,6 +9,7 @@ import * as navActions from '../actions/navActions'
 import {createFolder} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
+import * as constans from '../constants/GlobalConstans'
 
 var styles = StyleSheet.create({
     container: {
@@ -56,13 +57,13 @@ class Toast extends React.Component {
         let bgColor = '';
         
         switch(this.state.type){
-            case 'error':
+            case constans.ERROR:
                 bgColor = '#f00';
                 break;
-            case 'success':
+            case constans.SUCCESS:
                 bgColor = '#3290F1';
                 break;
-            case 'info':
+            case constans.INFO:
                 bgColor = '#333';
                 break;
             default:
@@ -75,7 +76,7 @@ class Toast extends React.Component {
            
                 <View style={[styles.container, {backgroundColor: bgColor}]}>
                 {
-                    this.state.type === 'error' &&
+                    this.state.type === constans.ERROR &&
                     <View style={styles.errorIconContainer}>
                         <Image source={require('../assets/icn_error_toast.png') } style={styles.errorIcon}></Image>
                     </View>

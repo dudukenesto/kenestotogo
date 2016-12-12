@@ -13,6 +13,8 @@ export const INFO = 'Info'
 export const WARNING = 'Warning'
 export const FATAL = 'Fatal'
 export const DEBUG = 'Debug'
-export const GENERAL = 'General'
+export const GENERAL_FAMILY = 'General'
+export const SUCCESS = 'success'
+
 
 
