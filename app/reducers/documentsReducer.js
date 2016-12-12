@@ -100,12 +100,6 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
         [action.catId]: documentlist(state[action.catId], action),
 
       })
-    case types.REQUEST_CREATE_FOLDER: {
-      return {
-        ...state,
-        creatingFolder: action.creatingFolder
-      }
-    }
     case types.SET_SHARING_PERMISSIONS:
       return {
               ...state,

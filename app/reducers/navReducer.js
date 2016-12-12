@@ -22,6 +22,7 @@ const initialState = {
   triggerSelectedValue: '',
   addPeopleTriggerValue: 'VIEW_ONLY', 
   toolbarVisible: true,
+  isProcessing:false,
   orientation: Orientation.getInitialOrientation()
 }
 
@@ -170,7 +171,12 @@ function navigationState(state = initialState, action) {
           ...state,
           orientation: action.orientation,
       }
-  
+   case actionTypes.UPDATE_IS_PROCESSING:
+
+      return {
+        ...state,
+        isProcessing: action.isProcessing,
+      }
     default:
       return state
   }

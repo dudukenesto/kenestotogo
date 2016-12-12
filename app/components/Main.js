@@ -17,6 +17,7 @@ import CreateFolder from './CreateFolder'
 import EditDocument from './EditDocument'
 import EditFolder from './EditFolder'
 import UpdateVersions from './UpdateVersions'
+import Processing from './Processing'
 import {connect} from 'react-redux'
 import KenestoToolbar from './KenestoToolbar'
 import * as documentsActions from '../actions/documentsActions'
@@ -69,6 +70,12 @@ let styles = StyleSheet.create({
     width: 320
   },
   ifProcessing: {
+    height: 90,
+    width: 320,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  processingModal: {
     height: 90,
     width: 320,
     justifyContent: 'center',
@@ -153,6 +160,7 @@ class Main extends React.Component {
         this.state = {
           ifCreatingFolder: false,
           isPopupMenuOpen: false,
+          isProcessingOpen: false,
           isDropDownOpen: true,
           toastMessage: '',
           toastType: ''
@@ -288,6 +296,10 @@ class Main extends React.Component {
     this.openModal("updateVersionsModal");
   }
 
+  openProcessingModal()
+  {
+    this.openModal("processingModal");
+  }
   openCreateFolder() {
     this.refs.CreateFolder.open();
 
@@ -318,7 +330,16 @@ class Main extends React.Component {
   // {
   //    this.showToolBar(); 
   // }
-      
+    if (nextprops.navReducer.isProcessing && !this.state.isProcessingOpen ) {
+      this.openModal("processingModal");
+      this.setState({isProcessingOpen: true})
+    }
+    else if(this.state.isProcessingOpen)
+    {
+      this.closeModal("processingModal")
+       this.setState({isProcessingOpen: false})
+    }
+
     if (nextprops.navReducer.HasError) {
       this.openModal("errorModal");
     }
@@ -457,6 +478,9 @@ class Main extends React.Component {
         </Modal>
         <Modal style= {styles.updateVersionsModal} position={"center"}  ref={"updateVersionsModal"} isDisabled={false}>
           <UpdateVersions closeModal = {() => this.closeModal("updateVersionsModal") } openModal = {() => this.openModal("updateVersionsModal") }/>
+        </Modal>
+        <Modal style= {styles.processingModal} position={"center"}  ref={"processingModal"} isDisabled={false}>
+          <Processing  closeModal = {() => this.closeModal("processingModal") } openModal = {() => this.openModal("processingModal") }/>
         </Modal>
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>

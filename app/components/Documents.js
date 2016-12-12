@@ -205,7 +205,7 @@ class Documents extends Component {
     const errorMessage = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].errorMessage : "";
     if (hasError && this.refs.masterView != undefined) {
       //this.refs.masterView.showMessage("success", errorMessage);
-      this.props.dispatch(emitToast("error", "Error loading documents list"));
+      this.props.dispatch(emitToast(constans.ERROR, "Error loading documents list"));
       this.peops.dispatch(clearToast());
     }
   }

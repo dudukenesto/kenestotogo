@@ -55,6 +55,14 @@ export function updateRouteData (routeData) {
   }
 }
 
+export function updateIsProcessing(isProcessing: boolean) {
+  return {
+    type: actionTypes.UPDATE_IS_PROCESSING,
+    isProcessing
+  }
+}
+
+
 export function emitToast(type: string, messge: string, title: string){
     return {
     type: actionTypes.SUBMIT_TOAST, 
