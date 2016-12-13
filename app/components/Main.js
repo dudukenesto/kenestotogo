@@ -5,7 +5,8 @@ import {
   TextInput,
   StyleSheet,
   ToolbarAndroid,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  AppState
 } from 'react-native'
 
 import NavigationRootContainer from '../containers/navRootContainer'
@@ -31,6 +32,10 @@ import Confirm from './Confirm'
 import CheckInDocument from './CheckInDocument'
 import { writeToLog } from '../utils/ObjectUtils'
 import * as Animatable from 'react-native-animatable';
+import {config} from '../utils/app.config'
+import PubNub from 'pubnub'
+import PushController from './PushController';
+import PushNotification from 'react-native-push-notification';
 
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 // var MessageBarManager = require('react-native-message-bar').MessageBarManager;
@@ -163,7 +168,10 @@ class Main extends React.Component {
           isProcessingOpen: false,
           isDropDownOpen: true,
           toastMessage: '',
-          toastType: ''
+          toastType: '', 
+          pubnub :new PubNub({  publishKey: config.pubnub.publishKey,
+          subscribeKey: config.pubnub.subscribeKey,
+          ssl: config.pubnub.ssl})
         };
          this.onActionSelected = this.onActionSelected.bind(this);
          this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
@@ -369,14 +377,32 @@ class Main extends React.Component {
     this.refs.toastModal.close();
   }
 
+    // handleAppStateChange(appState) {
+    //   if (appState === 'background') {
+    //     let date = new Date(Date.now() + (5000));
+
+    //     if (Platform.OS === 'ios') {
+    //       date = date.toISOString();
+    //     }
+
+    //     PushNotification.localNotificationSchedule({
+    //       message: "My Notification Message",
+    //       date,
+    //     });
+    //   }
+    // }
+
+
   componentDidMount() {
     Orientation.addOrientationListener(this._orientationDidChange.bind(this));
+   // AppState.addEventListener('change', this.handleAppStateChange);
     // MessageBarManager.registerMessageBar(this.refs.alert);
   }
 
   componentWillUnmount(){
     this.orientationListener.remove();
     Orientation.removeOrientationListener();
+    // AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
   _orientationDidChange(orientation) {
@@ -410,6 +436,22 @@ class Main extends React.Component {
 
     componentWillMount(){
 //  MessageBarManager.unregisterMessageBar();
+
+      this.state.pubnub.addListener({
+          message: function(pubnubMessage) {
+
+              PushNotification.localNotification({ message : pubnubMessage.message.Subject, userInfo : pubnubMessage.message})
+
+            //  console.log('pubnubMessage.message.Subject = ' + pubnubMessage.message.Subject);
+            //  console.log('pubnubMessage.message.Text = ' + pubnubMessage.message.Text);
+              // handle message
+          }
+      })
+
+      this.state.pubnub.subscribe({ 
+          channels: ['scott@kenestodemo.com'] 
+      });
+
 
   }
   
@@ -526,7 +568,7 @@ class Main extends React.Component {
           :
           <View></View>
         }
-
+      <PushController dispatch={this.props.dispatch} navReducer={this.props.navReducer} env={this.props.env} height={height} width={width}/>
       <MessageBarAlert ref="alert" />
         <DropDownOptions ref={"dropDownOptionsContainer"} />
 
@@ -551,7 +593,7 @@ Main.contextTypes = {
 function mapStateToProps(state) {
 
   const { documentsReducer, navReducer} = state
-  const {env, sessionToken } = state.accessReducer;
+  const {env, sessionToken, email } = state.accessReducer;
   //alert(sessionToken);
   return {
     documentsReducer,
