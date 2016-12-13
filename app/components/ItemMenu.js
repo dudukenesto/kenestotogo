@@ -290,7 +290,7 @@ class ItemMenu extends React.Component {
             return (<TouchableHighlight onPress={this.updateVersions.bind(this)} underlayColor="#E9EAEC">
                 <View style={styles.actionHolder}>
                     <Icon name="update" style={styles.icon} />
-                    <Text style={styles.actionName}>Update Versions</Text>
+                    <Text style={styles.actionName}>Update Version</Text>
                 </View>
             </TouchableHighlight>)
         }
