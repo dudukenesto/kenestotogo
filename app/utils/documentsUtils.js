@@ -12,7 +12,7 @@ const window = Dimensions.get('window');
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
 
-export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId, keyboard) {
+export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId, keyboard, isSearch) {
   var urls = _.find(config.urls, { 'env': env });
   const splitChars = '|';
   var apiBaseUrl = urls.ApiBaseUrl;
@@ -20,40 +20,44 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
   keyboard = typeof (keyboard) == 'undefined' ? "" : encodeURIComponent(keyboard)
   if (urls == null)
     return null;
-
-  if (catId.indexOf(splitChars) >= 0) {
-    var dtlStr = catId.split(splitChars);
-    var key = dtlStr[0]
-  }
-  else {
-    var key = catId
-  }
-  var asOwner = false;
   var functionName = 'RetrieveDocuments';
-  switch (key) {
-    case constans.MY_DOCUMENTS:
-      functionName = 'RetrieveDocuments';
-      asOwner = true;
-      break;
-    case constans.ALL_DOCUMENTS:
-      functionName = 'RetrieveDocuments';
-      asOwner = false;
-      break;
-    case constans.ARCHIVED_DOCUMENTS:
-      functionName = 'RetrieveArchivedDocuments';
-      break;
-    case constans.DOCUMENTS_SHARE_WITH_ME:
-      functionName = 'RetrieveSharedDocuments';
-      break;
-    case constans.CHECKED_OUT_DOCUMENTS:
-      functionName = 'RetrieveCheckedOutDocuments';
-      break;
-    case constans.SEARCH_DOCUMENTS:
-      functionName = 'DocumentsQuickSearch';
-      break;
+  if (isSearch)
+  {
+        functionName = 'DocumentsQuickSearch';
+  }
+  else{
+        if (catId.indexOf(splitChars) >= 0) {
+            var dtlStr = catId.split(splitChars);
+            var key = dtlStr[0]
+          }
+          else {
+            var key = catId
+          }
+          var asOwner = false;
+
+          switch (key) {
+            case constans.MY_DOCUMENTS:
+              functionName = 'RetrieveDocuments';
+              asOwner = true;
+              break;
+            case constans.ALL_DOCUMENTS:
+              functionName = 'RetrieveDocuments';
+              asOwner = false;
+              break;
+            case constans.ARCHIVED_DOCUMENTS:
+              functionName = 'RetrieveArchivedDocuments';
+              break;
+            case constans.DOCUMENTS_SHARE_WITH_ME:
+              functionName = 'RetrieveSharedDocuments';
+              break;
+            case constans.CHECKED_OUT_DOCUMENTS:
+              functionName = 'RetrieveCheckedOutDocuments';
+              break;
+          }
   }
 
-  if (key == constans.SEARCH_DOCUMENTS) {
+
+  if (isSearch) {
     return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&k=${keyboard}`
   }
   else {
@@ -123,7 +127,8 @@ export function getDocumentsContext(navReducer: Object) {
       sortDirection: currRoute.data.sortDirection,
       sortBy: currRoute.data.sortBy,
       keyboard: currRoute.data.keyboard,
-      baseFileId: currRoute.data.baseFileId
+      baseFileId: currRoute.data.baseFileId,
+      isSearch: currRoute.data.isSearch
     })
 }
 
@@ -145,7 +150,8 @@ export function getDocumentsContextByCatId(navReducer: Object, catId: string) {
             sortDirection: route.data.sortDirection,
             sortBy: route.data.sortBy,
             keyboard: route.data.keyboard,
-            baseFileId: route.data.baseFileId
+            baseFileId: route.data.baseFileId,
+            isSearch: currRoute.data.isSearch
           })
       }
     }
@@ -184,8 +190,6 @@ export function getDocumentsTitle(categoryType: String) {
       return "Checked-out Documents";
     case constans.ARCHIVED_DOCUMENTS:
       return "Archived Documents";
-    case constans.SEARCH_DOCUMENTS:
-      return "Search Documents";
     default:
       return "My Documents";
 

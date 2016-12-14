@@ -122,18 +122,7 @@ class KenestoToolbar extends Component {
   }
   
   onPressSearchBox() {
-
-    var data = {
-        key:"documents|search",
-        name: "documents|" + "search",
-        catId: constans.SEARCH_DOCUMENTS,
-        fId: "",
-        sortDirection: constans.ASCENDING,
-        sortBy: constans.ASSET_NAME,
-        isVault:false,
-        keyboard: ""
-      }
-      this.props.dispatch(documentsActions.initializeSearchBox(data));
+      this.props.dispatch(documentsActions.toggleSearchBox(true));
       
       this.setState({
         isSearchBoxOpen: true,
@@ -163,32 +152,22 @@ class KenestoToolbar extends Component {
   }
 
   hideSearchBox() {
-    var routeData ={
-                name: getDocumentsTitle(constans.SEARCH_DOCUMENTS),
-                catId: constans.SEARCH_DOCUMENTS,
-                fId: "",
-                sortDirection: constans.ASCENDING,
-                sortBy: constans.ASSET_NAME,
-                keyboard:""
-            }
-            
-    this.props.onActionSelected(1)
     this.setState({
       isSearchBoxOpen: false
     });
+
+  
+    this.props.dispatch(documentsActions.toggleSearchBox(false));
   }
 
   _submitSearch(text){
-    var routeData ={
-                name: getDocumentsTitle(constans.SEARCH_DOCUMENTS),
-                catId: constans.SEARCH_DOCUMENTS,
-                fId: "",
-                sortDirection: constans.ASCENDING,
-                sortBy: constans.ASSET_NAME,
-                keyboard:text
-            }
-
-    this.props.dispatch(documentsActions.refreshTable(routeData, true));
+      const {navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    documentlist.keyboard = text; 
+    documentlist.sortDirection = constans.ASCENDING; 
+    documentlist.sortBy = constans.ASSET_NAME;
+   
+    this.props.dispatch(documentsActions.refreshTable(documentlist, true));
      this.setState({
       searchText: text
     });
@@ -343,8 +322,9 @@ renderDocumentToolbar() {
     var isDocumentsTollbar = (navReducer.routes[navReducer.index].key.indexOf('documents') > -1) ? true : false;
     var isDocumentTollbar = navReducer.routes[navReducer.index].key == 'document';
     var isAddPeoplePage = (navReducer.routes[navReducer.index].key.indexOf('addPeople') > -1) ? true : false;
-    var isSearchToolbar = documentlist.catId == constans.SEARCH_DOCUMENTS && this.state.isSearchBoxOpen && isDocumentsTollbar;
-
+    var isSearchToolbar = this.state.isSearchBoxOpen || (typeof navReducer.routes[navReducer.index].data != 'undefined' 
+                           && typeof navReducer.routes[navReducer.index].data.isSearch != 'undefined' 
+                           && navReducer.routes[navReducer.index].data.isSearch);           
 
 
     if (isSearchToolbar)

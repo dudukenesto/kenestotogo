@@ -5,7 +5,9 @@ export default class PushController extends Component {
   componentDidMount() {
     PushNotification.configure({
       onNotification: function(notification) {
-           alert(JSON.stringify(notification));
+        alert('hey')
+       // alert(JSON.stringify(notification));
+          // alert(JSON.stringify(notification));
         //    const {dispatch, navReducer} = this.props
         //    var documentlist = getDocumentsContext(navReducer);
         //    var data = {
@@ -29,6 +31,7 @@ export default class PushController extends Component {
 
         // })
       },
+      senderID: "504053097092"
     });
   }
 

@@ -236,7 +236,8 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                                                 catId: constans.MY_DOCUMENTS,
                                                 fId: "",
                                                 sortDirection: constans.ASCENDING,
-                                                sortBy: constans.ASSET_NAME
+                                                sortBy: constans.ASSET_NAME, 
+                                                isSearch: false
                                             }
                                 var rr = routes.documentsRoute(data)
                             

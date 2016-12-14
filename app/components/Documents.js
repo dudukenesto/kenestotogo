@@ -83,7 +83,8 @@ class Documents extends Component {
     this._showStatusBar()
 
     if (documentlist.catId in documentsReducer) {
-      if (documentsReducer[documentlist.catId].uploadItems.length > 0) {
+       let dataSource = documentlist.catId in documentsReducer && documentsReducer[documentlist.catId].dataSource.length > 0 ? documentsReducer[documentlist.catId].dataSource : '';
+      if (documentsReducer[documentlist.catId].uploadItems.length > 0 && dataSource != '' && dataSource.getSectionLengths(0) != '' && !documentlist.isSearch) {
         this.scrollToTop()
       }
       // else if (documentsReducer[documentlist.catId].lastUploadId != "") {
@@ -129,7 +130,8 @@ class Documents extends Component {
         fId: fId,
         sortDirection: constans.ASCENDING,
         sortBy: constans.ASSET_NAME,
-        isVault: document.IsVault
+        isVault: document.IsVault, 
+        isSearch: false
       }
       this.props._handleNavigate(routes.documentsRoute(data));
     }
@@ -252,10 +254,10 @@ class Documents extends Component {
 
     const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
-    var itemsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].items.length : 0;
+   // var itemsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].items.length : 0;
 
-    var uploadsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].uploadItems.length : 0;
-    itemsLength += uploadsLength;
+ //   var uploadsLength = (documentlist.catId in documentsReducer) && !documentlist.isSearch ? documentsReducer[documentlist.catId].uploadItems.length : 0;
+   // itemsLength += uploadsLength;
     let ds = new ListView.DataSource({
       rowHasChanged: (r1, r2) => {
         r1["Id"] !== r2["Id"] || r1["uploadStatus"] !== r2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
@@ -263,10 +265,7 @@ class Documents extends Component {
     })
     let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]);
 
-    //itemsLength+= documentsReducer[documentlist.catId].uploadItems.length;
-
-
-    if (itemsLength == 0) {
+    if (typeof dataSource.getSectionLengths == 'undefined' || dataSource.getSectionLengths(0) == '') {
 
       return (<NoDocuments
         filter={this.state.filter}
@@ -334,7 +333,7 @@ class Documents extends Component {
       const isFetching = documentsReducer.isFetching;
       var additionalStyle = {};
 
-      let showCustomButton = documentlist.catId == constans.SEARCH_DOCUMENTS ? false : true
+      let showCustomButton = documentlist.isSearch ? false : true
       return (
 
         <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
@@ -369,7 +368,7 @@ var NoDocuments = React.createClass({
         </View>)
     }
     else {
-      if (this.props.documentlist.catId == constans.SEARCH_DOCUMENTS) {
+      if (this.props.documentlist.isSearch) {
         return (
           <View style={[styles.container, styles.centerText]}>
             <View style={styles.textContainer}>

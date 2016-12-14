@@ -72,7 +72,7 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
 }
 
 
-export function getDocumentInfo(documentId: string, familyCode: string) {
+export function getDocumentInfo(documentId: string, familyCode: string, actionType : string = types.UPDATE_ROUTE_DATA) {
     return (dispatch, getState) => {
         const {sessionToken, env, email} = getState().accessReducer;
         var documentlist = getDocumentsContext(getState().navReducer);
@@ -105,7 +105,17 @@ export function getDocumentInfo(documentId: string, familyCode: string) {
                         env: env,
                         dispatch: dispatch
                     }
-                    dispatch(navActions.updateRouteData(data))
+
+                    switch (actionType) {
+                        case types.UPDATE_ROUTE_DATA:
+                            dispatch(navActions.updateRouteData(data))
+                            break;
+                        case types.PUSH_ROUTE:
+                              this.props.dispatch(navActions.push(routes.documentRoute(data).route));
+                            break;
+                    }
+                    
+                    
                 }
             })
             .catch((error) => {
@@ -116,7 +126,7 @@ export function getDocumentInfo(documentId: string, familyCode: string) {
 }
 
 
-function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders) {
+function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders, isSearch = false) {
     try {
         var dataBlob = {},
             sectionIDs = [],
@@ -135,7 +145,7 @@ function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders) {
 
 
         if (totalFolders > 0 && totalFiles > 0) {
-            if (uploadItems.length > 0) {
+            if (uploadItems.length > 0 && !isSearch) {
                 dataBlob["ID1"] = `Uploads (${uploadItems.length})`
                 dataBlob["ID2"] = `Folders (${totalFolders})`
                 dataBlob["ID3"] = `Files (${totalFiles})`
@@ -202,7 +212,7 @@ function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders) {
 
         }
         else if (totalFolders > 0 && totalFiles == 0) {
-            if (uploadItems.length > 0) {
+            if (uploadItems.length > 0 && !isSearch) {
                 dataBlob["ID1"] = `Uploads (${uploadItems.length})`
                 dataBlob["ID2"] = `Folders (${totalFolders})`
                 sectionIDs[0] = "ID1";
@@ -239,7 +249,7 @@ function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders) {
 
         }
         else if (totalFiles > 0 && totalFolders == 0) {
-            if (uploadItems.length > 0) {
+            if (uploadItems.length > 0 && !isSearch) {
                 dataBlob["ID1"] = `Uploads (${uploadItems.length})`
                 dataBlob["ID2"] = `Files (${totalFiles})`
                 sectionIDs[0] = "ID1";
@@ -276,7 +286,7 @@ function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders) {
 
         }
         else if (totalFiles == 0 && totalFolders == 0) {
-            if (uploadItems.length > 0) {
+            if (uploadItems.length > 0 && !isSearch) {
 
                 dataBlob["ID1"] = `Uploads (${uploadItems.length})`
                 sectionIDs[0] = "ID1";
@@ -362,7 +372,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
                         items = [...json.ResponseData.DocumentsList]
                     }
                     var uploadItems = getState().documentsReducer[documentlist.catId].uploadItems;
-                    var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
+                    var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders, documentlist.isSearch).ret;
                     switch (actionType) {
                         case types.RECEIVE_DOCUMENTS:
                             dispatch(receiveDocumentsList(items, nextUrl, documentlist, datasource, totalFiles, totalFolders))
@@ -395,17 +405,18 @@ export function fetchTableIfNeeded() {
         }
     }
 }
-export function refreshTable(documentlist: Object, updateRouteData: boolean = true) {
+export function refreshTable(documentlist: Object, updateRouteData: boolean = true, getStatistics = false) {
     return (dispatch, getState) => {
         try {
-            const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
+            const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch)
             const {sessionToken, env, email} = getState().accessReducer;
             writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
 
             if (updateRouteData) {
                 dispatch(navActions.updateRouteData(documentlist))
             }
-            dispatch(Access.retrieveStatistics());
+            if (getStatistics)
+                dispatch(Access.retrieveStatistics());
             return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
 
 
@@ -417,10 +428,21 @@ export function refreshTable(documentlist: Object, updateRouteData: boolean = tr
 
 }
 
-export function initializeSearchBox(documentlist: Object) {
+
+export function toggleSearchBox(active: boolean) {
     return (dispatch, getState) => {
-        dispatch(clearDocuments(documentlist));
-        return dispatch(navActions.push(routes.documentsRoute(documentlist).route));
+        var documentlist = getDocumentsContext(getState().navReducer);
+       
+        documentlist.isSearch = active;
+        if (!active)
+            return dispatch(refreshTable(documentlist, true))
+        else 
+        {
+                 dispatch(clearDocuments(documentlist));
+                 return dispatch(navActions.updateRouteData(documentlist));
+        }
+       
+       // return dispatch(navActions.push(routes.documentsRoute(documentlist).route));
     }
 }
 
@@ -430,7 +452,7 @@ export function clearAllDocumentlists() {
     }
 }
 
-export function clearDocuments(documentlist: Object) {
+export function clearDocuments(documentlist: Object, isSearch : boolean = false) {
     return (dispatch, getState) => {
         var items = [];
         var nextUrl = ""
@@ -443,7 +465,7 @@ function getNextUrl(env: string, sessionToken: string, documentsReducer: Object,
 
     const activeDocumentsList = documentsReducer[documentlist.catId]
     if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl == "false" || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == null || activeDocumentsList.nextUrl == 'null') {
-        return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard)
+        return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch)
     }
     return activeDocumentsList.nextUrl
 }
@@ -545,7 +567,7 @@ export function createFolder(folderName: string, isVault: boolean) {
                 }
                 else {
                     //dispatch(UpdateCreateingFolderState(2))
-                    dispatch(refreshTable(documentlist, false))
+                    dispatch(refreshTable(documentlist, false, true))
 
                 }
                 dispatch(navActions.updateIsProcessing(false));
@@ -698,17 +720,22 @@ export function removeUploadDocument(Id: string, catId: string, documentId: stri
             _.remove(uploads, {
                 Id: Id
             });
-            var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders).ret;
-            dispatch(updateUploadDocument(datasource, uploads, catId, documentId));
 
-            var documentlist = getDocumentsContext(getState().navReducer);
+              var documentlist = getDocumentsContext(getState().navReducer);
+
+
+            var datasource = AssembleTableDatasource(items, uploads, totalFiles, totalFolders,documentlist.isSearch).ret;
+            dispatch(updateUploadDocument(datasource, uploads, catId, documentId));
+            
+            documentlist = getDocumentsContext(getState().navReducer);
+          
             if (catId == documentlist.catId) {
-                dispatch(refreshTable(documentlist, false));
+                dispatch(refreshTable(documentlist, false, true));
             }
             else {
                 if (isDocumentsContextExists(getState().navReducer, catId)) {
                     documentlist = getDocumentsContextByCatId(getState().navReducer, catId)
-                    dispatch(refreshTable(documentlist, false));
+                    dispatch(refreshTable(documentlist, false, true));
                 }
                 else {
                     dispatch(clearDocumentList(catId));
@@ -846,7 +873,7 @@ export function uploadToKenesto(fileObject: object, url: string) {
             var xhr = new XMLHttpRequest();
             xhr.status = -1;
             var newUploadItems = [...getState().documentsReducer[documentlist.catId].uploadItems, { Id: uploadId, catId: documentlist.catId, FamilyCode: 'UPLOAD_PROGRESS', Name: fileObject.name, Size: fileObject.size, fileExtension: fileObject.fileExtension, uploadStatus: -1, xhr: xhr, fileObject: fileObject, url: url }];
-            var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders).ret;
+            var datasource = AssembleTableDatasource(items, newUploadItems, totalFiles, totalFolders, documentlist.isSearch).ret;
             dispatch(updateUploadDocument(datasource, newUploadItems, documentlist.catId, ""));
             dispatch(uploadDocumentObject(fileObject, uploadId));
 
@@ -878,15 +905,15 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
                         items[i].fileObject = fileObject
                 }
             }
-
-            var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
+             var documentlist = getDocumentsContext(getState().navReducer);
+            var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders, documentlist.isSearch).ret;
             dispatch(updateItemsState(datasource, items, catId));
 
             if (isUploading) {
                 dispatch(uploadNewVersion(fileObject, baseFileId));
             }
             else {
-                var documentlist = getDocumentsContext(getState().navReducer);
+                documentlist = getDocumentsContext(getState().navReducer);
                 if (catId == documentlist.catId) {
                     var isDocumentPage = navReducer.routes[navReducer.index].key == 'document';
                     if (isDocumentPage) {
@@ -1016,7 +1043,7 @@ export function deleteAsset(id: string, familyCode: string) {
                         dispatch(navActions.pop());
                     }
                     var documentlist = getDocumentsContext(navReducer);
-                    dispatch(refreshTable(documentlist, false));
+                    dispatch(refreshTable(documentlist, false, true));
                     dispatch(navActions.emitToast(constans.SUCCESS, "successfully deleted the document"))
                     dispatch(navActions.updateIsProcessing(false));
                 }
@@ -1046,7 +1073,7 @@ export function deleteFolder(id: string) {
                 else {
                     dispatch(navActions.emitToast(constans.SUCCESS, "successfully deleted the folder"))
                     var documentlist = getDocumentsContext(getState().navReducer);
-                    dispatch(refreshTable(documentlist, false))
+                    dispatch(refreshTable(documentlist, false, true))
                 }
                 dispatch(navActions.updateIsProcessing(false));
             })
@@ -1434,8 +1461,9 @@ export function updateUploadItems(uploadId: string, catId: string, status: numbe
             );
 
             obj.uploadStatus = status
+             var documentlist = getDocumentsContext(getState().navReducer);
 
-            var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders).ret;
+            var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders, documentlist.isSearch).ret;
 
             dispatch(updateUploadItemsState(datasource, uploadItems, catId));
 

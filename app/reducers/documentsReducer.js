@@ -177,6 +177,7 @@ function initDocumentList() {
     hasError: false,
     dataSource: {},
     sharingPermissions: null,
-    lastUploadId:''
+    lastUploadId:'', 
+    isSearch: false
   }
 }
