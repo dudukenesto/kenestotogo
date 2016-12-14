@@ -138,26 +138,39 @@ class KenestoToolbar extends Component {
         keyboard: ""
       }
     
-    this.refs.folderTitle.fadeOut(600);
-    if(!showGoBack){
-      this.refs.hamburgerMenu.transition({opacity: 1, rotate: '0deg'}, {opacity: 0, rotate: '180deg'}, 600);
-      this.refs.arrowBack.transition({opacity: 0, rotate: '180deg'}, {opacity: 1, rotate: '360deg'}, 600);
-    }
-    
-    this.refs.sorting.slideOutRight(600).then(() => {
+    this.openingSearchBoxAnimation(showGoBack).then(() => {
       this.props.dispatch(documentsActions.initializeSearchBox(data));
       this.setState({
         isSearchBoxOpen: true,
         searchText: ""
       })
-    });
-    this.refs.searchIcon.transition({translateX: 0}, {translateX: 63}, 600);      
+    });    
   }
+  
+openingSearchBoxAnimation(showGoBack) {
+  return new Promise((resolve, reject) => {
+    var counter = 0;
+    var updateCounter = function(){
+      counter++;
+      if(counter >= 2) {
+        resolve(counter);
+      }
+    }
+    
+    this.refs.folderTitle.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
+    if(!showGoBack){
+      this.refs.hamburgerMenu.transition({opacity: 1, rotate: '0deg'}, {opacity: 0, rotate: '180deg'}, 600);
+      this.refs.arrowBack.transition({opacity: 0, rotate: '180deg'}, {opacity: 1, rotate: '360deg'}, 600);
+    }
+    this.refs.searchIcon.transition({translateX: 0}, {translateX: 63}, 600);
+    this.refs.sorting.slideOutRight(600).then(() => updateCounter()).catch(()=>updateCounter());
+  })
+}
 
-  onGoBack() {
-    this.props.onActionSelected(1)
-    this.props.dispatch(hideToast());
-  }
+onGoBack() {
+  this.props.onActionSelected(1)
+  this.props.dispatch(hideToast());
+}
 
   onSort() {
     this.props.onActionSelected(2)
@@ -234,22 +247,35 @@ class KenestoToolbar extends Component {
     this.refs.textInput.fadeIn(600);
   } 
   
-  openingDocumentsToolbarAnimation() {
-    const {navReducer} = this.props
-    var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
+  onDocumentsToolbarLayout() {
     if (this.state.animateToolBar) {
-      this.refs.folderTitle.fadeIn(600);
-      if (!showGoBack) {
-        this.refs.hamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 600);
-        this.refs.arrowBack.transition({opacity: 1, rotate: '0deg'}, {opacity: 0, rotate: '-180deg'}, 600);
-      }
-      this.refs.searchIcon.transition({ translateX: 63, opacity: 1 }, { translateX: 0, opacity: 1 }, 600);
-      this.refs.sorting.fadeInRight(600).then(() => {
+      const {navReducer} = this.props;
+      var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
+      this.openingDocumentsToolbarAnimation(showGoBack).then(() => {
         this.setState({
           animateToolBar: false,
         })
-      });      
+      })
     }
+  }
+  
+  openingDocumentsToolbarAnimation(showGoBack) {
+    return new Promise((resolve, reject) => {
+      var counter = 0;
+      var updateCounter = function () {
+        counter++;
+        if (counter >= 2) {
+          resolve(counter);
+        }
+      }
+      this.refs.folderTitle.fadeIn(600).then(() => updateCounter()).catch(() => updateCounter());
+      if (!showGoBack) {
+        this.refs.hamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 600);
+        this.refs.arrowBack.transition({ opacity: 1, rotate: '0deg' }, { opacity: 0, rotate: '-180deg' }, 600);
+      }
+      this.refs.searchIcon.transition({ translateX: 63, opacity: 1 }, { translateX: 0, opacity: 1 }, 600);
+      this.refs.sorting.fadeInRight(600).then(() => updateCounter()).catch(() => updateCounter());
+    })
   }
 
   renderDocumentsToolbar() {
@@ -261,7 +287,7 @@ class KenestoToolbar extends Component {
     var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
     
     return (
-      <View style= {styles.toolbar} onLayout={this.openingDocumentsToolbarAnimation.bind(this)}>
+      <View style= {styles.toolbar} onLayout={this.onDocumentsToolbarLayout.bind(this)}>
         
         {showGoBack ?
           <Icon name="arrow-back" style={[styles.iconStyle]} onPress={this.onGoBack.bind(this) } />
