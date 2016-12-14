@@ -17,11 +17,13 @@ import {
   TouchableNativeFeedback,
   Platform
 } from 'react-native'
+import * as Animatable from 'react-native-animatable';
+
 
 
 let styles = StyleSheet.create({
   toolbar: {
-    backgroundColor: '#eee',
+    backgroundColor: '#fff',
     height: 50,
     flex: 1,
     flexDirection: "row",
@@ -117,6 +119,7 @@ class KenestoToolbar extends Component {
     super(props)
     this.state = {
       isSearchBoxOpen: false,
+      animateToolBar: false,
       searchText:""
     }
   }
@@ -126,14 +129,34 @@ class KenestoToolbar extends Component {
       
       this.setState({
         isSearchBoxOpen: true,
-        searchText:""
-      })
+        searchText: ""
+      }) 
   }
+  
+openingSearchBoxAnimation(showGoBack) {
+  return new Promise((resolve, reject) => {
+    var counter = 0;
+    var updateCounter = function(){
+      counter++;
+      if(counter >= 2) {
+        resolve(counter);
+      }
+    }
+    
+    this.refs.folderTitle.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
+    if(!showGoBack){
+      this.refs.hamburgerMenu.transition({opacity: 1, rotate: '0deg'}, {opacity: 0, rotate: '180deg'}, 600);
+      this.refs.arrowBack.transition({opacity: 0, rotate: '180deg'}, {opacity: 1, rotate: '360deg'}, 600);
+    }
+    this.refs.searchIcon.transition({translateX: 0}, {translateX: 63}, 600);
+    this.refs.sorting.slideOutRight(600).then(() => updateCounter()).catch(()=>updateCounter());
+  })
+}
 
-  onGoBack() {
-    this.props.onActionSelected(1)
-    this.props.dispatch(hideToast());
-  }
+onGoBack() {
+  this.props.onActionSelected(1)
+  this.props.dispatch(hideToast());
+}
 
   onSort() {
     this.props.onActionSelected(2)
@@ -152,13 +175,17 @@ class KenestoToolbar extends Component {
   }
 
   hideSearchBox() {
-    this.setState({
-      isSearchBoxOpen: false
-    });
 
-  
-    this.props.dispatch(documentsActions.toggleSearchBox(false));
+    this.refs.textInput.fadeOut(600).then(()=>{
+        this.props.dispatch(documentsActions.toggleSearchBox(false));
+      this.setState({
+        isSearchBoxOpen: false,
+        animateToolBar: true
+      });
+
+  })
   }
+  
 
   _submitSearch(text){
       const {navReducer} = this.props
@@ -184,14 +211,47 @@ class KenestoToolbar extends Component {
   renderSearchBox() {
     return (
       <View style={styles.searchBoxContainer}>
-       <Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} />
-        <View style={styles.textInputContainer}><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text)} value={this.state.searchText}/></View>
+       <View onLayout={this.onSearchBoxShow.bind(this)}><Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} /></View>
+        <Animatable.View style={styles.textInputContainer} ref="textInput"><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text)} value={this.state.searchText}/></Animatable.View>
         <Icon name="search" style={styles.iconStyle} />
       </View>
     )
   }
-
- 
+  
+  onSearchBoxShow(){    
+    this.refs.textInput.fadeIn(600);
+  } 
+  
+  onDocumentsToolbarLayout() {
+    if (this.state.animateToolBar) {
+      const {navReducer} = this.props;
+      var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
+      this.openingDocumentsToolbarAnimation(showGoBack).then(() => {
+        this.setState({
+          animateToolBar: false,
+        })
+      })
+    }
+  }
+  
+  openingDocumentsToolbarAnimation(showGoBack) {
+    return new Promise((resolve, reject) => {
+      var counter = 0;
+      var updateCounter = function () {
+        counter++;
+        if (counter >= 2) {
+          resolve(counter);
+        }
+      }
+      this.refs.folderTitle.fadeIn(600).then(() => updateCounter()).catch(() => updateCounter());
+      if (!showGoBack) {
+        this.refs.hamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 600);
+        this.refs.arrowBack.transition({ opacity: 1, rotate: '0deg' }, { opacity: 0, rotate: '-180deg' }, 600);
+      }
+      this.refs.searchIcon.transition({ translateX: 63, opacity: 1 }, { translateX: 0, opacity: 1 }, 600);
+      this.refs.sorting.fadeInRight(600).then(() => updateCounter()).catch(() => updateCounter());
+    })
+  }
 
   renderDocumentsToolbar() {
     const {navReducer} = this.props
@@ -202,43 +262,46 @@ class KenestoToolbar extends Component {
     var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
     
     return (
-      <View style= {styles.toolbar} >
-        <View>
-          {showGoBack ?
-            <Icon name="arrow-back" style={[styles.iconStyle]} onPress={this.onGoBack.bind(this) } />
-            :
-            <Icon name="menu" style={[styles.iconStyle, { color: "orange" }]} onPress={this.props.onIconClicked} />
-          }
-
-        </View>
-        <View style={styles.folderName}>
-          <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
-        </View>
-          <View style={{ flexDirection: "row" }}>
-          <Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
-
-
-          <View style={[this.props.isPopupMenuOpen ? styles.buttonsActive : styles.buttonsInactive]}>
-            <View style={[styles.popupInactive, this.props.isPopupMenuOpen ? styles.popupActive : {}]}>
-              <Icon name="more-vert" style={[styles.iconStyle]} onPress={this.onPressPopupMenu.bind(this) } />
-            </View>
-
-            <View style={this.props.isPopupMenuOpen ? styles.sortingInactive : {}}>
-              {sortDirection == constans.ASCENDING ?
-                <View>
-                  <Icon name="keyboard-arrow-up" style={[styles.iconStyle, styles.arrowUp]}  onPress={this.onSort.bind(this) }/>
-                  <Icon name="keyboard-arrow-down" style={[styles.iconStyle, styles.arrowDown, styles.iconDisabled]} onPress={this.onSort.bind(this) }/>
-                </View>
-                :
-                <View>
-                  <Icon name="keyboard-arrow-up" style={[styles.iconStyle, styles.arrowUp, styles.iconDisabled]}  onPress={this.onSort.bind(this) }/>
-                  <Icon name="keyboard-arrow-down" style={[styles.iconStyle, styles.arrowDown]} onPress={this.onSort.bind(this) }/>
-                </View>
-              }
-            </View>
+      <View style= {styles.toolbar} onLayout={this.onDocumentsToolbarLayout.bind(this)}>
+        
+        {showGoBack ?
+          <Icon name="arrow-back" style={[styles.iconStyle]} onPress={this.onGoBack.bind(this) } />
+          :
+          <View >
+            <Animatable.View ref="hamburgerMenu" style={this.state.animateToolBar? {opacity: 0}:{}}><Icon name="menu" style={[styles.iconStyle, { color: "orange" }]} onPress={this.props.onIconClicked} /></Animatable.View>
+            <Animatable.View ref="arrowBack" style={[{position: 'absolute', top: 0}, this.state.animateToolBar? {opacity: 1}:{opacity: 0}]}><Icon name="arrow-back" style={styles.iconStyle} /></Animatable.View>
           </View>
-        </View>
-        </View>
+        }
+
+        
+        
+        <Animatable.View ref="folderTitle" style={styles.folderName}>
+          <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
+        </Animatable.View>
+
+        <Animatable.View ref="searchIcon" style={this.state.animateToolBar? {transform: [{translateX: 63}]}:{}}><Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
+        </Animatable.View>
+
+        <Animatable.View ref="sorting" style={[this.props.isPopupMenuOpen ? styles.buttonsActive : styles.buttonsInactive, this.state.animateToolBar? {opacity: 0}:{}]}>
+          <View style={[styles.popupInactive, this.props.isPopupMenuOpen ? styles.popupActive : {}]}>
+            <Icon name="more-vert" style={[styles.iconStyle]} onPress={this.onPressPopupMenu.bind(this) } />
+          </View>
+
+          <View style={this.props.isPopupMenuOpen ? styles.sortingInactive : {}}>
+            {sortDirection == constans.ASCENDING ?
+              <View>
+                <Icon name="keyboard-arrow-up" style={[styles.iconStyle, styles.arrowUp]}  onPress={this.onSort.bind(this) }/>
+                <Icon name="keyboard-arrow-down" style={[styles.iconStyle, styles.arrowDown, styles.iconDisabled]} onPress={this.onSort.bind(this) }/>
+              </View>
+              :
+              <View>
+                <Icon name="keyboard-arrow-up" style={[styles.iconStyle, styles.arrowUp, styles.iconDisabled]}  onPress={this.onSort.bind(this) }/>
+                <Icon name="keyboard-arrow-down" style={[styles.iconStyle, styles.arrowDown]} onPress={this.onSort.bind(this) }/>
+              </View>
+            }
+          </View>
+        </Animatable.View>
+      </View>
     )
   }
 

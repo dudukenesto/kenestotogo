@@ -549,6 +549,7 @@ export function createFolder(folderName: string, isVault: boolean) {
         return fetch(createFolderUrl)
             .then(response => response.json())
             .then(json => {
+                dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
                     // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
 
@@ -570,7 +571,7 @@ export function createFolder(folderName: string, isVault: boolean) {
                     dispatch(refreshTable(documentlist, false, true))
 
                 }
-                dispatch(navActions.updateIsProcessing(false));
+               
             })
             .catch((error) => {
                 dispatch(navActions.emitError("Error creating new folder"))
@@ -1032,6 +1033,7 @@ export function deleteAsset(id: string, familyCode: string) {
         return fetch(url)
             .then(response => response.json())
             .then(json => {
+                dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
                     dispatch(navActions.emitToast(constans.ERROR, "", "Error deleting document"))
                     writeToLog(email, constans.ERROR, `function deleteAsset - Error deleting asset - url: ${url}`)
@@ -1045,7 +1047,7 @@ export function deleteAsset(id: string, familyCode: string) {
                     var documentlist = getDocumentsContext(navReducer);
                     dispatch(refreshTable(documentlist, false, true));
                     dispatch(navActions.emitToast(constans.SUCCESS, "successfully deleted the document"))
-                    dispatch(navActions.updateIsProcessing(false));
+                    
                 }
             })
             .catch((error) => {
@@ -1065,7 +1067,7 @@ export function deleteFolder(id: string) {
         return fetch(url)
             .then(response => response.json())
             .then(json => {
-               
+               dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
                     dispatch(navActions.emitToast(constans.ERROR, "Error deleting folder"))
                     writeToLog(email, constans.ERROR, `function deleteFolder - Failed to delete folder - url: ${url}`)
@@ -1075,7 +1077,7 @@ export function deleteFolder(id: string) {
                     var documentlist = getDocumentsContext(getState().navReducer);
                     dispatch(refreshTable(documentlist, false, true))
                 }
-                dispatch(navActions.updateIsProcessing(false));
+                
             })
             .catch((error) => {
                 dispatch(navActions.updateIsProcessing(false));
@@ -1175,6 +1177,7 @@ export function DiscardCheckOut() {
         fetch(url)
             .then(response => response.json())
             .then(json => {
+                dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
                     dispatch(navActions.emitError("Failed to discard Check-Out document", ""))
                     writeToLog(email, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`)
@@ -1191,7 +1194,7 @@ export function DiscardCheckOut() {
                 writeToLog(email, constans.ERROR, `function DiscardCheckOut - Failed to discard Check-Out document! - url: ${url}`, error)
 
             }).done();
-           dispatch(navActions.updateIsProcessing(false));
+           
     }
 
 }
@@ -1208,6 +1211,7 @@ export function CheckOut() {
         fetch(url)
             .then(response => response.json())
             .then(json => {
+                 dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
                     dispatch(navActions.emitError("Failed to Check-Out document", ""))
                     writeToLog(email, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`)
@@ -1224,7 +1228,7 @@ export function CheckOut() {
                 writeToLog(email, constans.ERROR, `function CheckOut - Failed to Check-Out document! - url: ${url}`, error)
 
             }).done();
-        dispatch(navActions.updateIsProcessing(false));
+       
     }
 
 }
@@ -1258,6 +1262,7 @@ export function CheckIn(comment: string) {
         fetch(request)
             .then(response => response.json())
             .then(json => {
+                 dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
                     dispatch(navActions.emitError("Failed to Check-In document", ""))
                     writeToLog(email, constans.ERROR, `function CheckIn - Failed to Check-In document! - url: ${url}`)
@@ -1272,8 +1277,9 @@ export function CheckIn(comment: string) {
             }).catch((error) => {
                 dispatch(navActions.emitError("Failed to Check-In document", ""))
                 writeToLog(email, constans.ERROR, `function CheckIn - Failed to Check-In document! - url: ${url}`, error)
+                dispatch(navActions.updateIsProcessing(false));
             }).done();
-         dispatch(navActions.updateIsProcessing(false));
+        
     }
 
 }
@@ -1291,6 +1297,7 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
         fetch(url)
             .then(response => response.json())
             .then(json => {
+                 dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
                     dispatch(updateIsFetching(false));
 
@@ -1311,7 +1318,7 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
                     dispatch(navActions.clearToast());
                    
                 }
-                dispatch(navActions.updateIsProcessing(false));
+               
             }).catch((error) => {
                 dispatch(navActions.updateIsProcessing(false));
                 dispatch(navActions.emitError("Failed to edit folder", ""))
@@ -1328,30 +1335,30 @@ export function EditDocument(documentId: string, documentName: string) {
         const url = getEditDocumentUrl(env, sessionToken, documentId, documentName);
         writeToLog(email, constans.DEBUG, `function EditDocument - url: ${url}`)
         var isDocumentPage = getState().navReducer.routes[getState().navReducer.index].key == 'document';
-        dispatch(navActions.updateIsProcessing(true));
+        if (isDocumentPage) {
+            dispatch(navActions.updateIsProcessing(true));
+        }
         fetch(url)
             .then(response => response.json())
             .then(json => {
+                dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
-                    dispatch(updateIsFetching(false));
                     dispatch(navActions.emitError("Failed to edit document", ""))
                     writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`)
                 }
                 else {
                     
-                  
-                   
                     if (isDocumentPage) {
                         dispatch(getDocumentInfo(documentId, constans.GENERAL_FAMILY));
                     }
-                   
+                    
                     dispatch(refreshTable(documentlist, false));
                     dispatch(navActions.emitToast(constans.SUCCESS, "document successfully updated.", ""));
                     dispatch(navActions.clearToast());
                 }
-                dispatch(navActions.updateIsProcessing(false));
+             
             }).catch((error) => {
-                 dispatch(navActions.updateIsProcessing(false));
+                dispatch(navActions.updateIsProcessing(false));
                 dispatch(navActions.emitError("Failed to edit document", ""))
                 writeToLog(email, constans.ERROR, `function EditFolder - Failed to edit document! - url: ${url}`, error)
             }).done();
@@ -1412,10 +1419,11 @@ export function ShareDocument() {
                 }
 
             }).catch((error) => {
+                 dispatch(navActions.updateIsProcessing(false));
                 dispatch(navActions.emitError("Failed to share object", ""))
                 writeToLog(email, constans.ERROR, `function ShareDocument -Failed to share document! - ID:${document.Id} url: ${url}`, error)
             }).done();
-        dispatch(navActions.updateIsProcessing(false));
+       
     }
 
 }
