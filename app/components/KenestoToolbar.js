@@ -249,6 +249,7 @@ class KenestoToolbar extends Component {
           animateToolBar: false,
         })
       });      
+    }
   }
 
   renderDocumentsToolbar() {
