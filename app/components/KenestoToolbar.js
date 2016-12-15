@@ -110,7 +110,27 @@ let styles = StyleSheet.create({
    moreMenu: {
     fontSize: 22,
     color: '#888', 
-  }
+  },
+  fakeTextInput: {
+    opacity: 0, 
+    position: 'absolute', 
+    top: 0, 
+    left: 0, 
+    right: 0,
+    height: 50,
+    paddingLeft: 9,
+    paddingRight: 9,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  fakeTextInputCover: {
+    position: 'absolute', 
+    top: 0, 
+    bottom: 0, 
+    left: 0, 
+    right: 0, 
+    zIndex: 1000,
+  },
 })
 
 
@@ -125,12 +145,16 @@ class KenestoToolbar extends Component {
   }
   
   onPressSearchBox() {
+    const {navReducer} = this.props
+    var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
+        
+    this.openingSearchBoxAnimation(showGoBack).then(() => {
       this.props.dispatch(documentsActions.toggleSearchBox(true));
-      
       this.setState({
         isSearchBoxOpen: true,
         searchText: ""
       }) 
+    });  
   }
   
 openingSearchBoxAnimation(showGoBack) {
@@ -138,16 +162,17 @@ openingSearchBoxAnimation(showGoBack) {
     var counter = 0;
     var updateCounter = function(){
       counter++;
-      if(counter >= 2) {
+      if(counter >= 3) {
         resolve(counter);
       }
-    }
+    } 
     
-    this.refs.folderTitle.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
     if(!showGoBack){
       this.refs.hamburgerMenu.transition({opacity: 1, rotate: '0deg'}, {opacity: 0, rotate: '180deg'}, 600);
       this.refs.arrowBack.transition({opacity: 0, rotate: '180deg'}, {opacity: 1, rotate: '360deg'}, 600);
     }
+    this.refs.folderTitle.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
+    this.refs.fakeTextInput.fadeIn(600).then(() => updateCounter()).catch(()=>updateCounter());
     this.refs.searchIcon.transition({translateX: 0}, {translateX: 63}, 600);
     this.refs.sorting.slideOutRight(600).then(() => updateCounter()).catch(()=>updateCounter());
   })
@@ -176,12 +201,12 @@ onGoBack() {
 
   hideSearchBox() {
 
-    this.refs.textInput.fadeOut(600).then(()=>{
-        this.props.dispatch(documentsActions.toggleSearchBox(false));
-      this.setState({
-        isSearchBoxOpen: false,
-        animateToolBar: true
-      });
+    // this.refs.textInput.fadeOut(600).then(()=>{
+    this.props.dispatch(documentsActions.toggleSearchBox(false));
+    this.setState({
+      isSearchBoxOpen: false,
+      animateToolBar: true
+    // });
 
   })
   }
@@ -211,18 +236,19 @@ onGoBack() {
   renderSearchBox() {
     return (
       <View style={styles.searchBoxContainer}>
-       <View onLayout={this.onSearchBoxShow.bind(this)}><Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} /></View>
-        <Animatable.View style={styles.textInputContainer} ref="textInput"><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text)} value={this.state.searchText}/></Animatable.View>
+        <View onLayout={this.onSearchBoxShow.bind(this) }><Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} /></View>
+        <View style={styles.textInputContainer} ref="textInput"><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text) } value={this.state.searchText}/></View>
         <Icon name="search" style={styles.iconStyle} />
       </View>
     )
   }
   
   onSearchBoxShow(){    
-    this.refs.textInput.fadeIn(600);
+    // this.refs.textInput.transition({opacity: 1}, {opacity: 1}, 100);
   } 
   
   onDocumentsToolbarLayout() {
+    console.log('onDocumentsToolbarLayout')
     if (this.state.animateToolBar) {
       const {navReducer} = this.props;
       var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
@@ -239,15 +265,17 @@ onGoBack() {
       var counter = 0;
       var updateCounter = function () {
         counter++;
-        if (counter >= 2) {
+        if (counter >= 3) {
           resolve(counter);
         }
       }
-      this.refs.folderTitle.fadeIn(600).then(() => updateCounter()).catch(() => updateCounter());
+      
       if (!showGoBack) {
         this.refs.hamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 600);
         this.refs.arrowBack.transition({ opacity: 1, rotate: '0deg' }, { opacity: 0, rotate: '-180deg' }, 600);
       }
+      this.refs.folderTitle.fadeIn(600).then(() => updateCounter()).catch(() => updateCounter());
+      this.refs.fakeTextInput.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
       this.refs.searchIcon.transition({ translateX: 63, opacity: 1 }, { translateX: 0, opacity: 1 }, 600);
       this.refs.sorting.fadeInRight(600).then(() => updateCounter()).catch(() => updateCounter());
     })
@@ -275,9 +303,18 @@ onGoBack() {
 
         
         
-        <Animatable.View ref="folderTitle" style={styles.folderName}>
+        <Animatable.View ref="folderTitle" style={[styles.folderName, this.state.animateToolBar? {opacity: 0}:{}]}>
           <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
         </Animatable.View>
+
+        
+        <Animatable.View style={styles.fakeTextInput} ref="fakeTextInput">
+          <View><Icon name="arrow-back" style={[styles.iconStyle, {opacity: 0}]} /></View>
+          <TextInput style={styles.textInput} />
+          <View style={styles.fakeTextInputCover} />
+          <Icon name="search" style={[styles.iconStyle, {opacity: 0}]} />
+        </Animatable.View>
+        
 
         <Animatable.View ref="searchIcon" style={this.state.animateToolBar? {transform: [{translateX: 63}]}:{}}><Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
         </Animatable.View>
