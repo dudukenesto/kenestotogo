@@ -78,7 +78,7 @@ let styles = StyleSheet.create({
   },
   textInputContainer: {
     flex: 1,
-    marginLeft: 3,
+    // marginLeft: 3,
   },
   textInput: {
     flex: 1,
@@ -201,16 +201,47 @@ onGoBack() {
 
   hideSearchBox() {
 
-    // this.refs.textInput.fadeOut(600).then(()=>{
-    this.props.dispatch(documentsActions.toggleSearchBox(false));
-    this.setState({
-      isSearchBoxOpen: false,
-      animateToolBar: true
-    // });
-
-  })
+    // // this.refs.textInput.fadeOut(600).then(()=>{
+    // this.props.dispatch(documentsActions.toggleSearchBox(false));
+    // this.setState({
+    //   isSearchBoxOpen: false,
+    //   animateToolBar: true
+    //   });
+    // // })
+    const {navReducer} = this.props;
+    var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
+    this.closingSearchBoxAnimation(showGoBack).then(()=>{
+      this.props.dispatch(documentsActions.toggleSearchBox(false));
+      this.setState({
+        isSearchBoxOpen: false,
+        // animateToolBar: true
+      })
+    })
   }
   
+  closingSearchBoxAnimation(showGoBack){
+    return new Promise((resolve, reject) => {
+      var counter = 0;
+      var updateCounter = function () {
+        counter++;
+        if (counter >= 3) {
+          resolve(counter);
+        }
+      }
+      
+      if (!showGoBack) {
+        // this.refs.fakeHamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 600);
+        // this.refs.fakeArrowBack.transition({ opacity: 1, rotate: '0deg' }, { opacity: 0, rotate: '-180deg' }, 600);
+      }
+      // this.refs.fakeFolderTitle.fadeIn(600).then(() => updateCounter()).catch(() => updateCounter());
+      // this.refs.textInput.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
+      // this.refs.fakeSearchIcon.transition({ translateX: 63, opacity: 1 }, { translateX: 0, opacity: 1 }, 600);
+      // this.refs.fakeSorting.fadeInRight(600).then(() => updateCounter()).catch(() => updateCounter());
+      setTimeout(function() {
+        resolve();
+      }, 2000);
+    })
+  }
 
   _submitSearch(text){
       const {navReducer} = this.props
@@ -236,9 +267,12 @@ onGoBack() {
   renderSearchBox() {
     return (
       <View style={styles.searchBoxContainer}>
-        <View onLayout={this.onSearchBoxShow.bind(this) }><Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} /></View>
+        <View onLayout={this.onSearchBoxShow.bind(this)} ><Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} /></View>
         <View style={styles.textInputContainer} ref="textInput"><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text) } value={this.state.searchText}/></View>
         <Icon name="search" style={styles.iconStyle} />
+        
+        
+        
       </View>
     )
   }
@@ -248,38 +282,37 @@ onGoBack() {
   } 
   
   onDocumentsToolbarLayout() {
-    console.log('onDocumentsToolbarLayout')
-    if (this.state.animateToolBar) {
-      const {navReducer} = this.props;
-      var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
-      this.openingDocumentsToolbarAnimation(showGoBack).then(() => {
-        this.setState({
-          animateToolBar: false,
-        })
-      })
-    }
+  //   if (this.state.animateToolBar) {
+  //     const {navReducer} = this.props;
+  //     var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
+  //     this.openingDocumentsToolbarAnimation(showGoBack).then(() => {
+  //       this.setState({
+  //         animateToolBar: false,
+  //       })
+  //     })
+  //   }
   }
   
-  openingDocumentsToolbarAnimation(showGoBack) {
-    return new Promise((resolve, reject) => {
-      var counter = 0;
-      var updateCounter = function () {
-        counter++;
-        if (counter >= 3) {
-          resolve(counter);
-        }
-      }
+  // openingDocumentsToolbarAnimation(showGoBack) {
+  //   return new Promise((resolve, reject) => {
+  //     var counter = 0;
+  //     var updateCounter = function () {
+  //       counter++;
+  //       if (counter >= 3) {
+  //         resolve(counter);
+  //       }
+  //     }
       
-      if (!showGoBack) {
-        this.refs.hamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 600);
-        this.refs.arrowBack.transition({ opacity: 1, rotate: '0deg' }, { opacity: 0, rotate: '-180deg' }, 600);
-      }
-      this.refs.folderTitle.fadeIn(600).then(() => updateCounter()).catch(() => updateCounter());
-      this.refs.fakeTextInput.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
-      this.refs.searchIcon.transition({ translateX: 63, opacity: 1 }, { translateX: 0, opacity: 1 }, 600);
-      this.refs.sorting.fadeInRight(600).then(() => updateCounter()).catch(() => updateCounter());
-    })
-  }
+  //     if (!showGoBack) {
+  //       this.refs.hamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 600);
+  //       this.refs.arrowBack.transition({ opacity: 1, rotate: '0deg' }, { opacity: 0, rotate: '-180deg' }, 600);
+  //     }
+  //     this.refs.folderTitle.fadeIn(600).then(() => updateCounter()).catch(() => updateCounter());
+  //     this.refs.fakeTextInput.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
+  //     this.refs.searchIcon.transition({ translateX: 63, opacity: 1 }, { translateX: 0, opacity: 1 }, 600);
+  //     this.refs.sorting.fadeInRight(600).then(() => updateCounter()).catch(() => updateCounter());
+  //   })
+  // }
 
   renderDocumentsToolbar() {
     const {navReducer} = this.props
@@ -292,22 +325,6 @@ onGoBack() {
     return (
       <View style= {styles.toolbar} onLayout={this.onDocumentsToolbarLayout.bind(this)}>
         
-        {showGoBack ?
-          <Icon name="arrow-back" style={[styles.iconStyle]} onPress={this.onGoBack.bind(this) } />
-          :
-          <View >
-            <Animatable.View ref="hamburgerMenu" style={this.state.animateToolBar? {opacity: 0}:{}}><Icon name="menu" style={[styles.iconStyle, { color: "orange" }]} onPress={this.props.onIconClicked} /></Animatable.View>
-            <Animatable.View ref="arrowBack" style={[{position: 'absolute', top: 0}, this.state.animateToolBar? {opacity: 1}:{opacity: 0}]}><Icon name="arrow-back" style={styles.iconStyle} /></Animatable.View>
-          </View>
-        }
-
-        
-        
-        <Animatable.View ref="folderTitle" style={[styles.folderName, this.state.animateToolBar? {opacity: 0}:{}]}>
-          <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
-        </Animatable.View>
-
-        
         <Animatable.View style={styles.fakeTextInput} ref="fakeTextInput">
           <View><Icon name="arrow-back" style={[styles.iconStyle, {opacity: 0}]} /></View>
           <TextInput style={styles.textInput} />
@@ -315,9 +332,26 @@ onGoBack() {
           <Icon name="search" style={[styles.iconStyle, {opacity: 0}]} />
         </Animatable.View>
         
+        {showGoBack ?
+          <Icon name="arrow-back" style={[styles.iconStyle]} onPress={this.onGoBack.bind(this) } />
+          :
+            <View style={{flexDirection: 'row'}}>
+              <Animatable.View ref="arrowBack" style={{opacity: 0, position: 'absolute'}}><Icon name="arrow-back" style={styles.iconStyle} /></Animatable.View>
+              <Animatable.View ref="hamburgerMenu"><Icon name="menu" style={[styles.iconStyle, { color: "orange" }]} onPress={this.props.onIconClicked} /></Animatable.View>
+            </View>
+        }
+
+
+        
+        <Animatable.View ref="folderTitle" style={[styles.folderName, this.state.animateToolBar? {opacity: 0}:{}]}>
+          <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
+        </Animatable.View>
+   
+        
 
         <Animatable.View ref="searchIcon" style={this.state.animateToolBar? {transform: [{translateX: 63}]}:{}}><Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
         </Animatable.View>
+        
 
         <Animatable.View ref="sorting" style={[this.props.isPopupMenuOpen ? styles.buttonsActive : styles.buttonsInactive, this.state.animateToolBar? {opacity: 0}:{}]}>
           <View style={[styles.popupInactive, this.props.isPopupMenuOpen ? styles.popupActive : {}]}>
