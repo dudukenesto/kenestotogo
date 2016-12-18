@@ -1,7 +1,6 @@
 import React from "react"; 
 import {View, Text,TextInput, StyleSheet, Animated, Dimensions} from "react-native";
 import Button from "react-native-button";
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';

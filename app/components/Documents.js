@@ -22,7 +22,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { createIconSetFromFontello } from 'react-native-vector-icons'
 import fontelloConfig from '../assets/icons/config.json';
 import * as constans from '../constants/GlobalConstans'
-import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
 import { getDownloadFileUrl, getIconNameFromMimeType, getViewerUrl } from '../utils/documentsUtils'

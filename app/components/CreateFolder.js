@@ -1,7 +1,6 @@
 import React from "react"; 
 import {View, Text,TextInput, StyleSheet, Animated, Dimensions, Switch} from "react-native";
 import Button from "react-native-button";
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
@@ -78,14 +77,6 @@ var styles = StyleSheet.create({
         fontSize: 16,
         marginRight: 40
     },
-    // modal: {
-    //     justifyContent: 'center',
-    //     alignItems: 'center'
-    // },
-    // InProggress: {
-    //     height: 500, 
-    //     width: 500
-    // },
 });
 
 class CreateFolder extends React.Component {
