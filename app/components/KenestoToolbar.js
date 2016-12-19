@@ -78,6 +78,10 @@ let styles = StyleSheet.create({
   },
   textInputContainer: {
     flex: 1,
+    // borderWidth: 1,
+    // padding: 0,
+    // margin: 0,
+    // height: 50
     // marginLeft: 3,
   },
   textInput: {
@@ -131,6 +135,30 @@ let styles = StyleSheet.create({
     right: 0, 
     zIndex: 1000,
   },
+  searchBoxFakeToolbar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0,
+    borderWidth: 1
+  },
+  fakeSortingContainer: {
+    position: 'absolute', 
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    bottom: 0,
+    
+    height: 50,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 9,
+    // opacity: 0
+  }
 })
 
 
@@ -144,18 +172,36 @@ class KenestoToolbar extends Component {
     }
   }
   
+  // onPressSearchBox() {
+  //   const {navReducer} = this.props
+  //   var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
+        
+  //   this.openingSearchBoxAnimation(showGoBack).then(() => {
+  //     this.props.dispatch(documentsActions.toggleSearchBox(true));
+  //     this.setState({
+  //       isSearchBoxOpen: true,
+  //       searchText: ""
+  //     }) 
+  //   });  
+  // }
+  
+  
   onPressSearchBox() {
     const {navReducer} = this.props
     var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
-        
+    this.props.dispatch(documentsActions.toggleSearchBox(true));
     this.openingSearchBoxAnimation(showGoBack).then(() => {
-      this.props.dispatch(documentsActions.toggleSearchBox(true));
+      var documentlist = getDocumentsContext(navReducer);
+      this.props.dispatch(navActions.updateRouteData(documentlist));
       this.setState({
         isSearchBoxOpen: true,
         searchText: ""
-      }) 
-    });  
+      })
+    }); 
   }
+ 
+ 
+ 
   
 openingSearchBoxAnimation(showGoBack) {
   return new Promise((resolve, reject) => {
@@ -168,13 +214,13 @@ openingSearchBoxAnimation(showGoBack) {
     } 
     
     if(!showGoBack){
-      this.refs.hamburgerMenu.transition({opacity: 1, rotate: '0deg'}, {opacity: 0, rotate: '180deg'}, 600);
-      this.refs.arrowBack.transition({opacity: 0, rotate: '180deg'}, {opacity: 1, rotate: '360deg'}, 600);
+      this.refs.hamburgerMenu.transition({opacity: 1, rotate: '0deg'}, {opacity: 0, rotate: '180deg'}, 400);
+      this.refs.arrowBack.transition({opacity: 0, rotate: '180deg'}, {opacity: 1, rotate: '360deg'}, 400);
     }
-    this.refs.folderTitle.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
-    this.refs.fakeTextInput.fadeIn(600).then(() => updateCounter()).catch(()=>updateCounter());
-    this.refs.searchIcon.transition({translateX: 0}, {translateX: 63}, 600);
-    this.refs.sorting.slideOutRight(600).then(() => updateCounter()).catch(()=>updateCounter());
+    this.refs.folderTitle.fadeOut(400).then(() => updateCounter()).catch(()=>updateCounter());
+    this.refs.fakeTextInput.fadeIn(400).then(() => updateCounter()).catch(()=>updateCounter());
+    this.refs.searchIcon.transition({translateX: 0}, {translateX: 63}, 400);
+    this.refs.sorting.slideOutRight(400).then(() => updateCounter()).catch(()=>updateCounter());
   })
 }
 
@@ -210,13 +256,16 @@ onGoBack() {
     // // })
     const {navReducer} = this.props;
     var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
-    this.closingSearchBoxAnimation(showGoBack).then(()=>{
-      this.props.dispatch(documentsActions.toggleSearchBox(false));
-      this.setState({
-        isSearchBoxOpen: false,
-        // animateToolBar: true
-      })
-    })
+    this.props.dispatch(documentsActions.toggleSearchBox(false));
+    // this.closingSearchBoxAnimation(showGoBack).then(()=>{
+      // this.props.dispatch(documentsActions.toggleSearchBox(false));
+      var documentlist = getDocumentsContext(navReducer);
+      // this.props.dispatch(navActions.updateRouteData(documentlist));
+        this.setState({
+          isSearchBoxOpen: false,
+          // animateToolBar: true
+        })
+    // })
   }
   
   closingSearchBoxAnimation(showGoBack){
@@ -224,22 +273,23 @@ onGoBack() {
       var counter = 0;
       var updateCounter = function () {
         counter++;
-        if (counter >= 3) {
+        if (counter >= 2) {
+          console.log('resolve')
           resolve(counter);
         }
       }
       
       if (!showGoBack) {
-        // this.refs.fakeHamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 600);
-        // this.refs.fakeArrowBack.transition({ opacity: 1, rotate: '0deg' }, { opacity: 0, rotate: '-180deg' }, 600);
+        this.refs.fakeHamburgerMenu.transition({ opacity: 0, rotate: '180deg' }, { opacity: 1, rotate: '0deg' }, 400);
+        this.refs.searchArrowBack.transition({ opacity: 1, rotate: '0deg' }, { opacity: 0, rotate: '-180deg' }, 400);
       }
       // this.refs.fakeFolderTitle.fadeIn(600).then(() => updateCounter()).catch(() => updateCounter());
-      // this.refs.textInput.fadeOut(600).then(() => updateCounter()).catch(()=>updateCounter());
-      // this.refs.fakeSearchIcon.transition({ translateX: 63, opacity: 1 }, { translateX: 0, opacity: 1 }, 600);
-      // this.refs.fakeSorting.fadeInRight(600).then(() => updateCounter()).catch(() => updateCounter());
-      setTimeout(function() {
-        resolve();
-      }, 2000);
+      this.refs.textInput.fadeOut(400).then(() => updateCounter()).catch(()=>updateCounter());
+      this.refs.searchBoxSearchIcon.transition({translateX: 0}, {translateX: -63}, 400);
+      this.refs.fakeSorting.fadeInRight(400).then(() => updateCounter()).catch(() => updateCounter());
+      // setTimeout(function() {
+      //   resolve();
+      // }, 1000);
     })
   }
 
@@ -265,21 +315,48 @@ onGoBack() {
     }
 
   renderSearchBox() {
+    const {navReducer} = this.props
+    var title =  navReducer.routes[navReducer.index].data != null? navReducer.routes[navReducer.index].data.name: navReducer.routes[navReducer.index].title;
+    var documentlist = getDocumentsContext(navReducer);
+    const sortDirection = documentlist.sortDirection != undefined ? documentlist.sortDirection : "";
+
     return (
       <View style={styles.searchBoxContainer}>
-        <View onLayout={this.onSearchBoxShow.bind(this)} ><Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} /></View>
-        <View style={styles.textInputContainer} ref="textInput"><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text) } value={this.state.searchText}/></View>
-        <Icon name="search" style={styles.iconStyle} />
+
+        <View>
+          <Animatable.View ref="fakeHamburgerMenu" style={{ opacity: 0 }}><Icon name="menu" style={[styles.iconStyle, { color: "orange" }]} /></Animatable.View>
+          <Animatable.View ref="searchArrowBack" style={[{ position: 'absolute', top: 0, left: 0, opacity: 1 }]}><Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} /></Animatable.View>
+        </View>
+
+        <Animatable.View style={styles.textInputContainer} ref="textInput"><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text) } value={this.state.searchText}/></Animatable.View>
+
+        <View><Animatable.View ref="searchBoxSearchIcon"><Icon name="search" style={[styles.iconStyle]} /></Animatable.View></View>
         
-        
+        <Animatable.View ref="fakeSorting" style={[{ opacity: 0, position: 'absolute', right: 9, top: 0, marginVertical: 9}, this.props.isPopupMenuOpen ? styles.buttonsActive : styles.buttonsInactive]}>
+            <View style={[styles.popupInactive, this.props.isPopupMenuOpen ? styles.popupActive : {}]}>
+              <Icon name="more-vert" style={[styles.iconStyle]} />
+            </View>
+
+            <View style={this.props.isPopupMenuOpen ? styles.sortingInactive : {}}>
+              {sortDirection == constans.ASCENDING ?
+                <View>
+                  <Icon name="keyboard-arrow-up" style={[styles.iconStyle, styles.arrowUp]} />
+                  <Icon name="keyboard-arrow-down" style={[styles.iconStyle, styles.arrowDown, styles.iconDisabled]} />
+                </View>
+                :
+                <View>
+                  <Icon name="keyboard-arrow-up" style={[styles.iconStyle, styles.arrowUp, styles.iconDisabled]} />
+                  <Icon name="keyboard-arrow-down" style={[styles.iconStyle, styles.arrowDown]} />
+                </View>
+              }
+            </View>
+          </Animatable.View>
+          
+          
         
       </View>
     )
   }
-  
-  onSearchBoxShow(){    
-    // this.refs.textInput.transition({opacity: 1}, {opacity: 1}, 100);
-  } 
   
   onDocumentsToolbarLayout() {
   //   if (this.state.animateToolBar) {
@@ -343,17 +420,17 @@ onGoBack() {
 
 
         
-        <Animatable.View ref="folderTitle" style={[styles.folderName, this.state.animateToolBar? {opacity: 0}:{}]}>
+        <Animatable.View ref="folderTitle" style={[styles.folderName]}>
           <Text style={{ fontSize: 20 }} numberOfLines={1}>{title}</Text>
         </Animatable.View>
    
         
 
-        <Animatable.View ref="searchIcon" style={this.state.animateToolBar? {transform: [{translateX: 63}]}:{}}><Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
-        </Animatable.View>
+        <View><Animatable.View ref="searchIcon"><Icon name="search" style={[styles.iconStyle]}  onPress={this.onPressSearchBox.bind(this) }/>
+        </Animatable.View></View>
         
 
-        <Animatable.View ref="sorting" style={[this.props.isPopupMenuOpen ? styles.buttonsActive : styles.buttonsInactive, this.state.animateToolBar? {opacity: 0}:{}]}>
+        <Animatable.View ref="sorting" style={[this.props.isPopupMenuOpen ? styles.buttonsActive : styles.buttonsInactive]}>
           <View style={[styles.popupInactive, this.props.isPopupMenuOpen ? styles.popupActive : {}]}>
             <Icon name="more-vert" style={[styles.iconStyle]} onPress={this.onPressPopupMenu.bind(this) } />
           </View>
