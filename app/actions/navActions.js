@@ -68,7 +68,8 @@ export function emitToast(type: string, messge: string, title: string){
     type: actionTypes.SUBMIT_TOAST, 
     toastTitle: title, 
     toastType: type,
-    toastMessage: messge
+    toastMessage: messge,
+    isProcessing: false
   }
 }
 
@@ -89,7 +90,8 @@ export function emitError(errorTitle: string, errorDetails: string, okAction: Ob
     type: actionTypes.SUBMIT_ERROR, 
     errorTitle: errorTitle, 
     errorDetails: errorDetails,
-    errorOkAction: okAction
+    errorOkAction: okAction,
+    isProcessing: false
   }
   
 }
@@ -104,7 +106,8 @@ export function emitConfirm(confirmTitle: string, confirmDetails: string, okActi
     type: actionTypes.SUBMIT_CONFIRM, 
     confirmTitle: confirmTitle, 
     confirmDetails: confirmDetails,
-    confirmOkAction: okAction
+    confirmOkAction: okAction,
+    isProcessing: false
   }
   
 }
@@ -119,7 +122,8 @@ export function emitInfo(infoTitle: string, infoDetails: string, okAction: Objec
     type: actionTypes.SUBMIT_INFO, 
     infoTitle: infoTitle, 
     infoDetails: infoDetails,
-    infoOkAction: okAction
+    infoOkAction: okAction,
+    isProcessing: false
   }
 }
 

@@ -137,9 +137,6 @@ class ItemMenu extends React.Component {
         this.props.closeItemMenuModal();
 
         this.props.dispatch(docActions.downloadDocument(this.state.document.Id, this.state.document.FileName, this.state.document.MimeType));
-        //  this.props.dispatch(navActions.clearToast());
-        //   
-        //alert('start Download')
     }
 
     viewDocument() {
@@ -451,7 +448,7 @@ class ItemMenu extends React.Component {
 
                     </View>
                 </View>
-                {this._renderMenuItemActions(isFetching)}
+                {this._renderMenuItemActions(this.state.isFetching)}
             </ViewContainer>
         )
     }

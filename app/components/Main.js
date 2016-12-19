@@ -165,7 +165,6 @@ class Main extends React.Component {
         this.state = {
        //   ifCreatingFolder: false,
           isPopupMenuOpen: false,
-          isProcessingOpen: false,
           isDropDownOpen: true,
           toastMessage: '',
           toastType: '' 
@@ -304,10 +303,8 @@ class Main extends React.Component {
     this.openModal("updateVersionsModal");
   }
 
-  openProcessingModal()
-  {
-    this.openModal("processingModal");
-  }
+
+  
   openCreateFolder() {
     this.refs.CreateFolder.open();
 
@@ -325,28 +322,12 @@ class Main extends React.Component {
   // }
 
   componentWillReceiveProps(nextprops) {
- //   if (nextprops.navReducer.toolbarVisible != this.props.navReducer.toolbarVisible)
-  //  {
-  //    console.log('before changing toolbar');
-     //   if(nextprops.navReducer.toolbarVisible)
-   //         this.showToolBar(); 
-      //  else 
-      //      this.hideToolBar();
- //   }
-
-  // if(nextprops.navReducer.toolbarVisible)
-  // {
-  //    this.showToolBar(); 
-  // }
-  // alert(nextprops.navReducer.isProcessing + ' ' + this.state.isProcessingOpen)
-    if (nextprops.navReducer.isProcessing && !this.state.isProcessingOpen ) {
+    if (nextprops.navReducer.isProcessing) {
       this.openModal("processingModal");
-      this.setState({isProcessingOpen: true})
     }
-    else if(this.state.isProcessingOpen)
+    else 
     {
       this.closeModal("processingModal")
-       this.setState({isProcessingOpen: false})
     }
 
     if (nextprops.navReducer.HasError) {
@@ -496,6 +477,9 @@ class Main extends React.Component {
           <View></View>
         }
         <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) } isItemMenuModalOpen ={this.isItemMenuModalOpen.bind(this) } closeDrawer ={this.closeDrawer.bind(this) } isDrawerOpen ={this.isDrawerOpen.bind(this) } isMenuModalOpen={this.isMenuModalOpen.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)  }/>
+         <Modal style= {styles.processingModal} position={"center"}  ref={"processingModal"} isDisabled={false} animationDuration={0}>
+          <Processing  closeModal = {() => this.closeModal("processingModal") }  openModal = {() => this.openModal("processingModal")}/>
+        </Modal>
         <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
           <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this) }
             openCreateFolder = {this.openCreateFolder.bind(this) }  createError={() => this.openModal("errorModal") }
@@ -508,7 +492,8 @@ class Main extends React.Component {
         </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
           <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.closeCreateFolder.bind(this) }
-            closeCreateFolder={this.closeCreateFolder.bind(this) } 
+            closeCreateFolder={this.closeCreateFolder.bind(this)} openProcessingModal={() => this.openModal("processingModal")} 
+            closeProcessingModal={() => this.closeModal("processingModal") }
             />
         </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"checkInModal"} isDisabled={false}>
@@ -523,9 +508,7 @@ class Main extends React.Component {
         <Modal style= {styles.updateVersionsModal} position={"center"}  ref={"updateVersionsModal"} isDisabled={false}>
           <UpdateVersions closeModal = {() => this.closeModal("updateVersionsModal") } openModal = {() => this.openModal("updateVersionsModal") }/>
         </Modal>
-        <Modal style= {styles.processingModal} position={"center"}  ref={"processingModal"} isDisabled={false} animationDuration={0}>
-          <Processing  closeModal = {() => this.closeModal("processingModal") }  openModal = {() => this.openModal("processingModal")}/>
-        </Modal>
+       
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>
         </Modal>

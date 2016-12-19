@@ -48,23 +48,23 @@ export function isRouteKeyExists(key:string, routes:Object)
 export function writeToLog(userEmail: string, category: string = "", ...values) {
     try {
 
-        var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-        // var logRow = `${DeviceInfo.getUniqueID()} - ${userEmail} [${date}][${category}] ${values.join(';')} ; Device Info: ${DeviceInfo.getUserAgent()} ${DeviceInfo.getDeviceCountry()}`
-        var data = {
-            Date: date,
-            Id: DeviceInfo.getUniqueID(),
-            Message: values.join(';'),
-            Email: userEmail,
-            Category: category,
-            UserAgent: DeviceInfo.getUserAgent(),
-            DeviceCountry: DeviceInfo.getDeviceCountry(),
-        }
+        // var date = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        // // var logRow = `${DeviceInfo.getUniqueID()} - ${userEmail} [${date}][${category}] ${values.join(';')} ; Device Info: ${DeviceInfo.getUserAgent()} ${DeviceInfo.getDeviceCountry()}`
+        // var data = {
+        //     Date: date,
+        //     Id: DeviceInfo.getUniqueID(),
+        //     Message: values.join(';'),
+        //     Email: userEmail,
+        //     Category: category,
+        //     UserAgent: DeviceInfo.getUserAgent(),
+        //     DeviceCountry: DeviceInfo.getDeviceCountry(),
+        // }
 
 
-        pubnub.publish({
-            channel: category == constans.ERROR ? config.pubnub.channel_error : config.pubnub.channel_info,
-            message: data
-        });
+        // pubnub.publish({
+        //     channel: category == constans.ERROR ? config.pubnub.channel_error : config.pubnub.channel_info,
+        //     message: data
+        // });
     }
     catch (err) {
         //alert(err)

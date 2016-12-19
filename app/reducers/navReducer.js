@@ -71,7 +71,8 @@ function navigationState(state = initialState, action) {
         HasInfo: true,
         GlobalInfoTitle: action.infoTitle,
         GlobalInfoDetails: action.infoDetails,
-        GlobalInfoOkAction: action.infoOkAction
+        GlobalInfoOkAction: action.infoOkAction,
+        isProcessing: action.isProcessing
 
       }
     case actionTypes.CLEAR_INFO:
@@ -85,7 +86,8 @@ function navigationState(state = initialState, action) {
         HasError: true, 
         GlobalErrorTitle: action.errorTitle, 
         GlobalErrorDetails: action.errorDetails,
-        GlobalErrorOkAction: action.errorOkAction
+        GlobalErrorOkAction: action.errorOkAction,
+        isProcessing: action.isProcessing
       }
 
     case  actionTypes.SUBMIT_CONFIRM:
@@ -94,7 +96,8 @@ function navigationState(state = initialState, action) {
         HasConfirm: true, 
         GlobalConfirmTitle: action.confirmTitle, 
         GlobalConfirmDetails: action.confirmDetails,
-        GlobalConfirmOkAction: action.confirmOkAction
+        GlobalConfirmOkAction: action.confirmOkAction,
+        isProcessing: action.isProcessing
       }
     case  actionTypes.CLEAR_CONFIRM:
       return {
@@ -115,7 +118,8 @@ function navigationState(state = initialState, action) {
           HasToast: true, 
           GlobalToastType: action.toastType,
           GlobalToastTitle:action.toastTitle, 
-          GlobalToastMessage: action.toastMessage
+          GlobalToastMessage: action.toastMessage, 
+          isProcessing: action.isProcessing
         }
    case  actionTypes.CLEAR_TOAST:
         return {

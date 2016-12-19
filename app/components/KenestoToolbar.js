@@ -445,7 +445,11 @@ class KenestoToolbar extends Component {
     if (documentsReducer.sharingPermissions.length === 0) {
       return false;
     }
-    this.props.dispatch(documentsActions.ShareDocument());
+    this.props.dispatch(navActions.updateIsProcessing(true));
+    setTimeout(() => {
+        this.props.dispatch(documentsActions.ShareDocument());
+    }, 100);
+    
   }
 
   render() {

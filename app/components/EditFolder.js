@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
 import * as documentsActions from '../actions/documentsActions'
+import * as navActions from '../actions/navActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -100,8 +101,14 @@ class EditFolder extends React.Component {
 
     _edit() {
         if (this.state.folderName != false) {
-            this.props.dispatch(documentsActions.EditFolder(this.state.folderId ,this.state.folderName, this.state.isVault));
             this.props.closeModal();
+            this.props.dispatch(navActions.updateIsProcessing(true));
+            setTimeout(() =>{
+                
+                this.props.dispatch(documentsActions.EditFolder(this.state.folderId ,this.state.folderName, this.state.isVault));
+            }, 100);
+            
+            
         }
     }
     render(){

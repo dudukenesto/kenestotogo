@@ -53,7 +53,10 @@ class UpdateVersions extends React.Component {
 
   upload(){
     this.props.closeModal();
-    const documentsContext = getDocumentsContext(this.props.navReducer);
+    if (this.props.navReducer.routes[this.props.navReducer.index].key == 'document')
+        this.props.dispatch(navActions.updateIsProcessing(true));
+     setTimeout(() => {
+                 const documentsContext = getDocumentsContext(this.props.navReducer);
     var document = getSelectedDocument(this.props.documentsReducer, this.props.navReducer);
     const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.file.name, "", "",  documentsContext.fId, document.Id);
     
@@ -61,6 +64,8 @@ class UpdateVersions extends React.Component {
    
     const name = fileName.substring(0,  fileName.lastIndexOf('.'));
     this.props.dispatch(updateDocumentVersion(documentsContext.catId, {name: name, uri : this.state.file.path, type: this.state.file.type, size: this.state.file.size, fileExtension: this.state.file.extension}, url, document.Id, true));
+           }, 100); 
+  
 
   }
 
