@@ -445,8 +445,8 @@ class ItemMenu extends React.Component {
                         </View>
 
                         <View style={styles.actionIconsContainer}>
-            {this._renderDownloadAction(document)}
-             {this._renderViewAction(document)}
+            {this._renderDownloadAction(this.state.document)}
+             {this._renderViewAction(this.state.document)}
                         </View>
 
                     </View>

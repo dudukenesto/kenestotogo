@@ -15,8 +15,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import java.util.Arrays;
 import java.util.List;
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
-
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -35,8 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
             new VectorIconsPackage(),
             new OrientationPackage(),
             new PickerPackage(),
-            new RNFetchBlobPackage(),
-            new ReactNativePushNotificationPackage() 
+            new RNFetchBlobPackage()
       );
     }
   };

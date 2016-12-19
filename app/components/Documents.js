@@ -15,14 +15,13 @@ import {
   ActivityIndicator,
   RefreshControl
 } from 'react-native'
-import { emitToast, clearToast } from '../actions/navActions'
+import { emitToast, clearToast,updateIsProcessing } from '../actions/navActions'
 
 import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { createIconSetFromFontello } from 'react-native-vector-icons'
 import fontelloConfig from '../assets/icons/config.json';
 import * as constans from '../constants/GlobalConstans'
-import Modal from 'react-native-modalbox';
 import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
 import { getDownloadFileUrl, getIconNameFromMimeType, getViewerUrl } from '../utils/documentsUtils'
@@ -77,8 +76,23 @@ class Documents extends Component {
     dispatch(fetchTableIfNeeded())
   }
 
+  componentDidMount(){
+  //  const {dispatch} = this.props
+  //  dispatch(updateIsProcessing(true));
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
+      const {navReducer} = nextProps
+      if (navReducer.routes[navReducer.index].key != 'documents')
+         return false; 
+        return true;
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const {documentsReducer, navReducer} = this.props
+
+     
+
     var documentlist = getDocumentsContext(navReducer);
     this._showStatusBar()
 
@@ -87,14 +101,7 @@ class Documents extends Component {
       if (documentsReducer[documentlist.catId].uploadItems.length > 0 && dataSource != '' && dataSource.getSectionLengths(0) != '' && !documentlist.isSearch) {
         this.scrollToTop()
       }
-      // else if (documentsReducer[documentlist.catId].lastUploadId != "") {
-      //   alert(JSON.stringify(this.props.documentsReducer[documentlist.catId].lastUploadId)+",  "+JSON.stringify(prevProps.documentsReducer[documentlist.catId].lastUploadId))
-      //   this.scrollToItem(documentsReducer[documentlist.catId].lastUploadId)
-      // }
-      // else
-      // {
-      //   this.scrollToTop() 
-      // }
+
     }
 
 
@@ -274,7 +281,6 @@ class Documents extends Component {
         documentlist={documentlist} />)
     }
     else {
-
       return (
         <ListView
           ref="listview"
@@ -323,10 +329,12 @@ class Documents extends Component {
     }
   }
 
+
   render() {
 
     try {
       const {dispatch, documentsReducer, navReducer } = this.props
+
       var documentlist = getDocumentsContext(navReducer);
       // console.log("render documents page: " +JSON.stringify(documentlist))
       //const isFetching = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].isFetching : false
@@ -334,6 +342,7 @@ class Documents extends Component {
       var additionalStyle = {};
 
       let showCustomButton = documentlist.isSearch ? false : true
+
       return (
 
         <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>

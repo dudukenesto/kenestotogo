@@ -163,7 +163,7 @@ class Main extends React.Component {
     super(props)
 
         this.state = {
-          ifCreatingFolder: false,
+       //   ifCreatingFolder: false,
           isPopupMenuOpen: false,
           isProcessingOpen: false,
           isDropDownOpen: true,
@@ -315,14 +315,14 @@ class Main extends React.Component {
 
   closeCreateFolder() {
     this.refs.CreateFolder.close();
-    this.setState({ ifCreatingFolder: false })
+    //this.setState({ ifCreatingFolder: false })
   }
 
 
-  setProcessingStyle() {
-    this.setState({ ifCreatingFolder: true })
+  // setProcessingStyle() {
+  //   this.setState({ ifCreatingFolder: true })
 
-  }
+  // }
 
   componentWillReceiveProps(nextprops) {
  //   if (nextprops.navReducer.toolbarVisible != this.props.navReducer.toolbarVisible)
@@ -338,6 +338,7 @@ class Main extends React.Component {
   // {
   //    this.showToolBar(); 
   // }
+  // alert(nextprops.navReducer.isProcessing + ' ' + this.state.isProcessingOpen)
     if (nextprops.navReducer.isProcessing && !this.state.isProcessingOpen ) {
       this.openModal("processingModal");
       this.setState({isProcessingOpen: true})
@@ -469,8 +470,8 @@ class Main extends React.Component {
   render() {
     const {navReducer} = this.props
     var BContent = <Text style={styles.text}>error message</Text>
-    var modalStyle = this.state.ifCreatingFolder ? styles.ifProcessing : [styles.modal, styles.createFolder]
-
+    //var modalStyle = this.state.ifCreatingFolder ? styles.ifProcessing : [styles.modal, styles.createFolder]
+   var modalStyle =  [styles.modal, styles.createFolder]; 
     var showPopupMenu = this.state.isPopupMenuOpen;
     var showKenestoToolbar =  navReducer.routes[navReducer.index].key === 'login' || navReducer.routes[navReducer.index].key === 'forgotPassword' || navReducer.routes[navReducer.index].key === 'KenestoLauncher' ? false : true;
     var documentlist = getDocumentsContext(navReducer);
@@ -507,7 +508,7 @@ class Main extends React.Component {
         </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
           <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.closeCreateFolder.bind(this) }
-            closeCreateFolder={this.closeCreateFolder.bind(this) } setCreateFolderStyle={this.setProcessingStyle.bind(this) }
+            closeCreateFolder={this.closeCreateFolder.bind(this) } 
             />
         </Modal>
         <Modal style= {modalStyle} position={"center"}  ref={"checkInModal"} isDisabled={false}>
@@ -522,8 +523,8 @@ class Main extends React.Component {
         <Modal style= {styles.updateVersionsModal} position={"center"}  ref={"updateVersionsModal"} isDisabled={false}>
           <UpdateVersions closeModal = {() => this.closeModal("updateVersionsModal") } openModal = {() => this.openModal("updateVersionsModal") }/>
         </Modal>
-        <Modal style= {styles.processingModal} position={"center"}  ref={"processingModal"} isDisabled={false}>
-          <Processing  closeModal = {() => this.closeModal("processingModal") } openModal = {() => this.openModal("processingModal") }/>
+        <Modal style= {styles.processingModal} position={"center"}  ref={"processingModal"} isDisabled={false} animationDuration={0}>
+          <Processing  closeModal = {() => this.closeModal("processingModal") }  openModal = {() => this.openModal("processingModal")}/>
         </Modal>
         <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>

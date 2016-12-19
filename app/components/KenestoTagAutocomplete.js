@@ -12,11 +12,10 @@ import {
   Dimensions,
   Keyboard
 } from 'react-native';
-
+import {connect} from 'react-redux'
 import Tag from './Tag';
 var {height, width} = Dimensions.get('window');
-var Orientation = require('./KenestoDeviceOrientation');
-export default class KenestoTagAutocomplete extends Component {
+class KenestoTagAutocomplete extends Component {
 
   static defaultProps = {
     initialTags: [],
@@ -42,19 +41,18 @@ export default class KenestoTagAutocomplete extends Component {
       showlist: false,
       tags: props.initialTags,
       userInput: '',
+      orientation: this.props.orientation,
       listPosition: {
         top: 100,
         left: 0,
         right: 0,
-      },
-      orientation: Orientation.getInitialOrientation()
+      }
     }
 
   }
 
   componentDidMount() {
     
-    this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       this.setState({ showList: true });
       this.props.onShowTagsList();
@@ -66,19 +64,12 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   componentWillUnmount() {
-    this.orientationListener.remove();
-    Orientation.removeOrientationListener();
     this.keyboardDidShowListener.remove();
     Keyboard.removeListener('keyboardDidShow', (message) => console.log('\n\nremoveListener keyboardDidShow'));
     this.keyboardDidHideListener.remove();
     Keyboard.removeListener('keyboardDidHide', (message) => console.log('\n\nremoveListener keyboardDidHide'))
   }
 
-  _orientationDidChange(orientation) {
-    this.setState({
-      orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
-    })
-  }
 
   blur() {
     this.refs.textInput.blur();
@@ -446,3 +437,13 @@ const styles = StyleSheet.create({
   }
 
 });
+
+
+function mapStateToProps(state) {
+  const { navReducer } = state
+  return {
+        orientation : navReducer.orientation
+  }
+}
+
+export default connect(mapStateToProps)(KenestoTagAutocomplete)

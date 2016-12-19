@@ -1,11 +1,11 @@
 import React from "react"; 
 import {View, Text,TextInput, StyleSheet, Animated, Dimensions, Switch} from "react-native";
 import Button from "react-native-button";
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
 import * as documentsActions from '../actions/documentsActions'
+import * as navActions from '../actions/navActions'
 import {createFolder} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -78,14 +78,6 @@ var styles = StyleSheet.create({
         fontSize: 16,
         marginRight: 40
     },
-    // modal: {
-    //     justifyContent: 'center',
-    //     alignItems: 'center'
-    // },
-    // InProggress: {
-    //     height: 500, 
-    //     width: 500
-    // },
 });
 
 class CreateFolder extends React.Component {
@@ -96,12 +88,14 @@ class CreateFolder extends React.Component {
             isVault: false,
             folderName: '',
         };
+
+       // alert(this.state.folderName)
     }
 
-    componentDidMount() {
-  //      if (!this.props.creatingFolder)
-  //          this.refs.folderName.focus();
-    }
+    // componentDidMount() {
+    //     if (!this.props.creatingFolder)
+    //         this.refs.folderName.focus();
+    // }
 
     componentWillReceiveProps(nextprops){
         // alert(nextprops.creatingFolder)
@@ -115,14 +109,14 @@ class CreateFolder extends React.Component {
     }
 
     create() {
-        if (this.state.folderName != false) {
-            this.props.dispatch(createFolder(this.state.folderName, this.state.isVault));
-            this.props.setCreateFolderStyle();
+       //alert(this.state.folderName  != '')
+        if (this.state.folderName != '') {
+        //     this.props.setCreateFolderStyle();
             this.props.closeCreateFolder();
+            this.props.dispatch(createFolder(this.state.folderName, this.state.isVault));
+
         }
     }
-
-     
 
     render(){
 
