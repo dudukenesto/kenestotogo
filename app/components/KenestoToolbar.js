@@ -7,6 +7,7 @@ import * as navActions from '../actions/navActions'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import {hideToast} from '../actions/navActions'
+import * as Animatable from 'react-native-animatable';
 import {
   View,
   Text,
@@ -17,9 +18,6 @@ import {
   TouchableNativeFeedback,
   Platform
 } from 'react-native'
-import * as Animatable from 'react-native-animatable';
-
-
 
 let styles = StyleSheet.create({
   toolbar: {
@@ -185,21 +183,22 @@ class KenestoToolbar extends Component {
   //   });  
   // }
   
-  
+
   onPressSearchBox() {
     const {navReducer} = this.props
-    var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
+    var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
     this.props.dispatch(documentsActions.toggleSearchBox(true));
     this.openingSearchBoxAnimation(showGoBack).then(() => {
+
       var documentlist = getDocumentsContext(navReducer);
       this.props.dispatch(navActions.updateRouteData(documentlist));
       this.setState({
         isSearchBoxOpen: true,
         searchText: ""
       })
-    }); 
+    });
   }
- 
+
  
  
   
