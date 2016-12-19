@@ -11,7 +11,6 @@ import {
     Dimensions
 } from 'react-native';
 import {connect} from 'react-redux';
-var Orientation = require('./KenestoDeviceOrientation');
 var {height, width} = Dimensions.get('window');
 
 class DropDownOptions extends Component {
@@ -21,7 +20,6 @@ class DropDownOptions extends Component {
 
         this.state = {
             showDropDown: false,
-            orientation: Orientation.getInitialOrientation(),
             position: {
                 top: -10000,
                 left: -10000
@@ -62,7 +60,7 @@ class DropDownOptions extends Component {
     }
     
     getOpeningDirection(triggerSettings, optHeight){
-        var windowHeight = (this.state.orientation === 'PORTRAIT') ? height : width;
+        var windowHeight = (this.props.orientation === 'PORTRAIT') ? height : width;
         if ((triggerSettings.direction === 'up' && triggerSettings.top > optHeight) ||
             (triggerSettings.direction === 'down' && windowHeight-triggerSettings.top-triggerSettings.height < optHeight)) {
             return true;
@@ -128,28 +126,10 @@ class DropDownOptions extends Component {
     }
 
     componentWillReceiveProps(nextprops){
-      //  alert(this.state.showDropDown + ' ' + nextprops.showDropDown);
         if (this.state.showDropDown && !nextprops.showDropDown)
             this.closeDropDown();
          if (!this.state.showDropDown && nextprops.showDropDown)
             this.openDropDown(nextprops.dropDownTrigger, nextprops.dropDownOptions, nextprops.dropDownOptionTemplate);     
-    }
-
-    componentDidMount() {
-        this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-    }
-
-    componentWillUnmount() {
-        this.orientationListener.remove();
-        Orientation.removeOrientationListener();
-    }
-
-    _orientationDidChange(orientation) {
-        this.setState({
-            orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
-        })
-        
-        this.closeDropDown();
     }
 
     render() {
@@ -204,7 +184,8 @@ function mapStateToProps(state) {
          dropDownTrigger : navReducer.dropDownTrigger, 
          dropDownOptions: navReducer.dropDownOptions, 
         triggerSelectedChanged: navReducer.triggerSelectedChanged,
-         dropDownOptionTemplate : navReducer.dropDownOptionTemplate
+         dropDownOptionTemplate : navReducer.dropDownOptionTemplate, 
+         orientation : navReducer.orientation
     }
 }
 

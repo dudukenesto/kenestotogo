@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
 import * as documentsActions from '../actions/documentsActions'
+import * as navActions from '../actions/navActions'
 import {createFolder} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -87,12 +88,14 @@ class CreateFolder extends React.Component {
             isVault: false,
             folderName: '',
         };
+
+       // alert(this.state.folderName)
     }
 
-    componentDidMount() {
-  //      if (!this.props.creatingFolder)
-  //          this.refs.folderName.focus();
-    }
+    // componentDidMount() {
+    //     if (!this.props.creatingFolder)
+    //         this.refs.folderName.focus();
+    // }
 
     componentWillReceiveProps(nextprops){
         // alert(nextprops.creatingFolder)
@@ -106,14 +109,14 @@ class CreateFolder extends React.Component {
     }
 
     create() {
-        if (this.state.folderName != false) {
-            this.props.dispatch(createFolder(this.state.folderName, this.state.isVault));
-            this.props.setCreateFolderStyle();
+       //alert(this.state.folderName  != '')
+        if (this.state.folderName != '') {
+        //     this.props.setCreateFolderStyle();
             this.props.closeCreateFolder();
+            this.props.dispatch(createFolder(this.state.folderName, this.state.isVault));
+
         }
     }
-
-     
 
     render(){
 

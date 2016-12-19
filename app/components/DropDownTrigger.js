@@ -10,7 +10,6 @@ import {
 import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from "lodash";
-var Orientation = require('./KenestoDeviceOrientation');
 
 class DropDownTrigger extends Component {
 
@@ -19,29 +18,10 @@ class DropDownTrigger extends Component {
 
         this.state = {
             selected: this.props.selected,
-            triggerIsActive: false,
-            orientation: Orientation.getInitialOrientation()
+            triggerIsActive: false
         }
     }
     
-    componentDidMount() {
-        this.orientationListener = Orientation.addOrientationListener(this._orientationDidChange.bind(this));
-    }
-
-    componentWillUnmount() {
-        this.orientationListener.remove();
-        Orientation.removeOrientationListener();
-    }
-
-    _orientationDidChange(orientation) {
-        this.setState({
-            orientation: orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT'
-        })
-        this.setState({
-            triggerIsActive: false
-        })
-        
-    }
 
     openDropDown() {
         this.refs.DropDownTrigger.measure((fx, fy, width, height, px, py) => {

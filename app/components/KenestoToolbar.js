@@ -145,13 +145,14 @@ class KenestoToolbar extends Component {
   onPressSearchBox() {
     const {navReducer} = this.props
     var showGoBack = navReducer.routes[navReducer.index].data.fId != ""  ? true : false;
-        
+    this.props.dispatch(documentsActions.toggleSearchBox(true));
     this.openingSearchBoxAnimation(showGoBack).then(() => {
-      this.props.dispatch(documentsActions.toggleSearchBox(true));
-      this.setState({
-        isSearchBoxOpen: true,
-        searchText: ""
-      }) 
+    var documentlist = getDocumentsContext(navReducer);
+    this.props.dispatch(navActions.updateRouteData(documentlist));
+    this.setState({
+      isSearchBoxOpen: true,
+      searchText: ""
+    }) 
     });  
   }
   

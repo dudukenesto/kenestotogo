@@ -87,6 +87,12 @@ class AddPeople extends Component {
      this.props.dispatch(docActions.SetSharingPermissions(tags));
   }
   
+    shouldComponentUpdate(nextProps, nextState){
+      const {navReducer} = nextProps
+      if (navReducer.routes[navReducer.index].key != 'addPeople')
+         return false; 
+        return true;
+  }
 
   componentWillReceiveProps(nextprops){
       //  alert(JSON.stringify(nextprops.ObjectInfo))

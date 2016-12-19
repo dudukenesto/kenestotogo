@@ -438,8 +438,8 @@ export function toggleSearchBox(active: boolean) {
             return dispatch(refreshTable(documentlist, true))
         else 
         {
-                 dispatch(clearDocuments(documentlist));
-                 return dispatch(navActions.updateRouteData(documentlist));
+               return  dispatch(clearDocuments(documentlist));
+                
         }
        
        // return dispatch(navActions.push(routes.documentsRoute(documentlist).route));
@@ -539,17 +539,18 @@ export function updateSelectedObject(id: string, familyCode: string, permissions
 export function createFolder(folderName: string, isVault: boolean) {
 
     return (dispatch, getState) => {
+       
         var documentlist = getDocumentsContext(getState().navReducer);
         const {sessionToken, env, email} = getState().accessReducer;
         const folderId = documentlist.fId;
         const createFolderUrl = getCreateFolderUrl(env, sessionToken, documentlist.fId, folderName, isVault);
         //dispatch(UpdateCreateingFolderState(1))
-        dispatch(navActions.updateIsProcessing(true));
+      //  dispatch(navActions.updateIsProcessing(true));
         writeToLog(email, constans.DEBUG, `function createFolder - url: ${createFolderUrl}`)
         return fetch(createFolderUrl)
             .then(response => response.json())
             .then(json => {
-                dispatch(navActions.updateIsProcessing(false));
+              //  dispatch(navActions.updateIsProcessing(false));
                 if (json.ResponseStatus == "FAILED") {
                     // dispatch(failedToFetchDocumentsList(documentlist, "", json.ResponseData.ErrorMessage))
 
@@ -568,6 +569,7 @@ export function createFolder(folderName: string, isVault: boolean) {
                 }
                 else {
                     //dispatch(UpdateCreateingFolderState(2))
+                  //  dispatch(navActions.emitToast(constans.SUCCESS, 'Folder successfully created'));
                     dispatch(refreshTable(documentlist, false, true))
 
                 }
@@ -576,7 +578,7 @@ export function createFolder(folderName: string, isVault: boolean) {
             .catch((error) => {
                 dispatch(navActions.emitError("Error creating new folder"))
                 //dispatch(UpdateCreateingFolderState(0))
-                dispatch(navActions.updateIsProcessing(false));
+            //    dispatch(navActions.updateIsProcessing(false));
                 writeToLog(email, constans.ERROR, `function createFolder - Error creating new folder - url: ${createFolderUrl}`, error)
             })
             
