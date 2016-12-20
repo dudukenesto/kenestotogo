@@ -83,7 +83,7 @@ class Documents extends Component {
 
   shouldComponentUpdate(nextProps, nextState){
       const {navReducer} = nextProps
-      if (navReducer.routes[navReducer.index].key != 'documents')
+      if (navReducer.routes[navReducer.index].key.indexOf('documents') == -1)
          return false; 
         return true;
   }
@@ -261,18 +261,13 @@ class Documents extends Component {
 
     const {documentsReducer, navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
-   // var itemsLength = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].items.length : 0;
-
- //   var uploadsLength = (documentlist.catId in documentsReducer) && !documentlist.isSearch ? documentsReducer[documentlist.catId].uploadItems.length : 0;
-   // itemsLength += uploadsLength;
     let ds = new ListView.DataSource({
       rowHasChanged: (r1, r2) => {
         r1["Id"] !== r2["Id"] || r1["uploadStatus"] !== r2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
       }
     })
     let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]);
-
-    if (typeof dataSource.getSectionLengths == 'undefined' || dataSource.getSectionLengths(0) == '') {
+    if (typeof dataSource.getSectionLengths == 'undefined' || dataSource.getSectionLengths(0) == '' || dataSource.getSectionLengths(0) == 0) {
 
       return (<NoDocuments
         filter={this.state.filter}
@@ -336,11 +331,9 @@ class Documents extends Component {
       const {dispatch, documentsReducer, navReducer } = this.props
 
       var documentlist = getDocumentsContext(navReducer);
-      // console.log("render documents page: " +JSON.stringify(documentlist))
       //const isFetching = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].isFetching : false
       const isFetching = documentsReducer.isFetching;
       var additionalStyle = {};
-
       let showCustomButton = documentlist.isSearch ? false : true
 
       return (
@@ -355,7 +348,6 @@ class Documents extends Component {
         </ViewContainer>
       )
     } catch (error) {
-
       return null;
     }
 

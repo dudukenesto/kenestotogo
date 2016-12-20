@@ -592,15 +592,6 @@ export function downloadDocument(id: string, fileName: string, mimeType: string)
             .then(response => response.json())
             .then(json => {
                 var downloadUrl = json.ResponseData.AccessUrl;
-
-                //  config.log('document mime type = ' + mime.lookup(fileName))
-                //downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
-                //downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
-                //  console.log('downloadurl: ' + downloadUrl);
-
-                //  downloadUrl = 'http://images.one.co.il/images/d/dmain/ms/gg1268053.jpg';
-                // downloadUrl = 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQNua9BAIpL7ryiLkbL1-UleMUqURv--Ikt7y6dwb8GgH2Rx7D0';
-
                 RNFetchBlob.config({
                     //    path : Android_Download_Path + "/" + fileName,
                     fileCache: true,
@@ -804,7 +795,8 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                         //     message = `Error. failed to upload file ${fileObject.name}`
                                         //   else
                                         //  message = "Error. failed to update version"
-                                        message = "File successfully uploaded"
+                                        message = "Error uploading file"
+                                        console.log(JSON.stringify(json));
                                         dispatch(navActions.emitToast(constans.ERROR, message));
                                         writeToLog(email, constans.ERROR, `function uploadToKenesto(1) - Error. failed to upload file 0, ${JSON.stringify(json)}`)
 
@@ -864,7 +856,6 @@ export function uploadToKenesto(fileObject: object, url: string) {
             var documentlist = getDocumentsContext(getState().navReducer);
             if (url != '')
                 url = url + "&ud=" + constrcutUploadUSerData(encodeURIComponent(uploadId), encodeURIComponent(documentlist.catId));
-
             const items = getState().documentsReducer[documentlist.catId].items;
             const totalFiles = getState().documentsReducer[documentlist.catId].totalFiles;
             const totalFolders = getState().documentsReducer[documentlist.catId].totalFolders;
@@ -877,6 +868,7 @@ export function uploadToKenesto(fileObject: object, url: string) {
 
         }
         catch (err) {
+            console.log(JSON.stringify(error))
             writeToLog(email, constans.ERROR, `function uploadToKenesto - Failed! fileObject: ${JSON.stringify(fileObject)} url${url}`, err)
         }
     }
@@ -886,7 +878,6 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
         try {
             if (url != '')
                 url = url + "&ud=" + constrcutUploadUSerData(encodeURIComponent(baseFileId), encodeURIComponent(catId));
-  console.log(getState().navReducer.isProcessing)
             const {navReducer} = getState()
             const items = getState().documentsReducer[catId].items;
             const uploadItems = getState().documentsReducer[catId].uploadItems;
@@ -913,7 +904,6 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
                 if (catId == documentlist.catId) {
                     var isDocumentPage = navReducer.routes[navReducer.index].key == 'document';
                     if (isDocumentPage) {
-                        console.log(getState().navReducer.isProcessing)
                         dispatch(getDocumentInfo(baseFileId, constans.GENERAL_FAMILY));
                     }
                     dispatch(refreshTable(documentlist, false));

@@ -62,7 +62,7 @@ componentWillMount(){
 //  this.setState( {url : url });
    
  
- 
+
 
 
       this.gestureResponder = createResponder({
