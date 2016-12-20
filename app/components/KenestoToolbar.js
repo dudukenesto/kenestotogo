@@ -165,6 +165,26 @@ class KenestoToolbar extends Component {
     }
   }
 
+  // onPressSearchBox() {
+  //   const {navReducer} = this.props
+  //   var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
+    
+//     //this.props.dispatch(documentsActions.toggleSearchBox(true));
+//    // this.props.dispatch(documentsActions.clearDocuments(documentlist));
+//   // this.props.dispatch(clearDocuments(documentlist));
+//     this.openingSearchBoxAnimation(showGoBack).then(() => {
+//  var documentlist = getDocumentsContext(navReducer);
+//       var documentlist = getDocumentsContext(navReducer);
+//       this.props.dispatch(documentsActions.toggleSearchBox(true));
+//      // this.props.dispatch(navActions.updateRouteData(documentlist));
+//       this.setState({
+//         isSearchBoxOpen: true,
+//         searchText: ""
+//       })
+//     });
+//   }
+
+
   onPressSearchBox() {
     const {navReducer} = this.props
     var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
@@ -172,6 +192,7 @@ class KenestoToolbar extends Component {
     this.openingSearchBoxAnimation(showGoBack).then(() => {
 
       var documentlist = getDocumentsContext(navReducer);
+     documentlist.isSearch = true;
       this.props.dispatch(navActions.updateRouteData(documentlist));
       this.setState({
         isSearchBoxOpen: true,
@@ -265,7 +286,6 @@ class KenestoToolbar extends Component {
     documentlist.keyboard = text;
     documentlist.sortDirection = constans.ASCENDING;
     documentlist.sortBy = constans.ASSET_NAME;
-
     this.props.dispatch(documentsActions.refreshTable(documentlist, true));
     this.setState({
       searchText: text
@@ -495,5 +515,17 @@ KenestoToolbar.contextTypes = {
   itemMenuContext: React.PropTypes.object,
 };
 
+// function mapStateToProps(state) {
+// alert(name)
+ 
+//   const { navReducer } = state
+//   var currRoute = navReducer.routes[navReducer.index];
+ 
+//   return {
+//       name : currRoute.data.name
 
+//   }
+// }
+
+//export default connect(mapStateToProps)(KenestoToolbar)
 export default KenestoToolbar

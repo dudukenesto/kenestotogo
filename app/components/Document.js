@@ -384,10 +384,11 @@ Document.contextTypes = {
 
 function mapStateToProps(state) {
 
-  const { navReducer } = state
+ 
+  const { navReducer } = state;
   return {
     toolbarVisible: navReducer.toolbarVisible,
-    orientation: navReducer.orientation
+    orientation: navReducer.orientation,
   }
 }
 

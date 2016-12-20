@@ -438,7 +438,9 @@ export function toggleSearchBox(active: boolean) {
             return dispatch(refreshTable(documentlist, true))
         else 
         {
-               return  dispatch(clearDocuments(documentlist));
+              return  dispatch(clearDocuments(documentlist));
+                // dispatch(clearDocuments(documentlist));
+                //  return dispatch(navActions.updateRouteData(documentlist));
                 
         }
        
@@ -1330,10 +1332,13 @@ export function EditDocument(documentId: string, documentName: string) {
                 else {
                     
                     if (isDocumentPage) {
-                        dispatch(getDocumentInfo(documentId, constans.GENERAL_FAMILY));
+                          dispatch(getDocumentInfo(documentId, constans.GENERAL_FAMILY));
+                    }
+                    else{
+                             dispatch(refreshTable(documentlist, false));
                     }
                     
-                    dispatch(refreshTable(documentlist, false));
+                   
                     dispatch(navActions.emitToast(constans.SUCCESS, "document successfully updated.", ""));
                 }
              
