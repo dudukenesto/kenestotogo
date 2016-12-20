@@ -408,10 +408,10 @@ export function fetchTableIfNeeded() {
 export function refreshTable(documentlist: Object, updateRouteData: boolean = true, getStatistics = false) {
     return (dispatch, getState) => {
         try {
+            
             const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch)
             const {sessionToken, env, email} = getState().accessReducer;
             writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
-
             if (updateRouteData) {
                 dispatch(navActions.updateRouteData(documentlist))
             }

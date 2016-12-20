@@ -259,6 +259,7 @@ class KenestoToolbar extends Component {
   // }
 
   _submitSearch(text) {
+   
     const {navReducer} = this.props
     var documentlist = getDocumentsContext(navReducer);
     documentlist.keyboard = text;

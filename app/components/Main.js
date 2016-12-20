@@ -239,7 +239,7 @@ class Main extends React.Component {
         sortBy: currRouteData.sortBy
       }
 
-    dispatch(documentsActions.refreshTable(routeData, false));
+    dispatch(documentsActions.refreshTable(routeData, true));
   }
 
   closeModal(ref: string) {
