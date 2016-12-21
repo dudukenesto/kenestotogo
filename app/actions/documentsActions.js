@@ -398,6 +398,10 @@ export function fetchTableIfNeeded() {
 
         var documentlist = getDocumentsContext(getState().navReducer);
         const {documentsReducer} = getState()
+
+        if (getState().navReducer.routes[getState().navReducer.index].key.indexOf('documents') == -1)
+                return null;
+                
         if (shouldFetchDocuments(documentsReducer, documentlist)) {
             const nextUrl = getNextUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentsReducer, documentlist)
             dispatch(updateLastUploadId(documentlist.catId, ""));
@@ -518,7 +522,6 @@ function requestDocumentsList(documentlist: Object) {
 
 function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
     const activeDocumentsList = documentsReducer[documentlist.catId]
-
     if (typeof (activeDocumentsList) == 'undefined' || activeDocumentsList.items.length == 0 || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
         return true
     }
