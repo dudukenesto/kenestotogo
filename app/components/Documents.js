@@ -49,7 +49,9 @@ class Documents extends Component {
     this.documentsProps = this.props.data
 
     this.state = {
-      isFetchingTail: false
+      isFetchingTail: false, 
+      uploadItemsLength : 0  
+      
     }
 
     this.onEndReached = this.onEndReached.bind(this)
@@ -95,12 +97,26 @@ class Documents extends Component {
 
     var documentlist = getDocumentsContext(navReducer);
     this._showStatusBar()
-
     if (documentlist.catId in documentsReducer) {
-       let dataSource = documentlist.catId in documentsReducer && documentsReducer[documentlist.catId].dataSource.length > 0 ? documentsReducer[documentlist.catId].dataSource : '';
-      if (documentsReducer[documentlist.catId].uploadItems.length > 0 && dataSource != '' && dataSource.getSectionLengths(0) != '' && !documentlist.isSearch) {
-        this.scrollToTop()
-      }
+
+    if(documentsReducer[documentlist.catId].uploadItems.length > this.state.uploadItemsLength)
+    {   
+          let ds = new ListView.DataSource({
+          rowHasChanged: (r1, r2) => {
+            r1["Id"] !== r2["Id"] || r1["uploadStatus"] !== r2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
+          }
+        })
+        let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]);
+        if (dataSource.getSectionLengths(0) != '' && !documentlist.isSearch) {
+              console.log('scrolling to top')
+               this.scrollToTop(); 
+              this.setState({ uploadItemsLength :documentsReducer[documentlist.catId].uploadItems.length })
+             
+              
+        }
+
+    }
+   
 
     }
 
@@ -266,7 +282,9 @@ class Documents extends Component {
         r1["Id"] !== r2["Id"] || r1["uploadStatus"] !== r2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
       }
     })
+ 
     let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]);
+   
     if (typeof dataSource.getSectionLengths == 'undefined' || dataSource.getSectionLengths(0) == '' || dataSource.getSectionLengths(0) == 0) {
 
       return (<NoDocuments

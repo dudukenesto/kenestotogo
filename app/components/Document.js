@@ -45,11 +45,6 @@ class Document extends React.Component{
   }
 
 
-componentWillReceiveProps(nextprops){
-    if (nextprops.orientation != this.props.orientation)
-        this.orientationChanged(nextprops.orientation);
-}
-
 
 componentWillMount(){
 //   console.log('window.height =' + window.height )

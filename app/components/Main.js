@@ -382,11 +382,6 @@ class Main extends React.Component {
     // MessageBarManager.registerMessageBar(this.refs.alert);
   }
 
-  componentWillUnmount(){
-    this.orientationListener.remove();
-    Orientation.removeOrientationListener();
-    // AppState.removeEventListener('change', this.handleAppStateChange);
-  }
 
   _orientationDidChange(orientation) {
     var o =  orientation == 'LANDSCAPE' ? 'LANDSCAPE' : 'PORTRAIT';
