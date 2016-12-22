@@ -322,6 +322,18 @@ class Main extends React.Component {
   // }
 
   componentWillReceiveProps(nextprops) {
+    if(nextprops.documentsReducer.selectedObject){
+      var permissions = nextprops.documentsReducer.selectedObject.permissions;
+      var itemMenuPermissions = ['AllowShare', 'IsOwnedByRequestor', 'AllowUpdateVersions', 'AllowCheckin', 'AllowCheckout', 'AllowDiscardCheckout'];
+      var visibleActions = 0;
+      for (var i = 0; i < 6; i++) {
+        permissions[itemMenuPermissions[i]] == true && visibleActions++;
+      }
+      if (permissions['IsOwnedByRequestor'] == true) visibleActions++;
+      this.setState({ visibleActions: visibleActions })
+
+    }
+    
     if (nextprops.navReducer.isProcessing) {
       this.openModal("processingModal");
     }
@@ -480,7 +492,7 @@ class Main extends React.Component {
             openCreateFolder = {this.openCreateFolder.bind(this) }  createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) }/>
         </Modal>
-        <Modal style={[styles.modal, styles.itemMenu]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.itemMenu, this.state.visibleActions>3&&{height: 250}]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
           <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) }
              createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) } openUpdateVersionsModal={this.openUpdateVersionsModal.bind(this) } openCheckInModal={this.openCheckInModal.bind(this) } openEditDocumentModal={this.openEditDocumentModal.bind(this) } openEditFolderModal={this.openEditFolderModal.bind(this)}/>

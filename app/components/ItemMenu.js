@@ -436,19 +436,19 @@ class ItemMenu extends React.Component {
                                 {this.state.document.Name}
                             </Text>
                             <Text style={styles.documentYear} numberOfLines={1}>
-                                {"Modified " + moment(this.state.document.ModificationDate).format('MMM DD, YYYY')}
+                                {"Modified " + moment(this.state.document.ModificationDate).format('MMM DD, YYYY') }
 
                             </Text>
                         </View>
 
                         <View style={styles.actionIconsContainer}>
-            {this._renderDownloadAction(this.state.document)}
-             {this._renderViewAction(this.state.document)}
+                            {this._renderDownloadAction(this.state.document) }
+                            {this._renderViewAction(this.state.document) }
                         </View>
 
                     </View>
                 </View>
-                {this._renderMenuItemActions(this.state.isFetching)}
+                {this._renderMenuItemActions(this.state.isFetching) }
             </ViewContainer>
         )
     }
