@@ -26,7 +26,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {createResponder} from 'react-native-gesture-responder';
 import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
-import { toggleToolbar } from '../actions/navActions'
+import * as navActions from '../actions/navActions'
+
 class Document extends React.Component{
   constructor(props){
   
@@ -44,7 +45,10 @@ class Document extends React.Component{
     };
   }
 
-
+componentWillUnmount(){
+      if (!this.state.toolbarVisible)
+        this.showToolBar();
+  }
 
 componentWillMount(){
 //   console.log('window.height =' + window.height )
@@ -124,14 +128,18 @@ componentWillMount(){
     },
 
     onResponderSingleTapConfirmed: (evt, gestureState) => {
-
-      if (this.state.toolbarVisible)
+  
+      if (this.state.toolbarVisible) {
         this.hideToolBar();
-      else
+        //  this.props.dispatch(navActions.hideToolbar(true));
+      }
+
+      else {
         this.showToolBar();
+        // this.props.dispatch(navActions.showToolbar(true));
+      }
+
       this.setState({ toolbarVisible: !this.state.toolbarVisible });
-
-
 
     },
     moveThreshold: 2,

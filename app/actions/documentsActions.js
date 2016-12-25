@@ -1140,6 +1140,7 @@ export function UpdateDocumentSharingPermission() {
         fetch(request).then(response => {
             //  setTimeout(function(){ dispatch(peopleActions.RemoveFromFetchingList(triggerId));}, 3000);
             dispatch(peopleActions.RemoveFromFetchingList(triggerId));
+            dispatch(navActions.emitToast(constans.SUCCESS, "Sharing settings updated", ""));
             //     alert(JSON.stringify(response))
 
         }).catch((error) => {
