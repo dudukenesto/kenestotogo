@@ -60,67 +60,81 @@ componentWillMount(){
 
 
 
-      this.gestureResponder = createResponder({
+  this.gestureResponder = createResponder({
     onStartShouldSetResponder: (evt, gestureState) => true,
-    onStartShouldSetResponderCapture: (evt, gestureState) =>true,
+    onStartShouldSetResponderCapture: (evt, gestureState) => true,
     onMoveShouldSetResponder: (evt, gestureState) => true,
     onMoveShouldSetResponderCapture: (evt, gestureState) => true,
-    onResponderGrant: (evt, gestureState) => {},
+    onResponderGrant: (evt, gestureState) => { },
     onResponderMove: (evt, gestureState) => {
 
-        if ( typeof(gestureState.pinch) != 'undefined' && typeof(gestureState.previousPinch) != 'undefined') {
-         var diff = gestureState.pinch - gestureState.previousPinch;
-          if (this.state.startPinch == null)
-            this.setState({startPinch : gestureState.pinch, pinchDirection: diff > 0 ? "in" : "out"})
-          else{
-              if (diff < 0 && this.state.pinchDirection == 'in')
-              {
-                this.setState({startPinch: gestureState.pinch, pinchDirection : "out"})
-              }
-              else if (diff > 0 && this.state.pinchDirection == 'out')
-              {
-                this.setState({startPinch: gestureState.pinch, pinchDirection : "in"})
-              }
+      if (typeof (gestureState.pinch) != 'undefined' && typeof (gestureState.previousPinch) != 'undefined') {
+        var diff = gestureState.pinch - gestureState.previousPinch;
+        if (this.state.zoomCorrection == null) {
+          this.setState({ zoomCorrection: 1 })
+        }
+        if (this.state.startPinch == null) {
+          this.setState({
+            startPinch: gestureState.pinch,
+          })
+        }
+
+        const absDistance = Math.round(gestureState.pinch - this.state.startPinch);
+        const mod = absDistance % 5;
+        if (mod == 0) {
+          console.log('set zoom:', Math.round(gestureState.pinch / this.state.startPinch * 100 * this.state.zoomCorrection)== Infinity? 100 * this.state.zoomCorrection : Math.round(gestureState.pinch / this.state.startPinch * 100 * this.state.zoomCorrection), this.state.zoomCorrection)
+          
+          const zoom = Math.round(gestureState.pinch / this.state.startPinch * 100) == Infinity? 100 : Math.round(gestureState.pinch / this.state.startPinch * 100);
+          if(zoom * this.state.zoomCorrection < 25){
+            this.setZoom(25);
           }
-
-         const absDistance =  Math.round(Math.abs(gestureState.pinch -  this.state.startPinch));
-         const mod = absDistance % 5; 
-         if (mod == 0)
-         {
-           //console.log('mode = ' + mod)
-            if (this.state.pinchDirection == "in")
-                this.zoomIn();
-            else {
-              this.zoomOut();
-            }
-         }
-     }
-
-        
+          else if (zoom * this.state.zoomCorrection > 400){
+            this.setZoom(400);
+          }
+          else {
+            this.setZoom(zoom * this.state.zoomCorrection);
+          }         
+          this.setState({
+            tempPinch: gestureState.pinch,
+          })
+        }
+      }
     },
+
     onResponderTerminationRequest: (evt, gestureState) => false,
     onResponderRelease: (evt, gestureState) => {
-   //   console.log('gestureState.doubleTapUp = ' + gestureState.doubleTapUp)
-       if (gestureState.doubleTapUp)
-          this.setZoom(100);
+      let zoomCorrection = Math.round(this.state.tempPinch / this.state.startPinch * 100 * this.state.zoomCorrection)/100;
+      if (zoomCorrection < 0.25){
+        zoomCorrection = 0.25;
+      }
+      else if (zoomCorrection > 4){
+        zoomCorrection = 4;
+      }
+      if (gestureState.doubleTapUp) {
+        this.setZoom(100);
+        zoomCorrection = 1;
+      }
+      this.setState({
+        startPinch: null,
+         zoomCorrection: zoomCorrection
+      })
     },
-    
+
     onResponderTerminate: (evt, gestureState) => {
     },
-    
-    
+
     onResponderSingleTapConfirmed: (evt, gestureState) => {
-    
-        if (this.state.toolbarVisible)
-                this.hideToolBar(); 
-            else 
-                this.showToolBar();
-        this.setState({toolbarVisible : !this.state.toolbarVisible});
-        
-      
-      
+
+      if (this.state.toolbarVisible)
+        this.hideToolBar();
+      else
+        this.showToolBar();
+      this.setState({ toolbarVisible: !this.state.toolbarVisible });
+
+
+
     },
- moveThreshold: 2,
+    moveThreshold: 2,
     debug: false
   });
     
