@@ -78,10 +78,12 @@ class Documents extends Component {
     dispatch(fetchTableIfNeeded())
   }
 
-  componentDidMount(){
-  //  const {dispatch} = this.props
-  //  dispatch(updateIsProcessing(true));
-  }
+
+  // componentDidMount(){
+  //  // this.showToolBar();
+  // //  const {dispatch} = this.props
+  // //  dispatch(updateIsProcessing(true));
+  // }
 
   shouldComponentUpdate(nextProps, nextState){
       const {navReducer} = nextProps
@@ -342,6 +344,12 @@ class Documents extends Component {
     }
   }
 
+  // showToolBar(){
+  //   alert(this.context.toolBar)
+  //  // this.context.toolBar.fadeInDown();
+  // }
+  
+
 
   render() {
 
@@ -489,7 +497,8 @@ var styles = StyleSheet.create({
 });
 
 Documents.contextTypes = {
-  plusMenuContext: React.PropTypes.object
+  plusMenuContext: React.PropTypes.object,
+  toolBar: React.PropTypes.object
 };
 
 export default Documents
