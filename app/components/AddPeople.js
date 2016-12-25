@@ -282,6 +282,15 @@ class AddPeople extends Component {
       );
     }, this);
 
+    if (permissions.length == 0)
+      return(
+         <View style={[styles.container, styles.centerText]}>
+            <View style={styles.textContainer}>
+              <Text style={styles.noDocumentsText}>No users are shared yet</Text>
+            </View>
+          </View>
+      )
+
     return permissions
 
   }
@@ -492,7 +501,10 @@ var styles = StyleSheet.create({
     width: 30,
     borderRadius: 15,
   },
-
+ centerText: {
+    alignItems: 'center',
+    marginTop: 30
+  },
 });
 
 function mapStateToProps(state) {
