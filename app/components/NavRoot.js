@@ -79,6 +79,10 @@ class NavRoot extends Component {
     return this.props.isDrawerOpen();
   }
 
+  _isSearch(){
+      return this.props.isSearch();
+  }
+
   _closeItemMenuModal() {
     this.props.closeItemMenuModal();
   }
@@ -90,6 +94,11 @@ class NavRoot extends Component {
   }
 
   _handleBackAction() {
+    if (this._isSearch()){
+     //  alert(this._isSearch());
+          this.props.hideSearchBox();
+        return true;
+    }
     if (this._isItemMenuModalOpen()) {
       this._closeItemMenuModal();
       return true;

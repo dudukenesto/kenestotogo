@@ -155,7 +155,8 @@ class Main extends React.Component {
       itemMenuContext: this.refs.modalItemMenu,
       errorModal: this.refs.errorModal,
       dropDownContext: this.refs.dropDownOptionsContainer, 
-      toolBar: this.refs.toolBar
+      toolBar: this.refs.toolBar, 
+      kToolbar: this.refs.kToolbar
     };
   }
 
@@ -302,6 +303,14 @@ class Main extends React.Component {
   {
     this.openModal("updateVersionsModal");
   }
+
+  isSearch(){
+       var currContext = getDocumentsContext(this.props.navReducer);
+       return currContext.isSearch;
+  }
+
+
+  
 
 
   
@@ -453,6 +462,9 @@ class Main extends React.Component {
     this.refs.toolBar.fadeOutUp(0);
   }
 
+  hideSearchBox(){
+      this.refs.kToolbar.hideSearchBox();
+  }
 
 
   render() {
@@ -470,7 +482,7 @@ class Main extends React.Component {
       <View style={styles.container}>
         {showKenestoToolbar ?
           <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic" style={toolbarStyle} duration={600}> 
-            <KenestoToolbar
+            <KenestoToolbar ref={"kToolbar"}
               onActionSelected={this.onActionSelected}
               onPressPopupMenu={this.onPressPopupMenu}
               onIconClicked = {this.onNavIconClicked.bind(this) }
@@ -483,7 +495,9 @@ class Main extends React.Component {
           :
           <View></View>
         }
-        <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) } isItemMenuModalOpen ={this.isItemMenuModalOpen.bind(this) } closeDrawer ={this.closeDrawer.bind(this) } isDrawerOpen ={this.isDrawerOpen.bind(this) } isMenuModalOpen={this.isMenuModalOpen.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)  }/>
+        <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) } isItemMenuModalOpen ={this.isItemMenuModalOpen.bind(this) }
+         closeDrawer ={this.closeDrawer.bind(this) } isDrawerOpen ={this.isDrawerOpen.bind(this) } 
+         isMenuModalOpen={this.isMenuModalOpen.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)} isSearch={this.isSearch.bind(this)} hideSearchBox={this.hideSearchBox.bind(this)} />
          <Modal style= {styles.processingModal} position={"center"}  ref={"processingModal"} isDisabled={false} animationDuration={0}>
           <Processing  closeModal = {() => this.closeModal("processingModal") }  openModal = {() => this.openModal("processingModal")}/>
         </Modal>
@@ -577,6 +591,7 @@ Main.childContextTypes = {
   errorModal: React.PropTypes.object,
   dropDownContext: React.PropTypes.object, 
   toolBar: React.PropTypes.object, 
+  kToolbar: React.PropTypes.object
 }
 
 Main.contextTypes = {
