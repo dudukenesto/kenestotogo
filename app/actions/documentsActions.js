@@ -410,10 +410,10 @@ export function fetchTableIfNeeded() {
     }
 }
 export function refreshTable(documentlist: Object, updateRouteData: boolean = true, getStatistics = false) {
+ 
     return (dispatch, getState) => {
         try {
-            
-            const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch)
+            const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch, documentlist.isVault)
             const {sessionToken, env, email} = getState().accessReducer;
             writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
             if (updateRouteData) {
@@ -468,10 +468,9 @@ export function clearDocuments(documentlist: Object, isSearch : boolean = false)
 }
 
 function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
-
     const activeDocumentsList = documentsReducer[documentlist.catId]
     if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl == "false" || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == null || activeDocumentsList.nextUrl == 'null') {
-        return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch)
+        return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch, documentlist.isVault)
     }
     return activeDocumentsList.nextUrl
 }
@@ -1175,7 +1174,9 @@ export function DiscardCheckOut() {
                 }
                 else {
                     dispatch(navActions.emitToast(constans.SUCCESS, "Check-Out successfully discarded", ""));
-                    dispatch(Access.retrieveStatistics());
+                     var documentlist = getDocumentsContext(navReducer);
+                    dispatch(refreshTable(documentlist, false, true));
+                  
                 }
 
             }).catch((error) => {
@@ -1208,7 +1209,9 @@ export function CheckOut() {
                 }
                 else {
                     dispatch(navActions.emitToast(constans.SUCCESS, "Document successfully checked out.", ""));
-                    dispatch(Access.retrieveStatistics());
+                    var documentlist = getDocumentsContext(navReducer);
+                    dispatch(refreshTable(documentlist, false, true));
+                  //  dispatch(Access.retrieveStatistics());
 
                 }
 
@@ -1258,7 +1261,9 @@ export function CheckIn(comment: string) {
                 }
                 else {
                     dispatch(navActions.emitToast(constans.SUCCESS, "Document successfully checked in.", ""));
-                    dispatch(Access.retrieveStatistics());
+                     var documentlist = getDocumentsContext(navReducer);
+                      dispatch(refreshTable(documentlist, false, true));
+                   // dispatch(Access.retrieveStatistics());
 
                 }
 
@@ -1300,9 +1305,10 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 
                 }
                 else {
+                      dispatch(navActions.emitToast(constans.SUCCESS, "folder successfully updated.", ""));
+                      var documentlist = getDocumentsContext(navReducer);
+                      dispatch(refreshTable(documentlist, false));
                   
-                    dispatch(refreshTable(documentlist, false));
-                    dispatch(navActions.emitToast(constans.SUCCESS, "folder successfully updated.", ""));
                    
                 }
                

@@ -174,7 +174,8 @@ class ItemMenu extends React.Component {
             catId: documentsContext.catId,
             fId: documentsContext.fId,
             sortDirection: documentsContext.sortDirection,
-            sortBy: documentsContext.sortBy
+            sortBy: documentsContext.sortBy,
+            isVault: documentsContext.isVault
         }
 
 
@@ -283,7 +284,7 @@ class ItemMenu extends React.Component {
     }
 
     _renderUpdateVersionsAction(document) {
-        if (this.props.documentsReducer.selectedObject.permissions.AllowUpdateVersions) {
+        if (this.props.documentsReducer.selectedObject.permissions.AllowUpdateVersions && (this.state.document.IsCheckedOut || !this.state.document.isVault)) {
             return (<TouchableHighlight onPress={this.updateVersions.bind(this)} underlayColor="#E9EAEC">
                 <View style={styles.actionHolder}>
                     <Icon name="update" style={styles.icon} />
@@ -394,6 +395,7 @@ class ItemMenu extends React.Component {
     }
 
     render() {
+
         var elementIcon;
         const {navReducer} = this.props
         var currRouteData = getDocumentsContext(navReducer);

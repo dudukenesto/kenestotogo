@@ -12,7 +12,7 @@ const window = Dimensions.get('window');
 let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
 
-export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId, keyboard, isSearch) {
+export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId, keyboard, isSearch, isParentVault : bool = false) {
   var urls = _.find(config.urls, { 'env': env });
   const splitChars = '|';
   var apiBaseUrl = urls.ApiBaseUrl;
@@ -62,10 +62,10 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
   }
   else {
     if (typeof (fId) == 'undefined' || fId == "") {
-      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}`
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}&pv=${isParentVault}`
     }
     else {
-      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}`
+      return `${apiBaseUrl}/KDocuments.svc/${functionName}?t=${sessionToken}&fid=${fId}&sb=${sortBy}&sd=${sortDirection}&ao=${asOwner}&pv=${isParentVault}`
     }
   }
 }
@@ -128,7 +128,8 @@ export function getDocumentsContext(navReducer: Object) {
       sortBy: currRoute.data.sortBy,
       keyboard: currRoute.data.keyboard,
       baseFileId: currRoute.data.baseFileId,
-      isSearch: currRoute.data.isSearch
+      isSearch: currRoute.data.isSearch, 
+      isVault: currRoute.data.isVault
     })
 }
 
@@ -151,7 +152,8 @@ export function getDocumentsContextByCatId(navReducer: Object, catId: string) {
             sortBy: route.data.sortBy,
             keyboard: route.data.keyboard,
             baseFileId: route.data.baseFileId,
-            isSearch: currRoute.data.isSearch
+            isSearch: currRoute.data.isSearch,
+            isVault: currRoute.data.isVault
           })
       }
     }

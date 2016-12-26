@@ -178,6 +178,7 @@ function initDocumentList() {
     dataSource: {},
     sharingPermissions: null,
     lastUploadId:'', 
-    isSearch: false
+    isSearch: false, 
+    isVault: false
   }
 }
