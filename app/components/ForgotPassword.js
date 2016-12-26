@@ -16,7 +16,7 @@ var Email = Tcomb.refinement(Tcomb.String, function (s) {
   return /\S+@\S+\.\S+/.test(s);
 });
 Email.getValidationErrorMessage = function (value, path, context) {
-  return 'Email Address (Username) is not valid';
+  return 'Email Address is not valid';
 };
 
 var _ = require('lodash');
