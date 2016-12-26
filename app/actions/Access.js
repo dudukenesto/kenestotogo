@@ -190,21 +190,29 @@ export function login(userId : string, password: string, env: string = 'dev')  {
         return fetch(authUrl)
             .then((response) => response.json())
             .catch((error) => {
-                 dispatch(emitError('Failed to Login')); 
+                 dispatch(emitError('Failed to login : The authentication servers are currently down for maintenance')); 
                  writeToLog(userId, constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`, error)
             })
             .then( (responseData) => {
+                if (typeof responseData == 'undefined')
+                    return; 
+
                 if (responseData.ResponseStatus == "FAILED")
                 {
 
                     clearCredentials();
                     //dispatch(updateIsFetching(false));
-                     dispatch(emitError('Failed to Login')); 
+                     dispatch(emitError('Failed to authenticate')); 
                      writeToLog(userId, constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`)
                 }
                 else if(responseData.AuthenticateJsonResult.ErrorMessage != "" && responseData.AuthenticateJsonResult.ErrorMessage != null &&  responseData.AuthenticateJsonResult.ErrorMessage != 'null')
                 {
-                     dispatch(emitError('Failed to login : The authentication are currently down for maintenance')); 
+                     var errorMessage = responseData.AuthenticateJsonResult.ErrorMessage.indexOf('ACCESS_DENIED') > -1?
+                                 'Failed to login: The e-mail address or password you entered is incorrect' : 
+                                responseData.AuthenticateJsonResult.ErrorMessage.indexOf('Could not connect')? 'Failed to login : The authentication servers are currently down for maintenance' 
+                                : "Failed to login"; 
+                      dispatch(emitError(errorMessage)); 
+                   //  dispatch(emitError('Failed to login : The authentication are currently down for maintenance')); 
                      writeToLog(userId, constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`,responseData.AuthenticateJsonResult.ErrorMessage)
                 }
                 else
