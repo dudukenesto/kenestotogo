@@ -69,19 +69,19 @@ class NavRoot extends Component {
       return <AddPeople _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
   }
-  _isItemMenuModalOpen() {
-    return this.props.isItemMenuModalOpen();
-  }
-  _isMenuModalOpen() {
-    return this.props.isMenuModalOpen();
-  }
-  _isDrawerOpen() {
-    return this.props.isDrawerOpen();
-  }
+  // _isItemMenuModalOpen() {
+  //   return this.props.isItemMenuModalOpen();
+  // }
+  // _isMenuModalOpen() {
+  //   return this.props.isMenuModalOpen();
+  // }
+  // _isDrawerOpen() {
+  //   return this.props.isDrawerOpen();
+  // }
 
-  _isSearch(){
-      return this.props.isSearch();
-  }
+  // _isSearch(){
+  //     return this.props.isSearch();
+  // }
 
   _closeItemMenuModal() {
     this.props.closeItemMenuModal();
@@ -94,23 +94,44 @@ class NavRoot extends Component {
   }
 
   _handleBackAction() {
-    if (this._isSearch()){
-     //  alert(this._isSearch());
-          this.props.hideSearchBox();
-        return true;
-    }
-    if (this._isItemMenuModalOpen()) {
-      this._closeItemMenuModal();
-      return true;
-    }
-    if (this._isMenuModalOpen()) {
-      this._closeMenuModal();
-      return true;
-    }
-    else if (this._isDrawerOpen()) {
-      this._closeDrawer();
-      return true;
-    }
+  //  //   alert(JSON.stringify(this.props.uiReducer));
+  //  // alert(this.props.openedDialogModalref())
+  //   //console.log(this.props.openedDialogModalref()); 
+
+  //  // return true;
+  //   if (this._isSearch()){
+  //    //  alert(this._isSearch());
+  //         this.props.hideSearchBox();
+  //       return true;
+  //   }
+  //   if (this._isItemMenuModalOpen()) {
+  //     this._closeItemMenuModal();
+  //     return true;
+  //   }
+  //   if (this._isMenuModalOpen()) {
+  //     this._closeMenuModal();
+  //     return true;
+  //   }
+  //   // else if (this._isDrawerOpen()) {
+  //   //   this._closeDrawer();
+  //   //   return true;
+  //   // }
+   if (this.props.uiReducer.isDrawerOpen){
+     this._closeDrawer();
+     return true;
+   }
+   if (this.props.uiReducer.isPopupMenuOpen){
+       this.props.hidePopupMenu();
+       return true;
+   }
+   if (this.props.uiReducer.isSearchboxOpen){
+       this.props.hideSearchBox();
+       return true;
+   }
+   if (this.props.uiReducer.openedDialogModalref != ''){
+     this.props.closeModal(this.props.uiReducer.openedDialogModalref)
+      return true; 
+   }
     else {
       if (this.props.navigation.routes[this.props.navigation.routes.length - 1].key == 'forgotPassword') {
         this.props.popRoute()

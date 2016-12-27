@@ -4,10 +4,12 @@ import {getDocumentsContext} from '../utils/documentsUtils'
 import * as constans from '../constants/GlobalConstans'
 import * as documentsActions from '../actions/documentsActions'
 import * as navActions from '../actions/navActions'
+import * as uiActions from '../actions/uiActions'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
 import {hideToast} from '../actions/navActions'
 import * as Animatable from 'react-native-animatable';
+
 import {
   View,
   Text,
@@ -165,26 +167,6 @@ class KenestoToolbar extends Component {
     }
   }
 
-  // onPressSearchBox() {
-  //   const {navReducer} = this.props
-  //   var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
-    
-//     //this.props.dispatch(documentsActions.toggleSearchBox(true));
-//    // this.props.dispatch(documentsActions.clearDocuments(documentlist));
-//   // this.props.dispatch(clearDocuments(documentlist));
-//     this.openingSearchBoxAnimation(showGoBack).then(() => {
-//  var documentlist = getDocumentsContext(navReducer);
-//       var documentlist = getDocumentsContext(navReducer);
-//       this.props.dispatch(documentsActions.toggleSearchBox(true));
-//      // this.props.dispatch(navActions.updateRouteData(documentlist));
-//       this.setState({
-//         isSearchBoxOpen: true,
-//         searchText: ""
-//       })
-//     });
-//   }
-
-
   onPressSearchBox() {
     const {navReducer} = this.props
     var showGoBack = navReducer.routes[navReducer.index].data.fId != "" ? true : false;
@@ -193,7 +175,9 @@ class KenestoToolbar extends Component {
 
       var documentlist = getDocumentsContext(navReducer);
      documentlist.isSearch = true;
+    
       this.props.dispatch(navActions.updateRouteData(documentlist));
+      this.props.dispatch(uiActions.setSearchboxState(true));
       this.setState({
         isSearchBoxOpen: true,
         searchText: ""
@@ -250,6 +234,7 @@ class KenestoToolbar extends Component {
     // this.closingSearchBoxAnimation(showGoBack).then(()=>{
     // this.props.dispatch(documentsActions.toggleSearchBox(false));
     var documentlist = getDocumentsContext(navReducer);
+    this.props.dispatch(uiActions.setSearchboxState(false));
     // this.props.dispatch(navActions.updateRouteData(documentlist));
     this.setState({
       isSearchBoxOpen: false,
@@ -298,6 +283,7 @@ class KenestoToolbar extends Component {
     dispatch(documentsActions.updateSelectedObject(id, familyCode, ""));
     dispatch(documentsActions.getDocumentPermissions(id, familyCode))
     this.context.itemMenuContext.open();
+    dispatch(uiActions.setOpenModalRef('modalItemMenu'));
   }
 
   renderSearchBox() {

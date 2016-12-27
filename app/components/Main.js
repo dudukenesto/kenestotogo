@@ -22,6 +22,7 @@ import Processing from './Processing'
 import {connect} from 'react-redux'
 import KenestoToolbar from './KenestoToolbar'
 import * as documentsActions from '../actions/documentsActions'
+import * as uiActions from '../actions/uiActions'
 import {pop, updateRouteData, clearToast,updatedOrientation} from '../actions/navActions'
 import * as constans from '../constants/GlobalConstans'
 import {getDocumentsContext} from '../utils/documentsUtils'
@@ -165,13 +166,12 @@ class Main extends React.Component {
 
         this.state = {
        //   ifCreatingFolder: false,
+          openedDialogModalref: '',
           isPopupMenuOpen: false,
           isDropDownOpen: true,
           toastMessage: '',
           toastType: '' 
-          // pubnub :new PubNub({  publishKey: config.pubnub.publishKey,
-          // subscribeKey: config.pubnub.subscribeKey,
-          // ssl: config.pubnub.ssl})
+          
         };
          this.onActionSelected = this.onActionSelected.bind(this);
          this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
@@ -180,12 +180,14 @@ class Main extends React.Component {
   }
 
   onPressPopupMenu() {
+    this.props.dispatch(uiActions.setPopupMenuState(true));
     this.setState({
       isPopupMenuOpen: true
     })
   }
 
   hidePopupMenu() {
+     this.props.dispatch(uiActions.setPopupMenuState(false));
     this.setState({
       isPopupMenuOpen: false
     });
@@ -257,6 +259,7 @@ class Main extends React.Component {
 
   closeDrawer() {
     return this.props.closeDrawer();
+    
   }
 
   closeMenuModal() {
@@ -264,8 +267,8 @@ class Main extends React.Component {
   }
 
   closeItemMenuModal() {
-   // this.props.dispatch(documentsActions.updateSelectedObject(''));
     this.refs.modalItemMenu.close();
+
   }
 
   isItemMenuModalOpen() {
@@ -274,15 +277,13 @@ class Main extends React.Component {
 
   isMenuModalOpen() {
     return this.refs.modalPlusMenu.state.isOpen;
+     
   }
 
   openMenuModal() {
     this.refs.modalPlusMenu.open();
   }
 
-  isDrawerOpen() {
-    return this.props.isDrawerOpen();
-  }
 
   openCheckInModal()
   {
@@ -292,6 +293,7 @@ class Main extends React.Component {
   openEditFolderModal()
   {
     this.openModal("editFolderModal");
+    
   }
 
   openEditDocumentModal()
@@ -309,9 +311,9 @@ class Main extends React.Component {
        return currContext.isSearch;
   }
 
-
-  
-
+  openedDialogModalref(){
+    return this.state.openedDialogModalref;
+  }
 
   
   openCreateFolder() {
@@ -321,7 +323,6 @@ class Main extends React.Component {
 
   closeCreateFolder() {
     this.refs.CreateFolder.close();
-    //this.setState({ ifCreatingFolder: false })
   }
 
 
@@ -466,6 +467,13 @@ class Main extends React.Component {
       this.refs.kToolbar.hideSearchBox();
   }
 
+  setClosedModal(){
+    this.props.dispatch(uiActions.setOpenModalRef(''))
+  }
+
+  setOpenedModal(ref : string){
+    this.props.dispatch(uiActions.setOpenModalRef(ref))
+  }
 
   render() {
     const {navReducer} = this.props
@@ -495,48 +503,48 @@ class Main extends React.Component {
           :
           <View></View>
         }
-        <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) } isItemMenuModalOpen ={this.isItemMenuModalOpen.bind(this) }
-         closeDrawer ={this.closeDrawer.bind(this) } isDrawerOpen ={this.isDrawerOpen.bind(this) } 
-         isMenuModalOpen={this.isMenuModalOpen.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)} isSearch={this.isSearch.bind(this)} hideSearchBox={this.hideSearchBox.bind(this)} />
+        <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) } hideSearchBox ={this.hideSearchBox.bind(this)} hidePopupMenu ={this.hidePopupMenu.bind(this)} 
+         closeDrawer ={this.closeDrawer.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)} openedDialogModalref = {() => this.openedDialogModalref()} 
+         closeModal={this.closeModal.bind(this) } openModal={this.openModal.bind(this) } />
          <Modal style= {styles.processingModal} position={"center"}  ref={"processingModal"} isDisabled={false} animationDuration={0}>
-          <Processing  closeModal = {() => this.closeModal("processingModal") }  openModal = {() => this.openModal("processingModal")}/>
+          <Processing  closeModal = {() => this.closeModal("processingModal") }  openModal = {() => this.openModal("processingModal")}  />
         </Modal>
-        <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.plusMenu]} position={"bottom"}  ref={"modalPlusMenu"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('modalPlusMenu')}}>
           <PlusMenu closeMenuModal = {this.closeMenuModal.bind(this) }
             openCreateFolder = {this.openCreateFolder.bind(this) }  createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) }/>
         </Modal>
-        <Modal style={[styles.modal, styles.itemMenu, this.state.visibleActions>3&&{height: 250}]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.itemMenu, this.state.visibleActions>3&&{height: 250}]} position={"bottom"}  ref={"modalItemMenu"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('modalItemMenu')}}>
           <ItemMenu closeItemMenuModal = {this.closeItemMenuModal.bind(this) }
              createError={() => this.openModal("errorModal") }
             closeCreateFolder={this.closeCreateFolder.bind(this) } openUpdateVersionsModal={this.openUpdateVersionsModal.bind(this) } openCheckInModal={this.openCheckInModal.bind(this) } openEditDocumentModal={this.openEditDocumentModal.bind(this) } openEditFolderModal={this.openEditFolderModal.bind(this)}/>
         </Modal>
-        <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false}>
+        <Modal style= {modalStyle} position={"center"}  ref={"CreateFolder"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('CreateFolder')}}>
           <CreateFolder closeMenuModal = {this.closeMenuModal.bind(this) } openMenuModal = {this.closeCreateFolder.bind(this) }
             closeCreateFolder={this.closeCreateFolder.bind(this)} openProcessingModal={() => this.openModal("processingModal")} 
             closeProcessingModal={() => this.closeModal("processingModal") }
             />
         </Modal>
-        <Modal style= {modalStyle} position={"center"}  ref={"checkInModal"} isDisabled={false}>
+        <Modal style= {modalStyle} position={"center"}  ref={"checkInModal"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('checkInModal')}}>
           <CheckInDocument closeModal = {() => this.closeModal("checkInModal") } openModal = {() => this.openModal("checkInModal") }/>
         </Modal>
-        <Modal style= {modalStyle} position={"center"}  ref={"editFolderModal"} isDisabled={false}>
+        <Modal style= {modalStyle} position={"center"}  ref={"editFolderModal"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('editFolderModal')}}>
           <EditFolder closeModal = {() => this.closeModal("editFolderModal") } openModal = {() => this.openModal("editFolderModal") }/>
         </Modal>
-        <Modal style= {modalStyle} position={"center"}  ref={"editDocumentModal"} isDisabled={false}>
+        <Modal style= {modalStyle} position={"center"}  ref={"editDocumentModal"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('editDocumentModal')}}>
           <EditDocument closeModal = {() => this.closeModal("editDocumentModal") } openModal = {() => this.openModal("editDocumentModal") }/>
         </Modal>
-        <Modal style= {styles.updateVersionsModal} position={"center"}  ref={"updateVersionsModal"} isDisabled={false}>
+        <Modal style= {styles.updateVersionsModal} position={"center"}  ref={"updateVersionsModal"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('updateVersionsModal')}}>
           <UpdateVersions closeModal = {() => this.closeModal("updateVersionsModal") } openModal = {() => this.openModal("updateVersionsModal") }/>
         </Modal>
        
-        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"errorModal"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('errorModal')}}>
           <Error closeModal = {() => this.closeModal("errorModal") } openModal = {() => this.openModal("errorModal") }/>
         </Modal>
-        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"infoModal"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('infoModal')}}>
           <Info closeModal = {() => this.closeModal("infoModal") } openModal = {() => this.openModal("infoModal") }/>
         </Modal>
-        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"confirmModal"} isDisabled={false}>
+        <Modal style={[styles.modal, styles.error]} position={"center"}  ref={"confirmModal"} isDisabled={false} onClosed={()=> {this.setClosedModal()}} onOpened={()=> {this.setOpenedModal('confirmModal')}}>
           <Confirm closeModal = {() => this.closeModal("confirmModal") } openModal = {() => this.openModal("confirmModal") }/>
         </Modal>
         <Modal style={[styles.modal, styles.toast]} position={"bottom"}  ref={"toastModal"} isDisabled={false} backdrop={false}>

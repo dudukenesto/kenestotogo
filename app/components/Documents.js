@@ -16,7 +16,7 @@ import {
   RefreshControl
 } from 'react-native'
 import { emitToast, clearToast,updateIsProcessing } from '../actions/navActions'
-
+import * as uiActions from '../actions/uiActions'
 import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { createIconSetFromFontello } from 'react-native-vector-icons'
@@ -241,6 +241,7 @@ class Documents extends Component {
   openModal() {
     //this.refs.modal3.open();
     this.context.plusMenuContext.open();
+    this.props.dispatch(uiActions.setOpenModalRef('modalPlusMenu'))
   }
 
   scrollToTop() {
