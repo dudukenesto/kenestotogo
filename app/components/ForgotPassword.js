@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
 
     render(){
         return (
-         <ScrollView style={{flex:1, backgroundColor: "#fff"}} showsVerticalScrollIndicator={false}>   
+         <ScrollView style={{flex:1, backgroundColor: "#fff"}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={true}>
           <View style={[styles.container, this.props.style]}>
             <View style={{flex: 1}}>
                         <View style={styles.titleContainer}>
