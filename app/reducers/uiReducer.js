@@ -4,7 +4,13 @@ function uiReducer(
         openedDialogModalref: '',
         isSearchboxOpen: false, 
         isDrawerOpen: false, 
-        isPopupMenuOpen: false
+        isPopupMenuOpen: false,
+        dropDownTrigger : null, 
+        dropDownOptions: null,
+        dropDownOptionTemplate: null,
+        showDropDown: false, 
+        clickedTrigger: null,
+        triggerSelectedValue: '',
     }, action){
        switch (action.type) {
            case types.SET_DRAWER_STATE:
@@ -27,6 +33,24 @@ function uiReducer(
                     ...state, 
                     openedDialogModalref : action.openedDialogModalref
                }
+            case  types.UPDATE_DROPDOWN_DATA: 
+                return{
+                    ...state,
+                    dropDownTrigger : action.triggerSettings, 
+                    dropDownOptions: action.options,
+                    dropDownOptionTemplate: action.optionTemplate,
+                    showDropDown: action.showDropDown, 
+                    clickedTrigger: action.clickedTrigger
+                }
+            case  types.UPDATE_SELECTED_TRIGGER_VALUE: 
+                addPeopleTriggerValue = state.clickedTrigger == 'addPeopleTrigger' || action.value == 'NONE' ? action.value : '';
+
+                return{
+                    ...state,
+                    triggerSelectedValue: action.value,
+                    showDropDown: false,
+                    addPeopleTriggerValue: addPeopleTriggerValue
+                }
            default:
                return state;
        }

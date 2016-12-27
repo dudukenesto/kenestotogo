@@ -1,5 +1,6 @@
 import * as actionTypes from '../constants/ActionTypes'
 import * as peopleActions from '../actions/peopleActions'
+import * as uiActions from '../actions/uiActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import {isRouteKeyExists} from '../utils/ObjectUtils'
 export function push (route) {
@@ -140,31 +141,6 @@ export function changeTab (index) {
   }
 }
 
-export function toggleDropdown(showDropDown: boolean){
-  return {
-    type: actionTypes.TOGGLE_DROPDOWN, 
-    showDropDown: showDropDown
-  }
-}
-
-export function updateDropdownData(clickedTrigger: string, triggerSettings: object, options: object, optionTemplate: object, showDropDown: boolean = true){
-  return {
-      type: actionTypes.UPDATE_DROPDOWN_DATA, 
-      clickedTrigger: clickedTrigger,
-      triggerSettings: triggerSettings, 
-      options: options,
-      optionTemplate: optionTemplate,
-      showDropDown : showDropDown
-    }
-  }
-
-export function updatedSelectedTrigerValue(value: string){
-  return{
-    type: actionTypes.UPDATE_SELECTED_TRIGGER_VALUE,
-    value: value
-  }
-}
-
 export function updatedOrientation(orientation: string){
   return{
     type: actionTypes.UPDATE_ORIENTATION,
@@ -177,13 +153,13 @@ export function requestUpdateTrigger(value: string){
       const documentLists = getState().documentsReducer; 
       const navReducer = getState().navReducer;
       const document = getSelectedDocument(documentLists, navReducer);
-      const triggerSelectedValue = navReducer.triggerSelectedValue;
-      const uersDetails = getState().navReducer.clickedTrigger.split('_');
+      const triggerSelectedValue = getState().uiReducer.triggerSelectedValue;
+      const uersDetails = getState().uiReducer.clickedTrigger.split('_');
       const ParticipantUniqueID = uersDetails[1];
       const familyCode = uersDetails[2];
       const triggerId = 'trigger_' + ParticipantUniqueID; 
       dispatch(peopleActions.AddtoFetchingList(triggerId));
-      dispatch(updatedSelectedTrigerValue(value));
+      dispatch(uiActions.updatedSelectedTrigerValue(value));
    }
         
 }

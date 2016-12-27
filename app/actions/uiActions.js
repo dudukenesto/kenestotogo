@@ -25,4 +25,21 @@ export function setOpenModalRef(openedDialogModalref: string){
         openedDialogModalref : openedDialogModalref
     }
 }
-
+export function updateDropdownData(clickedTrigger: string, triggerSettings: object, options: object, optionTemplate: object, showDropDown: boolean = true){
+  console.log(triggerSettings)
+  return {
+      type: types.UPDATE_DROPDOWN_DATA, 
+      clickedTrigger: clickedTrigger,
+      triggerSettings: triggerSettings, 
+      options: options,
+      optionTemplate: optionTemplate,
+      showDropDown : showDropDown
+    }
+  }
+export function updatedSelectedTrigerValue(value: string){
+      console.log(value)
+  return{
+    type: types.UPDATE_SELECTED_TRIGGER_VALUE,
+    value: value
+  }
+}

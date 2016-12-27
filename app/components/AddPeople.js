@@ -12,6 +12,7 @@ import ProgressBar from './ProgressBar'
 var ReactNative = require('react-native');
 import * as navActions from '../actions/navActions'
 import * as docActions from '../actions/documentsActions'
+import * as uiActions from '../actions/uiActions'
 var {
   View,
   Text,
@@ -216,7 +217,7 @@ class AddPeople extends Component {
        
      }
      else
-       this.props.dispatch(navActions.updatedSelectedTrigerValue(name));
+       this.props.dispatch(uiActions.updatedSelectedTrigerValue(name));
        
  }
  removeFromSharingList(ParticipantUniqueID : string){
@@ -509,7 +510,7 @@ var styles = StyleSheet.create({
 
 function mapStateToProps(state) {
 
-  const { peopleReducer, documentsReducer, navReducer  } = state
+  const { peopleReducer, documentsReducer, navReducer, uiReducer } = state
   var thisUsersPermission = peopleReducer.ObjectInfo === null ||  peopleReducer.ObjectInfo.UsersPermissions === null ? [] : peopleReducer.ObjectInfo.UsersPermissions
 
   return {
@@ -518,7 +519,7 @@ function mapStateToProps(state) {
     navReducer,
     UsersPermissions:  thisUsersPermission,
     UsersAndGroups: peopleReducer.UsersAndGroups,
-    clickedTrigger: navReducer.clickedTrigger,
+    clickedTrigger: uiReducer.clickedTrigger,
   }
 }
 

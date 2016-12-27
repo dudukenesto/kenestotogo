@@ -177,14 +177,13 @@ DropDownOptions.contextTypes = {
 }
 
 function mapStateToProps(state) {
-    const { navReducer } = state
+    const { uiReducer, navReducer } = state
 
     return {
-        showDropDown: navReducer.showDropDown,
-         dropDownTrigger : navReducer.dropDownTrigger, 
-         dropDownOptions: navReducer.dropDownOptions, 
-        triggerSelectedChanged: navReducer.triggerSelectedChanged,
-         dropDownOptionTemplate : navReducer.dropDownOptionTemplate, 
+        showDropDown: uiReducer.showDropDown,
+         dropDownTrigger : uiReducer.dropDownTrigger, 
+         dropDownOptions: uiReducer.dropDownOptions, 
+         dropDownOptionTemplate : uiReducer.dropDownOptionTemplate, 
          orientation : navReducer.orientation
     }
 }

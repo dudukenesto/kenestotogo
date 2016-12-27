@@ -15,12 +15,7 @@ const initialState = {
       title: 'Launcher'
     }
   ], 
-  showDropDown: false,
-  dropDownTrigger : null, 
-  dropDownOptions: null,
-  dropDownOptionTemplate: null, 
-  triggerSelectedValue: '',
-  addPeopleTriggerValue: 'VIEW_ONLY', 
+
   toolbarVisible: true,
   isProcessing:false,
   orientation: Orientation.getInitialOrientation()
@@ -138,31 +133,6 @@ function navigationState(state = initialState, action) {
        GlobalToastTitle: null,
        GlobalToastMessage: null
      }
-  case  actionTypes.TOGGLE_DROPDOWN: 
-  return {
-    ...state, 
-    showDropDown: action.showDropDown
-    
-  }
-  case  actionTypes.UPDATE_DROPDOWN_DATA: 
-  return{
-   
-      ...state,
-      dropDownTrigger : action.triggerSettings, 
-      dropDownOptions: action.options,
-      dropDownOptionTemplate: action.optionTemplate,
-      showDropDown: action.showDropDown, 
-      clickedTrigger: action.clickedTrigger
-  }
-  case  actionTypes.UPDATE_SELECTED_TRIGGER_VALUE: 
-    addPeopleTriggerValue = state.clickedTrigger == 'addPeopleTrigger' || action.value == 'NONE' ? action.value : '';
-
-    return{
-        ...state,
-        triggerSelectedValue: action.value,
-        showDropDown: false,
-        addPeopleTriggerValue: addPeopleTriggerValue
-    }
     case  actionTypes.TOGGLE_TOOLBAR: 
       var thistoolbarVisible = action.toolbarVisible == null? !state.toolbarVisible: action.toolbarVisible; 
       console.log('thistoolbarVisible = ' + thistoolbarVisible)

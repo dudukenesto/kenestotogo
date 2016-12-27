@@ -1,5 +1,5 @@
 'use strict';
-import * as navActions from '../actions/navActions'
+import * as uiActions from '../actions/uiActions'
 import ProgressBar from './ProgressBar'
 import React, { Component, PropTypes} from 'react';
 import {
@@ -35,7 +35,7 @@ class DropDownTrigger extends Component {
             }
 
           //  alert(this.context.dropDownContext.openDropDown)
-          this.props.dispatch(navActions.updateDropdownData(this.props.id, triggerSettings, this.props.options, this.props.optionTemplate))
+          this.props.dispatch(uiActions.updateDropdownData(this.props.id, triggerSettings, this.props.options, this.props.optionTemplate))
          //   this.context.dropDownContext.openDropDown(triggerSettings, this.props.options, this.props.optionTemplate);
         })
         
@@ -116,10 +116,11 @@ DropDownTrigger.contextTypes = {
 }
 
 function mapStateToProps(state) {
-  const { navReducer, peopleReducer } = state
+  //const { navReducer, peopleReducer } = state
+  const { uiReducer,peopleReducer } = state
   return {
-      clickedTrigger: navReducer.clickedTrigger, 
-      triggerSelectedValue: navReducer.triggerSelectedValue, 
+      clickedTrigger: uiReducer.clickedTrigger, 
+      triggerSelectedValue: uiReducer.triggerSelectedValue, 
       fetchingList : peopleReducer.fetchingList,
       fetchingListChanged : peopleReducer.fetchingListChanged
 

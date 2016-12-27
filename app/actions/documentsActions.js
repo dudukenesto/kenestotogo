@@ -1100,8 +1100,8 @@ export function UpdateDocumentSharingPermission() {
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
         const document = getSelectedDocument(documentLists, navReducer);
-        const triggerSelectedValue = navReducer.triggerSelectedValue;
-        const uersDetails = getState().navReducer.clickedTrigger.split('_');
+        const triggerSelectedValue = getState().uiReducer.triggerSelectedValue;
+        const uersDetails = getState().uiReducer.clickedTrigger.split('_');
         const ParticipantUniqueID = uersDetails[1];
         const familyCode = uersDetails[2];
         const triggerId = 'trigger_' + ParticipantUniqueID;
@@ -1369,7 +1369,7 @@ export function ShareDocument() {
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
         var document = getSelectedDocument(documentLists, navReducer);
-        const addPeopleTriggerValue = getState().navReducer.addPeopleTriggerValue;
+        const addPeopleTriggerValue = 'VIEW_ONLY';
         const sharingPermissions = documentLists.sharingPermissions;
         const {sessionToken, env, email} = getState().accessReducer;
 
