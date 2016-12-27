@@ -167,7 +167,6 @@ class AddPeople extends Component {
   // EXAMPLE OF CUSTOM TAG TEMPLATE
   // 
   getTagTemplate(tag, removeTag) {
-    
     return (
       <View style={styles.tagInnerContainer}>
         <View style={[styles.roundIcon, { marginLeft: -5.5 }]}>
@@ -290,8 +289,7 @@ class AddPeople extends Component {
             </View>
           </View>
       )
-
-    return permissions
+      else return permissions
 
   }
 
@@ -454,6 +452,8 @@ var styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     marginLeft: 30,
+    borderWidth: 1,
+    borderColor: "transparent"
   },
   thumbnail: {
     width: 30,

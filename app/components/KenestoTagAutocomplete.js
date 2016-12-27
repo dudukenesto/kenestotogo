@@ -209,7 +209,7 @@ class KenestoTagAutocomplete extends Component {
   _onFocus() {
     this.setState({ showList: true });
     this.props.onShowTagsList();
-    this.refs.focusImitation.stopAnimation();
+    // this.refs.focusImitation.stopAnimation();
   }
 
   _onChangeText(text) {
@@ -362,7 +362,6 @@ class KenestoTagAutocomplete extends Component {
               autoCorrect={false}
               autoCapitalize='none'
               />
-              <Animatable.View ref="focusImitation" animation="fadeIn" iterationCount={"infinite"} direction="alternate" duration={500} easing="ease-in-out-expo" style={styles.focusImitation} />
           </View>
 
         </View>
@@ -438,15 +437,15 @@ const styles = StyleSheet.create({
     height: 31,
     maxWidth: 295
   },
-  focusImitation: {
-    borderWidth: 1, 
-    position: 'absolute', 
-    left: 33, 
-    bottom: 11, 
-    height: 19, 
-    zIndex: -1,
-    opacity: 0    
-  }
+  // focusImitation: {
+  //   borderWidth: 1, 
+  //   position: 'absolute', 
+  //   left: 33, 
+  //   bottom: 11, 
+  //   height: 19, 
+  //   zIndex: -1,
+  //   opacity: 0    
+  // }
 
 });
 
