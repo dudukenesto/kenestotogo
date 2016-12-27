@@ -151,7 +151,7 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
             }
             else{
                    dispatch(updateIsFetching(false)); 
-                   dispatch(emitInfo("Password reset email sent", "Follow the instructions in the email to rest your password",() => dispatch(pop())))
+                   dispatch(emitInfo("Password reset email sent", "Follow the instructions in the email to reset your password",() => dispatch(pop())))
             }
          
         }).done();

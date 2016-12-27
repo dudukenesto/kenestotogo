@@ -42,10 +42,7 @@ var styles = StyleSheet.create({
     textEdit: {
         flex: 1,
         color: "#000",
-        height: 50,            
         fontSize: 17,
-        paddingLeft: 40,
-        paddingBottom: 15,
         textAlign: "center"
     },
     buttonsContainer: {
