@@ -1,5 +1,5 @@
 'use strict';
-
+import * as uiActions from '../actions/uiActions'
 import React, { Component, PropTypes} from 'react';
 import {
     StyleSheet,
@@ -29,7 +29,7 @@ class DropDownOptions extends Component {
 
     openDropDown(triggerSettings, options, optionTemplate) {
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        
+        this.props.dispatch(uiActions.setDropdownOptionsState(true));
         this.setState({
             showDropDown: true,
             triggerSettings: triggerSettings,
@@ -40,6 +40,7 @@ class DropDownOptions extends Component {
     }
 
     closeDropDown() {
+        this.props.dispatch(uiActions.setDropdownOptionsState(false));
         this.setState({
             showDropDown: false,
             position: {

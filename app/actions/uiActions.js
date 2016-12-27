@@ -19,6 +19,12 @@ export function setPopupMenuState(isPopupMenuOpen: bool){
         isPopupMenuOpen : isPopupMenuOpen
     }
 }
+export function setDropdownOptionsState(IsDropdownOptionsOpen: bool){
+    return {
+        type: types.SET_DROPDOWN_OPTIONS_STATE, 
+        IsDropdownOptionsOpen : IsDropdownOptionsOpen
+    }
+}
 export function setOpenModalRef(openedDialogModalref: string){
     return {
         type: types.SET_OPEN_MODAL_REF, 
@@ -26,7 +32,7 @@ export function setOpenModalRef(openedDialogModalref: string){
     }
 }
 export function updateDropdownData(clickedTrigger: string, triggerSettings: object, options: object, optionTemplate: object, showDropDown: boolean = true){
-  console.log(triggerSettings)
+
   return {
       type: types.UPDATE_DROPDOWN_DATA, 
       clickedTrigger: clickedTrigger,
@@ -36,7 +42,7 @@ export function updateDropdownData(clickedTrigger: string, triggerSettings: obje
       showDropDown : showDropDown
     }
   }
-export function updatedSelectedTrigerValue(value: string){
+export function updatedSelectedTrigerValue(value: string){  
       console.log(value)
   return{
     type: types.UPDATE_SELECTED_TRIGGER_VALUE,

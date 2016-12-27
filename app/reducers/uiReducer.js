@@ -5,6 +5,7 @@ function uiReducer(
         isSearchboxOpen: false, 
         isDrawerOpen: false, 
         isPopupMenuOpen: false,
+        IsDropdownOptionsOpen: false,
         dropDownTrigger : null, 
         dropDownOptions: null,
         dropDownOptionTemplate: null,
@@ -28,6 +29,11 @@ function uiReducer(
                     ...state, 
                     isSearchboxOpen : action.isSearchboxOpen
                }
+            case types.SET_DROPDOWN_OPTIONS_STATE:
+                return {
+                    ...state, 
+                    IsDropdownOptionsOpen : action.IsDropdownOptionsOpen
+               }
             case types.SET_OPEN_MODAL_REF:
                 return {
                     ...state, 
@@ -44,7 +50,6 @@ function uiReducer(
                 }
             case  types.UPDATE_SELECTED_TRIGGER_VALUE: 
                 addPeopleTriggerValue = state.clickedTrigger == 'addPeopleTrigger' || action.value == 'NONE' ? action.value : '';
-
                 return{
                     ...state,
                     triggerSelectedValue: action.value,
