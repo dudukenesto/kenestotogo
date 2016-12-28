@@ -43,9 +43,16 @@ export function updateDropdownData(clickedTrigger: string, triggerSettings: obje
     }
   }
 export function updatedSelectedTrigerValue(value: string){  
-      console.log(value)
   return{
     type: types.UPDATE_SELECTED_TRIGGER_VALUE,
     value: value
   }
 }
+export function updateAddPeopleTrigerValue(value: string){  
+  return{
+    type: types.UPDATE_ADD_PEOPLE_TRIGGER_VALUE,
+    addPeopleTriggerValue: value
+  }
+}
+
+

@@ -24,7 +24,6 @@ class DropDownTrigger extends Component {
     
 
     openDropDown() {
-        console.log('start ' + getTime())
         this.refs.DropDownTrigger.measure((fx, fy, width, height, px, py) => {
             var triggerSettings = {
                 top: py,
@@ -35,9 +34,7 @@ class DropDownTrigger extends Component {
                 direction: this.props.openingDirection
             }
 
-          //  alert(this.context.dropDownContext.openDropDown)
           this.props.dispatch(uiActions.updateDropdownData(this.props.id, triggerSettings, this.props.options, this.props.optionTemplate))
-         //   this.context.dropDownContext.openDropDown(triggerSettings, this.props.options, this.props.optionTemplate);
         })
         
         this.setState({
@@ -45,18 +42,20 @@ class DropDownTrigger extends Component {
         })
     }
 
-    componentWillReceiveProps(nextprops) {
-        if (!nextprops.IsDropdownOptionsOpen && this.props.IsDropdownOptionsOpen) {
+       componentWillReceiveProps(nextprops){
+           if (!nextprops.IsDropdownOptionsOpen && this.props.IsDropdownOptionsOpen) {
             this.setState({
                 triggerIsActive: false
             })
         }
-
-        var indexOfId = nextprops.fetchingList.indexOf(this.props.id);
-       
-          //alert(indexOfId + ' ' + this.props.id)
-           if (this.props.clickedTrigger == this.props.id && nextprops.triggerSelectedValue != '')
-           {   //alert(nextprops.triggerSelectedValue)
+          var indexOfId = nextprops.fetchingList.indexOf(this.props.id);
+          
+         var needToChange = this.props.clickedTrigger != nextprops.clickedTrigger || this.props.triggerSelectedValue != nextprops.triggerSelectedValue;
+            if (this.props.id == 'addPeopleTrigger' && nextprops.clickedTrigger == 'addPeopleTrigger' && nextprops.addPeopleTriggerValue != this.props.addPeopleTriggerValue){
+                  this.setState({ selected: nextprops.addPeopleTriggerValue, isFetching: false})
+            }
+           else if (needToChange && nextprops.clickedTrigger == this.props.id && nextprops.triggerSelectedValue != '')
+           {   
                if (nextprops.triggerSelectedValue == 'NONE')
                {    
                    var xx = this.props.id.split('_'); 
@@ -69,12 +68,11 @@ class DropDownTrigger extends Component {
                  
                }
                else
-                //  alert(this.props.fetchingList + ' ' +nextprops.fetchingList)
-                    this.setState({ selected: nextprops.triggerSelectedValue, isFetching: indexOfId > -1})
                    
+                    this.setState({ selected: nextprops.triggerSelectedValue, isFetching: indexOfId > -1})
+                        this.props.dispatch(uiActions.updatedSelectedTrigerValue(''));
            }
            else{
-             //    alert(this.props.fetchingList + ' ' + nextprops.fetchingList)
                 this.setState({ isFetching: indexOfId > -1})
            }
                
@@ -82,8 +80,6 @@ class DropDownTrigger extends Component {
 
 
     render() {
-
-    // console.log('end ' + getTime())
         const {dropDownTriggerTemplate, dropDownTriggerStyle, dropDownTriggerContainer, activeTriggerStyle, id} = this.props;
         return (
             <View style={[styles.dropDownTriggerContainer, dropDownTriggerContainer]}>
@@ -128,7 +124,8 @@ function mapStateToProps(state) {
   return {
       clickedTrigger: uiReducer.clickedTrigger, 
       triggerSelectedValue: uiReducer.triggerSelectedValue, 
-      IsDropdownOptionsOpen: uiReducer.IsDropdownOptionsOpen,
+       IsDropdownOptionsOpen: uiReducer.IsDropdownOptionsOpen,
+      addPeopleTriggerValue: uiReducer.addPeopleTriggerValue,
       fetchingList : peopleReducer.fetchingList,
       fetchingListChanged : peopleReducer.fetchingListChanged
 

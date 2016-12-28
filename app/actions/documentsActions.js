@@ -800,7 +800,6 @@ function uploadDocumentObject(fileObject: object, uploadId: string) {
                                         //   else
                                         //  message = "Error. failed to update version"
                                         message = "Error uploading file"
-                                        console.log(JSON.stringify(json));
                                         dispatch(navActions.emitToast(constans.ERROR, message));
                                         writeToLog(email, constans.ERROR, `function uploadToKenesto(1) - Error. failed to upload file 0, ${JSON.stringify(json)}`)
 
@@ -872,7 +871,6 @@ export function uploadToKenesto(fileObject: object, url: string) {
 
         }
         catch (err) {
-            console.log(JSON.stringify(error))
             writeToLog(email, constans.ERROR, `function uploadToKenesto - Failed! fileObject: ${JSON.stringify(fileObject)} url${url}`, err)
         }
     }
@@ -1363,13 +1361,12 @@ export function EditDocument(documentId: string, documentName: string) {
 
 
 export function ShareDocument() {
-
+    
     return (dispatch, getState) => {
-        
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
         var document = getSelectedDocument(documentLists, navReducer);
-        const addPeopleTriggerValue = 'VIEW_ONLY';
+        const addPeopleTriggerValue = getState().uiReducer.addPeopleTriggerValue;
         const sharingPermissions = documentLists.sharingPermissions;
         const {sessionToken, env, email} = getState().accessReducer;
 

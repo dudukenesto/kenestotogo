@@ -12,6 +12,7 @@ function uiReducer(
         showDropDown: false, 
         clickedTrigger: null,
         triggerSelectedValue: '',
+        addPeopleTriggerValue: 'VIEW_ONLY'
     }, action){
        switch (action.type) {
            case types.SET_DRAWER_STATE:
@@ -55,6 +56,12 @@ function uiReducer(
                     triggerSelectedValue: action.value,
                     showDropDown: false,
                     addPeopleTriggerValue: addPeopleTriggerValue
+                }
+           case  types.UPDATE_ADD_PEOPLE_TRIGGER_VALUE: 
+                return{
+                    ...state,
+                    showDropDown: false,
+                    addPeopleTriggerValue: action.addPeopleTriggerValue
                 }
            default:
                return state;

@@ -31,7 +31,6 @@ class DropDownOptions extends Component {
 
     openDropDown(triggerSettings, options, optionTemplate) {
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      //  console.log('end   ' + getTime())
         this.props.dispatch(uiActions.setDropdownOptionsState(true));
         this.setState({
             showDropDown: true,
@@ -43,7 +42,7 @@ class DropDownOptions extends Component {
     }
 
     closeDropDown() {
-        this.props.dispatch(uiActions.setDropdownOptionsState(false));
+      this.props.dispatch(uiActions.setDropdownOptionsState(false));
         this.setState({
             showDropDown: false,
             position: {

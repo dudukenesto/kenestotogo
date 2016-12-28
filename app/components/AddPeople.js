@@ -96,7 +96,6 @@ class AddPeople extends Component {
   }
 
   componentWillReceiveProps(nextprops){
-      //  alert(JSON.stringify(nextprops.ObjectInfo))
      this.setState( {UsersPermissions : typeof nextprops.UsersPermissions  != 'undefined' ?nextprops.UsersPermissions : [] });
   }
 
@@ -182,7 +181,6 @@ class AddPeople extends Component {
 
   renderPermissionsTrigger(permissionName : string, isFetching: boolean) {
 
-
     var iconName;
     switch (permissionName) {
       case "VIEW_ONLY":
@@ -209,7 +207,6 @@ class AddPeople extends Component {
   }
 
  onMenuSelect(name: string){
-
      if (this.props.clickedTrigger != 'addPeopleTrigger')
      {
        this.props.dispatch(navActions.requestUpdateTrigger(name));
@@ -217,7 +214,7 @@ class AddPeople extends Component {
        
      }
      else
-       this.props.dispatch(uiActions.updatedSelectedTrigerValue(name));
+       this.props.dispatch(uiActions.updateAddPeopleTrigerValue(name));
        
  }
  removeFromSharingList(ParticipantUniqueID : string){
