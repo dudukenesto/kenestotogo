@@ -369,9 +369,11 @@ class Main extends React.Component {
         toastMessage: nextprops.navReducer.GlobalToastMessage
       })
 
-      this.openModal("toastModal");
+      this.openModal("toastModal")
+    //   setTimeout(()=> this.openModal("toastModal"), 2000)
       setTimeout(this.closeToast.bind(this), 4000)
-      this.props.dispatch(clearToast());
+
+     // this.props.dispatch(clearToast());
     }
    
 
