@@ -373,7 +373,7 @@ class Main extends React.Component {
     //   setTimeout(()=> this.openModal("toastModal"), 2000)
       setTimeout(this.closeToast.bind(this), 4000)
 
-     // this.props.dispatch(clearToast());
+      this.props.dispatch(clearToast());
     }
    
 
