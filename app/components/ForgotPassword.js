@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
                             />
                             <View style={styles.buttonsContainer}>
                                 <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={() => this.props._goBack()}>Cancel</Button>
-                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={this._makeForgotPassword.bind(this)}>Request</Button>
+                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={this._makeForgotPassword.bind(this)}>Reset</Button>
                             </View>
                         </View>
                     </View>
