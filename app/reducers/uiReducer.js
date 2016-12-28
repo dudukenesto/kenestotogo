@@ -63,6 +63,12 @@ function uiReducer(
                     showDropDown: false,
                     addPeopleTriggerValue: action.addPeopleTriggerValue
                 }
+            case  types.FORCE_CLOSE_DROPDOWN_OPTIONS: 
+            return{
+                ...state,
+                showDropDown: false,
+
+            }
            default:
                return state;
        }

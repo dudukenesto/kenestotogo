@@ -54,5 +54,10 @@ export function updateAddPeopleTrigerValue(value: string){
     addPeopleTriggerValue: value
   }
 }
+export function forceCloseDropdownOptions(){  
+  return{
+    type: types.FORCE_CLOSE_DROPDOWN_OPTIONS,
+  }
+}
 
 

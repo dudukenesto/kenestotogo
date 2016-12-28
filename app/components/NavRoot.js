@@ -10,7 +10,7 @@ import DocumentsContainer from '../containers/DocumentsContainer'
 import LauncherContainer from '../containers/LauncherContainer'
 import AddPeople from './AddPeople'
 import Scan from './Scan';
-
+import * as uiActions from '../actions/uiActions'
 import {
   BackAndroid,
   NavigationExperimental
@@ -127,6 +127,10 @@ class NavRoot extends Component {
    if (this.props.uiReducer.isSearchboxOpen){
        this.props.hideSearchBox();
        return true;
+   }
+   if (this.props.uiReducer.showDropDown){
+        this.props.dispatch(uiActions.forceCloseDropdownOptions()); 
+        return true;
    }
    if (this.props.uiReducer.openedDialogModalref != ''){
      this.props.closeModal(this.props.uiReducer.openedDialogModalref)

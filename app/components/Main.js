@@ -505,7 +505,7 @@ class Main extends React.Component {
           :
           <View></View>
         }
-        <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) } hideSearchBox ={this.hideSearchBox.bind(this)} hidePopupMenu ={this.hidePopupMenu.bind(this)} 
+        <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) }  dispatch={this.props.dispatch.bind(this)}  hideSearchBox ={this.hideSearchBox.bind(this)} hidePopupMenu ={this.hidePopupMenu.bind(this)} 
          closeDrawer ={this.closeDrawer.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)} openedDialogModalref = {() => this.openedDialogModalref()} 
          closeModal={this.closeModal.bind(this) } openModal={this.openModal.bind(this) } />
          <Modal style= {styles.processingModal} position={"center"}  ref={"processingModal"} isDisabled={false} animationDuration={0}>
