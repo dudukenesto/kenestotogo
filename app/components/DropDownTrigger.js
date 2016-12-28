@@ -44,10 +44,14 @@ class DropDownTrigger extends Component {
         })
     }
 
-       componentWillReceiveProps(nextprops){
+    componentWillReceiveProps(nextprops) {
+        if (!nextprops.IsDropdownOptionsOpen && this.props.IsDropdownOptionsOpen) {
+            this.setState({
+                triggerIsActive: false
+            })
+        }
 
-          
-          var indexOfId = nextprops.fetchingList.indexOf(this.props.id);
+        var indexOfId = nextprops.fetchingList.indexOf(this.props.id);
        
           //alert(indexOfId + ' ' + this.props.id)
            if (this.props.clickedTrigger == this.props.id && nextprops.triggerSelectedValue != '')
@@ -121,6 +125,7 @@ function mapStateToProps(state) {
   return {
       clickedTrigger: uiReducer.clickedTrigger, 
       triggerSelectedValue: uiReducer.triggerSelectedValue, 
+      IsDropdownOptionsOpen: uiReducer.IsDropdownOptionsOpen,
       fetchingList : peopleReducer.fetchingList,
       fetchingListChanged : peopleReducer.fetchingListChanged
 
