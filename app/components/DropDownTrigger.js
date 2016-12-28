@@ -10,7 +10,7 @@ import {
 import {connect} from 'react-redux'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import _ from "lodash";
-
+import {getTime} from '../utils/KenestoHelper'
 class DropDownTrigger extends Component {
 
     constructor(props) {
@@ -24,6 +24,7 @@ class DropDownTrigger extends Component {
     
 
     openDropDown() {
+        console.log('start ' + getTime())
         this.refs.DropDownTrigger.measure((fx, fy, width, height, px, py) => {
             var triggerSettings = {
                 top: py,
@@ -82,7 +83,7 @@ class DropDownTrigger extends Component {
 
     render() {
 
-    
+    // console.log('end ' + getTime())
         const {dropDownTriggerTemplate, dropDownTriggerStyle, dropDownTriggerContainer, activeTriggerStyle, id} = this.props;
         return (
             <View style={[styles.dropDownTriggerContainer, dropDownTriggerContainer]}>
@@ -95,6 +96,8 @@ class DropDownTrigger extends Component {
                 </View>
             </View>
         )
+
+      
     }
 
 }
