@@ -78,13 +78,6 @@ class Documents extends Component {
     dispatch(fetchTableIfNeeded())
   }
 
-
-  // componentDidMount(){
-  //  // this.showToolBar();
-  // //  const {dispatch} = this.props
-  // //  dispatch(updateIsProcessing(true));
-  // }
-
   shouldComponentUpdate(nextProps, nextState){
       const {navReducer} = nextProps
       if (navReducer.routes[navReducer.index].key.indexOf('documents') == -1)
@@ -92,7 +85,7 @@ class Documents extends Component {
         return true;
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidMount() {
     const {documentsReducer, navReducer} = this.props
 
      

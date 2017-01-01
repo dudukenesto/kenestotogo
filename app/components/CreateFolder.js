@@ -92,21 +92,6 @@ class CreateFolder extends React.Component {
        // alert(this.state.folderName)
     }
 
-    // componentDidMount() {
-    //     if (!this.props.creatingFolder)
-    //         this.refs.folderName.focus();
-    // }
-
-    componentWillReceiveProps(nextprops){
-        // alert(nextprops.creatingFolder)
-
-        // if (nextprops.creatingFolder == 2)
-        // {
-        //     this.props.closeCreateFolder();
-        //     this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
-           
-        // }
-    }
 
     create() {
        //alert(this.state.folderName  != '')

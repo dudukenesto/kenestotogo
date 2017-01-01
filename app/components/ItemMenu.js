@@ -25,7 +25,7 @@ import ViewContainer from './ViewContainer';
 import { getIconNameFromExtension } from '../utils/documentsUtils'
 import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
-
+import {getTime} from '../utils/KenestoHelper'
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
 const CustomIcon = createIconSetFromFontello(customConfig);
 
@@ -227,7 +227,9 @@ class ItemMenu extends React.Component {
     }
 
     componentWillMount() {
+        
         var document = getSelectedDocument(this.props.documentsReducer, this.props.navReducer);
+          this.props.dispatch(documentsActions.getDocumentPermissions(document.Id, document.FamilyCode))
         this.setState({ document: document });
     }
 

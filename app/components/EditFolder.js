@@ -91,13 +91,6 @@ class EditFolder extends React.Component {
         };
     }
 
-    componentDidMount() {
-  //      if (!this.props.creatingFolder)
-  //          this.refs.folderName.focus();
-    }
-
-    componentWillReceiveProps(nextprops){
-    }
 
     _edit() {
         if (this.state.folderName != false) {

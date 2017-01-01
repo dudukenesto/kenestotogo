@@ -44,17 +44,18 @@ import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
+import {getTime} from '../utils/KenestoHelper'
 //var getTextFromScore = require('./getTextFromScore');
 
 var DocumentCell = React.createClass({
 
     menuPressed: function (id, familyCode){
       var {dispatch} = this.props; 
-   
-      dispatch(updateSelectedObject(id, familyCode, ""));
-      dispatch(getDocumentPermissions(id, familyCode))
+    //   console.log('menu pressed ' + getTime());
+     dispatch(updateSelectedObject(id, familyCode, ""));
+     // dispatch(getDocumentPermissions(id, familyCode))
       this.context.itemMenuContext.open();
-      dispatch(uiActions.setOpenModalRef('modalItemMenu'))
+     // dispatch(uiActions.setOpenModalRef('modalItemMenu'))
     },
 
   render: function() {
