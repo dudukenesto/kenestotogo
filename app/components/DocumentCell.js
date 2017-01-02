@@ -30,28 +30,38 @@ var {
 var moment = require('moment');
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MartialExtendedConf from '../assets/icons/config.json';
+import customConfig from '../assets/icons/customConfig.json';
 import { createIconSetFromFontello } from  'react-native-vector-icons'
-import {updateSelectedId} from '../actions/documentlists'
+import {updateSelectedObject,getDocumentPermissions} from '../actions/documentsActions'
+import * as uiActions from '../actions/uiActions'
 import {connect} from 'react-redux'
+import {getIconNameFromExtension} from '../utils/documentsUtils'
 const KenestoIcon = createIconSetFromFontello(MartialExtendedConf);
-
+const CustomIcon = createIconSetFromFontello(customConfig);
+import _ from "lodash";
+import * as Progress from 'react-native-progress';
+import { writeToLog } from '../utils/ObjectUtils'
+import * as constans from '../constants/GlobalConstans'
 //var getStyleFromScore = require('./getStyleFromScore');
 var getImageSource = require('./GetImageSource');
+import {getTime} from '../utils/KenestoHelper'
 //var getTextFromScore = require('./getTextFromScore');
 
 var DocumentCell = React.createClass({
 
-    menuPressed: function (id){
+    menuPressed: function (id, familyCode){
       var {dispatch} = this.props; 
-   
-     dispatch(updateSelectedId(id));
+    //   console.log('menu pressed ' + getTime());
+     dispatch(updateSelectedObject(id, familyCode, ""));
+     // dispatch(getDocumentPermissions(id, familyCode))
       this.context.itemMenuContext.open();
-  
-     
+     // dispatch(uiActions.setOpenModalRef('modalItemMenu'))
     },
 
   render: function() {
-
+    var {documentsReducer} = this.props;
+    var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+    var uploadingInProgress = this.props.document.IsUploading
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
@@ -65,16 +75,28 @@ var DocumentCell = React.createClass({
     }
     else {
       if (this.props.document.FamilyCode == 'FOLDER'){
-        elementIcon = <KenestoIcon name="folder" style={styles.icon} />
+        if(this.props.document.IsVault)
+          elementIcon = <CustomIcon name="vault" style={styles.icon} />
+        else
+          elementIcon = <KenestoIcon name="folder" style={styles.kenestoIcon} />
       }
       else {
-        if (typeof this.props.document.IconName != 'undefined')
-          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name={this.props.document.IconName} style={styles.icon} /></View>
+        if (typeof this.props.document.IconName != 'undefined') {
+          var iconName = getIconNameFromExtension(this.props.document.FileExtension).iconName;
+          var customStyle = getIconNameFromExtension(this.props.document.FileExtension).customStyle;
+          elementIcon = <View style={styles.iconFiletype}>
+            { iconName === 'solidw' ? 
+              <CustomIcon name={iconName} style={[styles.icon, customStyle]} />
+              :
+              <KenestoIcon name={iconName} style={[styles.kenestoIcon, customStyle]} />
+            }
+
+          </View>
+        }
         else
-          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.icon} /></View>
+          elementIcon = <View style={styles.iconFiletype}><KenestoIcon name="description" style={styles.kenestoIcon} /></View>
       }
     }
-      
 
     return (
       <View>  
@@ -87,19 +109,32 @@ var DocumentCell = React.createClass({
               {elementIcon}
             </View>
             <View style={styles.textContainer}>
-              <Text style={styles.documentTitle} numberOfLines={2}>
-                {this.props.document.Name}
-              </Text>
+              <View style={{ flexDirection: "row" }}>
+                {this.props.document.IsCheckedOut && <View style={styles.customIconContainer}>
+                  <KenestoIcon name="logout-variant" style={[styles.kenestoIcon, styles.smallIcon]} />
+                </View>}
+                <Text style={styles.documentTitle} numberOfLines={2}>
+                  {this.props.document.Name}
+                </Text>
+              </View>
               <Text style={styles.documentYear} numberOfLines={1}>
                 {  "Modified "+ moment(this.props.document.ModificationDate).format('MMM DD, YYYY')}
-                
               </Text>
+              {uploadingInProgress?
+                <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
+                :
+                <View></View>
+              }
             </View>
-            <TouchableElement onPress={ (()=> { this.menuPressed(this.props.document.Id)}).bind(this) }>
-              <View style={styles.iconContainer}>
-                <Icon name="more-vert" style={styles.moreMenu} />
-              </View>
-            </TouchableElement>
+            {uploadingInProgress? 
+              <View></View>
+              :
+              <TouchableElement onPress={ (()=> { this.menuPressed(this.props.document.Id, this.props.document.FamilyCode)}).bind(this) }>
+                <View style={styles.iconContainer}>
+                  <Icon name="more-vert" style={styles.moreMenu} />
+                </View>
+              </TouchableElement>
+            }
           </View>
         </TouchableElement>
       </View>
@@ -144,8 +179,12 @@ var styles = StyleSheet.create({
   icon: {
     fontSize: 22,
     color: '#888',    
-    
   },
+  kenestoIcon: {
+        fontSize: 22,
+        color: '#888',
+        marginTop: -12
+    },
   iconFiletype: {
     height: 40,
     width: 55,
@@ -157,8 +196,22 @@ var styles = StyleSheet.create({
   moreMenu: {
     fontSize: 22,
     color: '#888', 
-  }
-  
+  },
+  progressBarContainer: {
+    justifyContent: "center",
+    marginHorizontal: 15,
+  },
+  customIconContainer: {
+        justifyContent: 'center', 
+        marginTop: 3,
+        marginRight: 5,
+        width: 16,
+        height: 16,
+    },
+    smallIcon: {
+      fontSize: 16,
+      color: "#fa8302"
+    }
 });
 
 DocumentCell.contextTypes = {

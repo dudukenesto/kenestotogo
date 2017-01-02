@@ -21,7 +21,7 @@ var Email = Tcomb.refinement(Tcomb.String, function (s) {
   return /\S+@\S+\.\S+/.test(s);
 });
 Email.getValidationErrorMessage = function (value, path, context) {
-  return 'Email Address (Username) is not valid';
+  return 'Email Address is not valid';
 };
 
 var Password = Tcomb.refinement(Tcomb.String, function (s) {
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     fields: {
         username: {
             template: this.usernameTemplate,
-            placeholder: 'Username',
+            placeholder: 'Email',
             label: ' ',
             autoFocus: true,
             placeholderTextColor: '#ccc',
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
 
                             
             return(
-                <KeyboardAwareScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
+                <KeyboardAwareScrollView style={{flex:1}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={true}>
                     <View style={{height: 460}}>
                         {this._renderProgressBar()}
                         <View style={styles.logoContainer}><Image source={require('../assets/kenesto_logo.png')} style={styles.logo}></Image></View>

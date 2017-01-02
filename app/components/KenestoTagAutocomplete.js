@@ -9,34 +9,22 @@ import {
   TextInput,
   ListView,
   TouchableHighlight,
+  Dimensions,
+  Keyboard
 } from 'react-native';
-
+import {connect} from 'react-redux'
 import Tag from './Tag';
-
-export default class KenestoTagAutocomplete extends Component {
-
-  // static propTypes = {
-  //   initialTags: React.PropTypes.arrayOf(React.PropTypes.string),
-  //   suggestions: React.PropTypes.arrayOf(React.PropTypes.string),
-  //   placeholder: React.PropTypes.string,
-  //   footerText: React.PropTypes.string,
-  //   height: React.PropTypes.number,
-  //   fontSize: React.PropTypes.number,
-  //   containerStyle: View.propTypes.style,
-  //   inputContainerStyle: View.propTypes.style,
-  //   textInputStyle: TextInput.propTypes.style,
-  //   listStyle: ListView.propTypes.style,
-  //   onUpdateTags: React.PropTypes.func,
-  //   onUpdateLayout: React.PropTypes.func,
-  // }
+import * as Animatable from 'react-native-animatable';
+var {height, width} = Dimensions.get('window');
+class KenestoTagAutocomplete extends Component {
 
   static defaultProps = {
     initialTags: [],
     suggestions: [],
     placeholder: 'Select tag or enter tag name...',
     addNewTagTitle: 'Add a new tag',
-    onUpdateTags: () => {},
-    onUpdateLayout: () => {},
+    onUpdateTags: () => { },
+    onUpdateLayout: () => { },
     containerStyle: null,
     inputContainerStyle: null,
     textInputStyle: null,
@@ -47,24 +35,42 @@ export default class KenestoTagAutocomplete extends Component {
   constructor(props) {
     super(props);
 
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
     this.state = {
       dataSource: ds.cloneWithRows(this._filterList(props.initialTags)),
       showlist: false,
       tags: props.initialTags,
       userInput: '',
+      orientation: this.props.orientation,
       listPosition: {
         top: 100,
         left: 0,
         right: 0,
       }
     }
+
   }
 
-  getTags() {
-    return this.state.tags;
+  componentDidMount() {
+    
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+      this.setState({ showList: true });
+      this.props.onShowTagsList();
+    })
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (e) => {
+      this.setState({ showList: false });
+      this.props.onHideTagsList();
+    })
   }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    Keyboard.removeListener('keyboardDidShow', (message) => console.log('\n\nremoveListener keyboardDidShow'));
+    this.keyboardDidHideListener.remove();
+    Keyboard.removeListener('keyboardDidHide', (message) => console.log('\n\nremoveListener keyboardDidHide'))
+  }
+
 
   blur() {
     this.refs.textInput.blur();
@@ -75,19 +81,34 @@ export default class KenestoTagAutocomplete extends Component {
   }
 
   clearText() {
-    this.setState({userInput: ''});
-    this.refs.textInput.setNativeProps({text: ''});
+    this.setState({ userInput: '' });
+    this.refs.textInput.setNativeProps({ text: '' });
   }
 
   _filterList(newTags) {
-    var filteredList = this.props.suggestions.filter((tag) => {
-      return tag !== newTags.find((t) => (t === tag))
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      if (this.props.autocompleteField && this.props.uniqueField) {
+        return listElement[this.props.uniqueField] !== newTags.find((t) => (t.tagID === listElement[this.props.uniqueField]))
+      }
+      else if (this.props.autocompleteField) {
+        return listElement[this.props.autocompleteField] !== newTags.find((t) => (t.tagName === listElement[this.props.autocompleteField]))
+      }
+      else {
+        return listElement !== newTags.find((t) => (t.tagName === listElement))
+      }
+
     });
     return filteredList;
   }
 
-  _addTag(text) {
-    var newTags = this.state.tags.concat([text]);
+  _addTag(tagName, tagID, iconType, iconName, aditionalData) {
+    var newTags = this.state.tags.concat({
+      tagName: tagName,
+      tagID: tagID,
+      iconType: iconType,
+      iconName: iconName,
+      aditionalData: aditionalData
+    });
     var filteredList = this._filterList(newTags);
     this.setState({
       tags: newTags,
@@ -98,49 +119,71 @@ export default class KenestoTagAutocomplete extends Component {
 
     this.props.onChange(newTags);
   }
-  
-  _addNewTag(text){
-    var tag = text;
-      if (this.props.formatNewTag) {
-        tag = this.props.formatNewTag(tag)
-      }
-      
-      if(tag === false){
-        // this.clearText();
-        if(this.props.onErrorAddNewTag){
-          this.props.onErrorAddNewTag(text);
-        }
-      }
-      else {
-        this._addTag(tag);
-      }      
+
+  _addNewTag(tagName) {
+    var _tagName = tagName;
+    if (this.props.formatNewTag) {
+      tagName = this.props.formatNewTag(tagName)
     }
+
+    if (tagName === false) {
+      if (this.props.onErrorAddNewTag) {
+        this.props.onErrorAddNewTag(_tagName);
+      }
+    }
+    else {
+      this._addTag(tagName, tagName, 'icon', 'person-outline', 'EXTERNAL_USER');
+    }
+  }
 
   _renderRow(rowData, sectionID, rowID) {
     const {rowContainerStyle, autocompleteTextStyle} = this.props;
     var autocompleteString = rowData[this.props.autocompleteField] || rowData;
+    var tagID = rowData[this.props.uniqueField] || autocompleteString;
+    var aditionalData = rowData["FamilyCode"]
     var searchedTextLength = this.state.userInput.length;
-    var searchedIndex = autocompleteString.indexOf(this.state.userInput);
+    var searchedIndex = autocompleteString.toLowerCase().indexOf(this.state.userInput.toLowerCase());
     var textBefore = autocompleteString.substr(0, searchedIndex);
-    var textAfter = autocompleteString.substr(searchedIndex+searchedTextLength);
+    var textAfter = autocompleteString.substr(searchedIndex + searchedTextLength);
+    var autocompleteFormattedString = (<View style={{ flexDirection: "row" }}><Text style={styles.text}>{textBefore}</Text>
+      <Text style={[styles.searchedText, autocompleteTextStyle]}>{autocompleteString.substr(searchedIndex, searchedTextLength)}</Text>
+      <Text style={styles.text}>{textAfter}</Text></View>)
+
+    var iconType, iconName;
+    var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
+    iconType = rowData.ThumbnailPath ? 'thumbnail' : 'icon';
+    if (!rowData.ThumbnailPath) {
+      if (rowData.IsGroup) {
+        iconName = 'group';
+      }
+      else {
+        iconName = rowData.IsExternal ? 'person-outline' : 'person'
+      }
+    }
+
     return (
-      <TouchableHighlight onPress={this._addTag.bind(this, rowData)}>
-        <View style={[styles.rowContainer, rowContainerStyle]}>
-          <Text style={styles.text}>{textBefore}</Text>
-          <Text style={[styles.searchedText, autocompleteTextStyle]}>{this.state.userInput}</Text>
-          <Text style={styles.text}>{textAfter}</Text>
-        </View>
-      </TouchableHighlight>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
+        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID, iconType, iconName, aditionalData) }>
+          <View style={[styles.rowContainer, { minWidth: this.state.orientation == "PORTRAIT" ? width : height }, rowContainerStyle]}>
+            {this.props.autocompleteRowTemplate ?
+              this.props.autocompleteRowTemplate(autocompleteFormattedString, iconType, iconName, rowData)
+              :
+              autocompleteFormattedString
+            }
+
+          </View>
+        </TouchableHighlight>
+      </ScrollView>
     )
   }
 
   _renderFooter() {
     const { userInput, tags } = this.state;
-    const shouldRender = ( userInput && !tags.includes(userInput) && this.props.allowAddingNewTags ) ? true : false;
+    const shouldRender = (userInput && !tags.includes(userInput) && this.props.allowAddingNewTags) ? true : false;
     const { addNewTagTitle, newTagStyle, newTagContainerStyle } = this.props
     if (shouldRender) {
       return (
-        <TouchableHighlight onPress={this._addNewTag.bind(this, userInput)} underlayColor={"#efefef"}>
+        <TouchableHighlight onPress={this._addNewTag.bind(this, userInput) } underlayColor={"#efefef"}>
           <View style={[styles.newTagContainer, newTagContainerStyle]}>
             <Text style={[styles.newTagText, newTagStyle]}>{addNewTagTitle + ' \"' + userInput + '\"'}</Text>
           </View>
@@ -159,39 +202,53 @@ export default class KenestoTagAutocomplete extends Component {
 
   _onBlur() {
     this.blur();
-    this.setState({showList: false});
+    this.setState({ showList: false });
     this.props.onHideTagsList();
   }
 
   _onFocus() {
-    this.setState({showList: true});
+    this.setState({ showList: true });
     this.props.onShowTagsList();
   }
 
   _onChangeText(text) {
-    
-    var filteredList = this.props.suggestions.filter((tag) => {
-      return !this.state.tags.find(t => (t === tag)) && tag.includes(text);
+    if(text == '' && this.state.tags == ''){
+      this.setState({ showList: false });
+      this.props.onHideTagsList();
+    }
+    else if (this.state.tags == ''){ 
+      this._onFocus();
+    }
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      if (this.props.autocompleteField && this.props.uniqueField) {
+        return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].toLowerCase().includes(text.toLowerCase());
+      }
+      else if (this.props.autocompleteField) {
+        return !this.state.tags.find(t => (t.tagName === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(text);
+      }
+      else {
+        return !this.state.tags.find(t => (t.tagName === listElement)) && listElement.includes(text);
+      }
+
     })
 
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(filteredList),
-      userInput: text,
-});
-    
-    
+      userInput: text
+    });
+
   }
 
   _getListView() {
     const { dataSource, listPosition } = this.state;
-    const { listStyle, minCharsToStartAutocomplete } = this.props; 
+    const { listStyle, minCharsToStartAutocomplete } = this.props;
 
-    if(!this.state.showList || this.state.userInput=="" || this.state.userInput.length < minCharsToStartAutocomplete) {
+    if (!this.state.showList || this.state.userInput == "" || this.state.userInput.length < minCharsToStartAutocomplete) {
       return null;
     }
 
     return (
-      
+
       <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
         <ListView
           style={[styles.list, listStyle]}
@@ -202,21 +259,34 @@ export default class KenestoTagAutocomplete extends Component {
           renderRow={this._renderRow.bind(this) }
           renderSeparator={this._renderSeparator.bind(this) }
           renderFooter={this._renderFooter.bind(this) }
-          key={this.state.userInput}
+          key={this.state.userInput + this.state.orientation}
           />
       </ScrollView>
     )
   }
 
-  _removeTag(tag) {
-    var newTags = this.state.tags.filter((t) => (t !== tag));
-    var filteredList = this._filterList(newTags);
+  _removeTag(tagID) {
+    var newTags = this.state.tags.filter((t) => (t.tagID !== tagID));
+    var filteredList = this.props.suggestions.filter((listElement) => {
+      if (this.props.autocompleteField && this.props.uniqueField) {
+        return !newTags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
+      }
+      else if (this.props.autocompleteField) {
+        return !newTags.find(t => (t.tagName === listElement[this.props.autocompleteField])) && listElement[this.props.autocompleteField].includes(this.state.userInput);
+      }
+      else {
+        return !newTags.find(t => (t.tagName === listElement)) && listElement.includes(this.state.userInput);
+      }
+
+    })
     this.setState({
       tags: newTags,
       dataSource: this.state.dataSource.cloneWithRows(filteredList),
     });
 
-    this.props.onChange(newTags);    
+
+    this.props.onChange(newTags);
+
   }
 
   _onChangeLayout(e) {
@@ -224,7 +294,7 @@ export default class KenestoTagAutocomplete extends Component {
 
     this.setState({
       listPosition: {
-        top: layout.height+10,
+        top: layout.height + 10,
         left: 0,
         right: 0,
       }
@@ -233,19 +303,51 @@ export default class KenestoTagAutocomplete extends Component {
     this.props.onUpdateLayout(layout);
   }
 
-  render() {
+  renderTags() {
+    var tagTemplate = this.props.tagTemplate;
+    if (this.props.uniqueField) {
+      return (
+        tagTemplate ? this.state.tags.map((t) => (
+          <TouchableHighlight key={t.tagID} style={[styles.tagContainerStyle, this.props.tagContainerStyle]} >
+            {tagTemplate(t, this._removeTag.bind(this, t.tagID)) }
+          </TouchableHighlight>
+        ))
+          :
+          this.state.tags.map((t) => (
+            <Tag key={t.tagID} onPress={this._removeTag.bind(this, t.tagID) } data={t} />
+          ))
 
-    const { placeholder, containerStyle, inputContainerStyle, textInputStyle } = this.props;
-    var flex = (this.state.showList) ? {flex: 1} : {flex: 0} 
+      )
+    }
+    else {
+      return (
+        tagTemplate ? this.state.tags.map((t) => (
+          <TouchableHighlight key={t.tagName} style={[styles.tagContainerStyle, this.props.tagContainerStyle]} >
+            {tagTemplate(t.tagName, this._removeTag.bind(this, t.tagID)) }
+          </TouchableHighlight>
+        ))
+          :
+          this.state.tags.map((t) => (
+            <Tag key={t.tagName} text={t.tagName} onPress={this._removeTag.bind(this, t.tagID) } />
+          ))
+
+      )
+    }
+  }
+
+  render() {
+    const { placeholder, containerStyle, inputContainerStyle, textInputStyle, tagTemplate } = this.props;
+    var flex = (this.state.showList) ? { flex: 1 } : { flex: 0 }
+
+
     return (
       <View style={[flex, containerStyle]}>
         <View style={styles.headerContainer}>
           {this.props.title && <Text style={styles.autocompleteTitle}>{this.props.title}</Text>}
           <View ref='tagInput' style={[styles.inputContainer, inputContainerStyle]} onLayout={this._onChangeLayout.bind(this) }>
 
-            {this.state.tags.map((tag) => (
-              <Tag key={tag} text={tag} onPress={this._removeTag.bind(this, tag) }/>
-            )) }
+            {this.renderTags() }
+
             <TextInput
               ref='textInput'
               style={[styles.textinput, textInputStyle]}
@@ -259,25 +361,27 @@ export default class KenestoTagAutocomplete extends Component {
               autoCapitalize='none'
               />
           </View>
-          
+
         </View>
         {this._getListView() }
-       </View>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   headerContainer: {
-    
+
   },
   inputContainer: {
-    flexDirection:'row', 
+    flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 30,
+    paddingTop: 15,
+    paddingBottom: 3,
     borderColor: '#999',
     borderBottomWidth: 1,
-    minHeight:20,
+    minHeight: 20,
   },
   textinput: {
     padding: 0,
@@ -291,7 +395,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: 'white',
     paddingVertical: 15,
-    paddingLeft: 30
+    paddingHorizontal: 30,
   },
   newTagText: {
     fontSize: 14,
@@ -305,8 +409,11 @@ const styles = StyleSheet.create({
 
   },
   searchedText: {
-    color: "#F66400",
+    color: "#000",
     fontWeight: "bold"
+  },
+  text: {
+    color: "#888"
   },
   autocompleteTitle: {
     color: "#999",
@@ -316,5 +423,27 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   newTagContainer: {},
-  
+  tagContainerStyle: {
+    backgroundColor: '#fff',
+    paddingLeft: 5,
+    paddingRight: 7,
+    paddingVertical: 0,
+    margin: 3,
+    borderRadius: 16,
+    borderWidth: 0.5,
+    borderColor: "#ccc",
+    height: 31,
+    maxWidth: 295
+  },
+
 });
+
+
+function mapStateToProps(state) {
+  const { navReducer } = state
+  return {
+        orientation : navReducer.orientation
+  }
+}
+
+export default connect(mapStateToProps)(KenestoTagAutocomplete)

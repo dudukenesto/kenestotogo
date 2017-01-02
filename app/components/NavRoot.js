@@ -8,8 +8,9 @@ import Document from './Document'
 import LoginContainer from '../containers/LoginContainer'
 import DocumentsContainer from '../containers/DocumentsContainer'
 import LauncherContainer from '../containers/LauncherContainer'
+import AddPeople from './AddPeople'
 import Scan from './Scan';
-
+import * as uiActions from '../actions/uiActions'
 import {
   BackAndroid,
   NavigationExperimental
@@ -51,7 +52,7 @@ class NavRoot extends Component {
       return <ForgotPassword userName={route.userName} _goBack={this._handleBackAction.bind(this) }  />
     }
     if (route.key === 'scan') {
-      return <Scan _handleNavigate={this._handleNavigate.bind(this) } />
+      return <Scan _handleNavigate={this._handleNavigate.bind(this) } isCameraScan={route.data.isCameraScan}  baseFileId={route.data.baseFileId} />
     }
     if (route.key === 'login') {
       return <LoginContainer _handleNavigate={this._handleNavigate.bind(this) } />
@@ -65,34 +66,76 @@ class NavRoot extends Component {
       return <Document _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
     if (route.key === 'addPeople') {
-      return <AddPeopleContainer _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
+      return <AddPeople _goBack={this._handleBackAction.bind(this) } data={route.data} _handleNavigate={this._handleNavigate.bind(this) }/>
     }
   }
-  _isMenuModalOpen() {
-    return this.props.isMenuModalOpen();
-  }
-  _isDrawerOpen() {
-    return this.props.isDrawerOpen();
-  }
+  // _isItemMenuModalOpen() {
+  //   return this.props.isItemMenuModalOpen();
+  // }
+  // _isMenuModalOpen() {
+  //   return this.props.isMenuModalOpen();
+  // }
+  // _isDrawerOpen() {
+  //   return this.props.isDrawerOpen();
+  // }
 
- _closeDrawer() {
+  // _isSearch(){
+  //     return this.props.isSearch();
+  // }
+
+  _closeItemMenuModal() {
+    this.props.closeItemMenuModal();
+  }
+  _closeDrawer() {
     this.props.closeDrawer();
-    
   }
   _closeMenuModal() {
     this.props.closeMenuModal();
   }
-  
+
   _handleBackAction() {
-    if (this._isMenuModalOpen()) {
-      this._closeMenuModal();
-      return true;
-    }
-    else if(this._isDrawerOpen())
-    {
-      this._closeDrawer();
-      return true;
-    }
+  //  //   alert(JSON.stringify(this.props.uiReducer));
+  //  // alert(this.props.openedDialogModalref())
+  //   //console.log(this.props.openedDialogModalref()); 
+
+  //  // return true;
+  //   if (this._isSearch()){
+  //    //  alert(this._isSearch());
+  //         this.props.hideSearchBox();
+  //       return true;
+  //   }
+  //   if (this._isItemMenuModalOpen()) {
+  //     this._closeItemMenuModal();
+  //     return true;
+  //   }
+  //   if (this._isMenuModalOpen()) {
+  //     this._closeMenuModal();
+  //     return true;
+  //   }
+  //   // else if (this._isDrawerOpen()) {
+  //   //   this._closeDrawer();
+  //   //   return true;
+  //   // }
+   if (this.props.uiReducer.isDrawerOpen){
+     this._closeDrawer();
+     return true;
+   }
+   if (this.props.uiReducer.isPopupMenuOpen){
+       this.props.hidePopupMenu();
+       return true;
+   }
+   if (this.props.uiReducer.isSearchboxOpen){
+       this.props.hideSearchBox();
+       return true;
+   }
+   if (this.props.uiReducer.showDropDown){
+        this.props.dispatch(uiActions.forceCloseDropdownOptions()); 
+        return true;
+   }
+   if (this.props.uiReducer.openedDialogModalref != ''){
+     this.props.closeModal(this.props.uiReducer.openedDialogModalref)
+      return true; 
+   }
     else {
       if (this.props.navigation.routes[this.props.navigation.routes.length - 1].key == 'forgotPassword') {
         this.props.popRoute()
@@ -100,9 +143,16 @@ class NavRoot extends Component {
       }
 
       if ((this.props.navigation.routes[this.props.navigation.index].key.indexOf('documents') > -1 && this.props.navigation.routes[this.props.navigation.index].data.fId != "") || this.props.navigation.routes[this.props.navigation.index].key === 'document') {
+
         this.props.popRoute()
         return true
       }
+      
+      if (this.props.navigation.routes[this.props.navigation.routes.length - 1].key == 'addPeople') {
+        this.props.popRoute()
+        return true
+      }
+      
       else {
         return false
       }
@@ -111,16 +161,16 @@ class NavRoot extends Component {
   }
 
   _handleNavigate(action) {
-      switch (action && action.type) {
-        case 'push':
-          this.props.pushRoute(action.route)
-          return true
-        case 'back':
-        case 'pop':
-          return this._handleBackAction()
-        default:
-          return false
-      }
+    switch (action && action.type) {
+      case 'push':
+        this.props.pushRoute(action.route)
+        return true
+      case 'back':
+      case 'pop':
+        return this._handleBackAction()
+      default:
+        return false
+    }
   }
   render() {
     return (

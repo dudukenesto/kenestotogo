@@ -16,7 +16,7 @@ var Email = Tcomb.refinement(Tcomb.String, function (s) {
   return /\S+@\S+\.\S+/.test(s);
 });
 Email.getValidationErrorMessage = function (value, path, context) {
-  return 'Email Address (Username) is not valid';
+  return 'Email Address is not valid';
 };
 
 var _ = require('lodash');
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
 
     render(){
         return (
-         <ScrollView style={{flex:1, backgroundColor: "#fff"}} showsVerticalScrollIndicator={false}>   
+         <ScrollView style={{flex:1, backgroundColor: "#fff"}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={true}>
           <View style={[styles.container, this.props.style]}>
             <View style={{flex: 1}}>
                         <View style={styles.titleContainer}>
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
                             />
                             <View style={styles.buttonsContainer}>
                                 <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={() => this.props._goBack()}>Cancel</Button>
-                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={this._makeForgotPassword.bind(this)}>Request</Button>
+                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={this._makeForgotPassword.bind(this)}>Reset</Button>
                             </View>
                         </View>
                     </View>

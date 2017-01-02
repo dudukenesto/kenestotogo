@@ -19,7 +19,7 @@ export function getAuthUrl(env: string,username: string, password: string){
     if (urls == null)
         return null;
 
-    var authUrl = urls.AuthUrlTemplate.replace('{0}', username).replace('{1}', password);
+    var authUrl = urls.AuthUrlTemplate.replace('{0}', username.trim()).replace('{1}', password.trim());
     return authUrl;
 
 }
@@ -89,7 +89,7 @@ export async function getCredentials(props: Object) : Object{
           if (storedPassword != null && storedUserName != null)
                {
                 
-                   return   { hasCredentials: true, storedUserName : storedUserName, storedPassword : storedPassword, env : env, props: props};
+                   return   { hasCredentials: true, storedUserName : storedUserName, storedPassword : storedPassword, env : env, props: props, _handleNavigate: props._handleNavigate};
                }
                else
                     return { hasCredentials: false,  props: props};

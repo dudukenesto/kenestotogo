@@ -8,7 +8,7 @@ import * as constans from '../constants/GlobalConstans'
 import {getDocumentsTitle, getDocumentsContext} from '../utils/documentsUtils'
 import * as accessActions from '../actions/Access'
 import * as navActions from '../actions/navActions'
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import { createIconSetFromFontello } from  'react-native-vector-icons'
 import MartialExtendedConf from '../assets/icons/config.json';
@@ -115,6 +115,7 @@ class TabView extends React.Component {
                 itemTitle: getDocumentsTitle(constans.MY_DOCUMENTS),
                 itemCount: accessReducer.statistics.totalMyDocuments,
                 itemIcon: 'folder',
+                iconType: 'regular',
                 selected: documentlist.catId == constans.MY_DOCUMENTS ? true : false,
                 customStyle: ''
             },
@@ -123,6 +124,7 @@ class TabView extends React.Component {
                 itemTitle: getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME),
                 itemCount: accessReducer.statistics.totalSharedWithMe,
                 itemIcon: 'folder',
+                iconType: 'regular',
                 selected: documentlist.catId == constans.DOCUMENTS_SHARE_WITH_ME ? true : false,
                 customStyle: ''
             },
@@ -131,6 +133,7 @@ class TabView extends React.Component {
                 itemTitle: getDocumentsTitle(constans.ALL_DOCUMENTS),
                 itemCount: accessReducer.statistics.totalAllDocuments,
                 itemIcon: 'folder',
+                iconType: 'regular',
                 selected: documentlist.catId == constans.ALL_DOCUMENTS ? true : false,
                 customStyle: ''
             },
@@ -138,23 +141,25 @@ class TabView extends React.Component {
                 Index: 3,
                 itemTitle: getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS),
                 itemCount: accessReducer.statistics.totalCheckedoutDocuments,
-                itemIcon: 'android',
+                itemIcon: 'logout-variant',
+                iconType: 'custom',
                 selected: documentlist.catId == constans.CHECKED_OUT_DOCUMENTS ? true : false,
-                customStyle: ''
+                customStyle: {marginRight: 16, marginLeft: -1}
             },
-            {
-                Index: 4,
-                itemTitle: getDocumentsTitle(constans.ARCHIVED_DOCUMENTS),
-                itemCount: accessReducer.statistics.totalArchivedDocuments,
-                itemIcon: 'restore',
-                selected: documentlist.catId == constans.ARCHIVED_DOCUMENTS ? true : false,
-                customStyle: ''
-            },
+            // {
+            //     Index: 4,
+            //     itemTitle: getDocumentsTitle(constans.ARCHIVED_DOCUMENTS),
+            //     itemCount: accessReducer.statistics.totalArchivedDocuments,
+            //     itemIcon: 'restore',
+            //     selected: documentlist.catId == constans.ARCHIVED_DOCUMENTS ? true : false,
+            //     customStyle: ''
+            // },
             {
                 Index: 5,
                 itemTitle: 'My usage space '+accessReducer.statistics.totalUsageSpace,
                 itemCount: null,
-                itemIcon: 'android',
+                itemIcon: 'disk-usage',
+                iconType: 'custom',
                 selected: false,
                 customStyle: ''
             },
@@ -163,6 +168,7 @@ class TabView extends React.Component {
                 itemTitle: 'Logout',
                 itemCount: null,
                 itemIcon: 'power-settings-new',
+                iconType: 'regular',
                 selected: false,
                 customStyle: { color: "#FA8302" }
             }
@@ -225,34 +231,35 @@ class TabView extends React.Component {
                 catId: constans.MY_DOCUMENTS,
                 fId: "",
                 sortDirection: constans.ASCENDING,
-                sortBy: constans.ASSET_NAME
+                sortBy: constans.ASSET_NAME,
+                keyboard:""
             }
        
         switch (menuitem.Index) {
             case 0:
                 routeData.catId = constans.MY_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.MY_DOCUMENTS);
-                dispatch(documentsActions.refreshTable(routeData));
+                dispatch(documentsActions.refreshTable(routeData, true));
                 break;
             case 1:
                 routeData.catId = constans.DOCUMENTS_SHARE_WITH_ME;
                 routeData.name = getDocumentsTitle(constans.DOCUMENTS_SHARE_WITH_ME);
-                dispatch(documentsActions.refreshTable(routeData));
+                dispatch(documentsActions.refreshTable(routeData, true));
                 break;
             case 2:
                 routeData.catId = constans.ALL_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.ALL_DOCUMENTS);
-                 dispatch(documentsActions.refreshTable(routeData));
+                 dispatch(documentsActions.refreshTable(routeData, true));
                  break;
             case 3:
                 routeData.catId = constans.CHECKED_OUT_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.CHECKED_OUT_DOCUMENTS);
-                 dispatch(documentsActions.refreshTable(routeData));
+                 dispatch(documentsActions.refreshTable(routeData, true));
                  break;
             case 4:
                 routeData.catId = constans.ARCHIVED_DOCUMENTS;
                 routeData.name = getDocumentsTitle(constans.ARCHIVED_DOCUMENTS);
-                dispatch(documentsActions.refreshTable(routeData));
+                dispatch(documentsActions.refreshTable(routeData, true));
                  break;
             case 6:
                 dispatch(navActions.emitConfirm("Log Out", "Are you sure you want to Log Out?", () => dispatch(accessActions.logOut())))
@@ -295,10 +302,10 @@ class TabView extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { documentlists, navReducer, accessReducer} = state
+    const { documentsReducer, navReducer, accessReducer} = state
 
     return {
-        documentlists,
+        documentsReducer,
         navReducer,
         accessReducer
     }

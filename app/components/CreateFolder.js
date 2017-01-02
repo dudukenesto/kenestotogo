@@ -1,12 +1,12 @@
 import React from "react"; 
-import {View, Text,TextInput, StyleSheet, Animated, Dimensions} from "react-native";
+import {View, Text,TextInput, StyleSheet, Animated, Dimensions, Switch} from "react-native";
 import Button from "react-native-button";
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
-import * as documentsActions from '../actions/documentlists'
-import {createFolder} from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
+import * as navActions from '../actions/navActions'
+import {createFolder} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
@@ -43,10 +43,10 @@ var styles = StyleSheet.create({
     textEdit: {
         flex: 1,
         color: "#000",
-        height: 50,            
+        // height: 50,            
         fontSize: 17,
-        // paddingLeft: 40,
-        paddingBottom: 15,
+        paddingLeft: 5,
+        // paddingBottom: 15,
     },
     buttonsContainer: {
         flex: 1,
@@ -78,14 +78,6 @@ var styles = StyleSheet.create({
         fontSize: 16,
         marginRight: 40
     },
-    // modal: {
-    //     justifyContent: 'center',
-    //     alignItems: 'center'
-    // },
-    // InProggress: {
-    //     height: 500, 
-    //     width: 500
-    // },
 });
 
 class CreateFolder extends React.Component {
@@ -93,34 +85,27 @@ class CreateFolder extends React.Component {
         super (props);
 
         this.state = {
-           
+            isVault: false,
             folderName: '',
         };
+
+       // alert(this.state.folderName)
     }
 
-    componentDidMount() {
-  //      if (!this.props.creatingFolder)
-  //          this.refs.folderName.focus();
+
+    create() {
+       //alert(this.state.folderName  != '')
+       if (this.state.folderName != '') {
+           // this.props.setCreateFolderStyle();
+           this.props.closeCreateFolder();
+            this.props.dispatch(navActions.updateIsProcessing(true));
+           setTimeout(() => {
+               this.props.dispatch(createFolder(this.state.folderName, this.state.isVault));
+           }, 100); 
+
+
+       }
     }
-
-    componentWillReceiveProps(nextprops){
-        // alert(nextprops.creatingFolder)
-
-        if (nextprops.creatingFolder == 2)
-        {
-            this.props.closeCreateFolder();
-            this.props.dispatch(documentsActions.UpdateCreateingFolderState(0));
-           
-        }
-    }
-
-    create(){
-       
-        this.props.dispatch(createFolder(this.state.folderName)); 
-        this.props.setCreateFolderStyle();
-    }
-
-     
 
     render(){
 
@@ -136,29 +121,35 @@ class CreateFolder extends React.Component {
 
         return (
            
-                <View style={styles.container}>
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.title}>Create a new folder</Text>
-                    </View>
-                    <View style={styles.nameContainer}>
-                        <TextInput
-                            ref="folderName"
-                            value={this.state.folderName} 
-                            onChangeText={folderName => this.setState({folderName})}
-                            style={styles.textEdit}
-                            placeholder="Folder Name"    
-                            placeholderTextColor={"#ccc"}
-                            selectionColor={"orange"}
-                            underlineColorAndroid={"#ccc"}                       
-                            />
-                    </View>
-                    
-                        <View style={styles.buttonsContainer}>
-                            <Button onPress={this.create.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
-                            <Button onPress={this.props.closeCreateFolder.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
-                        </View>
-                        
+            <View style={styles.container}>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.title}>Create a new folder</Text>
                 </View>
+                <View style={styles.nameContainer}>
+                    <TextInput
+                        ref="folderName"
+                        value={this.state.folderName}
+                        onChangeText={folderName => this.setState({ folderName }) }
+                        style={styles.textEdit}
+                        placeholder="Folder Name"
+                        placeholderTextColor={"#ccc"}
+                        selectionColor={"orange"}
+                        underlineColorAndroid={"#ccc"}
+                        />
+                </View>
+                <View style={styles.nameContainer}>
+                    <Text style={styles.textEdit}>Vault folder</Text>
+                    <Switch
+                        onValueChange={(value) => this.setState({ isVault: value }) }
+                        // style={{ j}}
+                        value={this.state.isVault} />
+                </View>
+                <View style={styles.buttonsContainer}>
+                    <Button onPress={this.create.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
+                    <Button onPress={this.props.closeCreateFolder.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
+                </View>
+
+            </View>
         );
     }
 }
@@ -169,8 +160,8 @@ function mapStateToProps(state) {
   
 
   return {
-    folderId : state.documentlist.fId,
-    creatingFolder : state.documentlists.creatingFolder
+   // folderId : state.documentlist.fId,
+    creatingFolder : state.documentsReducer.creatingFolder
   }
 }
 

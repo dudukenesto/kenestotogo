@@ -4,9 +4,9 @@ import Button from "react-native-button";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import * as navActions from '../actions/navActions'
-import {createFolder} from '../actions/documentlists'
+import {createFolder} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
@@ -41,11 +41,9 @@ var styles = StyleSheet.create({
     },
     textEdit: {
         flex: 1,
-        color: "#000",
-        height: 50,            
+        color: "#000",          
         fontSize: 17,
         textAlign: "center",
-        paddingBottom: 15,
     },
     buttonsContainer: {
         flex: 1,
@@ -103,8 +101,6 @@ class Error extends React.Component {
         this.props.dispatch(navActions.clearError());
     }
 
-     
-
     render(){
 
         return (
@@ -112,12 +108,11 @@ class Error extends React.Component {
                 <View style={styles.container}>
                     <View style={styles.titleContainer}>
                         <Icon name="error" style={styles.icon} />
-                        <Text style={styles.title}>{this.state.errorTitle}</Text>
+                        <Text style={styles.title}>Error has occurred</Text>
                     </View>
                     
                     <View style={styles.nameContainer}>
-
-                        <Text style={styles.textEdit}>{this.state.errorDetails}</Text>
+                        <Text style={styles.textEdit} numberOfLines={4}>{this.state.errorTitle}</Text>
                     </View>
                     
                     <View style={styles.buttonsContainer}>

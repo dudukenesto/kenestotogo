@@ -3,7 +3,8 @@ import NavigationRoot from '../components/NavRoot'
 import { push, pop } from '../actions/navActions'
 function mapStateToProps (state) {
   return {
-    navigation: state.navReducer
+    navigation: state.navReducer,
+    uiReducer: state.uiReducer
   }
 }
 

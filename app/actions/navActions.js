@@ -1,36 +1,48 @@
-import { POP_ROUTE, PUSH_ROUTE, NAV_JUMP_TO_KEY, NAV_JUMP_TO_INDEX, NAV_RESET, CHANGE_TAB, UPDATE_ROUTE_DATA, SUBMIT_ERROR, CLEAR_ERROR,
-  SUBMIT_INFO, CLEAR_INFO, SUBMIT_CONFIRM, CLEAR_CONFIRM} from '../constants/ActionTypes'
-
+import * as actionTypes from '../constants/ActionTypes'
+import * as peopleActions from '../actions/peopleActions'
+import * as uiActions from '../actions/uiActions'
+import {getSelectedDocument} from '../utils/documentsUtils'
+import {isRouteKeyExists} from '../utils/ObjectUtils'
 export function push (route) {
-  return {
-    type: PUSH_ROUTE,
-    route
-  }
+   return (dispatch, getState) => {
+      const navReducer = getState().navReducer;
+      if(isRouteKeyExists(route.key, navReducer.routes))
+      {
+        route.key =  route.key+"~"+ Math.random();
+      }
+      dispatch(pushRouth(route));
+   }
 }
 
+export function pushRouth (route) {
+  return {
+          type: actionTypes.PUSH_ROUTE,
+          route
+    }
+}
 export function pop () {
   return {
-    type: POP_ROUTE
+    type: actionTypes.POP_ROUTE
   }
 }
 
 export function navigateJumpToKey(key) {
   return {
-    type: NAV_JUMP_TO_KEY,
+    type: actionTypes.NAV_JUMP_TO_KEY,
     key
   }
 }
 
 export function navigateJumpToIndex(index) {
   return {
-    type: NAV_JUMP_TO_INDEX,
+    type: actionTypes.NAV_JUMP_TO_INDEX,
     index
   }
 }
 
 export function navigateReset(key,routes, index) {
   return {
-    type: NAV_RESET,
+    type: actionTypes.NAV_RESET,
     key,
     index,
     routes
@@ -39,60 +51,137 @@ export function navigateReset(key,routes, index) {
 
 export function updateRouteData (routeData) {
   return {
-    type: UPDATE_ROUTE_DATA,
+    type: actionTypes.UPDATE_ROUTE_DATA,
     routeData
+  }
+}
+
+export function updateIsProcessing(isProcessing: boolean) {
+  return {
+    type: actionTypes.UPDATE_IS_PROCESSING,
+    isProcessing
+  }
+}
+
+
+export function emitToast(type: string, messge: string, title: string){
+    return {
+    type: actionTypes.SUBMIT_TOAST, 
+    toastTitle: title, 
+    toastType: type,
+    toastMessage: messge,
+    isProcessing: false
+  }
+}
+
+export function hideToast() {
+  return {
+    type: actionTypes.HIDE_TOAST
+  }
+}
+
+export function clearToast(){
+  return {
+    type: actionTypes.CLEAR_TOAST
   }
 }
 
 export function emitError(errorTitle: string, errorDetails: string, okAction: Object = null){
   return {
-    type: SUBMIT_ERROR, 
+    type: actionTypes.SUBMIT_ERROR, 
     errorTitle: errorTitle, 
     errorDetails: errorDetails,
-    errorOkAction: okAction
+    errorOkAction: okAction,
+    isProcessing: false
   }
   
 }
 export function clearError(){
   return {
-    type: CLEAR_ERROR
+    type: actionTypes.CLEAR_ERROR
   }
 }
 
 export function emitConfirm(confirmTitle: string, confirmDetails: string, okAction: Object = null){
   return {
-    type: SUBMIT_CONFIRM, 
+    type: actionTypes.SUBMIT_CONFIRM, 
     confirmTitle: confirmTitle, 
     confirmDetails: confirmDetails,
-    confirmOkAction: okAction
+    confirmOkAction: okAction,
+    isProcessing: false
   }
   
 }
 export function clearConfirm(){
   return {
-    type: CLEAR_CONFIRM
+    type: actionTypes.CLEAR_CONFIRM
   }
 }
 
 export function emitInfo(infoTitle: string, infoDetails: string, okAction: Object = null){
   return {
-    type: SUBMIT_INFO, 
+    type: actionTypes.SUBMIT_INFO, 
     infoTitle: infoTitle, 
     infoDetails: infoDetails,
-    infoOkAction: okAction
+    infoOkAction: okAction,
+    isProcessing: false
   }
-  
 }
 
 export function clearInfo(){
   return {
-    type: CLEAR_INFO
+    type: actionTypes.CLEAR_INFO
 }
 
 }
 export function changeTab (index) {
   return {
-    type: CHANGE_TAB,
+    type: actionTypes.CHANGE_TAB,
     index
   }
 }
+
+export function updatedOrientation(orientation: string){
+  return{
+    type: actionTypes.UPDATE_ORIENTATION,
+    orientation
+  }
+}
+
+export function requestUpdateTrigger(value: string){
+   return (dispatch, getState) => {
+      const documentLists = getState().documentsReducer; 
+      const navReducer = getState().navReducer;
+      const document = getSelectedDocument(documentLists, navReducer);
+      const triggerSelectedValue = getState().uiReducer.triggerSelectedValue;
+      const uersDetails = getState().uiReducer.clickedTrigger.split('_');
+      const ParticipantUniqueID = uersDetails[1];
+      const familyCode = uersDetails[2];
+      const triggerId = 'trigger_' + ParticipantUniqueID; 
+      dispatch(peopleActions.AddtoFetchingList(triggerId));
+      dispatch(uiActions.updatedSelectedTrigerValue(value));
+   }
+        
+}
+
+export function hideToolbar(){
+ return{
+    type: actionTypes.TOGGLE_TOOLBAR,
+    toolbarVisible: false
+  }
+}
+
+export function showToolbar(){
+ return{
+    type: actionTypes.TOGGLE_TOOLBAR,
+    toolbarVisible: true
+  }
+}
+
+export function toggleToolbar(){
+ return{
+    type: actionTypes.TOGGLE_TOOLBAR,
+    toolbarVisible: null
+  }
+}
+

@@ -4,13 +4,25 @@ packages with special handling:
     problem: npm not synced with latest version 
     solution: instead of installing with npm install, copy folder from master to node_modules folder 
     and run: react-native link react-native-orientation
-*  react-native-webview-bridge
-    problem: npm not synced with latest version 
-    solution: copy the following files from the master to the local react-native-webview-bridge inside node_modules
-        * C:\Work\Dev\react native\projects\KenestoToGo\node_modules\react-native-webview-bridge\webview-bridge\index.android.js
-        * C:\Work\Dev\react native\projects\KenestoToGo\node_modules\react-native-webview-bridge\webview-bridge\index.ios.js
+    then replace the content of index.js with the content of KenestoDeviceOrientation.js OR use require('./KenestoDeviceOrientation') instead require('react-native-orientation');
 * react-native-crop-picker 
+    problem: No support for all file types in the picker module. 
+    solution: replace \node_modules\react-native-image-crop-picker\android\src\main\java\com\reactnative\ivpusic\imagepicker\PickerModule.js 
+    with the one in \appendix
+* react-native-material-kit 
     problem: npm not synced with latest version 
-    solution: instead of installing with npm install, copy folder from master to node_modules folder 
-    and run: react-native link react-native-picker, 
-    also make sure cnages have been made in: settings.gradle, buil.gradle, androidManifest.xml, MainApplication.java
+    solution: replace \node_modules\react-native-material-kit\lib\internal\MKTouchable.js 
+    with the one in \appendix
+* react-native-fetch-blob
+    problem: SupportsRtl definitions colides with general definition.
+    soution: change the value of parameter "android:supportsRtl" from "true" to "false", 
+             in \kenestotogo\node_modules\react-native-fetch-blob\android\src\main\AndroidManifest.xml  
+* react-native-message-bar
+    problem: plugin doesn't allow customizing toast layout (aligning icon with centered text).
+    solution: in render() function inside MessageBar.js replace the TouchableOpacity content with:
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end', padding: 10 }} >
+                <View style={{ flex: 1, flexDirection: 'row', alignSelf: 'stretch', justifyContent: 'center', marginLeft: 0 }} >
+                    { this.renderImage() }
+                    { this.renderMessage() }
+                </View>
+            </View>

@@ -4,7 +4,7 @@ import Button from "react-native-button";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
 import config from '../utils/app.config';
-import * as documentsActions from '../actions/documentlists'
+import * as documentsActions from '../actions/documentsActions'
 import * as navActions from '../actions/navActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -23,9 +23,8 @@ var styles = StyleSheet.create({
     },
     title: {
         fontSize: 20,
-        color: "#000",
         alignSelf: "center",
-        color: "#FA8302",
+        color: "#FA8302"
     },
     messageContainer: {
         flex: 2,
@@ -35,10 +34,8 @@ var styles = StyleSheet.create({
     messageText: {
         flex: 1,
         color: "#888",
-        height: 50,            
+        // height: 50,            
         fontSize: 17,
-        paddingLeft: 40,
-        paddingBottom: 15,
         textAlign: "center"
     },
     buttonsContainer: {

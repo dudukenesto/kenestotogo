@@ -70,20 +70,20 @@ class KenestoLauncher extends React.Component {
 
 
 
-        var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: actions.login, updateIsFetching : actions.updateIsFetching});
+        var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: actions.login, updateIsFetching : actions.updateIsFetching, _handleNavigate : this.props._handleNavigate});
         
     
          creadetiails.then(function(storedCredentials) {
 
-        
+       //      storedCredentials.props.dispatch(storedCredentials.props.login("scott@kenestodemo.com", "!QAZ@WSX" , storedCredentials.env));
+             
             if (storedCredentials.hasCredentials)
             {
-              //  alert(this.props.isFetching)
                storedCredentials.props.dispatch(storedCredentials.props.login(storedCredentials.storedUserName, storedCredentials.storedPassword, storedCredentials.env));
             }
             else{
-            
                 storedCredentials.props.dispatch(storedCredentials.props.updateIsFetching(false));
+              
             }
         });
 
