@@ -209,7 +209,6 @@ class KenestoTagAutocomplete extends Component {
   _onFocus() {
     this.setState({ showList: true });
     this.props.onShowTagsList();
-    // this.refs.focusImitation.stopAnimation();
   }
 
   _onChangeText(text) {
@@ -337,7 +336,6 @@ class KenestoTagAutocomplete extends Component {
   }
 
   render() {
-    // console.log('\n\n\n\n\n\n ================== MY LOG START ==================  \n\n\n\n\n\n')
     const { placeholder, containerStyle, inputContainerStyle, textInputStyle, tagTemplate } = this.props;
     var flex = (this.state.showList) ? { flex: 1 } : { flex: 0 }
 
@@ -437,15 +435,6 @@ const styles = StyleSheet.create({
     height: 31,
     maxWidth: 295
   },
-  // focusImitation: {
-  //   borderWidth: 1, 
-  //   position: 'absolute', 
-  //   left: 33, 
-  //   bottom: 11, 
-  //   height: 19, 
-  //   zIndex: -1,
-  //   opacity: 0    
-  // }
 
 });
 
