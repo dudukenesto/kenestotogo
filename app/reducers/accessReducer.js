@@ -70,7 +70,7 @@ function accessReducer(state =
         email: action.email,
         firstName: action.firstName,
         lastName: action.lastName,
-        thumbnailPath: action.thumbnailPath
+        thumbnailPath: action.thumbnailPath + "?t=" + Date.now()
       }
 
     }

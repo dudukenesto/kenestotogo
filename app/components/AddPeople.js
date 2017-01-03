@@ -158,7 +158,7 @@ class AddPeople extends Component {
       <View style={styles.autocompleteRow}>
         {searchedtext}
         <View style={[styles.roundIcon, {marginLeft: 10}]}>
-            {iconType == 'icon' ? <Icon name={iconName} style={styles.iconMedium} /> : <Image source = {{ uri: iconName }} style={styles.thumbnail} />}
+            {iconType == 'icon' ? <Icon name={iconName} style={styles.iconMedium} /> : <Image source = {{ uri: rowData.ThumbnailPath }} style={styles.thumbnail} />}
           </View>
       </View>
     )
@@ -170,7 +170,7 @@ class AddPeople extends Component {
     return (
       <View style={styles.tagInnerContainer}>
         <View style={[styles.roundIcon, { marginLeft: -5.5 }]}>
-          {tag.iconType == 'icon' ? <Icon name={tag.iconName} style={styles.iconMedium} /> : <Image source = {{ uri: tag.iconName }} style={styles.thumbnail} />}
+          {tag.iconType == 'icon' ? <Icon name={tag.iconName} style={styles.iconMedium} /> : <Image source = {{ uri: tag.ThumbnailPath }} style={styles.thumbnail} />}
         </View>
         <View><Text style={styles.tagText} numberOfLines={1}>{tag.tagName}</Text></View>
         <Icon name="close" style={styles.closeIcon} onPress={removeTag.bind(this, tag)} />
@@ -241,9 +241,7 @@ class AddPeople extends Component {
   renderCurrentPermissions() {
 
     var permissions = this.state.UsersPermissions.map(function (permission) {
-
       var iconName;
-      var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
       if (!permission.ThumbnailPath) {
         if (permission.IsGroup) {
           iconName = 'group';
@@ -257,7 +255,7 @@ class AddPeople extends Component {
       return (
         <View style={styles.sharingRow} key={permission.UserId}>
           <View style={styles.roundIcon}>
-            {!permission.ThumbnailPath ? <Icon name={iconName} style={styles.iconMedium} /> : <Image source = {{ uri: uri }} style={styles.thumbnail} />}
+            {!permission.ThumbnailPath ? <Icon name={iconName} style={styles.iconMedium} /> : <Image source = {{ uri: permission.ThumbnailPath }} style={styles.thumbnail} />}
           </View>
           <View style={{ maxWidth: textWidth }}>
             <Text key={permission.ParticipantUniqueID} numberOfLines={1}>{permission.Name}</Text>
