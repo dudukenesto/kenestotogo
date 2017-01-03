@@ -9,7 +9,7 @@ import * as navActions from '../actions/navActions'
 import {createFolder} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-
+import { getDocumentsContext } from '../utils/documentsUtils'
 var styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -100,7 +100,7 @@ class CreateFolder extends React.Component {
            this.props.closeCreateFolder();
             this.props.dispatch(navActions.updateIsProcessing(true));
            setTimeout(() => {
-               this.props.dispatch(createFolder(this.state.folderName, this.state.isVault));
+               this.props.dispatch(createFolder(this.state.folderName, this.state.isVault || this.props.isParentVault));
            }, 100); 
 
 
@@ -141,8 +141,8 @@ class CreateFolder extends React.Component {
                     <Text style={styles.textEdit}>Vault folder</Text>
                     <Switch
                         onValueChange={(value) => this.setState({ isVault: value }) }
-                        // style={{ j}}
-                        value={this.state.isVault} />
+                        disabled={this.props.isParentVault}
+                        value={this.state.isVault || this.props.isParentVault} />
                 </View>
                 <View style={styles.buttonsContainer}>
                     <Button onPress={this.create.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
@@ -157,10 +157,11 @@ class CreateFolder extends React.Component {
 
  
 function mapStateToProps(state) {    
-  
+
+ var documentlist = getDocumentsContext(state.navReducer);
 
   return {
-   // folderId : state.documentlist.fId,
+    isParentVault : documentlist.isVault,
     creatingFolder : state.documentsReducer.creatingFolder
   }
 }
