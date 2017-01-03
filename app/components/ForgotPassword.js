@@ -16,6 +16,8 @@ var Email = Tcomb.refinement(Tcomb.String, function (s) {
   return /\S+@\S+\.\S+/.test(s);
 });
 Email.getValidationErrorMessage = function (value, path, context) {
+  if (value == null)
+     return 'The Email address field is required'; 
   return 'Email Address is not valid';
 };
 
