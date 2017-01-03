@@ -116,7 +116,7 @@ class Error extends React.Component {
                     </View>
                     
                     <View style={styles.buttonsContainer}>
-                        <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>ok</Button>
+                        <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Ok</Button>
                     </View>
                         
                 </View>
