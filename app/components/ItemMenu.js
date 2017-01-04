@@ -272,7 +272,7 @@ class ItemMenu extends React.Component {
     }
 
     _renderDeleteAction(document) {
-        if (this.props.documentsReducer.selectedObject.permissions.IsOwnedByRequestor) {
+        if (this.props.documentsReducer.selectedObject.permissions.AllowDelete) {
             return (<TouchableHighlight onPress={this.deleteDocument.bind(this)} underlayColor="#E9EAEC">
                 <View style={styles.actionHolder}>
                     <Icon name="delete" style={styles.icon} />
@@ -397,7 +397,6 @@ class ItemMenu extends React.Component {
     }
 
     render() {
-
         var elementIcon;
         const {navReducer} = this.props
         var currRouteData = getDocumentsContext(navReducer);

@@ -85,7 +85,7 @@ class Documents extends Component {
         return true;
   }
 
-  componentDidMount() {
+  componentDidUpdate(prevProps, prevState) {
     const {documentsReducer, navReducer} = this.props
 
      
