@@ -116,7 +116,16 @@ class NavRoot extends Component {
   //   //   this._closeDrawer();
   //   //   return true;
   //   // }
-   if (this.props.uiReducer.isDrawerOpen){
+
+   if (this.props.uiReducer.showDropDown){
+        this.props.dispatch(uiActions.forceCloseDropdownOptions()); 
+        return true;
+   }
+   if (this.props.uiReducer.openedDialogModalref != ''){
+     this.props.closeModal(this.props.uiReducer.openedDialogModalref)
+      return true; 
+   }
+  if (this.props.uiReducer.isDrawerOpen){
      this._closeDrawer();
      return true;
    }
@@ -127,14 +136,6 @@ class NavRoot extends Component {
    if (this.props.uiReducer.isSearchboxOpen){
        this.props.hideSearchBox();
        return true;
-   }
-   if (this.props.uiReducer.showDropDown){
-        this.props.dispatch(uiActions.forceCloseDropdownOptions()); 
-        return true;
-   }
-   if (this.props.uiReducer.openedDialogModalref != ''){
-     this.props.closeModal(this.props.uiReducer.openedDialogModalref)
-      return true; 
    }
     else {
       if (this.props.navigation.routes[this.props.navigation.routes.length - 1].key == 'forgotPassword') {
