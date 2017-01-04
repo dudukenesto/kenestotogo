@@ -121,7 +121,10 @@ class CreateFolder extends React.Component {
 
         this.state = {
             isVault: false,
-            folderName: '',
+            value:{
+                 folderName: ''
+            },   
+          
         };
 
        // alert(this.state.folderName)
@@ -136,12 +139,14 @@ class CreateFolder extends React.Component {
             return false; // value here is an instance of Person
         }
 
-       if (this.state.folderName != '') {
+        var {folderName} = this.state.value;
+
+       if (folderName != '') {
            // this.props.setCreateFolderStyle();
            this.props.closeCreateFolder();
             this.props.dispatch(navActions.updateIsProcessing(true));
            setTimeout(() => {
-               this.props.dispatch(createFolder(this.state.folderName, this.state.isVault || this.props.isParentVault));
+               this.props.dispatch(createFolder(folderName, this.state.isVault || this.props.isParentVault));
            }, 100); 
 
 
@@ -149,7 +154,7 @@ class CreateFolder extends React.Component {
     }
 
      onChange(value) {
-        this.setState({folderName: value});
+            this.setState({value});
     }
 
     render(){
@@ -185,7 +190,7 @@ class CreateFolder extends React.Component {
                     <Form
                         ref="form"
                         type={inputFolder}
-                        value={this.state.folderName}
+                        value={this.state.value}
                         onChange={this.onChange.bind(this)}
                         options={options}
                     />
