@@ -35,7 +35,7 @@ var DocumentUploadCell = require('../components/DocumentUploadCell');
 const splitChars = '|';
 
 import _ from "lodash";
-import { fetchTableIfNeeded, refreshTable } from '../actions/documentsActions'
+import { fetchTableIfNeeded, refreshTable,getDocumentPermissions } from '../actions/documentsActions'
 import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
@@ -50,7 +50,8 @@ class Documents extends Component {
 
     this.state = {
       isFetchingTail: false, 
-      uploadItemsLength : 0  
+      uploadItemsLength : 0,
+      AllowUpload: true
       
     }
 
@@ -75,6 +76,11 @@ class Documents extends Component {
 
   componentWillMount() {
     const {dispatch} = this.props
+    if(this.props.data.fId != '')
+    { 
+        dispatch(getDocumentPermissions(this.props.data.fId, "FOLDER"))
+    }
+       
     dispatch(fetchTableIfNeeded())
   }
 
@@ -87,8 +93,10 @@ class Documents extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {documentsReducer, navReducer} = this.props
+    const allowUpload = typeof(documentsReducer.selectedObject) != 'undefined' ? documentsReducer.selectedObject.permissions.AllowUpload || this.props.data.fId == '' : true;
+    if (allowUpload != this.state.AllowUpload)
+       this.setState({AllowUpload : allowUpload});
 
-     
 
     var documentlist = getDocumentsContext(navReducer);
     this._showStatusBar()
@@ -103,9 +111,8 @@ class Documents extends Component {
         })
         let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]);
         if (dataSource.getSectionLengths(0) != '' && !documentlist.isSearch) {
-              console.log('scrolling to top')
                this.scrollToTop(); 
-              this.setState({ uploadItemsLength :documentsReducer[documentlist.catId].uploadItems.length })
+              this.setState({ uploadItemsLength :documentsReducer[documentlist.catId].uploadItems.length})
              
               
         }
@@ -232,7 +239,9 @@ class Documents extends Component {
 
 
   openModal() {
-    //this.refs.modal3.open();
+    if (!this.state.AllowUpload)
+      return false; 
+
     this.context.plusMenuContext.open();
     this.props.dispatch(uiActions.setOpenModalRef('modalPlusMenu'))
   }
@@ -355,14 +364,15 @@ class Documents extends Component {
       const isFetching = documentsReducer.isFetching;
       var additionalStyle = {};
       let showCustomButton = documentlist.isSearch ? false : true
-
+      const buttonColor = this.state.AllowUpload ? "#FF811B" : "#d3d3d3"
       return (
 
         <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
           <View style={styles.separator} elevation={5} />
-
+    
           {this._renderTableContent(isFetching)}
-          {showCustomButton ? <ActionButton buttonColor="#FF811B" onPress={() => this.openModal()} >
+          
+          {showCustomButton ? <ActionButton style={ {opacity : 0.1} }  buttonColor={buttonColor} onPress={() => this.openModal()} >
           </ActionButton> : <View></View>}
 
         </ViewContainer>
