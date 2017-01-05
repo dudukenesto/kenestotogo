@@ -42,7 +42,7 @@ let styles = StyleSheet.create({
     },
     actionName: {
         textAlign: "center",
-        fontSize: 14,
+        fontSize: 13,
         color: "#000", 
     },
     
@@ -170,12 +170,12 @@ class PlusMenu extends React.Component{
             <View style={styles.container}>
                 <View style={styles.actionHolder}>
                     <Icon name="create-new-folder" style={styles.actionButtonIcon} onPress={this.addFolder.bind(this)} />
-                    <Text style={styles.actionName}>New Folder</Text>
+                    <Text style={styles.actionName}>Add Folder</Text>
                 </View>
                 
                 <View style={styles.actionHolder}>
                     <Icon name="file-upload" style={styles.actionButtonIcon} onPress={()=> {this.selectFromLib.bind(this)(false)}}/>
-                    <Text style={styles.actionName}>Upload File</Text>
+                    <Text style={styles.actionName}>Add Document</Text>
                 </View>
                 
                 <View style={styles.actionHolder}>

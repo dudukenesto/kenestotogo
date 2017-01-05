@@ -120,7 +120,7 @@ class UpdateVersions extends React.Component {
             <View style={styles.container}>                
                 <View style={styles.actionHolder}>
                     <Icon name="file-upload" style={styles.actionButtonIcon} onPress={()=> {this.selectFromLib.bind(this)(true)}}/>
-                    <Text style={styles.actionName}>Upload File</Text>
+                    <Text style={styles.actionName}>Update Version</Text>
                 </View>
                 
                 <View style={styles.actionHolder}>

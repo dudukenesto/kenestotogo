@@ -184,7 +184,7 @@ class CreateFolder extends React.Component {
            
             <View style={styles.container}>
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>Create a new folder</Text>
+                    <Text style={styles.title}>Add Folder</Text>
                 </View>
                 <View style={styles.form}>
                     <Form
