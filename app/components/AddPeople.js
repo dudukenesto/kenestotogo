@@ -172,7 +172,7 @@ class AddPeople extends Component {
         <View style={[styles.roundIcon, { marginLeft: -5.5 }]}>
           {tag.iconType == 'icon' ? <Icon name={tag.iconName} style={styles.iconMedium} /> : <Image source = {{ uri: tag.ThumbnailPath }} style={styles.thumbnail} />}
         </View>
-        <View><Text style={styles.tagText} numberOfLines={1}>{tag.tagName}</Text></View>
+        <View style={{maxWidth: width - 132}}><Text style={styles.tagText} numberOfLines={1}>{tag.tagName}</Text></View>
         <Icon name="close" style={styles.closeIcon} onPress={removeTag.bind(this, tag)} />
       </View>
     )
