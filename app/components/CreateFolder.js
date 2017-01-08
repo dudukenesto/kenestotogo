@@ -113,6 +113,9 @@ var styles = StyleSheet.create({
         fontSize: 16,
         marginRight: 40
     },
+    form: {
+        alignSelf: 'stretch'
+    }
 });
 
 class CreateFolder extends React.Component {
