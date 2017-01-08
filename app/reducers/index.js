@@ -1,16 +1,16 @@
 import { combineReducers } from 'redux'
 import navReducer from './navReducer'
-import documentlist from './documentlist'
-import documentlists from './documentlists'
+import documentsReducer from './documentsReducer'
 import tabReducer from './tabReducer'
 import accessReducer from './accessReducer'
-
+import peopleReducer from './peopleReducer'
+import uiReducer from './uiReducer'
 const rootReducer = combineReducers({
-  tabReducer,
   navReducer, 
   accessReducer,
-  documentlist,
-  documentlists
+  documentsReducer, 
+  peopleReducer, 
+  uiReducer
 })
 
 export default rootReducer

@@ -19,8 +19,19 @@ export function getAuthUrl(env: string,username: string, password: string){
     if (urls == null)
         return null;
 
-    var authUrl = urls.AuthUrlTemplate.replace('{0}', username).replace('{1}', password);
+    var authUrl = urls.AuthUrlTemplate.replace('{0}', username.trim()).replace('{1}', password.trim());
     return authUrl;
+
+}
+
+export function getEnvIp(env: string){
+
+    var urls = _.find(config.urls, {'env' : env});
+
+    if (urls == null)
+        return null;
+
+    return urls.Ip;
 
 }
 
@@ -41,6 +52,17 @@ export function getLoginUrl(env: string, orgId: string, token : Object){
 
   return urls.LoginUrlTemplate.replace('{0}', orgId).replace('{1}',  stricturiEncode(token));
 
+}
+
+
+export function getRetrieveStatisticsUrl(env: string, sessionToken: string, tenantId: string) {
+  var urls = _.find(config.urls, { 'env': env });
+  var apiBaseUrl = urls.ApiBaseUrl;
+  var url
+  if (urls == null)
+    return null;
+  
+  return `${apiBaseUrl}/KDocuments.svc/RetrieveStatistics?t=${sessionToken}&tid=${tenantId}`
 }
 
 export function clearCredentials()
@@ -67,7 +89,7 @@ export async function getCredentials(props: Object) : Object{
           if (storedPassword != null && storedUserName != null)
                {
                 
-                   return   { hasCredentials: true, storedUserName : storedUserName, storedPassword : storedPassword, env : env, props: props};
+                   return   { hasCredentials: true, storedUserName : storedUserName, storedPassword : storedPassword, env : env, props: props, _handleNavigate: props._handleNavigate};
                }
                else
                     return { hasCredentials: false,  props: props};

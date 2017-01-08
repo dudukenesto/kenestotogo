@@ -1,9 +1,14 @@
-export const documentsRoute = {
-  type: 'push',
-  route: {
-    key: 'documents',
-    title: 'documents'
-  }
+export function documentsRoute(data) {
+  return (
+    {
+      type: 'push',
+      route: {
+        key: data.key,
+        title: 'documents',
+        data: data
+      }
+    }
+  )
 }
 
 export const loginRoute = {
@@ -14,6 +19,7 @@ export const loginRoute = {
   }
 }
 
+
 export const forgotPasswordRoute = {
   type: 'push',
   route: {
@@ -23,18 +29,43 @@ export const forgotPasswordRoute = {
   }
 }
 
+
+
 export function documentRoute(data) {
   return (
     {
       type: 'push',
       route: {
-        key: 'document',
-        data:data
+        key: "document",
+        data: data
       }
     }
 
   );
-
- 
 }
+export function addPeopleRoute(data) {
+  return (
+    {
+      type: 'push',
+      route: {
+        key: "addPeople",
+        data: data
+      }
+    }
+
+  )
+};
+
+export function scanRoute(data) {
+  return(
+    {  type: 'push',
+      route: {
+        key: 'scan',
+        title: 'scan',
+        data: data
+      }
+    }
+  )
+}
+
 

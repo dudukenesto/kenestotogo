@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import {View,
+import {
+  View,
+  ScrollView,
   Text,
   TextInput,
   StyleSheet,
@@ -13,93 +15,131 @@ import {View,
   ActivityIndicator,
   RefreshControl
 } from 'react-native'
-
+import { emitToast, clearToast,updateIsProcessing } from '../actions/navActions'
+import * as uiActions from '../actions/uiActions'
+import ProggressBar from "../components/ProgressBar";
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { createIconSetFromFontello } from 'react-native-vector-icons'
+import fontelloConfig from '../assets/icons/config.json';
 import * as constans from '../constants/GlobalConstans'
-
+import Button from "react-native-button";
 import InteractionManager from 'InteractionManager'
-
-let deviceWidth = Dimensions.get('window').width
-let deviceHeight = Dimensions.get('window').height
+import { getDownloadFileUrl, getIconNameFromMimeType, getViewerUrl } from '../utils/documentsUtils'
+import { writeToLog } from '../utils/ObjectUtils'
+import { getEnvIp } from '../utils/accessUtils'
 
 var dismissKeyboard = require('dismissKeyboard');
 var DocumentCell = require('../components/DocumentCell');
+var DocumentUploadCell = require('../components/DocumentUploadCell');
+
 const splitChars = '|';
 
 import _ from "lodash";
-import {fetchTableIfNeeded, refreshTable, changeTable} from '../actions/documentlists'
-import {updateDocumentList} from '../actions/documentlist'
+import { fetchTableIfNeeded, refreshTable,getDocumentPermissions } from '../actions/documentsActions'
 import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
 import * as routes from '../constants/routes'
-import Button from './Button'
 
-// const Documents = ({_goBack}) => (
-//   <View style={styles.container}>
-//     <Text style={styles.title}>Documents page</Text>
-//     <Button onPress={_goBack} label='Go Back' />
-//   </View>
-// )
+import { getDocumentsContext, getDocumentsTitle } from '../utils/documentsUtils'
 
 class Documents extends Component {
   constructor(props) {
     super(props)
+    this.documentsProps = this.props.data
+
     this.state = {
-      isFetchingTail: false
+      isFetchingTail: false, 
+      uploadItemsLength : 0,
+      AllowUpload: true
+      
     }
-    this.foldersTrail = [];
+
     this.onEndReached = this.onEndReached.bind(this)
     this.selectItem = this.selectItem.bind(this)
     this._onRefresh = this._onRefresh.bind(this)
-    this._onGoBack = this._onGoBack.bind(this)
+    // this._onSort = this._onSort.bind(this)
   }
 
-  getCategoryName(categoryType)
-  {
-    switch (categoryType) {
-      case constans.ALL_DOCUMENTS:
-        return "All Documents"
+
+  getSortByName(sortBy) {
+    switch (sortBy) {
+      case constans.ASSET_NAME:
+        return "Name"
+      case constans.MODIFICATION_DATE:
+        return "Modification Date"
       default:
         return "";
     }
   }
 
- getBaseCatId(categoryType)
-  {
-    switch (categoryType) {
-      case constans.ALL_DOCUMENTS:
-        return "All Documents"
-      default:
-        return "";
-    }
-  }
+
   componentWillMount() {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
+    const {dispatch} = this.props
+    if(this.props.data.fId != '')
+    { 
+        dispatch(getDocumentPermissions(this.props.data.fId, "FOLDER"))
+    }
+       
+    dispatch(fetchTableIfNeeded())
   }
 
-  componentWillReceiveProps(nextProps) {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-    if (documentlist.catId !== nextProps.documentlist.catId) {
-      dispatch(changeTable(env, sessionToken, nextProps.documentlist));
+  shouldComponentUpdate(nextProps, nextState){
+      const {navReducer} = nextProps
+      if (navReducer.routes[navReducer.index].key.indexOf('documents') == -1)
+         return false; 
+        return true;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {documentsReducer, navReducer} = this.props
+    const allowUpload = typeof(documentsReducer.selectedObject) != 'undefined' ? documentsReducer.selectedObject.permissions.AllowUpload || this.props.data.fId == '' : true;
+    if (allowUpload != this.state.AllowUpload)
+       this.setState({AllowUpload : allowUpload});
+
+
+    var documentlist = getDocumentsContext(navReducer);
+    this._showStatusBar()
+    if (documentlist.catId in documentsReducer) {
+
+    if(documentsReducer[documentlist.catId].uploadItems.length > this.state.uploadItemsLength)
+    {   
+          let ds = new ListView.DataSource({
+          rowHasChanged: (r1, r2) => {
+            r1["Id"] !== r2["Id"] || r1["uploadStatus"] !== r2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
+          }
+        })
+        let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]);
+        if (dataSource.getSectionLengths(0) != '' && !documentlist.isSearch) {
+               this.scrollToTop(); 
+              this.setState({ uploadItemsLength :documentsReducer[documentlist.catId].uploadItems.length})
+             
+              
+        }
+
     }
+   
+
+    }
+
+
   }
 
   onEndReached() {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(fetchTableIfNeeded(env, sessionToken, documentlist))
+    const {dispatch} = this.props
+    dispatch(fetchTableIfNeeded())
   }
 
 
   selectItem(document) {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-
-    if (document.FamilyCode == 'FOLDER') {
+    const {dispatch, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    if (document.FamilyCode == 'UPLOAD_PROGRESS')
+      return false;
+    else if (document.FamilyCode == 'FOLDER') {
       var newId;
       var newName = document.Name;
       var fId = document.Id;
- 
       if (documentlist.catId.indexOf(splitChars) >= 0) {
         var dtlStr = documentlist.catId.split(splitChars);
         var newId = `${dtlStr[0]}${splitChars}${document.Id}`//i.e all_docuemnts|{folderID}
@@ -108,25 +148,36 @@ class Documents extends Component {
         var newId = `${documentlist.catId}${splitChars}${document.Id}`
       }
 
-
-      var folderT = new Object(); 
-        folderT.catId = newId;
-        folderT.name = newName;
-        folderT.fId = fId;
-        this.foldersTrail.push(folderT);
-
-      dispatch(updateDocumentList(newId, newName, fId))
+      var data = {
+        key: "documents|" + fId,
+        name: newName,
+        catId: newId,
+        fId: fId,
+        sortDirection: constans.ASCENDING,
+        sortBy: constans.ASSET_NAME,
+        isVault: document.IsVault, 
+        isSearch: false
+      }
+      this.props._handleNavigate(routes.documentsRoute(data));
     }
     else {
 
       var data = {
-        title: document.Name,
-        id: document.Id,
-        viewerUrl: document.ViewerUrl
+        key: "document",
+        name: document.Name,
+        documentId: document.Id,
+        familyCode: document.FamilyCode,
+        catId: documentlist.catId,
+        fId: documentlist.fId,
+        viewerUrl: getViewerUrl(this.props.env, document, this.props.navReducer.orientation),
+        isExternalLink: document.IsExternalLink,
+        isVault: document.IsVault,
+        ThumbnailUrl: document.ThumbnailUrl,
+        env: this.props.env,
+        dispatch: this.props.dispatch
       }
       this.props._handleNavigate(routes.documentRoute(data));
     }
-
   }
 
   onSearchChange(event) {
@@ -146,74 +197,112 @@ class Documents extends Component {
       style = [style, styles.rowSeparatorHide];
     }
     return (
-      <View key={'SEP_' + sectionID + '_' + rowID}  style={style}/>
+      <View key={'SEP_' + sectionID + '_' + rowID} style={style} />
     );
   }
 
 
-  _onGoBack() {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-    var baseCatId ;
-     if (documentlist.catId.indexOf(splitChars) >= 0) {
-        var dtlStr = documentlist.catId.split(splitChars);
-        var baseCatId = dtlStr[0];
-      }
-      else
-      {
-        baseCatId = documentlist.catId;
-      }
-     
-    this.foldersTrail.pop();
-      
-    var catId = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].catId: baseCatId;
-    var name = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].name: this.getCategoryName(baseCatId);
-     var fid = this.foldersTrail.length > 0 ? this.foldersTrail[this.foldersTrail.length-1].fId: "";
-    
-    dispatch(updateDocumentList(catId, name, fid))
-  }
 
   _onRefresh(type, message) {
-    const {dispatch, env, sessionToken, documentlist} = this.props
-    dispatch(refreshTable(env, sessionToken, documentlist))
+    const {dispatch, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    dispatch(refreshTable(documentlist, false))
   }
 
-  _renderBreadCrums() {
-    const {dispatch, env, sessionToken, documentlist, documentlists} = this.props
-
-    const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false;
-    const showBreadCrums = this.foldersTrail.length > 0 ? true : false;
-
-    if (!isFetching && showBreadCrums) {
-
-      var parentName =  this.foldersTrail.length > 1 ? this.foldersTrail[this.foldersTrail.length-1].name : this.getCategoryName(constans.ALL_DOCUMENTS);
-      return (
-        <View>
-          <TouchableOpacity style={styles.backButton} onPress={this._onGoBack.bind(this) }>
-            <Text style={styles.backLabel}>Go to {parentName} Page</Text>
-          </TouchableOpacity>
-        </View>)
-    }
-    else {
-      return null;
-    }
-  }
+  // _onSort(sortDirection, sortBy) {
+  //   const {dispatch} = this.props
+  //   var documentlist = getDocumentsContext(this.props);
+  //   documentlist.sortDirection = sortDirection;
+  //   documentlist.sortBy;
+  //   dispatch(refreshTable(documentlist));
+  // }
 
   _renderSectionHeader(sectionData, sectionID) {
 
     return (
-
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionLabel}>{sectionData}</Text>
       </View>
     )
   }
-  _renderTableContent(dataSource, isFetching) {
-    if (dataSource.getRowCount() === 0) {
+
+  _showStatusBar() {
+    const {documentsReducer, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    const hasError = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].hasError : false;
+    const errorMessage = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].errorMessage : "";
+    if (hasError && this.refs.masterView != undefined) {
+      //this.refs.masterView.showMessage("success", errorMessage);
+      this.props.dispatch(emitToast(constans.ERROR, "Error loading documents list"));
+      this.peops.dispatch(clearToast());
+    }
+  }
+
+
+  openModal() {
+
+    if (!this.props.isConnected){
+        this.props.dispatch(emitToast("info", "No internet connection")); 
+        return false;
+    }
+    if (!this.state.AllowUpload)
+      return false; 
+
+    this.context.plusMenuContext.open();
+    this.props.dispatch(uiActions.setOpenModalRef('modalPlusMenu'))
+  }
+
+  scrollToTop() {
+    const {documentsReducer, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    if (documentsReducer[documentlist.catId].uploadItems.length > 0) {
+      var uploadingScrollPosition = documentsReducer[documentlist.catId].uploadItems.length > 3 ? (documentsReducer[documentlist.catId].uploadItems.length - 1) * 67 + 52 : 0;
+      this.refs.listview.scrollTo({ y: uploadingScrollPosition })
+    }
+
+  }
+
+  scrollToItem(id) {
+    const {documentsReducer, navReducer, dispatch} = this.props;
+    var documentlist = getDocumentsContext(navReducer);
+    try {
+      const documents = documentsReducer[documentlist.catId].items;
+      const document = documents.find(d => (d.Id === id));
+      if (typeof (document) != 'undefined') {
+
+        const index = documents.indexOf(document);
+        const sectionHeaderHeights = index > 0 && documents[0].FamilyCode != document.FamilyCode ? 104 : 52
+        const position = index * 67 + sectionHeaderHeights;
+        this.refs.listview.scrollTo({ y: position });
+      }
+
+    }
+    catch (err) {
+      writeToLog("", constans.ERROR, `function scrollToItem - Failed! `, err)
+    }
+
+  }
+
+
+  _renderTableContent(isFetching) {
+
+    const {documentsReducer, navReducer} = this.props
+    var documentlist = getDocumentsContext(navReducer);
+    let ds = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => {
+        r1["Id"] !== r2["Id"] || r1["uploadStatus"] !== r2["uploadStatus"] || r1["IsUploading"] !== r2["IsUploading"]
+      }
+    })
+ 
+    let dataSource = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].dataSource : ds.cloneWithRows([]);
+   
+    if (typeof dataSource.getSectionLengths == 'undefined' || dataSource.getSectionLengths(0) == '' || dataSource.getSectionLengths(0) == 0) {
+
       return (<NoDocuments
         filter={this.state.filter}
-        isLoading={isFetching}
-        onRefresh={this._onRefresh.bind(this) }
-        />)
+        isFetching={isFetching}
+        onRefresh={this._onRefresh.bind(this)}
+        documentlist={documentlist} />)
     }
     else {
       return (
@@ -222,21 +311,37 @@ class Documents extends Component {
           refreshControl={
             <RefreshControl
               refreshing={isFetching}
-              onRefresh={this._onRefresh.bind(this) }
+              onRefresh={this._onRefresh.bind(this)}
               />
           }
           enableEmptySections={true}
           renderSeparator={this.renderSeparator}
           dataSource={dataSource}
-          renderSectionHeader={this._renderSectionHeader.bind(this) }
+          renderSectionHeader={this._renderSectionHeader.bind(this)}
           renderRow={(document, sectionID, rowID, highlightRowFunc) => {
-            return (<DocumentCell
+
+            //alert('documents ' + this.props.isConnected)
+
+            var documentCell = document.FamilyCode == 'UPLOAD_PROGRESS' ? <DocumentUploadCell
               key={document.Id}
-              onSelect={this.selectItem.bind(this, document) }
-              //onHighlight={this.highlightRowFunc(sectionID, rowID)}
-              //onUnhighlight={this.highlightRowFunc(null, null)}
-              document={document}/>
-            )
+              onSelect={this.selectItem.bind(this, document)}
+              dispatch={this.props.dispatch}
+              document={document} documentsReducer={this.props.documentsReducer} /> :
+              <DocumentCell
+                key={document.Id}
+                onSelect={this.selectItem.bind(this, document)}
+                isConnected={this.props.isConnected}
+                dispatch={this.props.dispatch}
+                documentsReducer={this.props.documentsReducer}
+                document={document} />
+
+            return (documentCell)
+          } }
+          renderFooter={() => {
+            return <View style={{ height: 100 }}>
+
+
+            </View>
           } }
           onEndReached={this.onEndReached}
           automaticallyAdjustContentInsets={false}
@@ -244,185 +349,167 @@ class Documents extends Component {
           keyboardShouldPersistTaps={true}
           showsVerticalScrollIndicator={false}
           />
+
       )
     }
   }
 
+  // showToolBar(){
+  //   alert(this.context.toolBar)
+  //  // this.context.toolBar.fadeInDown();
+  // }
+  
 
 
   render() {
-    const {dispatch, documentlists, documentlist } = this.props
+   
+    try {
+      const {dispatch, documentsReducer, navReducer } = this.props
 
-    const isFetching = documentlist.catId in documentlists ? documentlists[documentlist.catId].isFetching : false
+      var documentlist = getDocumentsContext(navReducer);
+      //const isFetching = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].isFetching : false
+      const isFetching = documentsReducer.isFetching;
+      var additionalStyle = {};
+      let showCustomButton = documentlist.isSearch ? false : true
+      const buttonColor = this.state.AllowUpload ? "#FF811B" : "#d3d3d3"
+      return (
 
-    var items = documentlist.catId in documentlists ? documentlists[documentlist.catId].items : [],
-      length = items.length,
-      dataBlob = {},
-      sectionIDs = [],
-      rowIDs = [],
-      foldersSection,
-      docuemntsSection,
-      folders,
-      documents,
-      i,
-      j;
+        <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
+          <View style={styles.separator} elevation={5} />
+    
+          {this._renderTableContent(isFetching)}
+          
+          {showCustomButton ? <ActionButton style={ {opacity : 0.1} }  buttonColor={buttonColor} onPress={() => this.openModal()} >
+          </ActionButton> : <View></View>}
 
-
-    dataBlob["ID1"] = "Folders";
-    dataBlob["ID2"] = "Documents";
-
-    sectionIDs[0] = "ID1";
-    sectionIDs[1] = "ID2";
-
-    folders = _.filter(items, function (o) { return o.FamilyCode == 'FOLDER'; });
-    documents = _.filter(items, function (o) { return o.FamilyCode != 'FOLDER'; });
-
-    // console.log("Folders:"+JSON.stringify(folders))
-
-    // console.log("documents:"+JSON.stringify(documents))
-
-    rowIDs[0] = [];
-    for (j = 0; j < folders.length; j++) {
-      folder = folders[j];
-      // Add Unique Row ID to RowID Array for Section
-      rowIDs[0].push(folder.Id);
-
-      // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-      dataBlob['ID1:' + folder.Id] = folder;
+        </ViewContainer>
+      )
+    } catch (error) {
+      return null;
     }
 
-    rowIDs[1] = [];
-    for (j = 0; j < documents.length; j++) {
-      document = documents[j];
-      // Add Unique Row ID to RowID Array for Section
-      rowIDs[1].push(document.Id);
-
-      // Set Value for unique Section+Row Identifier that will be retrieved by getRowData
-      dataBlob['ID2:' + document.Id] = document;
-    }
-
-    var getSectionData = (dataBlob, sectionID) => {
-      return dataBlob[sectionID];
-    }
-
-    var getRowData = (dataBlob, sectionID, rowID) => {
-      return dataBlob[sectionID + ':' + rowID];
-    }
-    let ds = new ListView.DataSource({
-      getSectionData: getSectionData,
-      getRowData: getRowData,
-      rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2
-    })
-
-
-    let dataSource = documentlist.catId in documentlists ? ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs) : ds.cloneWithRows([])
-    var additionalStyle = {};
-
-    return (
-      <ViewContainer  ref="masterView" style={[styles.container, additionalStyle]}>
-        {this._renderBreadCrums() }
-        <View style={styles.separator} />
-
-        { isFetching &&
-          <View style={styles.progressbar}>
-            <ActivityIndicator styleAttr='Small' />
-          </View>
-        }
-
-        {this._renderTableContent(dataSource, isFetching) }
-        <ActionButton buttonColor="rgba(231,76,60,1)">
-          <ActionButton.Item buttonColor='#9b59b6' title="New Task" onPress={() => this._onRefresh('info', 'wawa ziba and his group') }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-          <ActionButton.Item buttonColor='#3498db' title="Upload" onPress={() => Actions.animated() }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-
-          <ActionButton.Item buttonColor='#1abc9c' title="New Folder" onPress={() => Actions.createFolder({ env: this.state.env, currentFolderId: this.state.folderId, sessionToken: this.props.sessionToken, afterCreateCallback: this._onRefresh, updateLoading: this.updateLoadingState }) }>
-            <Icon name="folder" style={styles.actionButtonIcon} />
-          </ActionButton.Item>
-        </ActionButton>
-      </ViewContainer>
-    )
   }
-}
 
+}
 
 
 var NoDocuments = React.createClass({
   render: function () {
-    var text = '';
-    if (this.props.filter) {
-      text = `No results for "${this.props.filter}"`;
-    } else if (!this.props.isLoading) {
-      // If we're looking at the latest documents, aren't currently loading, and
-      // still have no results, show a message
-      text = 'No documents found';
+    var text = 'No documents found';
+    if (this.props.isFetching) {
+      return (
+        <View style={[styles.container, styles.centerText]}>
+          <View style={styles.textContainer}>
+            <Text>Please wait...</Text>
+            <ProggressBar isLoading={true} />
+          </View>
+        </View>)
     }
+    else {
+      if (this.props.documentlist.isSearch) {
+        return (
+          <View style={[styles.container, styles.centerText]}>
+            <View style={styles.textContainer}>
+              <Text style={styles.noDocumentsText}>{text}</Text>
+            </View>
+          </View>
+        );
+      }
+      else {
+        return (
+          <View style={[styles.container, styles.centerText]}>
+            <View style={styles.textContainer}>
+              <Text style={styles.noDocumentsText}>{text}</Text>
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button onPress={this.props.onRefresh} containerStyle={styles.singleBtnContainer} style={styles.button}>Refresh</Button>
+            </View>
+          </View>
+        );
+      }
 
-    return (
-      <View style={[styles.container, styles.centerText]}>
-        <Text style={styles.noDocumentsText}>{text}</Text>
-        <Button onPress={this.props.onRefresh}>refresh</Button>
-      </View>
-    );
+    }
   }
 });
+
+
+
 
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    marginTop: 40
+    backgroundColor: '#F5F6F8',
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  buttonContainer: {
+    flex: 1,
   },
   centerText: {
     alignItems: 'center',
   },
   noDocumentsText: {
-    marginTop: 80,
     color: '#888888',
+    fontSize: 16
   },
   separator: {
     height: 1,
     backgroundColor: '#eeeeee',
   },
-  scrollSpinner: {
-    marginVertical: 20,
-  },
   rowSeparator: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: "#eee",
     height: 1,
-    marginLeft: 4,
   },
   rowSeparatorHide: {
     opacity: 0.0,
   },
-  backButton: {
-    marginTop: 15,
-    padding: 15,
-    backgroundColor: '#3C5773',
-    alignSelf: 'stretch'
-  },
-  backLabel: {
-    color: '#F4F4E9',
-    textAlign: 'center'
-  },
   actionButtonIcon: {
-    fontSize: 20,
+    fontSize: 24,
     height: 22,
     color: 'white',
   },
+  arrowButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: '#2f2f2f',
+  },
   sectionHeader: {
-    marginTop: 15,
     padding: 15,
+    paddingLeft: 20,
+    backgroundColor: '#F5F6F8',
+    alignSelf: 'stretch',
+  },
+  sortContainer: {
+    padding: 0,
     backgroundColor: '#eeeeee',
-    alignSelf: 'stretch'
+    flex: 0,
+    flexDirection: "row-reverse",
   },
   sectionLabel: {
     color: '#2f2f2f',
-    textAlign: 'center'
+    textAlign: 'left'
   },
+  singleBtnContainer: {
+    width: 140,
+    marginTop: 15,
+    justifyContent: "center",
+    height: 50,
+    backgroundColor: "#F5F6F8",
+    borderWidth: 0.5,
+    borderColor: "#BEBDBD"
+  },
+  button: {
+    color: "#666666",
+    fontWeight: "normal",
+    fontSize: 18,
+  }
 });
+
+Documents.contextTypes = {
+  plusMenuContext: React.PropTypes.object,
+  toolBar: React.PropTypes.object
+};
 
 export default Documents

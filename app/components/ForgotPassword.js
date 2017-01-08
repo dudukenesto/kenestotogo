@@ -1,5 +1,5 @@
 import React from "react";
-import {View, Text, TextInput, StyleSheet} from "react-native";
+import {View, Text, TextInput, StyleSheet, ScrollView} from "react-native";
 import Tcomb from "tcomb-form-native";
 import Button from "react-native-button";
 import config from '../utils/app.config';
@@ -7,6 +7,7 @@ import ProggressBar from "../components/ProgressBar";
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as accessActions from '../actions/Access'
+import * as navActions from '../actions/navActions'
 
 var stricturiEncode = require('strict-uri-encode');
 
@@ -15,44 +16,92 @@ var Email = Tcomb.refinement(Tcomb.String, function (s) {
   return /\S+@\S+\.\S+/.test(s);
 });
 Email.getValidationErrorMessage = function (value, path, context) {
-  return 'Email Address (Username) is not valid';
+  if (value == null)
+     return 'The Email address field is required'; 
+  return 'Email Address is not valid';
 };
 
+var _ = require('lodash');
+const formStylesheet = _.cloneDeep(Form.stylesheet);
 var User = Tcomb.struct({      
   username: Email,  //required email
 });
 var options = {
+    stylesheet: formStylesheet,
     fields: {
-    username: {
-    placeholder: 'Username',
-    label: ' ',
-    autoFocus: true
+        username: {
+            placeholder: 'email address',
+            label: ' ',
+            autoFocus: true,
+            placeholderTextColor: '#ccc',
+            underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
+        }
     }
- }
 };
+
+formStylesheet.textbox.normal = {
+    height: 50,            
+    fontSize: 17,
+}
+formStylesheet.textbox.error = {
+    height: 50,            
+    fontSize: 17,
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#F5FCFF",
+        backgroundColor: "#fff",
     },
-    buttons: {
-         flex: 1,
-        flexDirection: "row",
-        justifyContent: 'space-around',
+    titleContainer: {        
+        backgroundColor: "#F5FCFF",
+        alignItems: "center",
+        padding: 14,
+        borderBottomWidth: 2,
+        borderBottomColor: "#e6e6e6",
+        marginBottom: 14,
    },
-   input:{
-       padding:4,
-       height:40,
-       borderColor:'gray',
-       borderWidth:1,
-       borderRadius:6,
-       margin:5,
-       width:200,
-       alignSelf:'center'
-   }
+   title: {
+       color: "#000",
+       fontSize: 20,
+   },
+   form: {
+        padding: 40,
+   },
+   instructions: {
+        textAlign: "center",
+        fontSize: 17,
+        marginBottom: 32,
+   },
+    buttonsContainer: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        marginTop: 30,
+   },
+   singleBtnContainer: {
+        width: 135,
+        justifyContent: "space-around",
+        height: 50,
+        backgroundColor: "#F5F6F8",
+        borderWidth: 0.5,
+        borderColor: "#BEBDBD"
+   },
+   button: {
+        color: "#666666",
+        fontWeight: "normal",
+        fontSize: 18, 
+   },
+   messageContainer: {
+       flex: 1, 
+       justifyContent: "center",
+   },
+   message: {
+       textAlign: "center",
+        fontSize: 17,
+   },
+      
   
 });
 
@@ -86,14 +135,12 @@ const styles = StyleSheet.create({
             return false; // value here is an instance of Person
         }
 
-        this.props.dispatch(this.props.ActivateForgotPassword(username));
+        this.props.dispatch(accessActions.ActivateForgotPassword(username));
 
     }
-    
-
 
     _renderProgressBar(){
-        if (this.state.isLoading){
+        if (this.props.isFetching){
             return(
             <ProggressBar isLoading={true} />
             )
@@ -106,76 +153,52 @@ const styles = StyleSheet.create({
             }
         
         }
-   
-    _renderForgotPassword(){
-            
-        if (!this.props.passwordSent) {
-            return(  <View>
-                        <View style={styles.container}>
-                            <Text>Forgot Password</Text>
-                            {this._renderProgressBar()}
-                            <Text>Enter your email address to request a password reset</Text>
-                       </View>
-                        <Form
-                            ref="form"
-                            type={User}
-                            value={this.state.value}
-                            onChange={this.onChange.bind(this)}
-                            options={options}
-                        />
-                        <View style={styles.buttons}>
-                            <Button onPress={ () => this.props._goBack() }>Cancel</Button>
-                            <Button onPress={this._makeForgotPassword.bind(this)}>Reset Password</Button>
-                        </View>
-                    </View>)
-        }
-        else
-        {
-        return( <View>
-                <View style={styles.container}>
-                    <Text>Email was sent successfully</Text>
-                    <Text> Please check your email for further instructions...</Text>
-                </View>
-                <Button onPress={ () => this.props._goBack()}>Back to login screen</Button>
-            </View>)
-        }
-    }
 
     render(){
         return (
-            
+         <ScrollView style={{flex:1, backgroundColor: "#fff"}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={true}>
           <View style={[styles.container, this.props.style]}>
-            {this._renderForgotPassword()}
+            <View style={{flex: 1}}>
+                        <View style={styles.titleContainer}>
+                            <Text style={styles.title}>Forgot Password</Text>
+                        </View>
+                        <View style={styles.form}>
+                            {this._renderProgressBar()}
+                            <Text style={styles.instructions}>Enter your email address to request a password reset</Text>
+                       
+                            <Form
+                                ref="form"
+                                type={User}
+                                value={this.state.value}
+                                onChange={this.onChange.bind(this)}
+                                options={options}
+                            />
+                            <View style={styles.buttonsContainer}>
+                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={() => this.props._goBack()}>Cancel</Button>
+                                <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={this._makeForgotPassword.bind(this)}>Reset</Button>
+                            </View>
+                        </View>
+                    </View>
           </View>
-       
+       </ScrollView>
         );
     }
 }
 
 function mapStateToProps(state) {
-  const {isLoggedIn, env, hasError, errorMessage, isFetching, passwordSent  } = state.accessReducer; 
+  const {isLoggedIn, env, hasError, errorMessage, isFetching, passwordSent} = state.accessReducer; 
+  const accessReducer = state.accessReducer;
 
   return {
     isLoggedIn, 
     env, 
     isFetching,
     hasError,
-    passwordSent
+    passwordSent,
   }
 }
 
-function  matchDispatchToProps(dispatch) {
-
-    return bindActionCreators({
-        updateLoginInfo : accessActions.updateLoginInfo, 
-        login : accessActions.login, 
-        ActivateForgotPassword : accessActions.ActivateForgotPassword,
-        dispatch,
-       
-    }, dispatch)
-    
-}
 
 
 
-export default connect(mapStateToProps,matchDispatchToProps)(ForgotPassword)
+export default connect(mapStateToProps)(ForgotPassword)

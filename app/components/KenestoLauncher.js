@@ -3,10 +3,12 @@ import {View, Text, TextInput, StyleSheet, AsyncStorage, TouchableHighlight, Pix
 import Button from "react-native-button";
 import config from '../utils/app.config';
 import {clearCredentials, setCredentials, getCredentials} from '../utils/accessUtils';
+
 import ModalPicker from 'react-native-modal-picker'
 import ProggressBar from "../components/ProgressBar";
 import * as routes from '../constants/routes'
 import * as actions from '../actions/Access'
+import * as constans from '../constants/GlobalConstans'
 
 const styles = StyleSheet.create({
     container: {
@@ -46,30 +48,42 @@ class KenestoLauncher extends React.Component {
       
     }
 
-    componentWillReceiveProps(nextProps){
-        if (nextProps.isLoggedIn)
-        {
-            this.props._handleNavigate(routes.documentsRoute);
-        } 
-            
-    }
+    //   componentWillReceiveProps(nextProps) {
+    //       alert(nextProps.isLoggedIn)
+    //       if (nextProps.isLoggedIn) {
+    //           var data = {
+    //               key : "documents",
+    //               name: "All Documents",
+    //               catId: constans.ALL_DOCUMENTS,
+    //               fId: "",
+    //               sortDirection: constans.ASCENDING,
+    //               sortBy: constans.ASSET_NAME
+    //           }
+    //           this.props._handleNavigate(routes.documentsRoute(data));
+    //       }
+    //   }
 
 
 
 
    componentWillMount(){
 
-        var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: this.props.login, updateIsFetching : this.props.updateIsFetching});
 
+
+        var creadetiails = getCredentials({ dispatch: this.props.dispatch, login: actions.login, updateIsFetching : actions.updateIsFetching, _handleNavigate : this.props._handleNavigate});
+        
     
          creadetiails.then(function(storedCredentials) {
+
+       //      storedCredentials.props.dispatch(storedCredentials.props.login("scott@kenestodemo.com", "!QAZ@WSX" , storedCredentials.env));
+             
             if (storedCredentials.hasCredentials)
             {
                storedCredentials.props.dispatch(storedCredentials.props.login(storedCredentials.storedUserName, storedCredentials.storedPassword, storedCredentials.env));
             }
             else{
-            
                 storedCredentials.props.dispatch(storedCredentials.props.updateIsFetching(false));
+              
             }
         });
 
@@ -97,7 +111,7 @@ class KenestoLauncher extends React.Component {
                 <ModalPicker
                     data={data}
                     initValue="Select Environment"
-                    onChange={(option)=>{ this.props.dispatch(this.props.setEnv(option.key))}}
+                    onChange={(option)=>{ this.props.dispatch(actions.setEnv(option.key))}}
                     selectStyle={{backgroundColor:"white", borderColor:"#888", borderWidth:2/PixelRatio.get()}}
                     selectTextStyle={{color:"#ff6a00"}}
                     sectionStyle={{height:130}}
@@ -115,7 +129,7 @@ class KenestoLauncher extends React.Component {
     
    
     render(){
-            if ( (this.props.isLoggedIn == null || this.props.isLoggedIn == false) && this.props.isFetching)
+            if (this.props.isFetching)
             return(
                     <View {...this.props}  style={styles.container}>
                 <Text>Welcome to Kenesto</Text>

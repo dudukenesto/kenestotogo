@@ -1,6 +1,7 @@
 'use strict';
 var React = require('react');
 var ReactNative = require('react-native');
+import {connect} from 'react-redux'
 var {
   StyleSheet,
   Text,
@@ -8,20 +9,24 @@ var {
   TouchableWithoutFeedback,
   TouchableOpacity,
   View,
-  WebView
+  WebView,
+  Dimensions,
 } = ReactNative;
 import Button from './Button'
-import _ from "lodash";
+import {getEnvIp} from '../utils/accessUtils'
 var HEADER = '#3b5998';
 var BGWASH = 'rgba(255,255,255,0.8)';
 var DISABLED_WASH = 'rgba(255,255,255,0.25)';
-
+const window = Dimensions.get('window');
 var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
 import ProggressBar from "../components/ProgressBar";
-//import ViewTransformer from 'react-native-view-transformer';
-
-
+import WebViewBridge from 'react-native-webview-bridge';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {createResponder} from 'react-native-gesture-responder';
+import { writeToLog } from '../utils/ObjectUtils'
+import * as constans from '../constants/GlobalConstans'
+import * as navActions from '../actions/navActions'
 
 class Document extends React.Component{
   constructor(props){
@@ -32,86 +37,224 @@ class Document extends React.Component{
    
     this.state = {  
       isLoading: true,
-      scalingEnabled: true};
+      scalingEnabled: true,
+      prevPinch: null, 
+      pinchDirection : null, 
+      thumbnailUrl: this.props.data.ThumbnailUrl, 
+      toolbarVisible: true
+    };
+  }
+
+componentWillUnmount(){
+      if (!this.state.toolbarVisible)
+        this.showToolBar();
+  }
+
+componentWillMount(){
+//   console.log('window.height =' + window.height )
+//   var url = ""
+//   if (this.props.data.isExternalLink)
+//       var url =this.props.data.viewerUrl;
+//   else
+//      url = this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env)) + "&w=" + window.width + "&h=" + window.height;
+
+//  this.setState( {url : url });
+   
+ 
+
+
+
+  this.gestureResponder = createResponder({
+    onStartShouldSetResponder: (evt, gestureState) => true,
+    onStartShouldSetResponderCapture: (evt, gestureState) => true,
+    onMoveShouldSetResponder: (evt, gestureState) => true,
+    onMoveShouldSetResponderCapture: (evt, gestureState) => true,
+    onResponderGrant: (evt, gestureState) => { },
+    onResponderMove: (evt, gestureState) => {
+
+      if (typeof (gestureState.pinch) != 'undefined' && typeof (gestureState.previousPinch) != 'undefined') {
+        var diff = gestureState.pinch - gestureState.previousPinch;
+        if (this.state.zoomCorrection == null) {
+          this.setState({ zoomCorrection: 1 })
+        }
+        if (this.state.startPinch == null) {
+          this.setState({
+            startPinch: gestureState.pinch,
+          })
+        }
+
+        const absDistance = Math.round(gestureState.pinch - this.state.startPinch);
+        const mod = absDistance % 5;
+        if (mod == 0) {
+          console.log('set zoom:', Math.round(gestureState.pinch / this.state.startPinch * 100 * this.state.zoomCorrection)== Infinity? 100 * this.state.zoomCorrection : Math.round(gestureState.pinch / this.state.startPinch * 100 * this.state.zoomCorrection), this.state.zoomCorrection)
+          
+          const zoom = Math.round(gestureState.pinch / this.state.startPinch * 100) == Infinity? 100 : Math.round(gestureState.pinch / this.state.startPinch * 100);
+          if(zoom * this.state.zoomCorrection < 25){
+            this.setZoom(25);
+          }
+          else if (zoom * this.state.zoomCorrection > 400){
+            this.setZoom(400);
+          }
+          else {
+            this.setZoom(zoom * this.state.zoomCorrection);
+          }         
+          this.setState({
+            tempPinch: gestureState.pinch,
+          })
+        }
+      }
+    },
+
+    onResponderTerminationRequest: (evt, gestureState) => false,
+    onResponderRelease: (evt, gestureState) => {
+      let zoomCorrection = Math.round(this.state.tempPinch / this.state.startPinch * 100 * this.state.zoomCorrection)/100;
+      if (zoomCorrection < 0.25){
+        zoomCorrection = 0.25;
+      }
+      else if (zoomCorrection > 4){
+        zoomCorrection = 4;
+      }
+      if (gestureState.doubleTapUp) {
+        this.setZoom(100);
+        zoomCorrection = 1;
+      }
+      this.setState({
+        startPinch: null,
+         zoomCorrection: zoomCorrection
+      })
+    },
+
+    onResponderTerminate: (evt, gestureState) => {
+    },
+
+    onResponderSingleTapConfirmed: (evt, gestureState) => {
+  
+      if (this.state.toolbarVisible) {
+        this.hideToolBar();
+        //  this.props.dispatch(navActions.hideToolbar(true));
+      }
+
+      else {
+        this.showToolBar();
+        // this.props.dispatch(navActions.showToolbar(true));
+      }
+
+      this.setState({ toolbarVisible: !this.state.toolbarVisible });
+
+    },
+    moveThreshold: 2,
+    debug: false
+  });
+    
+}
+
+   showToolBar(){
+    this.context.toolBar.fadeInDown();
   }
   
-  
-    //  <ViewTransformer
-    //     onGestureEnd={(e) => {
-    //       console.log('onGestureEnd...' + JSON.stringify(e))
-    //       return false;
-    //     }}
-    //     enableResistance={true}
-    //     maxScale={20}
-    //     style={{flex: 1}}>
-    //       <View style={{ flex: 1}}>
-    //     <WebView
-    //       style={{ backgroundColor: BGWASH, position: 'absolute',top: 0, bottom: 0, left: 0, right: 0}}
-    //      source={{uri: this.state.viewerUrl}}
-          
-    //         javaScriptEnabled={true}
-    //         domStorageEnabled={true}
-         
-    //       scalesPageToFit={true}
-    //     />
-       
-    //   </View>
-    //   </ViewTransformer>
+  hideToolBar(){
+    this.context.toolBar.fadeOutUp();
+  }
 
- 
+
  onLoadEnd(){
-    this.setState({isLoading: false});
+    // this.setState({isLoading: false});
  }
  
  renderLoading(){
-
-   return(
-    <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 80}}>
-      <ProggressBar isLoading={true} />
-    </View>
+   return (
+     this.state.isLoading ?
+       <View style={styles.loading}>
+         <ProggressBar isLoading={true} />
+       </View>
+       :
+       <View></View>
    )
  }
  
-      // <ViewTransformer
-      //   onGestureEnd={(e) => {
-      //     console.log('onGestureEnd...' + JSON.stringify(e))
-      //     return false;
-      //   }}
-      //   enableResistance={true}
-      //   maxScale={3}
-      //   style={{flex: 1}}>
-      //     <View style={{ flex: 1}}>
-      //   <WebView
-      //     style={{ backgroundColor: BGWASH, position: 'absolute',top: 0, bottom: 0, left: 0, right: 0}}
-      //   // source={{uri: this.state.viewerUrl}}
-      //     source={{uri: "http://10.0.0.105/static/hoops_web_viewer/client_side_renderer/hoops_web_viewer_mobile.html?/static/tempcache/session-db2ac1c3f805234f3b3f2e7d156971007db37c43/2c6407c0-b340-43e2-97e8-eb6c76cd6c6c.hsf"}}
-      //       javaScriptEnabled={true}
-      //       domStorageEnabled={true}
-         
-      //     scalesPageToFit={false}
-      //   />
-       
-      // </View>
-      // </ViewTransformer>
-  
+
+onBridgeMessage(message){
+  if (message == 'ViewerDocumentLoaded')
+    setTimeout(this.hideLoading.bind(this), 300)
+    }
+
+hideLoading(){
+  this.setState({isLoading: false});
+}
+  zoomIn(){
+      const { webviewbridge } = this.refs;
+     webviewbridge.sendToBridge("zoomIn");
+  }
+   zoomOut(){
+       const { webviewbridge } = this.refs;
+      webviewbridge.sendToBridge("zoomOut");
+
+  }
+  setZoom(value){
+      const { webviewbridge } = this.refs;
+      webviewbridge.sendToBridge("setZoom_" + value.toString());
+  }
+  orientationChanged(orientation){
+     const { webviewbridge } = this.refs;
+     webviewbridge.sendToBridge("onDeviceOrientationChanged_" + orientation);
+  }
+
   render(){
-    return(
+    writeToLog("", constans.DEBUG, `Document Component - url: ${this.props.data.viewerUrl}`)
+    const injectScript = `
+      (function () {
+              if (WebViewBridge)
+                   WebViewBridge.onMessage = function (message) {
+                        if (message.indexOf("setZoom") >  -1)
+                        {
+                             var zoomLevel = parseInt(message.split("_")[1]);
+                             activateSetZoom(zoomLevel);
+                        } 
+                        else if (message.indexOf("onDeviceOrientationChanged") >  -1)
+                        {
+                             var orientation = message.split("_")[1];
+                             onDeviceOrientationChanged(orientation);
+                        } 
+                        else
+                          switch (message) {
+                                    case "zoomIn":
+                                        activateZoomIn();
+                                    break;
+                                    case "zoomOut":
+                                            activateZoomOut();
+                                    break;
+                                    case "setZoom":
+                                            activateSetZoom(100);
+                                    break;
+
+                                   
+                                }
+                        
+
+                   }
+                 
+       }());
     
+    `; 
+    return(
+
       <View style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <Text style={styles.title}>{this.documentProps.title}</Text>
-          <Button onPress={ () => this.props._goBack() } label='Go Back' />
-        </View>
-        <WebView
-          style={styles.webview_body}
-          source={{ uri: this.state.viewerUrl }}
-          onLoadEnd={this.onLoadEnd.bind(this) }
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          startInLoadingState={true}
-          scalesPageToFit={true}
-          renderLoading={this.renderLoading}
-          />
+        
+            {this.renderLoading()}
+      
+            <WebViewBridge
+              ref="webviewbridge"
+              style={styles.webview_body}
+              source={{ uri: this.props.data.viewerUrl }}
+              onLoadEnd={this.onLoadEnd.bind(this) }
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              startInLoadingState={true}
+              scalesPageToFit={true}
+              onBridgeMessage={this.onBridgeMessage.bind(this)}
+              injectedJavaScript={injectScript}
+                   {...this.gestureResponder}
+              />
 
       </View>
 
@@ -216,26 +359,54 @@ var styles = StyleSheet.create({
   },
   
   webview_header: {
-        paddingLeft: 10,
-        backgroundColor: '#FF6600',
-        flex: 1,
-        justifyContent: 'space-between',
-        flexDirection: 'row'
-    },
-    header_item: {
-        paddingLeft: 10,
-        paddingRight: 10,
-        justifyContent: 'center'
-    },
-    webview_body: {
-        flex: 9
-    },
-    
-    page_title: {
-        color: '#FFF'
-    },
-   
-  
+    paddingLeft: 10,
+    backgroundColor: '#FF6600',
+    flex: 1,
+    justifyContent: 'space-between',
+    flexDirection: 'row'
+  },
+  header_item: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    justifyContent: 'center'
+  },
+  webview_body: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    // width: 300,
+    // height: 400,
+  },
+
+  page_title: {
+    color: '#FFF'
+  },
+  moreMenu: {
+    fontSize: 22,
+    color: '#888',
+  },
+  loading: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#fefefe', 
+    position: "absolute", 
+    zIndex: 1, 
+    top: 0, left: 0, bottom: 0, right: 0
+  }
+
 });
 
-module.exports = Document;
+Document.contextTypes = {
+  toolBar: React.PropTypes.object
+};
+
+function mapStateToProps(state) {
+
+ 
+  const { navReducer } = state;
+  return {
+    toolbarVisible: navReducer.toolbarVisible,
+    orientation: navReducer.orientation,
+  }
+}
+
+export default connect(mapStateToProps)(Document)
