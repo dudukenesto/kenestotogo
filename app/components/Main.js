@@ -34,6 +34,7 @@ import CheckInDocument from './CheckInDocument'
 import { writeToLog } from '../utils/ObjectUtils'
 import * as Animatable from 'react-native-animatable';
 import {config} from '../utils/app.config'
+import NetInfoManager from './NetInfoManager'
 //import PubNub from 'pubnub'
 //import PushController from './PushController';
 //import PushNotification from 'react-native-push-notification';
@@ -500,6 +501,7 @@ class Main extends React.Component {
               documentsReducer = {this.props.documentsReducer}
               isPopupMenuOpen={this.state.isPopupMenuOpen}
               dispatch={this.props.dispatch}
+              isConnected ={this.props.isConnected}
               />
           </Animatable.View>
           :
@@ -552,7 +554,7 @@ class Main extends React.Component {
         <Modal style={[styles.modal, styles.toast]} position={"bottom"}  ref={"toastModal"} isDisabled={false} backdrop={false}>
           <Toast closeModal = {() => this.closeModal("toastModal") } openModal = {() => this.openModal("toastModal")} toastType={this.state.toastType} toastMessage={this.state.toastMessage} />
         </Modal>
-
+       
         {showPopupMenu ?
           <View style={styles.popupMenuContainer}>
             <TouchableWithoutFeedback onPress={this.hidePopupMenu.bind(this) } >
@@ -586,8 +588,8 @@ class Main extends React.Component {
         }
     
       <MessageBarAlert ref="alert" />
-        <DropDownOptions ref={"dropDownOptionsContainer"} />
-
+      <DropDownOptions ref={"dropDownOptionsContainer"} />
+      <NetInfoManager dispatch={this.props.dispatch} />
       </View>
     )
   }

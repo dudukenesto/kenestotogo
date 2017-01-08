@@ -11,6 +11,8 @@ import LauncherContainer from '../containers/LauncherContainer'
 import AddPeople from './AddPeople'
 import Scan from './Scan';
 import * as uiActions from '../actions/uiActions'
+import * as textResource from '../constants/TextResource'
+import { emitToast} from '../actions/navActions'
 import {
   BackAndroid,
   NavigationExperimental
@@ -162,6 +164,9 @@ class NavRoot extends Component {
   }
 
   _handleNavigate(action) {
+      if (!this.props.isConnected)
+        return this.props.dispatch(emitToast("info", textResource.NO_INTERNET)); 
+
     switch (action && action.type) {
       case 'push':
         this.props.pushRoute(action.route)

@@ -7,7 +7,7 @@ import * as navActions from '../actions/navActions'
 import * as uiActions from '../actions/uiActions'
 import {getDocumentsTitle} from '../utils/documentsUtils'
 import * as routes from '../constants/routes'
-import {hideToast} from '../actions/navActions'
+import {hideToast, emitToast} from '../actions/navActions'
 import * as Animatable from 'react-native-animatable';
 
 import {
@@ -280,6 +280,10 @@ class KenestoToolbar extends Component {
 
   menuPressed(id, familyCode) {
     var {dispatch} = this.props;
+      if (!this.props.isConnected){
+        dispatch(emitToast("info", "No internet connection")); 
+        return false;
+      }
     dispatch(documentsActions.updateSelectedObject(id, familyCode, ""));
     dispatch(documentsActions.getDocumentPermissions(id, familyCode))
     this.context.itemMenuContext.open();

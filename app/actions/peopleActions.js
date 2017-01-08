@@ -2,7 +2,8 @@ import * as types from '../constants/ActionTypes';
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
 import {getRetrieveShareObjectInfoUrl,writeToLog} from '../utils/ObjectUtils'
-import { push, emitError} from './navActions'
+import { push, emitError, emitToast} from './navActions'
+import * as textResource from '../constants/TextResource'
 import _ from "lodash";
 export function updateIsFetching(isFetching: boolean){
     return {
@@ -61,6 +62,9 @@ export function RetrieveShareObjectInfo(ObjectInfo : Object, UsersAndGroups: Obj
 export function RequestShareObjectInfo(objectId : string, familyCode: string, objectName: string){
     
   return (dispatch, getState) => {
+ 
+    if (!getState().accessReducer.isConnected)
+        return dispatch(emitToast("info", textResource.NO_INTERNET)); 
 
       dispatch(updateIsFetching(true));
     const {sessionToken, env, email} = getState().accessReducer;

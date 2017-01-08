@@ -4,7 +4,8 @@ import { push, pop } from '../actions/navActions'
 function mapStateToProps (state) {
   return {
     navigation: state.navReducer,
-    uiReducer: state.uiReducer
+    uiReducer: state.uiReducer, 
+    isConnected : state.accessReducer.isConnected
   }
 }
 

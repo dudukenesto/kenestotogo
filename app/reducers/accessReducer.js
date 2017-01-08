@@ -11,6 +11,7 @@ function accessReducer(state =
     firstName: "",
     lastName: "",
     thumbnailPath: "",
+    isConnected : false,
     statistics: {
       totalMyDocuments: 0,
       totalAllDocuments: 0,
@@ -87,6 +88,12 @@ function accessReducer(state =
         }
       }
 
+    }
+    case types.UPDATE_CONNECTION_STATE: {
+      return {
+        ...state, 
+        isConnected : action.isConnected
+      }
     }
     default:
       return state

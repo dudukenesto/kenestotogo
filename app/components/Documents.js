@@ -161,6 +161,7 @@ class Documents extends Component {
       this.props._handleNavigate(routes.documentsRoute(data));
     }
     else {
+
       var data = {
         key: "document",
         name: document.Name,
@@ -239,6 +240,11 @@ class Documents extends Component {
 
 
   openModal() {
+
+    if (!this.props.isConnected){
+        this.props.dispatch(emitToast("info", "No internet connection")); 
+        return false;
+    }
     if (!this.state.AllowUpload)
       return false; 
 
@@ -314,7 +320,7 @@ class Documents extends Component {
           renderSectionHeader={this._renderSectionHeader.bind(this)}
           renderRow={(document, sectionID, rowID, highlightRowFunc) => {
 
-
+            //alert('documents ' + this.props.isConnected)
 
             var documentCell = document.FamilyCode == 'UPLOAD_PROGRESS' ? <DocumentUploadCell
               key={document.Id}
@@ -324,6 +330,7 @@ class Documents extends Component {
               <DocumentCell
                 key={document.Id}
                 onSelect={this.selectItem.bind(this, document)}
+                isConnected={this.props.isConnected}
                 dispatch={this.props.dispatch}
                 documentsReducer={this.props.documentsReducer}
                 document={document} />
@@ -355,7 +362,7 @@ class Documents extends Component {
 
 
   render() {
-
+   
     try {
       const {dispatch, documentsReducer, navReducer } = this.props
 

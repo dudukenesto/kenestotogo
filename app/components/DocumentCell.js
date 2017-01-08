@@ -46,11 +46,15 @@ import * as constans from '../constants/GlobalConstans'
 var getImageSource = require('./GetImageSource');
 import {getTime} from '../utils/KenestoHelper'
 //var getTextFromScore = require('./getTextFromScore');
-
+import {hideToast, emitToast} from '../actions/navActions'
 var DocumentCell = React.createClass({
 
     menuPressed: function (id, familyCode){
       var {dispatch} = this.props; 
+       if (!this.props.isConnected){
+        dispatch(emitToast("info", "No internet connection")); 
+        return false;
+    }
     //   console.log('menu pressed ' + getTime());
      dispatch(updateSelectedObject(id, familyCode, ""));
      // dispatch(getDocumentPermissions(id, familyCode))

@@ -4,6 +4,7 @@ import * as Access from '../actions/Access'
 import * as peopleActions from '../actions/peopleActions'
 import { writeToLog } from '../utils/ObjectUtils'
 import * as constans from '../constants/GlobalConstans'
+import * as textResource from '../constants/TextResource'
 //var mime = require('mime-types')
 import {
     constructRetrieveDocumentsUrl, constructRetrieveStatisticsUrl, getCreateFolderUrl,
@@ -42,6 +43,8 @@ export function updateIsFetchingSelectedObject(isFetching: boolean) {
 
 export function getDocumentPermissions(documentId: string, familyCode: string) {
     return (dispatch, getState) => {
+          if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
         const {sessionToken, env, email} = getState().accessReducer;
         var documentlist = getDocumentsContext(getState().navReducer);
 
@@ -74,6 +77,9 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
 
 export function getDocumentInfo(documentId: string, familyCode: string, actionType : string = types.UPDATE_ROUTE_DATA) {
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         const {sessionToken, env, email} = getState().accessReducer;
         var documentlist = getDocumentsContext(getState().navReducer);
 
@@ -334,7 +340,8 @@ function AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders, i
 
 function fetchDocumentsTable(url: string, documentlist: Object, actionType: string) {
     return (dispatch, getState) => {
-
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
         dispatch(requestDocumentsList(documentlist))
         const {sessionToken, env, email} = getState().accessReducer;
         writeToLog(email, constans.DEBUG, `function fetchDocumentsTable - url: ${url}`)
@@ -395,6 +402,8 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
 export function fetchTableIfNeeded() {
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
 
         var documentlist = getDocumentsContext(getState().navReducer);
         const {documentsReducer} = getState()
@@ -413,6 +422,9 @@ export function refreshTable(documentlist: Object, updateRouteData: boolean = tr
  
     return (dispatch, getState) => {
         try {
+            if (!getState().accessReducer.isConnected)
+                 return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
             const url = constructRetrieveDocumentsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch, documentlist.isVault)
             const {sessionToken, env, email} = getState().accessReducer;
             writeToLog(email, constans.DEBUG, `function refreshTable - url: ${url}`)
@@ -543,7 +555,9 @@ export function updateSelectedObject(id: string, familyCode: string, permissions
 export function createFolder(folderName: string, isVault: boolean) {
 
     return (dispatch, getState) => {
-       
+       if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         var documentlist = getDocumentsContext(getState().navReducer);
         const {sessionToken, env, email} = getState().accessReducer;
         const folderId = documentlist.fId;
@@ -587,6 +601,9 @@ export function createFolder(folderName: string, isVault: boolean) {
 
 export function downloadDocument(id: string, fileName: string, mimeType: string) {
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         const {sessionToken, env, email} = getState().accessReducer;
         //dispatch(updateIsFetching(true)); 
         dispatch(navActions.emitToast(constans.INFO, 'Document will be downloaded shortly'));
@@ -640,6 +657,8 @@ export function downloadDocument(id: string, fileName: string, mimeType: string)
 
 
 function uploadFile(data, file) {
+    if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
 
     return new Promise((resolve, reject) => {
         data.xhr.onerror = function(e) {
@@ -700,6 +719,8 @@ export function clearDocumentList(catId: string) {
 export function removeUploadDocument(Id: string, catId: string, documentId: string = "") {
     return (dispatch, getState) => {
         try {
+            if (!getState().accessReducer.isConnected)
+                return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
             const {navReducer} = getState()
             const items = getState().documentsReducer[catId].items;
             const totalFiles = getState().documentsReducer[catId].totalFiles;
@@ -746,6 +767,8 @@ export function removeUploadDocument(Id: string, catId: string, documentId: stri
 
 function uploadDocumentObject(fileObject: object, uploadId: string) {
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
 
         var documentlist = getDocumentsContext(getState().navReducer);
         let uploadObj = _.find(getState().documentsReducer[documentlist.catId].uploadItems, { 'Id': uploadId });
@@ -878,6 +901,9 @@ export function uploadToKenesto(fileObject: object, url: string) {
 export function updateDocumentVersion(catId: string, fileObject: object, url: string, baseFileId: string, isUploading: boolean) {
     return (dispatch, getState) => {
         try {
+            if (!getState().accessReducer.isConnected)
+                return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
             if (url != '')
                 url = url + "&ud=" + constrcutUploadUSerData(encodeURIComponent(baseFileId), encodeURIComponent(catId));
             const {navReducer} = getState()
@@ -931,7 +957,9 @@ export function updateDocumentVersion(catId: string, fileObject: object, url: st
 }
 function uploadNewVersion(fileObject: object, baseFileId: string) {
     return (dispatch, getState) => {
-       
+       if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         var documentlist = getDocumentsContext(getState().navReducer);
         let uploadObj = _.find(getState().documentsReducer[documentlist.catId].items, { 'Id': baseFileId });
         const {sessionToken, env, email} = getState().accessReducer;
@@ -1011,6 +1039,9 @@ function uploadNewVersion(fileObject: object, baseFileId: string) {
 // getDeleteFolderUrl
 export function deleteAsset(id: string, familyCode: string) {
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         dispatch(navActions.updateIsProcessing(true));
 
         const {navReducer} = getState()
@@ -1095,6 +1126,8 @@ export function SetSharingPermissions(tags: object) {
 
 export function UpdateDocumentSharingPermission() {
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
         const document = getSelectedDocument(documentLists, navReducer);
@@ -1153,6 +1186,9 @@ export function UpdateDocumentSharingPermission() {
 export function DiscardCheckOut() {
 
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         dispatch(navActions.updateIsProcessing(true));
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
@@ -1190,6 +1226,9 @@ export function DiscardCheckOut() {
 export function CheckOut() {
 
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         dispatch(navActions.updateIsProcessing(true));
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
@@ -1227,6 +1266,9 @@ export function CheckOut() {
 export function CheckIn(comment: string) {
 
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         dispatch(navActions.updateIsProcessing(true));
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
@@ -1278,6 +1320,9 @@ export function CheckIn(comment: string) {
 export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         const {navReducer} = getState()
         var documentlist = getDocumentsContext(navReducer);
         const {sessionToken, env, email} = getState().accessReducer;
@@ -1320,6 +1365,9 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 }
 
 export function EditDocument(documentId: string, documentName: string) {
+    if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
     return (dispatch, getState) => {          
         var documentlist = getDocumentsContext(getState().navReducer);
         const {sessionToken, env, email} = getState().accessReducer;
@@ -1363,6 +1411,9 @@ export function EditDocument(documentId: string, documentName: string) {
 export function ShareDocument() {
     
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
         var document = getSelectedDocument(documentLists, navReducer);

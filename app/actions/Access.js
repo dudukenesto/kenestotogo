@@ -1,7 +1,7 @@
 import * as types from '../constants/ActionTypes';
 import {getAuthUrl, getLoginUrl, getForgotPasswordUrl, clearCredentials, setCredentials, getRetrieveStatisticsUrl} from '../utils/accessUtils';
-import { push, pop, emitInfo, emitError, navigateReset} from './navActions'
-
+import { push, pop, emitInfo, emitError, emitToast, navigateReset} from './navActions'
+import * as textResource from '../constants/TextResource'
 import * as routes from '../constants/routes'
 import * as constans from '../constants/GlobalConstans'
 import {clearAllDocumentlists} from '../actions/documentsActions'
@@ -88,9 +88,20 @@ function DoNothing(message : string) {
     }
 }
 
+export function UpdateConnectionState(isConnected : boolean){
+    console.log('UpdateConnectionState ' + isConnected)
+    return {
+        type : types.UPDATE_CONNECTION_STATE, 
+        isConnected : isConnected
+    }
+}
+
 export function retrieveStatistics() {
  
   return (dispatch, getState) => {
+    if (!getState().accessReducer.isConnected)
+        return dispatch(emitToast("info", textResource.NO_INTERNET)); 
+
     const url = getRetrieveStatisticsUrl(getState().accessReducer.env, getState().accessReducer.sessionToken, getState().accessReducer.tenantId)
     let env =  getState().accessReducer.env;
     let token = getState().accessReducer.sessionToken;
@@ -125,6 +136,8 @@ export function retrieveStatistics() {
 
 export function ActivateForgotPassword(username : string, env : string = 'dev') {
      return (dispatch, getState) => {
+         if (!getState().accessReducer.isConnected)
+            return dispatch(emitToast("info", textResource.NO_INTERNET)); 
         let token = getState().accessReducer.sessionToken;
         if (env == null)
         {
@@ -175,6 +188,9 @@ export function logOut() {
 
 export function login(userId : string, password: string, env: string = 'dev')  {
     return (dispatch, getState) => {
+        if (!getState().accessReducer.isConnected)
+         return dispatch(emitToast("info", textResource.NO_INTERNET)); 
+
      writeToLog(userId, constans.DEBUG, `function login - userId: ${userId}, password:${"*****"}`)
      dispatch(updateIsFetching(true)); 
 
