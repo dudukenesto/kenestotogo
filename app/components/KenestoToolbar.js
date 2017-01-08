@@ -303,7 +303,7 @@ class KenestoToolbar extends Component {
           <Animatable.View ref="searchArrowBack" style={[{ position: 'absolute', top: 0, left: 0, opacity: 1 }]}><Icon name="arrow-back" onPress={this.hideSearchBox.bind(this) } style={styles.iconStyle} /></Animatable.View>
         </View>
 
-        <Animatable.View style={styles.textInputContainer} ref="textInput"><TextInput style={styles.textInput} onChangeText={(text) => this._submitSearch(text) } value={this.state.searchText}/></Animatable.View>
+        <Animatable.View style={styles.textInputContainer} ref="textInput"><TextInput autoFocus={true} style={styles.textInput} onChangeText={(text) => this._submitSearch(text) } value={this.state.searchText}/></Animatable.View>
 
         <View><Animatable.View ref="searchBoxSearchIcon"><Icon name="search" style={[styles.iconStyle]} /></Animatable.View></View>
 

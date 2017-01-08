@@ -348,6 +348,9 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
         return fetch(url)
             .then(response => response.json())
             .then(json => {
+              if (json.ResponseStatus == 'FAILED')
+                    return; 
+                
                 const nextUrl = json.ResponseData.next_href
                 if (json.ResponseStatus == "FAILED") {
                     //dispatch(failedToFetchDocumentsList(documentlist, url, json.ErrorMessage))
@@ -371,7 +374,6 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
                     var totalFiles = json.ResponseData.TotalFiles;
                     var totalFolders = json.ResponseData.TotalFolders;
-
                     if (actionType == types.RECEIVE_DOCUMENTS) {
                         items = [...prevState.documentsReducer[documentlist.catId].items, ...json.ResponseData.DocumentsList]
                     }
@@ -380,6 +382,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
                     }
                     var uploadItems = getState().documentsReducer[documentlist.catId].uploadItems;
                     var datasource = AssembleTableDatasource(items, uploadItems, totalFiles, totalFolders, documentlist.isSearch).ret;
+
                     switch (actionType) {
                         case types.RECEIVE_DOCUMENTS:
                             dispatch(receiveDocumentsList(items, nextUrl, documentlist, datasource, totalFiles, totalFolders))
@@ -393,6 +396,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
                 }
             })
             .catch((error) => {
+                console.log('error: ' + JSON.stringify(error))
                 dispatch(navActions.emitError("Failed to retrieve documents", ""))
                 writeToLog(email, constans.ERROR, `function fetchDocumentsTable - Failed to retrieve documents - url: ${url}`, error)
             })
