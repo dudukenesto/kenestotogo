@@ -89,7 +89,6 @@ function DoNothing(message : string) {
 }
 
 export function UpdateConnectionState(isConnected : boolean){
-    console.log('UpdateConnectionState ' + isConnected)
     return {
         type : types.UPDATE_CONNECTION_STATE, 
         isConnected : isConnected
@@ -97,7 +96,6 @@ export function UpdateConnectionState(isConnected : boolean){
 }
 
 export function retrieveStatistics() {
- 
   return (dispatch, getState) => {
     if (!getState().accessReducer.isConnected)
         return dispatch(emitToast("info", textResource.NO_INTERNET)); 
@@ -251,7 +249,6 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                                                     responseData.LoginJsonResult.User.LastName,
                                                     responseData.LoginJsonResult.User.ThumbnailPath,
                                                     responseData.LoginJsonResult.User.TenantID));
-                                                    
                             dispatch(retrieveStatistics());
                             dispatch(clearAllDocumentlists());
                                var data = {
