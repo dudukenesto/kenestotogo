@@ -13,7 +13,7 @@ import {
   Keyboard
 } from 'react-native';
 import {connect} from 'react-redux'
-
+import Tag from './Tag';
 import * as Animatable from 'react-native-animatable';
 var {height, width} = Dimensions.get('window');
 class KenestoTagAutocomplete extends Component {
@@ -101,14 +101,13 @@ class KenestoTagAutocomplete extends Component {
     return filteredList;
   }
 
-  _addTag(tagName, tagID, iconType, iconName, aditionalData, ThumbnailPath) {
+  _addTag(tagName, tagID, iconType, iconName, aditionalData) {
     var newTags = this.state.tags.concat({
       tagName: tagName,
       tagID: tagID,
       iconType: iconType,
       iconName: iconName,
-      aditionalData: aditionalData, 
-      ThumbnailPath: ThumbnailPath + '?t=' + Date.now()
+      aditionalData: aditionalData
     });
     var filteredList = this._filterList(newTags);
     this.setState({
@@ -133,7 +132,7 @@ class KenestoTagAutocomplete extends Component {
       }
     }
     else {
-      this._addTag(tagName, tagName, 'icon', 'person-outline', 'EXTERNAL_USER', '');
+      this._addTag(tagName, tagName, 'icon', 'person-outline', 'EXTERNAL_USER');
     }
   }
 
@@ -149,8 +148,9 @@ class KenestoTagAutocomplete extends Component {
     var autocompleteFormattedString = (<View style={{ flexDirection: "row" }}><Text style={styles.text}>{textBefore}</Text>
       <Text style={[styles.searchedText, autocompleteTextStyle]}>{autocompleteString.substr(searchedIndex, searchedTextLength)}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
+
     var iconType, iconName;
-  
+    var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
     iconType = rowData.ThumbnailPath ? 'thumbnail' : 'icon';
     if (!rowData.ThumbnailPath) {
       if (rowData.IsGroup) {
@@ -163,7 +163,7 @@ class KenestoTagAutocomplete extends Component {
 
     return (
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
-        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID, iconType, iconName, aditionalData, rowData.ThumbnailPath) }>
+        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID, iconType, iconName, aditionalData) }>
           <View style={[styles.rowContainer, { minWidth: this.state.orientation == "PORTRAIT" ? width : height }, rowContainerStyle]}>
             {this.props.autocompleteRowTemplate ?
               this.props.autocompleteRowTemplate(autocompleteFormattedString, iconType, iconName, rowData)
@@ -348,18 +348,20 @@ class KenestoTagAutocomplete extends Component {
 
             {this.renderTags() }
 
-            <TextInput
-              ref='textInput'
-              style={[styles.textinput, textInputStyle]}
-              underlineColorAndroid='transparent'
-              placeholder={this.state.tags.length > 0 ? '' : this.props.placeholder}
-              placeholderTextColor = {"#bbb"}
-              onChangeText={this._onChangeText.bind(this) }
-              onFocus={this._onFocus.bind(this) }
-              onBlur={this._onBlur.bind(this) }
-              autoCorrect={false}
-              autoCapitalize='none'
-              />
+            <View style={styles.textinputWrapper}>
+              <TextInput
+                ref='textInput'
+                style={[styles.textinput, textInputStyle]}
+                underlineColorAndroid='transparent'
+                placeholder={this.state.tags.length > 0 ? '' : this.props.placeholder}
+                placeholderTextColor = {"#bbb"}
+                onChangeText={this._onChangeText.bind(this) }
+                onFocus={this._onFocus.bind(this) }
+                onBlur={this._onBlur.bind(this) }
+                autoCorrect={false}
+                autoCapitalize='none'
+                />
+            </View>
           </View>
 
         </View>
@@ -381,13 +383,18 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
     borderColor: '#999',
     borderBottomWidth: 1,
-    minHeight: 20,
+    alignItems: 'center'
+  },
+  textinputWrapper: {
+    height: 30, 
+    justifyContent: 'center', 
+    minWidth: width-60
   },
   textinput: {
     padding: 0,
     flex: 1,
     fontSize: 14,
-    height: 27,
+    height: 29,
     margin: 3,
     color: "#000",
   },
