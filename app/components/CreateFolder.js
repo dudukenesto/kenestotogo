@@ -24,7 +24,14 @@ ileagleChars.getValidationErrorMessage = function (value, path, context) {
   return 'Name cannot contain any of the following characters: /\;*?"<>|';
   //return 'Name cannot contain special characters'
 };
-const formStylesheet = _.cloneDeep(Form.stylesheet);
+let formStylesheet = _.cloneDeep(Form.stylesheet);
+formStylesheet.textbox.normal = {
+      color: "#000000",
+      fontSize: 17,
+      height: 36,
+      padding: 7,
+      marginBottom: 5
+}
 
 var inputFolder = Tcomb.struct({      
   folderName: ileagleChars,  //required email
