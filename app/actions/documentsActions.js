@@ -431,8 +431,8 @@ export function refreshTable(documentlist: Object, updateRouteData: boolean = tr
             if (updateRouteData) {
                 dispatch(navActions.updateRouteData(documentlist))
             }
-            if (getStatistics)
-                dispatch(Access.retrieveStatistics());
+           // if (getStatistics)
+            dispatch(Access.retrieveStatistics());
             return dispatch(fetchDocumentsTable(url, documentlist, types.REFRESH_DOCUMENTS_LIST))
 
 

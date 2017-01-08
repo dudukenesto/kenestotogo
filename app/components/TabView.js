@@ -74,11 +74,11 @@ class TabView extends React.Component {
     }
 
     componentWillMount() {
-        this.loadMenu();
+        this.loadMenu(this.props);
     }
 
  componentWillReceiveProps(nextProps) {
-   this.loadMenu();
+   this.loadMenu(nextProps);
   }
 
 
@@ -86,8 +86,9 @@ class TabView extends React.Component {
         return this.state.dataSource.cloneWithRows(menuItems);
     }
 
-    loadMenu(selectedIndex = 0) {
-        const {navReducer,accessReducer} = this.props
+    loadMenu(props, selectedIndex = 0) {
+        const {navReducer,accessReducer} = props
+        
         var documentlist = getDocumentsContext(navReducer);
         switch (documentlist.catId) {
             case constans.MY_DOCUMENTS:
