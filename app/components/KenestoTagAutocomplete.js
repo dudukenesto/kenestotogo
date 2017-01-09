@@ -101,13 +101,14 @@ class KenestoTagAutocomplete extends Component {
     return filteredList;
   }
 
-  _addTag(tagName, tagID, iconType, iconName, aditionalData) {
+  _addTag(tagName, tagID, iconType, iconName, aditionalData, ThumbnailPath) {
     var newTags = this.state.tags.concat({
       tagName: tagName,
       tagID: tagID,
       iconType: iconType,
       iconName: iconName,
-      aditionalData: aditionalData
+      aditionalData: aditionalData, 
+      ThumbnailPath: ThumbnailPath + '?t=' + Date.now()
     });
     var filteredList = this._filterList(newTags);
     this.setState({
@@ -132,7 +133,7 @@ class KenestoTagAutocomplete extends Component {
       }
     }
     else {
-      this._addTag(tagName, tagName, 'icon', 'person-outline', 'EXTERNAL_USER');
+      this._addTag(tagName, tagName, 'icon', 'person-outline', 'EXTERNAL_USER', '');
     }
   }
 
@@ -148,9 +149,7 @@ class KenestoTagAutocomplete extends Component {
     var autocompleteFormattedString = (<View style={{ flexDirection: "row" }}><Text style={styles.text}>{textBefore}</Text>
       <Text style={[styles.searchedText, autocompleteTextStyle]}>{autocompleteString.substr(searchedIndex, searchedTextLength)}</Text>
       <Text style={styles.text}>{textAfter}</Text></View>)
-
     var iconType, iconName;
-    var uri = 'https://upload.wikimedia.org/wikipedia/commons/f/f5/Poster-sized_portrait_of_Barack_Obama.jpg'
     iconType = rowData.ThumbnailPath ? 'thumbnail' : 'icon';
     if (!rowData.ThumbnailPath) {
       if (rowData.IsGroup) {
@@ -163,7 +162,7 @@ class KenestoTagAutocomplete extends Component {
 
     return (
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps={true} >
-        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID, iconType, iconName, aditionalData) }>
+        <TouchableHighlight onPress={this._addTag.bind(this, autocompleteString, tagID, iconType, iconName, aditionalData, rowData.ThumbnailPath) }>
           <View style={[styles.rowContainer, { minWidth: this.state.orientation == "PORTRAIT" ? width : height }, rowContainerStyle]}>
             {this.props.autocompleteRowTemplate ?
               this.props.autocompleteRowTemplate(autocompleteFormattedString, iconType, iconName, rowData)

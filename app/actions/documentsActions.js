@@ -1419,11 +1419,13 @@ export function ShareDocument() {
         const documentLists = getState().documentsReducer;
         const navReducer = getState().navReducer;
         var document = getSelectedDocument(documentLists, navReducer);
-        const addPeopleTriggerValue = getState().uiReducer.addPeopleTriggerValue;
+        var addPeopleTriggerValue = getState().uiReducer.addPeopleTriggerValue;
         const sharingPermissions = documentLists.sharingPermissions;
         const {sessionToken, env, email} = getState().accessReducer;
 
         for (var i = 0; i < sharingPermissions.length; i++) {
+            if (addPeopleTriggerValue == '')
+                addPeopleTriggerValue = 'VIEW_ONLY';
             sharingPermissions[i].PermissionTypeValue = addPeopleTriggerValue;
         }
 
