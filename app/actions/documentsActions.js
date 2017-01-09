@@ -661,8 +661,6 @@ export function downloadDocument(id: string, fileName: string, mimeType: string)
 
 
 function uploadFile(data, file) {
-    if (!getState().accessReducer.isConnected)
-            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
 
     return new Promise((resolve, reject) => {
         data.xhr.onerror = function(e) {
