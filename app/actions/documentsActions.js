@@ -1367,10 +1367,11 @@ export function EditFolder(fId: string, folderName: string, isVault: boolean) {
 }
 
 export function EditDocument(documentId: string, documentName: string) {
-    if (!getState().accessReducer.isConnected)
-            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+   
 
     return (dispatch, getState) => {          
+         if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
         var documentlist = getDocumentsContext(getState().navReducer);
         const {sessionToken, env, email} = getState().accessReducer;
         const url = getEditDocumentUrl(env, sessionToken, documentId, documentName);
