@@ -213,7 +213,7 @@ class CreateFolder extends React.Component {
                         value={this.state.isVault || this.props.isParentVault} />
                 </View>
                 <View style={styles.buttonsContainer}>
-                    <Button onPress={this.create.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
+                    <Button onPress={this.create.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Add</Button>
                     <Button onPress={this.props.closeCreateFolder.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
                 </View>
 
