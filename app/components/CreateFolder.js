@@ -1,5 +1,5 @@
 import React from "react"; 
-import {View, Text,TextInput, StyleSheet, Animated, Dimensions, Switch} from "react-native";
+import {View, Text,TextInput, StyleSheet, Animated, Dimensions, Switch, Keyboard} from "react-native";
 import Button from "react-native-button";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from './ProgressBar'
@@ -10,47 +10,47 @@ import {createFolder} from '../actions/documentsActions'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import { getDocumentsContext } from '../utils/documentsUtils'
-import Tcomb from "tcomb-form-native";
+// import Tcomb from "tcomb-form-native";
 var _ = require('lodash');
 
-var Form = Tcomb.form.Form;
+// var Form = Tcomb.form.Form;
 
-var ileagleChars = Tcomb.refinement(Tcomb.String, function (s) {
-    var test =  /^[^;<>:\"/\\\\|?*]+$/.test(s);
-    return test;
-});
+// var ileagleChars = Tcomb.refinement(Tcomb.String, function (s) {
+//     var test =  /^[^;<>:\"/\\\\|?*]+$/.test(s);
+//     return test;
+// });
 
-ileagleChars.getValidationErrorMessage = function (value, path, context) {
-  return 'Name cannot contain any of the following characters: /\;*?"<>|';
-  //return 'Name cannot contain special characters'
-};
-let formStylesheet = _.cloneDeep(Form.stylesheet);
-formStylesheet.textbox.normal = {
-      color: "#000000",
-      fontSize: 17,
-      height: 36,
-      padding: 7,
-      marginBottom: 5
-}
+// ileagleChars.getValidationErrorMessage = function (value, path, context) {
+//   return 'Name cannot contain any of the following characters: /\;*?"<>|';
+//   //return 'Name cannot contain special characters'
+// };
+// let formStylesheet = _.cloneDeep(Form.stylesheet);
+// formStylesheet.textbox.normal = {
+//       color: "#000000",
+//       fontSize: 17,
+//       height: 36,
+//       padding: 7,
+//       marginBottom: 5
+// }
 
-var inputFolder = Tcomb.struct({      
-  folderName: ileagleChars,  //required email
-});
+// var inputFolder = Tcomb.struct({      
+//   folderName: ileagleChars,  //required email
+// });
 
 
-var options = {
-    stylesheet: formStylesheet,
-    fields: {
-        folderName: {
-            placeholder: 'Folder Name',
-            label: ' ',
-            autoFocus: true,
-            placeholderTextColor: '#ccc',
-            underlineColorAndroid: "#ccc",
-            selectionColor: "orange",
-        }
-    }
-};
+// var options = {
+//     stylesheet: formStylesheet,
+//     fields: {
+//         folderName: {
+//             placeholder: 'Folder Name',
+//             label: ' ',
+//             autoFocus: true,
+//             placeholderTextColor: '#ccc',
+//             underlineColorAndroid: "#ccc",
+//             selectionColor: "orange",
+//         }
+//     }
+// };
 
 var styles = StyleSheet.create({
     container: {
@@ -58,6 +58,8 @@ var styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor:"white",
         padding: 15,
+        
+        // borderWidth:3
     },
     titleContainer: {
         flex: 1,
@@ -121,7 +123,8 @@ var styles = StyleSheet.create({
         marginRight: 40
     },
     form: {
-        alignSelf: 'stretch'
+        alignSelf: 'stretch',
+        // borderWidth: 1
     }
 });
 
@@ -131,9 +134,10 @@ class CreateFolder extends React.Component {
 
         this.state = {
             isVault: false,
-            value:{
-                 folderName: ''
-            },   
+            folderName: ''
+            // value:{
+            //      folderName: ''
+            // },   
           
         };
 
@@ -144,15 +148,13 @@ class CreateFolder extends React.Component {
     create() {
        //alert(this.state.folderName  != '')
 
-        var value = this.refs.form.getValue();
-        if (value == null) { // if validation fails, value will be null
-            return false; // value here is an instance of Person
-        }
-
-        var {folderName} = this.state.value;
-
+        // var value = this.refs.form.getValue();
+        // if (value == null) { // if validation fails, value will be null
+        //     return false; // value here is an instance of Person
+        // }
+        Keyboard.dismiss();
+        var {folderName} = this.state;
        if (folderName != '') {
-           // this.props.setCreateFolderStyle();
            this.props.closeCreateFolder();
             this.props.dispatch(navActions.updateIsProcessing(true));
            setTimeout(() => {
@@ -163,12 +165,12 @@ class CreateFolder extends React.Component {
        }
     }
 
-     onChange(value) {
-            this.setState({value});
-    }
+    //  onChange(value) {
+    //         this.setState({value});
+    // }
 
     render(){
-
+    
         if (this.props.creatingFolder == 1){
             return(         
                     <View style={styles.creatingFolder}>
@@ -179,16 +181,7 @@ class CreateFolder extends React.Component {
             )
         }
 
-                        //     <TextInput
-                        // ref="folderName"
-                        // value={this.state.folderName}
-                        // onChangeText={folderName => this.setState({ folderName }) }
-                        // style={styles.textEdit}
-                        // placeholder="Folder Name"
-                        // placeholderTextColor={"#ccc"}
-                        // selectionColor={"orange"}
-                        // underlineColorAndroid={"#ccc"}
-                        // />
+                        
 
         return (
            
@@ -197,13 +190,16 @@ class CreateFolder extends React.Component {
                     <Text style={styles.title}>Add Folder</Text>
                 </View>
                 <View style={styles.form}>
-                    <Form
-                        ref="form"
-                        type={inputFolder}
-                        value={this.state.value}
-                        onChange={this.onChange.bind(this)}
-                        options={options}
-                    />
+                    <TextInput
+                        ref="folderName"
+                        value={this.state.folderName}
+                        onChangeText={(value) => this.setState({ folderName: value }) }
+                        style={{fontSize: 17}}
+                        placeholder="Folder Name"
+                        placeholderTextColor={"#ccc"}
+                        selectionColor={"orange"}
+                        underlineColorAndroid={"#ccc"}
+                        />
                 </View>
                 <View style={styles.nameContainer}>
                     <Text style={styles.textEdit}>Vault folder</Text>
@@ -214,7 +210,7 @@ class CreateFolder extends React.Component {
                 </View>
                 <View style={styles.buttonsContainer}>
                     <Button onPress={this.create.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Create</Button>
-                    <Button onPress={this.props.closeCreateFolder.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
+                    <Button onPress={()=>{Keyboard.dismiss(); this.props.closeCreateFolder()}} containerStyle={styles.singleBtnContainer} style={styles.button}>Cancel</Button>
                 </View>
 
             </View>
