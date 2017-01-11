@@ -86,7 +86,6 @@ componentWillMount(){
         const absDistance = Math.round(gestureState.pinch - this.state.startPinch);
         const mod = absDistance % 5;
         if (mod == 0) {
-          console.log('set zoom:', Math.round(gestureState.pinch / this.state.startPinch * 100 * this.state.zoomCorrection)== Infinity? 100 * this.state.zoomCorrection : Math.round(gestureState.pinch / this.state.startPinch * 100 * this.state.zoomCorrection), this.state.zoomCorrection)
           
           const zoom = Math.round(gestureState.pinch / this.state.startPinch * 100) == Infinity? 100 : Math.round(gestureState.pinch / this.state.startPinch * 100);
           if(zoom * this.state.zoomCorrection < 25){
@@ -100,6 +99,7 @@ componentWillMount(){
           }         
           this.setState({
             tempPinch: gestureState.pinch,
+            absDistance: absDistance
           })
         }
       }
@@ -107,21 +107,33 @@ componentWillMount(){
 
     onResponderTerminationRequest: (evt, gestureState) => false,
     onResponderRelease: (evt, gestureState) => {
-      let zoomCorrection = Math.round(this.state.tempPinch / this.state.startPinch * 100 * this.state.zoomCorrection)/100;
-      if (zoomCorrection < 0.25){
-        zoomCorrection = 0.25;
+      var zoomCorrection;
+      if (!gestureState.singleTapUp && !gestureState.doubleTapUp && this.state.absDistance != null) {
+        zoomCorrection = Math.round(this.state.tempPinch / this.state.startPinch * 100 * this.state.zoomCorrection) / 100;
+        if (zoomCorrection < 0.25) {
+          zoomCorrection = 0.25;
+        }
+        else if (zoomCorrection > 4) {
+          zoomCorrection = 4;
+        }
+        this.setState({
+          startPinch: null,
+          zoomCorrection: zoomCorrection,
+          absDistance: null
+        })
       }
-      else if (zoomCorrection > 4){
-        zoomCorrection = 4;
-      }
-      if (gestureState.doubleTapUp) {
+      
+      else if (gestureState.doubleTapUp) {
         this.setZoom(100);
         zoomCorrection = 1;
+        
+        this.setState({
+          startPinch: null,
+          zoomCorrection: zoomCorrection,
+          absDistance: null
+        })
       }
-      this.setState({
-        startPinch: null,
-         zoomCorrection: zoomCorrection
-      })
+      
     },
 
     onResponderTerminate: (evt, gestureState) => {
