@@ -6,7 +6,8 @@ import {
   StyleSheet,
   ToolbarAndroid,
   TouchableWithoutFeedback,
-  AppState
+  AppState,
+  Animated
 } from 'react-native'
 
 import NavigationRootContainer from '../containers/navRootContainer'
@@ -144,6 +145,20 @@ let styles = StyleSheet.create({
   disabledIcon: {
     color: "#ccc"
   },
+  toast2: {
+    height: 60, 
+    position: 'absolute',
+    left: 0, 
+    bottom: 0, 
+    right: 0, 
+    justifyContent:  'center'
+  },
+  toastMessage: { 
+     color: 'white',  
+     fontSize:16, 
+     fontWeight: 'bold',
+     textAlign: "center"
+  }
 })
 
 class Main extends React.Component {
@@ -170,12 +185,16 @@ class Main extends React.Component {
           openedDialogModalref: '',
           isPopupMenuOpen: false,
           isDropDownOpen: true,
-          toastMessage: '',
-          toastType: '' 
+          // toastMessage: '',
+          toastType: '' ,
           
+          modalShown: false,
+          toastColor: '#333',
+          toastMessage: ''          
         };
          this.onActionSelected = this.onActionSelected.bind(this);
          this.onPressPopupMenu = this.onPressPopupMenu.bind(this);
+         this.animatedValue = new Animated.Value(60);
         const {dispatch} = this.props
 
   }
@@ -188,7 +207,7 @@ class Main extends React.Component {
   }
 
   hidePopupMenu() {
-     this.props.dispatch(uiActions.setPopupMenuState(false));
+    this.props.dispatch(uiActions.setPopupMenuState(false));
     this.setState({
       isPopupMenuOpen: false
     });
@@ -269,7 +288,6 @@ class Main extends React.Component {
 
   closeItemMenuModal() {
     this.refs.modalItemMenu.close();
-
   }
 
   isItemMenuModalOpen() {
@@ -365,14 +383,14 @@ class Main extends React.Component {
 
     if (nextprops.navReducer.HasToast)
     {
-      this.setState({
-        toastType: nextprops.navReducer.GlobalToastType,
-        toastMessage: nextprops.navReducer.GlobalToastMessage
-      })
-
-      this.openModal("toastModal")
-    //   setTimeout(()=> this.openModal("toastModal"), 2000)
-      setTimeout(this.closeToast.bind(this), 4000)
+      // this.setState({
+      //   toastType: nextprops.navReducer.GlobalToastType,
+      //   toastMessage: nextprops.navReducer.GlobalToastMessage
+      // })
+this.callToast2(nextprops.navReducer.GlobalToastMessage, nextprops.navReducer.GlobalToastType)
+    //   this.openModal("toastModal")
+    // //   setTimeout(()=> this.openModal("toastModal"), 2000)
+    //   setTimeout(this.closeToast.bind(this), 4000)
 
       this.props.dispatch(clearToast());
     }
@@ -477,6 +495,39 @@ class Main extends React.Component {
   setOpenedModal(ref : string){
     this.props.dispatch(uiActions.setOpenModalRef(ref))
   }
+  
+  callToast2(message, type) {
+    if (this.state.modalShown) return;
+    this.setToastType(message, type);
+    this.setState({ modalShown: true })
+    Animated.timing(
+      this.animatedValue,
+      { 
+        toValue: 0,
+        duration: 550
+      }).start(this.closeToast2())
+  }
+  
+  closeToast2() {
+    setTimeout(() => {
+      this.setState({ modalShown: false });
+      Animated.timing(
+        this.animatedValue,
+        {
+          toValue: 60,
+          duration: 350
+        }).start()
+    }, 3000)
+  }
+  
+  setToastType(toastMessage, type) {
+    let color;
+    if (type == 'error') color = '#f00';
+    if (type == 'info') color = '#333';
+    if (type == 'warning') color = '#ec971f';
+    if (type == 'success') color = '#3290F1';
+    this.setState({ toastColor: color, toastMessage: toastMessage });
+  }
 
   render() {
     const {navReducer} = this.props
@@ -553,6 +604,12 @@ class Main extends React.Component {
         <Modal style={[styles.modal, styles.toast]} position={"bottom"}  ref={"toastModal"} isDisabled={false} backdrop={false}>
           <Toast closeModal = {() => this.closeModal("toastModal") } openModal = {() => this.openModal("toastModal")} toastType={this.state.toastType} toastMessage={this.state.toastMessage} />
         </Modal>
+        
+        <Animated.View  style={[styles.toast2, { transform: [{ translateY: this.animatedValue }], backgroundColor: this.state.toastColor}]}>
+          <Text style={styles.toastMessage}>
+            { this.state.toastMessage }
+          </Text>
+        </Animated.View>
        
         {showPopupMenu ?
           <View style={styles.popupMenuContainer}>
