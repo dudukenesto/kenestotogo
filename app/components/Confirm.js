@@ -98,7 +98,7 @@ class Confirm extends React.Component {
                          <Text style={styles.messageText}>{this.state.confirmDetails}</Text>
                     </View>
                       <View style={styles.buttonsContainer}>
-                        <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>Ok</Button>
+                        <Button onPress={this.handleOk.bind(this)} containerStyle={styles.singleBtnContainer} style={styles.button}>OK</Button>
                         <Button containerStyle={styles.singleBtnContainer} style={styles.button} onPress={this.handleCancel.bind(this)}>Cancel</Button>
                      </View>
                 </View>

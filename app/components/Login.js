@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     logo: {
-        width: 178,
+        width: 184,
         height: 61, 
     },
     loginBtn: {       

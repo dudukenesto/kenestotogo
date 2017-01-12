@@ -211,7 +211,12 @@ hideLoading(){
      webviewbridge.sendToBridge("onDeviceOrientationChanged_" + orientation);
   }
 
+  // componentDidMount(){
+  //   this.setState({isLoading: false});
+  // }
+
   render(){
+    console.log('this.props.data.viewerUrl = ' + this.props.data.viewerUrl)
     writeToLog("", constans.DEBUG, `Document Component - url: ${this.props.data.viewerUrl}`)
     const injectScript = `
       (function () {
@@ -258,6 +263,8 @@ hideLoading(){
               ref="webviewbridge"
               style={styles.webview_body}
               source={{ uri: this.props.data.viewerUrl }}
+              
+             // source={{ uri: 'https://viewer2d.kenesto.com/?t=1&document=http%3a%2f%2fstage-app.kenesto.com%2fKenesto%2fFile%2fExternalFileWithTokenAsAction%3fuserId%3dUFJDQiUyZktIVVd4MjQyWGVReExEcmtjclJyJTJmUXlhbmZDSiUyYk00dnZ0elhybk5iVkRwSFlyZVlKMEc4WVU3alNwUWRiciUyYlRCd1lDOUwlMmJDekpaWExCUEFwSSUyZkFpanNSRWZFMDB1V2libVA4ZUlmT3hQc3Y2UFMydUMlMmZsTW03Sm1rMGMyaEFRUHhhN2hGVHoyelBsblVWcWRTcEFFdFNndFFDZ1VpSHVUYUpPQzglM2Q%3d%26useItemVersion%3dFalse%26fileID%3d569e89c3-8dd4-4c21-90c6-cec2d3b9e7aa.xls' }}
               onLoadEnd={this.onLoadEnd.bind(this) }
               javaScriptEnabled={true}
               domStorageEnabled={true}
