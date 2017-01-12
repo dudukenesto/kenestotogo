@@ -488,7 +488,6 @@ class Main extends React.Component {
     var documentlist = getDocumentsContext(navReducer);
     var toolbarStyle = navReducer.routes[navReducer.index].key === 'document' ? styles.toolbarContainer : null;
     const sortBy = documentlist.sortBy;
-
     return (
       <View style={styles.container}>
         {showKenestoToolbar ?
@@ -613,14 +612,14 @@ Main.contextTypes = {
 function mapStateToProps(state) {
 
   const { documentsReducer, navReducer} = state
-  const {env, sessionToken, email } = state.accessReducer;
+  const {env, sessionToken, email, isConnected } = state.accessReducer;
   //alert(sessionToken);
   return {
     documentsReducer,
     navReducer,
     env,
     sessionToken,
-
+    isConnected
   }
 }
 

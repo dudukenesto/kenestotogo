@@ -177,9 +177,11 @@ export function logOut() {
         let token = getState().accessReducer.sessionToken;
         let email = getState().accessReducer.email;
         writeToLog(email, constans.DEBUG, `function logOut - clearCredentials`) 
-        clearCredentials();
         dispatch(navigateReset('root', [{ key: 'KenestoLauncher', title: 'Launcher' }], 0));
+        clearCredentials();
         dispatch(clearAllDocumentlists());
+      
+
 
     }
 }
