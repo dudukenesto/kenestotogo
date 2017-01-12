@@ -93,7 +93,12 @@ class Documents extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {documentsReducer, navReducer} = this.props
-    const allowUpload = typeof(documentsReducer.selectedObject) != 'undefined' ? documentsReducer.selectedObject.permissions.AllowUpload || this.props.data.fId == '' : true;
+    
+    const allowUpload = typeof(documentsReducer.selectedObject) != 'undefined' ? documentsReducer.selectedObject.permissions.AllowUpload && documentsReducer.selectedObject.familyCode == 'FOLDER' : true;
+    //console.log('*******   componentDidUpdate   ***********')
+    if (typeof(documentsReducer.selectedObject) != 'undefined' )
+    // console.log(documentsReducer.selectedObject.familyCode + ' ' + documentsReducer.selectedObject.permissions.AllowUpload);
+    // console.log('*****************************************')
     if (allowUpload != this.state.AllowUpload)
        this.setState({AllowUpload : allowUpload});
 

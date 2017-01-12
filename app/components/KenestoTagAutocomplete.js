@@ -349,7 +349,11 @@ class KenestoTagAutocomplete extends Component {
 
             <View style={styles.textinputWrapper}>
               <TextInput
+                returnKeyType = "next"
                 ref='textInput'
+                autoFocus={true}
+                blurOnSubmit={false}
+                onSubmitEditing ={() => {const { userInput } = this.state; this._addNewTag(userInput); }}
                 style={[styles.textinput, textInputStyle]}
                 underlineColorAndroid='transparent'
                 placeholder={this.state.tags.length > 0 ? '' : this.props.placeholder}
