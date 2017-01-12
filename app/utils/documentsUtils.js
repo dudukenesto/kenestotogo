@@ -486,7 +486,8 @@ export function getViewerUrl(env: string, document: Object, orientation) {
     var height = orientation === 'PORTRAIT' ? longDimension : shortDimension;
     var url = document.ViewerUrl.replace('localhost', getEnvIp(env)) + "&w=" + width + "&h=" + height + "&t=" + time;
    
-    if (document.MimeType.indexOf('video') > -1) {
+    if (document.MimeType.indexOf('video') > -1 || document.MimeType.indexOf('stream') > -1) {
+      
       url = url + '&tu=' + encodeURIComponent(document.ThumbnailUrl);
     }
     
