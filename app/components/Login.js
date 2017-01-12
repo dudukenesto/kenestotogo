@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image} from "react-native";
+import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image, Keyboard} from "react-native";
 import Button from "react-native-button";
 import Tcomb from "tcomb-form-native";
 import config from '../utils/app.config';
@@ -187,15 +187,20 @@ const styles = StyleSheet.create({
 
 
    _makeLogin(){
-
+       //  Keyboard.dismiss();
          var value = this.refs.form.getValue();
        
         if (value == null) { // if validation fails, value will be null
             return false; // value here is an instance of Person
         }
         // kukudssss1111
-
+       Keyboard.dismiss();
        this.props.dispatch(accessActions.login(this.state.value.username, this.state.value.password, this.props.env))
+     
+   }
+
+   goToPword(){
+       this.refs.form.getComponent('password').refs.inputPword.focus();
    }
    
    usernameTemplate(locals) {
@@ -214,6 +219,9 @@ const styles = StyleSheet.create({
            <View style={formGroupStyle}>
                <Icon name="person" style={[styles.formIcon, usernameIconStyle]} />
                <TextInput
+                   ref="inputUname"
+                   onEndEditing={() => {locals.onEndEditing(); }}
+                   returnKeyType ="next"
                    placeholderTextColor={locals.placeholderTextColor}
                    selectionColor={locals.selectionColor}
                    underlineColorAndroid={locals.underlineColorAndroid}
@@ -243,6 +251,9 @@ const styles = StyleSheet.create({
              <View style={formGroupStyle}>
                  <Icon name="https" style={[styles.formIcon, passwordIconStyle]} />
                  <TextInput
+                     ref="inputPword"
+                     onSubmitEditing ={() => {locals.onEndEditing();}}
+                     returnKeyType ="done"
                      placeholderTextColor={locals.placeholderTextColor}
                      selectionColor={locals.selectionColor}
                      underlineColorAndroid={locals.underlineColorAndroid}
@@ -265,6 +276,7 @@ const styles = StyleSheet.create({
     fields: {
         username: {
             template: this.usernameTemplate,
+            onEndEditing: this.goToPword.bind(this),
             placeholder: 'Email',
             label: ' ',
             autoFocus: true,
@@ -274,6 +286,7 @@ const styles = StyleSheet.create({
         },
         password: {
             template: this.passwordTemplate,
+            onEndEditing: this._makeLogin.bind(this),
             placeholder: 'Password',
             label: ' ',
             secureTextEntry: true,
@@ -295,6 +308,7 @@ const styles = StyleSheet.create({
                                     type={User}
                                     value={this.state.value}
                                     onChange={this.onChange.bind(this)}
+                                   
                                     options={options}
                                 />
                             
