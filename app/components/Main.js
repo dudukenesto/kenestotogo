@@ -109,7 +109,7 @@ let styles = StyleSheet.create({
       right: 0,
       height: 50,
       zIndex: 100,
-      opacity: 0.8,
+      opacity: 1,
   },
   popupMenu: {
     flex: 1,
