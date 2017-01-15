@@ -53,10 +53,12 @@ class KenestoTagAutocomplete extends Component {
   }
 
   componentDidMount() {
-    
+
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
-      this.setState({ showList: true });
-      this.props.onShowTagsList();
+      if (this.state.userInput != '') {
+        this.setState({ showList: true });
+        this.props.onShowTagsList();
+      } 
     })
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (e) => {
       this.setState({ showList: false });
@@ -113,8 +115,11 @@ class KenestoTagAutocomplete extends Component {
     var filteredList = this._filterList(newTags);
     this.setState({
       tags: newTags,
-      dataSource: this.state.dataSource.cloneWithRows(filteredList)
+      dataSource: this.state.dataSource.cloneWithRows(filteredList),
+      showList: false
     });
+    
+    this.props.onHideTagsList();
 
     this.clearText();
 
@@ -206,18 +211,17 @@ class KenestoTagAutocomplete extends Component {
   }
 
   _onFocus() {
+    if (this.state.userInput != '') {
+      this.showTagsList();
+    }
+  }
+  
+  showTagsList(){
     this.setState({ showList: true });
     this.props.onShowTagsList();
   }
 
   _onChangeText(text) {
-    if(text == '' && this.state.tags == ''){
-      this.setState({ showList: false });
-      this.props.onHideTagsList();
-    }
-    else if (this.state.tags == ''){ 
-      this._onFocus();
-    }
     var filteredList = this.props.suggestions.filter((listElement) => {
       if (this.props.autocompleteField && this.props.uniqueField) {
         return !this.state.tags.find(t => (t.tagID === listElement[this.props.uniqueField])) && listElement[this.props.autocompleteField].toLowerCase().includes(text.toLowerCase());
@@ -236,6 +240,13 @@ class KenestoTagAutocomplete extends Component {
       userInput: text
     });
 
+    if (text == '') {
+      this.setState({ showList: false });
+      this.props.onHideTagsList();
+    }
+    else {
+      this.showTagsList();
+    }
   }
 
   _getListView() {
@@ -432,7 +443,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 30,
   },
-  newTagContainer: {},
+  newTagContainer: {
+    borderWidth: 1,
+    borderColor: 'red',
+    flex: 1
+  },
   tagContainerStyle: {
     backgroundColor: '#fff',
     paddingLeft: 5,
