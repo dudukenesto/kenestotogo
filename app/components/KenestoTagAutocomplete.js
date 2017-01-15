@@ -248,6 +248,14 @@ class KenestoTagAutocomplete extends Component {
       this.showTagsList();
     }
   }
+  
+  _onAddNewTag(){
+    const { userInput, tags } = this.state;
+    const shouldAdd = (userInput && !tags.includes(userInput) && this.props.allowAddingNewTags) ? true : false;
+    if(shouldAdd){
+      this._addNewTag(this.state.userInput);
+    }
+  }
 
   _getListView() {
     const { dataSource, listPosition } = this.state;
@@ -258,20 +266,23 @@ class KenestoTagAutocomplete extends Component {
     }
 
     return (
-
-      <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false}>
-        <ListView
-          style={[styles.list, listStyle]}
-          ref='listView'
-          keyboardShouldPersistTaps={true}
-          dataSource={dataSource}
-          enableEmptySections={true}
-          renderRow={this._renderRow.bind(this) }
-          renderSeparator={this._renderSeparator.bind(this) }
-          renderFooter={this._renderFooter.bind(this) }
-          key={this.state.userInput + this.state.orientation}
-          />
-      </ScrollView>
+      <View style={{ flex: 1 }}>
+        <ScrollView keyboardShouldPersistTaps={true} showsVerticalScrollIndicator={false} style={{ flex: 1 }} contentContainerStyle={{ flex: 1, alignItems: 'center', flexDirection: 'row' }}>
+          <TouchableHighlight onPress={this._onAddNewTag.bind(this) } underlayColor={"#efefef"} style={{ flex: 1 }}>
+            <ListView
+              style={[styles.list, listStyle]}
+              ref='listView'
+              keyboardShouldPersistTaps={true}
+              dataSource={dataSource}
+              enableEmptySections={true}
+              renderRow={this._renderRow.bind(this) }
+              renderSeparator={this._renderSeparator.bind(this) }
+              // renderFooter={this._renderFooter.bind(this) }
+              key={this.state.userInput + this.state.orientation}
+              />
+          </TouchableHighlight>
+        </ScrollView>
+      </View>
     )
   }
 
@@ -426,9 +437,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     backgroundColor: '#aaa',
   },
-  list: {
-
-  },
+  list: {},
   searchedText: {
     color: "#000",
     fontWeight: "bold"
@@ -444,9 +453,7 @@ const styles = StyleSheet.create({
     marginLeft: 30,
   },
   newTagContainer: {
-    borderWidth: 1,
-    borderColor: 'red',
-    flex: 1
+
   },
   tagContainerStyle: {
     backgroundColor: '#fff',
