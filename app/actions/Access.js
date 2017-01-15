@@ -143,7 +143,7 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
              env = stateEnv;
         }
      
-        dispatch(updateIsFetching(true)); 
+        //dispatch(updateIsFetching(true)); 
        
         var forgotPasswordUrl = getForgotPasswordUrl(env, username);
          writeToLog(username, constans.DEBUG, `function ActivateForgotPassword - url:${forgotPasswordUrl}`)
@@ -156,12 +156,12 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
         .then( (responseData) => {
             if (responseData.ResponseStatus == "FAILED")
             {
-                 dispatch(updateIsFetching(false)); 
+                 //dispatch(updateIsFetching(false)); 
                  dispatch(emitError("Reset password failed", ""))
                  writeToLog(username, constans.ERROR, `function ActivateForgotPassword- Reset password failed - url: ${url}`)
             }
             else{
-                   dispatch(updateIsFetching(false)); 
+                 //  dispatch(updateIsFetching(false)); 
                    dispatch(emitInfo("Password reset email sent", "Follow the instructions in the email to reset your password",() => dispatch(pop())))
             }
          
@@ -187,12 +187,13 @@ export function logOut() {
 }
 
 export function login(userId : string, password: string, env: string = 'dev')  {
+  
     return (dispatch, getState) => {
         if (!getState().accessReducer.isConnected)
          return dispatch(emitToast("info", textResource.NO_INTERNET)); 
-
+  console.log('***************************************   login *********************************************')
      writeToLog(userId, constans.DEBUG, `function login - userId: ${userId}, password:${"*****"}`)
-     dispatch(updateIsFetching(true)); 
+   // dispatch(updateIsFetching(true)); 
 
         if (env == null)
         {
@@ -217,7 +218,6 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                 {
 
                     clearCredentials();
-                    //dispatch(updateIsFetching(false));
                      dispatch(emitError('Failed to authenticate')); 
                      writeToLog(userId, constans.ERROR, `function login - Failed to Login - userId: ${userId}, password:${"*****"}`)
                 }

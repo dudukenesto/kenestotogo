@@ -11,7 +11,7 @@ function accessReducer(state =
     firstName: "",
     lastName: "",
     thumbnailPath: "",
-    isConnected : false,
+    isConnected : true,
     statistics: {
       totalMyDocuments: 0,
       totalAllDocuments: 0,
@@ -22,7 +22,9 @@ function accessReducer(state =
     }
   }, action) {
   switch (action.type) {
+  
     case types.UPDATE_IS_FETCHING:
+      console.log('UPDATE_IS_FETCHING accessReducer')
       return {
           ...state,
         isFetching: action.isFetching

@@ -216,7 +216,6 @@ hideLoading(){
   // }
 
   render(){
-    console.log('this.props.data.viewerUrl = ' + this.props.data.viewerUrl)
     writeToLog("", constans.DEBUG, `Document Component - url: ${this.props.data.viewerUrl}`)
     const injectScript = `
       (function () {

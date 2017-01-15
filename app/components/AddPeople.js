@@ -167,7 +167,6 @@ class AddPeople extends Component {
   // EXAMPLE OF CUSTOM TAG TEMPLATE
   // 
   getTagTemplate(tag, removeTag) {
-    console.log('this is the tag template thumbnail = ' + JSON.stringify(tag));
     return (
       <View style={styles.tagInnerContainer}>
         <View style={[styles.roundIcon, { marginLeft: -5.5 }]}>

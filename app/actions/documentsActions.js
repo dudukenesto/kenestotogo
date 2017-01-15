@@ -396,7 +396,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
                 }
             })
             .catch((error) => {
-                console.log('error: ' + JSON.stringify(error))
+             //   console.log('error: ' + JSON.stringify(error))
                 dispatch(navActions.emitError("Failed to retrieve documents", ""))
                 writeToLog(email, constans.ERROR, `function fetchDocumentsTable - Failed to retrieve documents - url: ${url}`, error)
             })
@@ -405,6 +405,7 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
 
 export function fetchTableIfNeeded() {
+    console.log('fetchTableIfNeeded')
     return (dispatch, getState) => {
         if (!getState().accessReducer.isConnected)
             return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
@@ -423,7 +424,7 @@ export function fetchTableIfNeeded() {
     }
 }
 export function refreshTable(documentlist: Object, updateRouteData: boolean = true, getStatistics = false) {
- 
+   console.log('refreshTable')
     return (dispatch, getState) => {
         try {
             if (!getState().accessReducer.isConnected)
@@ -484,6 +485,7 @@ export function clearDocuments(documentlist: Object, isSearch : boolean = false)
 }
 
 function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
+    console.log('getNextUrl')
     const activeDocumentsList = documentsReducer[documentlist.catId]
     if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl == "false" || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == null || activeDocumentsList.nextUrl == 'null') {
         return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch, documentlist.isVault)
@@ -537,10 +539,22 @@ function requestDocumentsList(documentlist: Object) {
 
 function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
     const activeDocumentsList = documentsReducer[documentlist.catId]
+    console.log('shouldFetchDocuments *********************')
+     console.log(typeof (activeDocumentsList))
+     if (typeof(activeDocumentsList) != 'undefined')
+     {
+         console.log('activeDocumentsList.items.length = ' + activeDocumentsList.items.length); 
+         console.log('activeDocumentsList.isFetching = ' + activeDocumentsList.isFetching); 
+         console.log('activeDocumentsList.nextUrl = ' + activeDocumentsList.nextUrl)
+     }
+    if (documentsReducer.isFetching)
+        return false;
     if (typeof (activeDocumentsList) == 'undefined' || activeDocumentsList.items.length == 0 || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
+        console.log('shouldFetchDocuments returns true')
         return true
     }
 
+console.log('shouldFetchDocuments returns false')
     return false
 }
 

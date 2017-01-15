@@ -80,6 +80,9 @@ class Documents extends Component {
     { 
         dispatch(getDocumentPermissions(this.props.data.fId, "FOLDER"))
     }
+
+
+    console.log('************************** documents componentWillMount *************************')
        
     dispatch(fetchTableIfNeeded())
   }
@@ -94,13 +97,22 @@ class Documents extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {documentsReducer, navReducer} = this.props
     
-    const allowUpload = typeof(documentsReducer.selectedObject) != 'undefined' ? documentsReducer.selectedObject.permissions.AllowUpload && documentsReducer.selectedObject.familyCode == 'FOLDER' : true;
-    //console.log('*******   componentDidUpdate   ***********')
+   // const allowUpload = typeof(documentsReducer.selectedObject) != 'undefined' ? documentsReducer.selectedObject.permissions.AllowUpload && documentsReducer.selectedObject.familyCode == 'FOLDER' : true;
+    var allowUpload = false; 
+   if (typeof(documentsReducer.selectedObject) != 'undefined' && documentsReducer.selectedObject.familyCode == 'FOLDER')
+      allowUpload = true; 
+   else {
+      if ( typeof(documentsReducer.selectedObject) != 'undefined' && documentsReducer.selectedObject.permissions.AllowUpload == false)
+         allowUpload = false; 
+      else 
+        allowUpload = true;
+   }
+    console.log('*******   componentDidUpdate   ***********')
     if (typeof(documentsReducer.selectedObject) != 'undefined' )
-    // console.log(documentsReducer.selectedObject.familyCode + ' ' + documentsReducer.selectedObject.permissions.AllowUpload);
-    // console.log('*****************************************')
-    if (allowUpload != this.state.AllowUpload)
-       this.setState({AllowUpload : allowUpload});
+    console.log(documentsReducer.selectedObject.familyCode + ' ' + documentsReducer.selectedObject.permissions.AllowUpload);
+    console.log('*****************************************')
+  if (allowUpload != this.state.AllowUpload)
+      this.setState({AllowUpload : allowUpload});
 
 
     var documentlist = getDocumentsContext(navReducer);

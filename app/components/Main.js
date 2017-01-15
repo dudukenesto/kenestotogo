@@ -645,7 +645,7 @@ this.callToast2(nextprops.navReducer.GlobalToastMessage, nextprops.navReducer.Gl
     
       <MessageBarAlert ref="alert" />
       <DropDownOptions ref={"dropDownOptionsContainer"} />
-      <NetInfoManager dispatch={this.props.dispatch} />
+   
       </View>
     )
   }

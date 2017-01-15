@@ -135,7 +135,6 @@ function navigationState(state = initialState, action) {
      }
     case  actionTypes.TOGGLE_TOOLBAR: 
       var thistoolbarVisible = action.toolbarVisible == null? !state.toolbarVisible: action.toolbarVisible; 
-      console.log('thistoolbarVisible = ' + thistoolbarVisible)
       return{
           ...state,
           toolbarVisible: thistoolbarVisible,
