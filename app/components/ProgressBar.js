@@ -2,30 +2,10 @@ import React from "react";
 import {View, StyleSheet, Platform, ActivityIndicator, ActivityIndicatorIOS} from "react-native";
 
 var styles = StyleSheet.create({
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#a9a9a9',
-    height: 56,
-  },
-  searchBarInput: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-    height: 50,
-    padding: 0,
-    backgroundColor: 'transparent'
-  },
   spinner: {
     alignSelf: "center",
     width: 30,
     height: 30,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-    marginHorizontal: 8,
   },
 });
 
@@ -46,6 +26,8 @@ export default class extends React.Component {
                         <ActivityIndicator
                             styleAttr="Large"
                             style={styles.spinner}
+                            size={this.props.size || 'small'}
+                            color={this.props.color || "#000"}
                             />
                   )
              }

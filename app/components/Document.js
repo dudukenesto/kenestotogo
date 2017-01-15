@@ -177,7 +177,7 @@ componentWillMount(){
    return (
      this.state.isLoading ?
        <View style={styles.loading}>
-         <ProggressBar isLoading={true} />
+         <ProggressBar isLoading={true} size={50} color={"#ff6a00"} />
        </View>
        :
        <View></View>
@@ -405,7 +405,8 @@ var styles = StyleSheet.create({
   loading: {
     justifyContent: 'center', 
     alignItems: 'center', 
-    backgroundColor: '#fefefe', 
+    // backgroundColor: '#fefefe',
+    backgroundColor: '#000', 
     position: "absolute", 
     zIndex: 1, 
     top: 0, left: 0, bottom: 0, right: 0
