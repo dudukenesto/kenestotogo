@@ -7,7 +7,7 @@ import * as textResource from '../constants/TextResource'
 import _ from "lodash";
 export function updateIsFetching(isFetching: boolean){
     return {
-        type: types.UPDATE_IS_FETCHING, 
+        type: types.UPDATE_IS_FETCHING_PEOPLE, 
         isFetching
     }
 }

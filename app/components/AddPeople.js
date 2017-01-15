@@ -290,6 +290,7 @@ class AddPeople extends Component {
   }
 
   render() {
+    console.log('addpeople is fetching = ' + this.props.isFetching)
     if (this.props.isFetching) {
       return (<View style={styles.creatingFolder}>
         <ProgressBar isLoading={true}/>

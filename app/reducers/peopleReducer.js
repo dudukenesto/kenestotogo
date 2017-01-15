@@ -1,8 +1,8 @@
 import * as types from '../constants/ActionTypes'
 import _ from "lodash";
-function peopleReducer(state = {isFetching: false, UsersAndGroups: null, ObjectInfo: null, fetchingList: [], fetchingListChanged : 0},  action){
+function peopleReducer(state = {isFetching: true, UsersAndGroups: null, ObjectInfo: null, fetchingList: [], fetchingListChanged : 0},  action){
      switch (action.type) {
-        case types.UPDATE_IS_FETCHING:
+        case types.UPDATE_IS_FETCHING_PEOPLE:
             return {
                 ...state,
                 isFetching: action.isFetching

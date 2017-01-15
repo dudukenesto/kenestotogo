@@ -29,7 +29,7 @@ let {
 
 export function updateIsFetching(isFetching: boolean) {
     return {
-        type: types.UPDATE_IS_FETCHING,
+        type: types.UPDATE_IS_FETCHING_DOCUMENTS,
         isFetching
     }
 }

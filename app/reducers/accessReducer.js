@@ -23,8 +23,7 @@ function accessReducer(state =
   }, action) {
   switch (action.type) {
   
-    case types.UPDATE_IS_FETCHING:
-      console.log('UPDATE_IS_FETCHING accessReducer')
+    case types.UPDATE_IS_FETCHING_ACCESS:
       return {
           ...state,
         isFetching: action.isFetching

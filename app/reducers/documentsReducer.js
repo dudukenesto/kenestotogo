@@ -131,7 +131,7 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
           ...state,
         isFetchingSelectedObject: action.isFetchingSelectedObject
       }
-    case types.UPDATE_IS_FETCHING:
+    case types.UPDATE_IS_FETCHING_DOCUMENTS:
       return {
           ...state,
         isFetching: action.isFetching
