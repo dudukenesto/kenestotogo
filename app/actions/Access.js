@@ -191,7 +191,6 @@ export function login(userId : string, password: string, env: string = 'dev')  {
     return (dispatch, getState) => {
         if (!getState().accessReducer.isConnected)
          return dispatch(emitToast("info", textResource.NO_INTERNET)); 
-  console.log('***************************************   login *********************************************')
      writeToLog(userId, constans.DEBUG, `function login - userId: ${userId}, password:${"*****"}`)
     dispatch(updateIsFetching(true)); 
 

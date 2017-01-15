@@ -41,6 +41,45 @@ export function updateIsFetchingSelectedObject(isFetching: boolean) {
     }
 }
 
+export function updateIsFetchingCurrentFolderPermissions(isFetching: boolean) {
+    return {
+        type: types.UPDATE_IS_FETCHING_CURRENT_FOLDER_PERMISSIONS,
+        isFetchingCurrentFolderPermissions: isFetching
+    }
+}
+
+export function getCurrentFolderPermissions(folderId : string){
+    return (dispatch, getState) => {
+          if (!getState().accessReducer.isConnected)
+            return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
+          dispatch(updateIsFetchingCurrentFolderPermissions(true))
+         const {sessionToken, env, email} = getState().accessReducer;
+         var url = getObjectInfoUrl(env, sessionToken, folderId, "FOLDER");
+
+          return fetch(url)
+            .then(response => response.json())
+            .then(json => {
+                if (json.ResponseStatus == "FAILED") {
+                    dispatch(navActions.emitError(json.ErrorMessage, 'error details'))
+                    dispatch(navActions.emitError(json.ErrorMessage, ""))
+                    dispatch(updateIsFetchingCurrentFolderPermissions(false))
+                    writeToLog(email, constans.ERROR, `function getCurrentFolderPermissions - error details- url: ${url}`)
+                }
+                else {
+                    var permissions = json.ResponseData.ObjectPermissions;
+                    dispatch(updateCurrentFolder(folderId, permissions))
+                    dispatch(updateIsFetchingCurrentFolderPermissions(false))
+                }
+            })
+            .catch((error) => {
+                dispatch(navActions.emitError("Failed to get folder permissions", ""))
+                dispatch(updateIsFetchingCurrentFolderPermissions(false))
+                writeToLog(email, constans.ERROR, `function getCurrentFolderPermissions - Failed to get document permissions , url: ${url}`, error)
+            })
+
+    }
+}
+
 export function getDocumentPermissions(documentId: string, familyCode: string) {
     return (dispatch, getState) => {
           if (!getState().accessReducer.isConnected)
@@ -405,7 +444,6 @@ function fetchDocumentsTable(url: string, documentlist: Object, actionType: stri
 
 
 export function fetchTableIfNeeded() {
-    console.log('fetchTableIfNeeded')
     return (dispatch, getState) => {
         if (!getState().accessReducer.isConnected)
             return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
@@ -424,7 +462,6 @@ export function fetchTableIfNeeded() {
     }
 }
 export function refreshTable(documentlist: Object, updateRouteData: boolean = true, getStatistics = false) {
-   console.log('refreshTable')
     return (dispatch, getState) => {
         try {
             if (!getState().accessReducer.isConnected)
@@ -485,7 +522,6 @@ export function clearDocuments(documentlist: Object, isSearch : boolean = false)
 }
 
 function getNextUrl(env: string, sessionToken: string, documentsReducer: Object, documentlist: Object) {
-    console.log('getNextUrl')
     const activeDocumentsList = documentsReducer[documentlist.catId]
     if (!activeDocumentsList || activeDocumentsList.nextUrl === false || activeDocumentsList.nextUrl == "false" || activeDocumentsList.nextUrl == "" || activeDocumentsList.nextUrl == null || activeDocumentsList.nextUrl == 'null') {
         return constructRetrieveDocumentsUrl(env, sessionToken, documentlist.fId, documentlist.sortBy, documentlist.sortDirection, documentlist.catId, documentlist.keyboard, documentlist.isSearch, documentlist.isVault)
@@ -539,22 +575,11 @@ function requestDocumentsList(documentlist: Object) {
 
 function shouldFetchDocuments(documentsReducer: Object, documentlist: Object) {
     const activeDocumentsList = documentsReducer[documentlist.catId]
-    console.log('shouldFetchDocuments *********************')
-     console.log(typeof (activeDocumentsList))
-     if (typeof(activeDocumentsList) != 'undefined')
-     {
-         console.log('activeDocumentsList.items.length = ' + activeDocumentsList.items.length); 
-         console.log('activeDocumentsList.isFetching = ' + activeDocumentsList.isFetching); 
-         console.log('activeDocumentsList.nextUrl = ' + activeDocumentsList.nextUrl)
-     }
     if (documentsReducer.isFetching)
         return false;
     if (typeof (activeDocumentsList) == 'undefined' || activeDocumentsList.items.length == 0 || !activeDocumentsList.isFetching && (activeDocumentsList.nextUrl !== null) && (activeDocumentsList.nextUrl !== "")) {
-        console.log('shouldFetchDocuments returns true')
         return true
     }
-
-console.log('shouldFetchDocuments returns false')
     return false
 }
 
@@ -567,6 +592,24 @@ export function updateSelectedObject(id: string, familyCode: string, permissions
             familyCode: familyCode,
             permissions: permissions
         }
+    }
+}
+
+export function updateCurrentFolder(id: string, permissions: object) {
+
+    return {
+        type: types.UPDATE_CURRENT_FOLDER,
+        currentFolder: {
+            id: id,
+            permissions: permissions
+        }
+    }
+}
+
+export function resetCurrentFolder() {
+    return {
+        type: types.UPDATE_CURRENT_FOLDER,
+        currentFolder: null
     }
 }
 

@@ -11,7 +11,7 @@ function accessReducer(state =
     firstName: "",
     lastName: "",
     thumbnailPath: "",
-    isConnected : true,
+    isConnected : false,
     statistics: {
       totalMyDocuments: 0,
       totalAllDocuments: 0,

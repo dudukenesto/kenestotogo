@@ -35,7 +35,7 @@ var DocumentUploadCell = require('../components/DocumentUploadCell');
 const splitChars = '|';
 
 import _ from "lodash";
-import { fetchTableIfNeeded, refreshTable,getDocumentPermissions } from '../actions/documentsActions'
+import { fetchTableIfNeeded, refreshTable,getDocumentPermissions, getCurrentFolderPermissions,resetCurrentFolder } from '../actions/documentsActions'
 import ViewContainer from '../components/ViewContainer';
 import KenestoHelper from '../utils/KenestoHelper';
 import ActionButton from 'react-native-action-button';
@@ -78,11 +78,9 @@ class Documents extends Component {
     const {dispatch} = this.props
     if(this.props.data.fId != '')
     { 
-        dispatch(getDocumentPermissions(this.props.data.fId, "FOLDER"))
+        dispatch(getCurrentFolderPermissions(this.props.data.fId))
     }
 
-
-    console.log('************************** documents componentWillMount *************************')
        
     dispatch(fetchTableIfNeeded())
   }
@@ -96,24 +94,12 @@ class Documents extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {documentsReducer, navReducer} = this.props
-    
-   // const allowUpload = typeof(documentsReducer.selectedObject) != 'undefined' ? documentsReducer.selectedObject.permissions.AllowUpload && documentsReducer.selectedObject.familyCode == 'FOLDER' : true;
-    var allowUpload = false; 
-   if (typeof(documentsReducer.selectedObject) != 'undefined' && documentsReducer.selectedObject.familyCode == 'FOLDER')
-      allowUpload = true; 
-   else {
-      if ( typeof(documentsReducer.selectedObject) != 'undefined' && documentsReducer.selectedObject.permissions.AllowUpload == false)
-         allowUpload = false; 
-      else 
-        allowUpload = true;
-   }
-    console.log('*******   componentDidUpdate   ***********')
-    if (typeof(documentsReducer.selectedObject) != 'undefined' )
-    console.log(documentsReducer.selectedObject.familyCode + ' ' + documentsReducer.selectedObject.permissions.AllowUpload);
-    console.log('*****************************************')
+    var  allowUpload = true;
+
+    if (this.props.data.fId != '' && documentsReducer.currentFolder != null)
+        allowUpload = documentsReducer.currentFolder.permissions.AllowUpload;
   if (allowUpload != this.state.AllowUpload)
       this.setState({AllowUpload : allowUpload});
-
 
     var documentlist = getDocumentsContext(navReducer);
     this._showStatusBar()
@@ -386,6 +372,7 @@ class Documents extends Component {
       var documentlist = getDocumentsContext(navReducer);
       //const isFetching = documentlist.catId in documentsReducer ? documentsReducer[documentlist.catId].isFetching : false
       const isFetching = documentsReducer.isFetching;
+      const isFetchingFolder = documentsReducer.isFetchingCurrentFolderPermissions;
       var additionalStyle = {};
       let showCustomButton = documentlist.isSearch ? false : true
       const buttonColor = this.state.AllowUpload ? "#FF811B" : "#d3d3d3"
@@ -394,7 +381,7 @@ class Documents extends Component {
         <ViewContainer ref="masterView" style={[styles.container, additionalStyle]}>
           <View style={styles.separator} elevation={5} />
     
-          {this._renderTableContent(isFetching)}
+          {this._renderTableContent(isFetching || isFetchingFolder)}
           
           {showCustomButton ? <ActionButton style={ {opacity : 0.1} }  buttonColor={buttonColor} onPress={() => this.openModal()} >
           </ActionButton> : <View></View>}

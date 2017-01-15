@@ -146,7 +146,6 @@ class NavRoot extends Component {
       }
 
       if ((this.props.navigation.routes[this.props.navigation.index].key.indexOf('documents') > -1 && this.props.navigation.routes[this.props.navigation.index].data.fId != "") || this.props.navigation.routes[this.props.navigation.index].key === 'document') {
-
         this.props.popRoute()
         return true
       }

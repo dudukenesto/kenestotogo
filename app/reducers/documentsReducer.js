@@ -114,8 +114,14 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
     case types.UPDATE_SELECTED_OBJECT:
       return {
         ...state,
-        isFetching: false,
+        isFetchingSelectedObject: false,
         selectedObject: action.selectedObject
+      }
+      case types.UPDATE_CURRENT_FOLDER:
+      return {
+        ...state,
+        isFetchingCurrentFolderPermissions: false,
+        currentFolder: action.currentFolder
       }
     case types.CLEAR_ALL_DOCUMENTS_LIST:
       return state = initDocumentsReducer()
@@ -130,6 +136,11 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
       return {
           ...state,
         isFetchingSelectedObject: action.isFetchingSelectedObject
+      }
+    case types.UPDATE_IS_FETCHING_CURRENT_FOLDER_PERMISSIONS:
+      return {
+          ...state,
+        isFetchingCurrentFolderPermissions: action.isFetchingCurrentFolderPermissions
       }
     case types.UPDATE_IS_FETCHING_DOCUMENTS:
       return {
@@ -163,7 +174,7 @@ export default function documentsReducer(state = initDocumentsReducer(), action)
 
 
 function initDocumentsReducer() {
-  return { isFetching: false, isFetchingSelectedObject: false }
+  return { isFetching: false, isFetchingSelectedObject: false, isFetchingCurrentFolderPermissions: false, currentFolder : null }
 }
 
 function initDocumentList() {
