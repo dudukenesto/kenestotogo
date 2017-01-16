@@ -181,22 +181,22 @@ class KenestoTagAutocomplete extends Component {
     )
   }
 
-  _renderFooter() {
-    const { userInput, tags } = this.state;
-    const shouldRender = (userInput && !tags.includes(userInput) && this.props.allowAddingNewTags) ? true : false;
-    const { addNewTagTitle, newTagStyle, newTagContainerStyle } = this.props
-    if (shouldRender) {
-      return (
-        <TouchableHighlight onPress={this._addNewTag.bind(this, userInput) } underlayColor={"#efefef"}>
-          <View style={[styles.newTagContainer, newTagContainerStyle]}>
-            <Text style={[styles.newTagText, newTagStyle]}>{addNewTagTitle + ' \"' + userInput + '\"'}</Text>
-          </View>
-        </TouchableHighlight>
-      )
-    }
+  // _renderFooter() {
+  //   const { userInput, tags } = this.state;
+  //   const shouldRender = (userInput && !tags.includes(userInput) && this.props.allowAddingNewTags) ? true : false;
+  //   const { addNewTagTitle, newTagStyle, newTagContainerStyle } = this.props
+  //   if (shouldRender) {
+  //     return (
+  //       <TouchableHighlight onPress={this._addNewTag.bind(this, userInput) } underlayColor={"#efefef"}>
+  //         <View style={[styles.newTagContainer, newTagContainerStyle]}>
+  //           <Text style={[styles.newTagText, newTagStyle]}>{addNewTagTitle + ' \"' + userInput + '\"'}</Text>
+  //         </View>
+  //       </TouchableHighlight>
+  //     )
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
   _renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
     return (

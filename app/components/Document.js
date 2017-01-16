@@ -177,7 +177,7 @@ componentWillMount(){
    return (
      this.state.isLoading ?
        <View style={styles.loading}>
-         <ProggressBar isLoading={true} size={50} color={"#ff6a00"} />
+         <ProggressBar isLoading={true} size={50} color={"#3490EF"} />
        </View>
        :
        <View></View>
