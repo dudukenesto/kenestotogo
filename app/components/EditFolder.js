@@ -9,6 +9,59 @@ import * as navActions from '../actions/navActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
+import Tcomb from "tcomb-form-native";
+var _ = require('lodash');
+
+
+var Form = Tcomb.form.Form;
+
+var ileagleChars = Tcomb.refinement(Tcomb.String, function (s) {
+    var test =  /^[^;<>:\"/\\\\|?*]+$/.test(s);
+    return test;
+});
+
+ileagleChars.getValidationErrorMessage = function (value, path, context) {
+  return 'Name cannot contain any of the following characters: /\;*?"<>|';
+  //return 'Name cannot contain special characters'
+};
+let formStylesheet = _.cloneDeep(Form.stylesheet);
+formStylesheet.textbox.normal = {
+      color: "#000000",
+      fontSize: 17,
+      height: 36,
+      padding: 7,
+      marginBottom: 5,
+      borderWidth: 0     
+}
+formStylesheet.textbox.error = {
+      color: "#000000",
+      fontSize: 17,
+      height: 36,
+      padding: 7,
+      marginBottom: 5,
+      borderWidth: 0     
+}
+
+var inputFolder = Tcomb.struct({      
+  folderName: ileagleChars
+});
+
+
+var options = {
+    stylesheet: formStylesheet,
+    fields: {
+        folderName: {
+            // placeholder: 'Folder Name',
+            label: ' ',
+            autoFocus: true,
+            // placeholderTextColor: '#ccc',
+            underlineColorAndroid: "#ccc",
+            selectionColor: "orange",
+        }
+    }
+};
+
+
 
 var styles = StyleSheet.create({
     container: {
@@ -78,6 +131,9 @@ var styles = StyleSheet.create({
         fontSize: 16,
         marginRight: 40
     },
+    form: {
+        alignSelf: 'stretch'
+    }
 });
 
 class EditFolder extends React.Component {
@@ -87,41 +143,55 @@ class EditFolder extends React.Component {
         this.state = {
             isVault: document.IsVault,
             folderName: document.Name,
-            folderId:document.Id
+            folderId:document.Id,
+            value:{
+                 folderName: document.Name
+            }
         };
     }
 
 
     _edit() {
-        if (this.state.folderName != false) {
+        
+        var value = this.refs.form.getValue();
+        if (value == null) { // if validation fails, value will be null
+            return false; // value here is an instance of Person
+        }
+
+        var {folderName} = this.state.value;
+        
+        
+        if (folderName != false) {
             this.props.closeModal();
             this.props.dispatch(navActions.updateIsProcessing(true));
             setTimeout(() =>{
                 
-                this.props.dispatch(documentsActions.EditFolder(this.state.folderId ,this.state.folderName, this.state.isVault));
+                this.props.dispatch(documentsActions.EditFolder(this.state.folderId ,this.state.value.folderName, this.state.isVault));
             }, 100);
-            
-            
         }
     }
+    
+    onChange(value) {
+            this.setState({value});
+    }
+    
     render(){
         return (
             <View style={styles.container}>
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>Edit folder</Text>
                 </View>
-                <View style={styles.nameContainer}>
-                    <TextInput
-                        ref="folderName"
-                        value={this.state.folderName}
-                        onChangeText={folderName => this.setState({ folderName }) }
-                        style={styles.textEdit}
-                        placeholder="Folder Name"
-                        placeholderTextColor={"#ccc"}
-                        selectionColor={"orange"}
-                        underlineColorAndroid={"#ccc"}
-                        />
+                
+                <View style={styles.form}>
+                    <Form
+                        ref="form"
+                        type={inputFolder}
+                        value={this.state.value}
+                        onChange={this.onChange.bind(this)}
+                        options={options}
+                    />
                 </View>
+                
                 <View style={styles.nameContainer}>
                     <Text style={styles.textEdit}>Vault folder</Text>
                     <Switch

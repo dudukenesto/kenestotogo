@@ -32,6 +32,14 @@ formStylesheet.textbox.normal = {
       padding: 7,
       marginBottom: 5
 }
+formStylesheet.textbox.error = {
+      color: "#000000",
+      fontSize: 17,
+      height: 36,
+      padding: 7,
+      marginBottom: 5,
+      borderWidth: 0     
+}
 
 var inputFolder = Tcomb.struct({      
   folderName: ileagleChars,  //required email
