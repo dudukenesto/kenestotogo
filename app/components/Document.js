@@ -51,7 +51,7 @@ componentWillUnmount(){
   }
 
 componentWillMount(){
-//   console.log('window.height =' + window.height )
+ //  console.log('window.height =' + window.height )
 //   var url = ""
 //   if (this.props.data.isExternalLink)
 //       var url =this.props.data.viewerUrl;
@@ -216,6 +216,7 @@ hideLoading(){
   // }
 
   render(){
+ //   console.log('this.props.data.viewerUrl = ' + this.props.data.viewerUrl)
     writeToLog("", constans.DEBUG, `Document Component - url: ${this.props.data.viewerUrl}`)
     const injectScript = `
       (function () {
