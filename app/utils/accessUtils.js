@@ -12,14 +12,14 @@ export function getApiBaseUrl(env: string){
 
 }
 
-export function getAuthUrl(env: string,username: string, password: string){
+export function getAuthUrl(env: string,username: string, password: string, accessKey : string){
 
     var urls = _.find(config.urls, {'env' : env});
 
     if (urls == null)
         return null;
 
-    var authUrl = urls.AuthUrlTemplate.replace('{0}', username.trim()).replace('{1}', password.trim());
+    var authUrl = urls.AuthUrlTemplate.replace('{0}', username.trim()).replace('{1}', password.trim()).replace('{2}', accessKey);
     return authUrl;
 
 }
