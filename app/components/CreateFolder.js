@@ -44,7 +44,7 @@ var options = {
         folderName: {
             placeholder: 'Folder Name',
             label: ' ',
-            autoFocus: false,
+            autoFocus: true,
             placeholderTextColor: '#ccc',
             underlineColorAndroid: "#ccc",
             selectionColor: "orange",
