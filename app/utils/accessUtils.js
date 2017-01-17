@@ -65,12 +65,13 @@ export function getRetrieveStatisticsUrl(env: string, sessionToken: string, tena
   return `${apiBaseUrl}/KDocuments.svc/RetrieveStatistics?t=${sessionToken}&tid=${tenantId}`
 }
 
-export function clearCredentials()
+export async function clearCredentials() : bool
 {
-        AsyncStorage.multiRemove(["kenestoU","kenestoP", "env"]); 
+     await AsyncStorage.multiRemove(["kenestoU","kenestoP", "env"]); 
+     return true;
 }
 
-export async function getCredentials(props: Object) : Object{
+export async function getCredentials() : Object{
     
     var res  = await AsyncStorage.multiGet(["kenestoU", "kenestoP", "env"]);
       var env = null; 
@@ -89,10 +90,10 @@ export async function getCredentials(props: Object) : Object{
           if (storedPassword != null && storedUserName != null)
                {
                 
-                   return   { hasCredentials: true, storedUserName : storedUserName, storedPassword : storedPassword, env : env, props: props, _handleNavigate: props._handleNavigate};
+                   return   { hasCredentials: true, storedUserName : storedUserName, storedPassword : storedPassword, env : env};
                }
                else
-                    return { hasCredentials: false,  props: props};
+                    return { hasCredentials: false};
 }
 
 

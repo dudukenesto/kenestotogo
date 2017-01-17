@@ -1,5 +1,6 @@
 import * as actionTypes from '../constants/ActionTypes'
 import * as peopleActions from '../actions/peopleActions'
+
 import * as uiActions from '../actions/uiActions'
 import {getSelectedDocument} from '../utils/documentsUtils'
 import {isRouteKeyExists} from '../utils/ObjectUtils'
@@ -60,6 +61,13 @@ export function updateIsProcessing(isProcessing: boolean) {
   return {
     type: actionTypes.UPDATE_IS_PROCESSING,
     isProcessing
+  }
+}
+
+export function updateIsRouting(isRouting: boolean) {
+  return {
+    type: actionTypes.UPDATE_IS_ROUTING,
+    isRouting
   }
 }
 

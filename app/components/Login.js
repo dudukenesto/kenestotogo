@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image, Keyboard} from "react-native";
+import {View, Text, TextInput, StyleSheet, TouchableWithoutFeedback, AsyncStorage, Image, Keyboard,Picker} from "react-native";
 import Button from "react-native-button";
 import Tcomb from "tcomb-form-native";
 import config from '../utils/app.config';
@@ -10,6 +10,9 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import * as constans from '../constants/GlobalConstans'
 import * as accessActions from '../actions/Access'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {clearCredentials, setCredentials, getCredentials} from '../utils/accessUtils';
+const Item = Picker.Item;
+
 var stricturiEncode = require('strict-uri-encode');
 
 var Form = Tcomb.form.Form;
@@ -67,7 +70,7 @@ const styles = StyleSheet.create({
     logoContainer: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: "center",
+        justifyContent: "space-between",
     },
     logo: {
         width: 184,
@@ -107,6 +110,18 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 5
     },  
+    loading: {
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        // backgroundColor: '#fefefe',
+
+        position: "absolute", 
+
+        top: 0, left: 0, bottom: 0, right: 0
+    },
+     picker: {
+     width: 130
+    }
 });
 
 
@@ -114,8 +129,9 @@ const styles = StyleSheet.create({
      constructor(props) {
 
          super(props)
-
          this.state = {
+             isLoading: true,
+             selectedEnv: 'dev',
              value: {
                  username: "",
                  password: "",
@@ -140,21 +156,7 @@ const styles = StyleSheet.create({
         this.setState({value});
     }
 
-    
-    _renderProgressBar(){
-        if (this.props.isFetching){
-            return(
-            <ProggressBar isLoading={true} />
-            )
-        }
-        else{
-            return(
-                <ProggressBar isLoading={false} />
-            )
-            
-            }
-        
-        }
+
    NavigateToForgotPassword(){
 
       const  forgotPasswordRoute = {
@@ -168,40 +170,71 @@ const styles = StyleSheet.create({
         this.props._handleNavigate(forgotPasswordRoute)
    }
 
-    //  componentWillReceiveProps(nextProps){
-    //     if (nextProps.isLoggedIn)
-    //     {
-    //          var data = {
-    //               key : "documents",
-    //               name: "My Documents",
-    //               catId: constans.MY_DOCUMENTS,
-    //               fId: "",
-    //               sortDirection: constans.ASCENDING,
-    //               sortBy: constans.ASSET_NAME
-    //           }
-    //           this.props._handleNavigate(routes.documentsRoute(data));
-    //     } 
-            
-    // }
-
-
+    directLogin(uName: string, pWord: string , env : string){
+       this.updateIsLoading(true); 
+       Keyboard.dismiss();
+       this.props.dispatch(accessActions.login( uName, pWord, env))
+     
+   }
 
    _makeLogin(){
-       //  Keyboard.dismiss();
-         var value = this.refs.form.getValue();
+     
+       var value = this.refs.form.getValue();
        
         if (value == null) { // if validation fails, value will be null
             return false; // value here is an instance of Person
         }
-        // kukudssss1111
+        this.updateIsLoading(true); 
        Keyboard.dismiss();
-       this.props.dispatch(accessActions.login(this.state.value.username, this.state.value.password, this.props.env))
+       this.props.dispatch(accessActions.login(this.state.value.username,this.state.value.password, this.state.selectedEnv));
      
    }
 
    goToPword(){
        this.refs.form.getComponent('password').refs.inputPword.focus();
    }
+
+   updateIsLoading(isLoading : boolean){
+        this.setState({isLoading : isLoading})
+   }
+
+   onEnvChange = (key: string) => {
+        this.setState({selectedEnv : key});
+    };
+    renderLoading(){
+            return (
+
+                <View style={{height: 460}}>
+                    <View style={styles.logoContainer}><Image source={require('../assets/kenesto_logo.png')} style={styles.logo}></Image></View>
+                    <View style={styles.loading}>
+                        <ProggressBar isLoading={true} size={50} color={"#3490EF"} />
+                    </View>
+
+            </View>
+            )
+    }
+
+
+    renderEnvPicker(){
+            return(
+                 <Picker
+                    style={styles.picker}
+                    selectedValue={this.state.selectedEnv}
+                    onValueChange={this.onEnvChange.bind(this)}
+                    mode="dropdown"
+                    >
+                    <Item label="Dev" value="dev" />
+                    <Item label="QA" value="qa" />
+                    <Item label="Staging" value="staging" />
+                    <Item label="Production" value="production" />
+                 </Picker>
+            )
+    }
+
+    componentDidChange(){
+        alert('fdfd')
+    }
+ 
    
    usernameTemplate(locals) {
        var stylesheet = locals.stylesheet;
@@ -299,9 +332,9 @@ const styles = StyleSheet.create({
 
                             
             return(
+
                 <KeyboardAwareScrollView style={{flex:1}} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={true}>
                     <View style={{height: 460}}>
-                        {this._renderProgressBar()}
                         <View style={styles.logoContainer}><Image source={require('../assets/kenesto_logo.png')} style={styles.logo}></Image></View>
                         <View style={styles.form}><Form
                                     ref="form"
@@ -311,6 +344,7 @@ const styles = StyleSheet.create({
                                    
                                     options={options}
                                 />
+                            {this.renderEnvPicker()}
                             
                             <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
 
@@ -324,8 +358,30 @@ const styles = StyleSheet.create({
                 </KeyboardAwareScrollView>
               )
     }
+   componentWillMount(){
+        getCredentials().then((storedCredentials) => {
+            if (storedCredentials.hasCredentials)
+            {
+                this.directLogin(storedCredentials.storedUserName, storedCredentials.storedPassword, storedCredentials.env);
+            }
+            else{
+                this.updateIsLoading(false);
+              
+            }
+        });
+
+   }
+
 
     render(){
+
+        if (this.state.isLoading && !this.props.isAfterLogout){
+            return (
+                <View style = {styles.container}>
+                      {this.renderLoading()}
+                </View>
+            )
+        }
         
         return (
           <View style={[styles.container, this.props.style]}>

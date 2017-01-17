@@ -75,6 +75,7 @@ class Documents extends Component {
 
 
   componentWillMount() {
+   
     const {dispatch} = this.props
     if(this.props.data.fId != '')
     { 

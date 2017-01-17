@@ -286,7 +286,7 @@ class ItemMenu extends React.Component {
     }
 
     _renderUpdateVersionsAction(document) {
-        if (this.state.document.IsOwnedByRequestor && 
+        if (this.state.document.IsOwnedByRequestor || 
              this.props.documentsReducer.selectedObject.permissions.AllowUpdateVersions 
              && (this.state.document.IsCheckedOut || !this.state.document.isVault)) {
             return (<TouchableHighlight onPress={this.updateVersions.bind(this)} underlayColor="#E9EAEC">

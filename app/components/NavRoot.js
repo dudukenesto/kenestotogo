@@ -57,7 +57,7 @@ class NavRoot extends Component {
       return <Scan _handleNavigate={this._handleNavigate.bind(this) } isCameraScan={route.data.isCameraScan}  baseFileId={route.data.baseFileId} />
     }
     if (route.key === 'login') {
-      return <LoginContainer _handleNavigate={this._handleNavigate.bind(this) } />
+      return <LoginContainer _handleNavigate={this._handleNavigate.bind(this)} isAfterLogout={route.isAfterLogout} />
     }
 
     if (route.key != "" && typeof route.key != 'undefined' && (route.key.indexOf('documents') > -1)) {

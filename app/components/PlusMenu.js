@@ -70,8 +70,8 @@ class PlusMenu extends React.Component{
       
      const url = getFileUploadUrl(this.props.env, this.props.sessionToken, this.state.file.name, "", "",  this.state.documentsContext.fId);
     const fileName = this.state.file.path.substring(this.state.file.path.lastIndexOf('/') + 1); 
-    const name = fileName.substring(0,  fileName.lastIndexOf('.'));
-    this.props.dispatch(uploadToKenesto({name: name, uri : this.state.file.path, type: this.state.file.type, size: this.state.file.size, fileExtension: this.state.file.extension}, url, false));
+    //const name = fileName.substring(0,  fileName.lastIndexOf('.'));
+    this.props.dispatch(uploadToKenesto({name: this.state.file.name, uri : this.state.file.path, type: this.state.file.type, size: this.state.file.size, fileExtension: this.state.file.extension}, url, false));
      this.props.closeMenuModal("modalPlusMenu");
     
   }
@@ -84,10 +84,12 @@ class PlusMenu extends React.Component{
         height: 400,
             includeBase64: false
         }).then(image => {
-
-        const fileName = image.path.substring(image.path.lastIndexOf("/") + 1);
-
+        var date = new Date(); 
         const fileExtension =  image.path.substring(image.path.lastIndexOf("."));
+
+        const fileName = "scanned_" + date.getTime() + '.' + fileExtension;
+
+       
         
 
           this.setState({

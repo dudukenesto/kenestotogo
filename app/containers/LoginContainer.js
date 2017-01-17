@@ -9,6 +9,7 @@ import {bindActionCreators} from 'redux'
 import Login from '../components/Login'
 
 class LoginContainer extends Component {
+
   render() {
   
     return (
@@ -19,14 +20,17 @@ class LoginContainer extends Component {
 }
 
 
+
+
 function mapStateToProps(state) {
   const {isLoggedIn, env, hasError, errorMessage,isFetching  } = state.accessReducer; 
-
+ 
   return {
     isLoggedIn, 
     env, 
     isFetching, 
-    hasError
+    hasError, 
+    isAfterLogout : state.navReducer.routes[state.navReducer.index].isAfterLogout
   }
 }
 

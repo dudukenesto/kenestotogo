@@ -11,33 +11,38 @@ const initialState = {
   lastActionType:"",
   routes: [
     {
-      key: 'KenestoLauncher',
-      title: 'Launcher'
+      key: 'login',
+      title: 'login'
     }
   ], 
 
   toolbarVisible: true,
   isProcessing:false,
+  isRouting: false,
   orientation: Orientation.getInitialOrientation()
 }
 
 function navigationState(state = initialState, action) {
  
   switch (action.type) {
+   
     case actionTypes.PUSH_ROUTE:
       if (state.routes[state.index].key === (action.route && action.route.key)) return state
       state.lastActionType =  actionTypes.PUSH_ROUTE;
       state.toolbarVisible = true;
+      state.isRouting = true;
       return NavigationStateUtils.push(state, action.route)
     case  actionTypes.POP_ROUTE:
       if (state.index === 0 || state.routes.length === 1) return state
       state.lastActionType =  actionTypes.POP_ROUTE;
       state.toolbarVisible = true;
+      state.isRouting = true;
       return NavigationStateUtils.pop(state)
 
     case  actionTypes.NAV_JUMP_TO_KEY:
      state.lastActionType =  actionTypes.NAV_JUMP_TO_KEY;
       state.toolbarVisible = true;
+      state.isRouting = true;
       return NavigationStateUtils.jumpTo(state, action.key)
 
     case  actionTypes.NAV_JUMP_TO_INDEX:
@@ -150,6 +155,13 @@ function navigationState(state = initialState, action) {
         ...state,
         isProcessing: action.isProcessing,
       }
+       case actionTypes.UPDATE_IS_ROUTING:
+
+      return {
+        ...state,
+        isRouting: action.isRouting,
+      }
+      
     default:
       return state
   }
@@ -158,31 +170,4 @@ function navigationState(state = initialState, action) {
 
 export default navigationState
 
-// You can also manually create your reducer::
-// export default (state = initialState, action) => {
-//   const {
-//     index,
-//     routes
-//   } = state
-//   console.log('action: ', action)
-//   switch (action.type) {
-//     case PUSH_ROUTE:
-//       return {
-//         ...state,
-//         routes: [
-//           ...routes,
-//           action.route
-//         ],
-//         index: index + 1
-//       }
-//     case POP_ROUTE:
-//       return index > 0 ? {
-//         ...state,
-//         routes: routes.slice(0, routes.length - 1),
-//         index: index - 1
-//       } : state
-//     default:
-//       return state
-//   }
-// }
 
