@@ -464,8 +464,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 0.5,
     borderColor: "#ccc",
-    height: 31,
-    maxWidth: 295
+    height: 31
   },
 
 });
