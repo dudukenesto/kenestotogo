@@ -304,7 +304,7 @@ class ItemMenu extends React.Component {
         if (this.props.documentsReducer.selectedObject.permissions.AllowCheckin) {
             return (<TouchableHighlight onPress={this.checkinDocument.bind(this)} underlayColor="#E9EAEC">
                 <View style={styles.actionHolder}>
-                    <KenestoIcon name="login-variant" style={styles.kenestoIcon} />
+                    <CustomIcon name="checkin" style={styles.icon} />
                     <Text style={styles.actionName}>Check In</Text>
                 </View>
             </TouchableHighlight>)
@@ -318,7 +318,7 @@ class ItemMenu extends React.Component {
         if (this.props.documentsReducer.selectedObject.permissions.AllowDiscardCheckout) {
             return (<TouchableHighlight onPress={this.discardCheckOut.bind(this)} underlayColor="#E9EAEC">
                 <View style={styles.actionHolder}>
-                    <CustomIcon name="checkout_discard_1cp" style={styles.icon} />
+                    <CustomIcon name="discard_checkout" style={styles.icon} />
                     <Text style={styles.actionName}>Discard Check Out</Text>
                 </View>
             </TouchableHighlight>)
@@ -332,7 +332,7 @@ class ItemMenu extends React.Component {
         if (this.props.documentsReducer.selectedObject.permissions.AllowCheckout) {
             return (<TouchableHighlight onPress={this.checkoutDocument.bind(this)} underlayColor="#E9EAEC">
                 <View style={styles.actionHolder}>
-                    <View style={styles.customIconContainer}><KenestoIcon name="logout-variant" style={styles.kenestoIcon} /></View>
+                    <View style={styles.customIconContainer}><CustomIcon name="checkout" style={styles.icon} /></View>
                     <Text style={styles.actionName}>Check Out</Text>
                 </View>
             </TouchableHighlight>)

@@ -115,7 +115,7 @@ var DocumentCell = React.createClass({
             <View style={styles.textContainer}>
               <View style={{ flexDirection: "row" }}>
                 {this.props.document.IsCheckedOut && <View style={styles.customIconContainer}>
-                  <KenestoIcon name="logout-variant" style={[styles.kenestoIcon, styles.smallIcon]} />
+                  <CustomIcon name="checkout" style={[styles.icon, styles.smallIcon]} />
                 </View>}
                 <Text style={styles.documentTitle} numberOfLines={2}>
                   {this.props.document.Name}
