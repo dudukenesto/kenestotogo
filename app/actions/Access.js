@@ -180,7 +180,7 @@ export function logOut() {
 
        // var clear = clearCredentials();
         clearCredentials().then(() => {
-            dispatch(navigateReset('root', [{ key: 'login', title: 'login', isAfterLogout: true }], 0));
+            dispatch(navigateReset('root', [{ key: 'login', title: 'login'}], 0));
            try {
                dispatch(clearAllDocumentlists());
            } catch (error) {

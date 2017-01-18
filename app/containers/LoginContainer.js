@@ -29,8 +29,7 @@ function mapStateToProps(state) {
     isLoggedIn, 
     env, 
     isFetching, 
-    hasError, 
-    isAfterLogout : state.navReducer.routes[state.navReducer.index].isAfterLogout
+    hasError
   }
 }
 

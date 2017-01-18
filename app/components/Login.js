@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
 
          super(props)
          this.state = {
-             isLoading: true,
              selectedEnv: 'dev',
              value: {
                  username: "",
@@ -171,7 +170,7 @@ const styles = StyleSheet.create({
    }
 
     directLogin(uName: string, pWord: string , env : string){
-       this.updateIsLoading(true); 
+      // this.updateIsLoading(true); 
        Keyboard.dismiss();
        this.props.dispatch(accessActions.login( uName, pWord, env))
      
@@ -184,7 +183,7 @@ const styles = StyleSheet.create({
         if (value == null) { // if validation fails, value will be null
             return false; // value here is an instance of Person
         }
-        this.updateIsLoading(true); 
+     //   this.updateIsLoading(true); 
        Keyboard.dismiss();
        this.props.dispatch(accessActions.login(this.state.value.username,this.state.value.password, this.state.selectedEnv));
      
@@ -194,9 +193,9 @@ const styles = StyleSheet.create({
        this.refs.form.getComponent('password').refs.inputPword.focus();
    }
 
-   updateIsLoading(isLoading : boolean){
-        this.setState({isLoading : isLoading})
-   }
+//    updateIsLoading(isLoading : boolean){
+//         this.setState({isLoading : isLoading})
+//    }
 
    onEnvChange = (key: string) => {
         this.setState({selectedEnv : key});
@@ -231,11 +230,7 @@ const styles = StyleSheet.create({
             )
     }
 
-    componentDidChange(){
-        alert('fdfd')
-    }
- 
-   
+
    usernameTemplate(locals) {
        var stylesheet = locals.stylesheet;
        var formGroupStyle = stylesheet.formGroup.normal;
@@ -364,10 +359,10 @@ const styles = StyleSheet.create({
             {
                 this.directLogin(storedCredentials.storedUserName, storedCredentials.storedPassword, storedCredentials.env);
             }
-            else{
-                this.updateIsLoading(false);
+            // else{
+            //     this.updateIsLoading(false);
               
-            }
+            // }
         });
 
    }
@@ -375,7 +370,7 @@ const styles = StyleSheet.create({
 
     render(){
 
-        if (this.state.isLoading && !this.props.isAfterLogout){
+        if (this.props.isFetching ){
             return (
                 <View style = {styles.container}>
                       {this.renderLoading()}
