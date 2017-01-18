@@ -107,6 +107,15 @@ class EditDocument extends React.Component {
         }
     }
 
+   componentWillReceiveProps(nextprops){
+        var document = getSelectedDocument(nextprops.documentsReducer, nextprops.navReducer); 
+         this.state = {
+            documentName: document.Name,
+            documentId:document.Id
+        };
+  }
+
+
      
 
     render(){

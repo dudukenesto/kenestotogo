@@ -114,14 +114,14 @@ export function getDocumentPermissions(documentId: string, familyCode: string) {
 }
 
 
-export function getDocumentInfo(documentId: string, familyCode: string, actionType : string = types.UPDATE_ROUTE_DATA) {
+export function getDocumentInfo(documentId: string, familyCode: string, actionType : string = types.UPDATE_ROUTE_DATA, updateViewer : boolean = true) {
     return (dispatch, getState) => {
         if (!getState().accessReducer.isConnected)
             return dispatch(navActions.emitToast("info", textResource.NO_INTERNET)); 
 
         const {sessionToken, env, email} = getState().accessReducer;
         var documentlist = getDocumentsContext(getState().navReducer);
-
+      
         dispatch(updateIsFetchingSelectedObject(true))
         var url = getObjectInfoUrl(env, sessionToken, documentId, familyCode);
         writeToLog(email, constans.DEBUG, `function getDocumentInfo - url: ${url}`)
@@ -136,6 +136,8 @@ export function getDocumentInfo(documentId: string, familyCode: string, actionTy
                 }
                 else {
                     var document = json.ResponseData.DocumentInfo;
+                    var currRoute = getState().navReducer.routes[ getState().navReducer.index].data; 
+                    const viewerUrl = updateViewer ?  getViewerUrl(env, document, getState().navReducer.orientation) : currRoute.viewerUrl;
                     var data = {
                         key: "document",
                         name: document.Name,
@@ -143,7 +145,7 @@ export function getDocumentInfo(documentId: string, familyCode: string, actionTy
                         familyCode: json.ResponseData.FamilyCode,
                         catId: documentlist.catId,
                         fId: documentlist.fId,
-                        viewerUrl: getViewerUrl(env, document, getState().navReducer.orientation),
+                        viewerUrl:viewerUrl,
                         isExternalLink: document.IsExternalLink,
                         isVault: document.IsVault,
                         ThumbnailUrl: document.ThumbnailUrl,
@@ -1448,11 +1450,11 @@ export function EditDocument(documentId: string, documentName: string) {
                 else {
                     
                     if (isDocumentPage) {
-                          dispatch(getDocumentInfo(documentId, constans.GENERAL_FAMILY));
+                          dispatch(getDocumentInfo(documentId, constans.GENERAL_FAMILY,  types.UPDATE_ROUTE_DATA, false));
                     }
-                    else{
-                             dispatch(refreshTable(documentlist, false));
-                    }
+
+                   dispatch(refreshTable(documentlist, false));
+
                     
                    
                     dispatch(navActions.emitToast(constans.SUCCESS, "document successfully updated.", ""));

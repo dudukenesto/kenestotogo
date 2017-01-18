@@ -252,6 +252,8 @@ export function login(userId : string, password: string, env: string = 'dev')  {
                              writeToLog(userId, constans.ERROR, `function login - Failed to Login, loginUrl:${loginUrl}`, error) 
                         })
                         .then( (responseData) => {
+                            if (responseData == null)
+                                return  dispatch(emitError('Failed to Login'));
                             setCredentials(userId, password, env);
                             var sessionToken =  typeof (responseData.LoginJsonResult) != 'undefined'? responseData.LoginJsonResult.Token : "";
                             dispatch(updateLoginInfo(true, 

@@ -467,7 +467,6 @@ ItemMenu.contextTypes = {
 
 function mapStateToProps(state) {
     const { documentsReducer, navReducer } = state
-    console.log(documentsReducer.isFetchingSelectedObject)
     const {env } = state.accessReducer;
     return {
         documentsReducer: documentsReducer,
