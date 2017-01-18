@@ -448,12 +448,12 @@ class ItemMenu extends React.Component {
 
                         <View style={styles.actionIconsContainer}>
                             {this._renderDownloadAction(this.state.document) }
-                            {this._renderViewAction(this.state.document) }
+                            {this._renderViewAction(this.props.documentsReducer.isFetchingSelectedObject) }
                         </View>
 
                     </View>
                 </View>
-                {this._renderMenuItemActions(this.state.isFetching) }
+                {this._renderMenuItemActions(this.props.documentsReducer.isFetchingSelectedObject) }
             </ViewContainer>
         )
     }
@@ -467,6 +467,7 @@ ItemMenu.contextTypes = {
 
 function mapStateToProps(state) {
     const { documentsReducer, navReducer } = state
+    console.log(documentsReducer.isFetchingSelectedObject)
     const {env } = state.accessReducer;
     return {
         documentsReducer: documentsReducer,

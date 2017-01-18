@@ -359,10 +359,7 @@ const styles = StyleSheet.create({
             {
                 this.directLogin(storedCredentials.storedUserName, storedCredentials.storedPassword, storedCredentials.env);
             }
-            // else{
-            //     this.updateIsLoading(false);
-              
-            // }
+ 
         });
 
    }
