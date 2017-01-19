@@ -28,7 +28,7 @@ let formStylesheet = _.cloneDeep(Form.stylesheet);
 formStylesheet.textbox.normal = {
       color: "#000000",
       fontSize: 17,
-      height: 36,
+      height: 40,
       padding: 7,
       marginBottom: 5,
       borderWidth: 0     
@@ -36,10 +36,18 @@ formStylesheet.textbox.normal = {
 formStylesheet.textbox.error = {
       color: "#000000",
       fontSize: 17,
-      height: 36,
+      height: 40,
       padding: 7,
       marginBottom: 5,
       borderWidth: 0     
+}
+formStylesheet.formGroup= {
+    normal: {
+      marginTop: -15
+    },
+    error: {
+      marginTop: -15, 
+    }
 }
 
 var inputFolder = Tcomb.struct({      
