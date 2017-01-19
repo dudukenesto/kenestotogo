@@ -98,7 +98,7 @@ class PlusMenu extends React.Component{
 
        this.upload();
    
-        }).catch(e => alert(JSON.stringify(e)));
+        }).catch(e => console.log(JSON.stringify(e)));
 
     
   }
