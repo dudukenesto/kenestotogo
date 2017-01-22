@@ -124,7 +124,6 @@ export function retrieveStatistics() {
         }
       })
       .catch((error) => {
-       // console.log("error:" + JSON.stringify(error))
         dispatch(emitError("Failed to retrieve statistics",""))
 
         writeToLog(email, constans.ERROR, `function retrieveStatistics- Failed to retrieve statistics - url: ${url}`, error)
@@ -139,10 +138,9 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
         let token = getState().accessReducer.sessionToken;
         if (env == null)
         {
-             const {stateEnv} = getState(); 
+             const {stateEnv} = getState().accessReducer; 
              env = stateEnv;
         }
-     
         dispatch(updateIsFetching(true)); 
        
         var forgotPasswordUrl = getForgotPasswordUrl(env, username);
@@ -151,14 +149,14 @@ export function ActivateForgotPassword(username : string, env : string = 'dev') 
         .then((response) => response.json())
         .catch((error) => {
              dispatch(emitError('Failed to reset password'))
-              writeToLog(username, constans.ERROR, `function ActivateForgotPassword- Failed to reset password - url: ${url}`,error)
+              writeToLog(username, constans.ERROR, `function ActivateForgotPassword- Failed to reset password - url: ${forgotPasswordUrl}`,error)
         })
         .then( (responseData) => {
             if (responseData.ResponseStatus == "FAILED")
             {
                  dispatch(updateIsFetching(false)); 
                  dispatch(emitError("Reset password failed", ""))
-                 writeToLog(username, constans.ERROR, `function ActivateForgotPassword- Reset password failed - url: ${url}`)
+                 writeToLog(username, constans.ERROR, `function ActivateForgotPassword- Reset password failed - url: ${forgotPasswordUrl}`)
             }
             else{
                    dispatch(updateIsFetching(false)); 

@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
             return false; // value here is an instance of Person
         }
 
-        this.props.dispatch(accessActions.ActivateForgotPassword(username));
+        this.props.dispatch(accessActions.ActivateForgotPassword(username, this.props.env));
 
     }
 
@@ -186,12 +186,11 @@ const styles = StyleSheet.create({
 }
 
 function mapStateToProps(state) {
-  const {isLoggedIn, env, hasError, errorMessage, isFetching, passwordSent} = state.accessReducer; 
+  const {isLoggedIn, hasError, errorMessage, isFetching, passwordSent} = state.accessReducer; 
   const accessReducer = state.accessReducer;
 
   return {
     isLoggedIn, 
-    env, 
     isFetching,
     hasError,
     passwordSent,

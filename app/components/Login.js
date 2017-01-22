@@ -163,7 +163,8 @@ const styles = StyleSheet.create({
                 route: {
                     key: 'forgotPassword',
                     title: 'forgotPassword',
-                    userName: this.state.value.username
+                    userName: this.state.value.username,
+                    env: this.state.selectedEnv
                 }
                 }
         this.props._handleNavigate(forgotPasswordRoute)
