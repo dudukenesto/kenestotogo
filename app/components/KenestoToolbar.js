@@ -498,6 +498,8 @@ class KenestoToolbar extends Component {
           {this.renderAddPeopleToolbar() }
         </View>
       )
+
+      return null;
   }
 }
 
