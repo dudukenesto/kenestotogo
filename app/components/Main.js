@@ -535,13 +535,13 @@ this.callToast2(nextprops.navReducer.GlobalToastMessage, nextprops.navReducer.Gl
     //var modalStyle = this.state.ifCreatingFolder ? styles.ifProcessing : [styles.modal, styles.createFolder]
    var modalStyle =  [styles.modal, styles.createFolder]; 
     var showPopupMenu = this.state.isPopupMenuOpen;
-    var showKenestoToolbar =  navReducer.routes[navReducer.index].key === 'login' || navReducer.routes[navReducer.index].key === 'forgotPassword' || navReducer.routes[navReducer.index].key === 'KenestoLauncher' ? false : true;
+   // var showKenestoToolbar =  navReducer.routes[navReducer.index].key === 'login' || navReducer.routes[navReducer.index].key === 'forgotPassword' || navReducer.routes[navReducer.index].key === 'KenestoLauncher' ? false : true;
+  //  showKenestoToolbar = true;
     var documentlist = getDocumentsContext(navReducer);
     var toolbarStyle = navReducer.routes[navReducer.index].key === 'document' ? styles.toolbarContainer : null;
     const sortBy = documentlist.sortBy;
     return (
       <View style={styles.container}>
-        {showKenestoToolbar ?
           <Animatable.View ref={"toolBar"} easing="ease-in-out-cubic" style={toolbarStyle} duration={600}> 
             <KenestoToolbar ref={"kToolbar"}
               onActionSelected={this.onActionSelected}
@@ -554,9 +554,7 @@ this.callToast2(nextprops.navReducer.GlobalToastMessage, nextprops.navReducer.Gl
               isConnected ={this.props.isConnected}
               />
           </Animatable.View>
-          :
-          <View></View>
-        }
+
         <NavigationRootContainer closeItemMenuModal ={this.closeItemMenuModal.bind(this) }  dispatch={this.props.dispatch.bind(this)}  hideSearchBox ={this.hideSearchBox.bind(this)} hidePopupMenu ={this.hidePopupMenu.bind(this)} 
          closeDrawer ={this.closeDrawer.bind(this) } closeMenuModal={this.closeMenuModal.bind(this)} openedDialogModalref = {() => this.openedDialogModalref()} 
          closeModal={this.closeModal.bind(this) } openModal={this.openModal.bind(this) } />
