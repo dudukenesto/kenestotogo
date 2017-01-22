@@ -11,6 +11,7 @@ function accessReducer(state =
     firstName: "",
     lastName: "",
     thumbnailPath: "",
+    hasProfilePicture: false,
     isConnected : false,
     statistics: {
       totalMyDocuments: 0,
@@ -72,6 +73,7 @@ function accessReducer(state =
         email: action.email,
         firstName: action.firstName,
         lastName: action.lastName,
+        hasProfilePicture: action.thumbnailPath != '',
         thumbnailPath: action.thumbnailPath + "?t=" + Date.now()
       }
 

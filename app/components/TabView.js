@@ -184,6 +184,7 @@ class TabView extends React.Component {
 
 
     render() {
+     
         const drawer = this.context.drawer;
         const {accessReducer} = this.props
         var fullName = `${accessReducer.firstName} ${accessReducer.lastName}`
@@ -192,7 +193,7 @@ class TabView extends React.Component {
             <View style={styles.screenContainer}>
                 <View style={[styles.headerContainer, this.props.sceneStyle]}>
                     <View style={styles.avatarContainer}>
-                        {accessReducer.thumbnailPath == "" ?
+                        {!accessReducer.hasProfilePicture ?
                             <Icon name="account-circle" style={styles.userIcon} /> :
                             <Image source={{ uri: accessReducer.thumbnailPath }} style={styles.avatar} />
                         }
