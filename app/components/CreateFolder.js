@@ -21,6 +21,9 @@ var ileagleChars = Tcomb.refinement(Tcomb.String, function (s) {
 });
 
 ileagleChars.getValidationErrorMessage = function (value, path, context) {
+    console.log('value = ' + value)
+    if (value == '' || value == null)
+        return 'Folder name cannot be empty';
   return 'Name cannot contain any of the following characters: /\;*?"<>|';
   //return 'Name cannot contain special characters'
 };
