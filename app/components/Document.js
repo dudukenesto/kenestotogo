@@ -36,7 +36,7 @@ class Document extends React.Component{
     this.documentProps = this.props.data// _.filter(routes, function(o) { return o.key == 'document'; })[0];
    
     this.state = {  
-      isLoading: true,
+      isLoading: !this.props.data.isExternalLink,
       scalingEnabled: true,
       prevPinch: null, 
       pinchDirection : null, 
@@ -51,18 +51,6 @@ componentWillUnmount(){
   }
 
 componentWillMount(){
- //  console.log('window.height =' + window.height )
-//   var url = ""
-//   if (this.props.data.isExternalLink)
-//       var url =this.props.data.viewerUrl;
-//   else
-//      url = this.props.data.viewerUrl.replace('localhost', getEnvIp(this.props.data.env)) + "&w=" + window.width + "&h=" + window.height;
-
-//  this.setState( {url : url });
-   
- 
-
-
 
   this.gestureResponder = createResponder({
     onStartShouldSetResponder: (evt, gestureState) => true,
@@ -216,7 +204,7 @@ hideLoading(){
   // }
 
   render(){
- //   console.log('this.props.data.viewerUrl = ' + this.props.data.viewerUrl)
+    console.log('this.props.data.viewerUrl = ' +  JSON.stringify(this.props.data));
     writeToLog("", constans.DEBUG, `Document Component - url: ${this.props.data.viewerUrl}`)
     const injectScript = `
       (function () {

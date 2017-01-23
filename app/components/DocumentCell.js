@@ -72,7 +72,7 @@ var DocumentCell = React.createClass({
     }
     
     var imageSource = require('../assets/thumbnail_img.png'); 
-          
+        
     var elementIcon;
     if (this.props.document.HasThumbnail){
       elementIcon = <Image source = {{uri: this.props.document.ThumbnailUrl}} style={styles.previewThumbnail} />
@@ -86,8 +86,9 @@ var DocumentCell = React.createClass({
       }
       else {
         if (typeof this.props.document.IconName != 'undefined') {
-          var iconName = getIconNameFromExtension(this.props.document.FileExtension).iconName;
-          var customStyle = getIconNameFromExtension(this.props.document.FileExtension).customStyle;
+          var fileExtension = this.props.document.IsExternalLink? 'link' : this.props.document.FileExtension;
+          var iconName = getIconNameFromExtension(fileExtension).iconName;
+          var customStyle = getIconNameFromExtension(fileExtension).customStyle;
           elementIcon = <View style={styles.iconFiletype}>
             { iconName === 'solidw' ? 
               <CustomIcon name={iconName} style={[styles.icon, customStyle]} />
