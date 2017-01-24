@@ -10,6 +10,7 @@ import {getSelectedDocument} from '../utils/documentsUtils'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import Tcomb from "tcomb-form-native";
+import { getDocumentsContext } from '../utils/documentsUtils'
 var _ = require('lodash');
 
 
@@ -206,8 +207,9 @@ class EditFolder extends React.Component {
                     <Text style={styles.textEdit}>Vault folder</Text>
                     <Switch
                         onValueChange={(value) => this.setState({ isVault: value }) }
-                        // style={{ j}}
-                        value={this.state.isVault} />
+                       
+                         disabled={this.props.isParentVault}
+                        value={this.state.isVault || this.props.isParentVault}/>
                 </View>
                 <View style={styles.buttonsContainer}>
                     <Button onPress={this._edit.bind(this) } containerStyle={styles.singleBtnContainer} style={styles.button}>Edit</Button>
@@ -223,7 +225,9 @@ class EditFolder extends React.Component {
  
 function mapStateToProps(state) {
     const { documentsReducer,navReducer} = state
+    var documentlist = getDocumentsContext(state.navReducer);
     return {
+       isParentVault : documentlist.isVault,
         documentsReducer,
         navReducer
     }
