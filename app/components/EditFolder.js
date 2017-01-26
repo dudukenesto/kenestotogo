@@ -17,13 +17,18 @@ var _ = require('lodash');
 var Form = Tcomb.form.Form;
 
 var ileagleChars = Tcomb.refinement(Tcomb.String, function (s) {
+     if (s.length > 200)
+        return false;
     var test =  /^[^;<>:\"/\\\\|?*]+$/.test(s);
     return test;
 });
 
 ileagleChars.getValidationErrorMessage = function (value, path, context) {
     if (value == '' || value == null)
-    return 'Folder name cannot be empty';
+        return 'Folder name cannot be empty';
+    if (value.length > 200)
+        return 'Folder Name is limited to 200 chars';
+
     return 'Name cannot contain any of the following characters: /\;*?"<>|';
   //return 'Name cannot contain special characters'
 };
@@ -165,6 +170,7 @@ class EditFolder extends React.Component {
     _edit() {
         
         var value = this.refs.form.getValue();
+      
         if (value == null) { // if validation fails, value will be null
             return false; // value here is an instance of Person
         }
