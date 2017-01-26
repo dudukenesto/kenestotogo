@@ -68,9 +68,9 @@ class KenestoTagAutocomplete extends Component {
 
   componentWillUnmount() {
     this.keyboardDidShowListener.remove();
-    Keyboard.removeListener('keyboardDidShow', (message) => console.log('\n\nremoveListener keyboardDidShow'));
+  //  Keyboard.removeListener('keyboardDidShow', (message) => console.log('\n\nremoveListener keyboardDidShow'));
     this.keyboardDidHideListener.remove();
-    Keyboard.removeListener('keyboardDidHide', (message) => console.log('\n\nremoveListener keyboardDidHide'))
+  //  Keyboard.removeListener('keyboardDidHide', (message) => console.log('\n\nremoveListener keyboardDidHide'))
   }
 
 

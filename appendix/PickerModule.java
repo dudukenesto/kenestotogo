@@ -489,7 +489,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         }
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            mPickerPromise.reject(E_PICKER_CANCELLED_KEY, E_PICKER_CANCELLED_MSG);
+          //  mPickerPromise.reject(E_PICKER_CANCELLED_KEY, E_PICKER_CANCELLED_MSG);
         } else if (resultCode == Activity.RESULT_OK) {
             if (multiple) {
                 ClipData clipData = data.getClipData();
@@ -536,7 +536,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         }
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            mPickerPromise.reject(E_PICKER_CANCELLED_KEY, E_PICKER_CANCELLED_MSG);
+           // mPickerPromise.reject(E_PICKER_CANCELLED_KEY, E_PICKER_CANCELLED_MSG);
         } else if (resultCode == Activity.RESULT_OK) {
             if (multiple) {
                 ClipData clipData = data.getClipData();
@@ -581,7 +581,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         }
 
         if (resultCode == Activity.RESULT_CANCELED) {
-            mPickerPromise.reject(E_PICKER_CANCELLED_KEY, E_PICKER_CANCELLED_MSG);
+           // mPickerPromise.reject(E_PICKER_CANCELLED_KEY, E_PICKER_CANCELLED_MSG);
         } else if (resultCode == Activity.RESULT_OK) {
             Uri uri = mCameraCaptureURI;
 
@@ -621,7 +621,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
                 mPickerPromise.reject(E_NO_IMAGE_DATA_FOUND, "Cannot find image data");
             }
         } else {
-            mPickerPromise.reject(E_PICKER_CANCELLED_KEY, E_PICKER_CANCELLED_MSG);
+          //  mPickerPromise.reject(E_PICKER_CANCELLED_KEY, E_PICKER_CANCELLED_MSG);
         }
     }
 
