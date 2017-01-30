@@ -13,6 +13,9 @@ let deviceWidth = Dimensions.get('window').width
 let deviceHeight = Dimensions.get('window').height
 
 export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, sortDirection, catId, keyboard, isSearch, isParentVault : bool = false) {
+
+  var folderId = (typeof (fId) == 'undefined' || fId == null || fId == '') ? '00000000-0000-0000-0000-000000000000' : fId;
+
   var urls = _.find(config.urls, { 'env': env });
   const splitChars = '|';
   var apiBaseUrl = urls.ApiBaseUrl;
@@ -34,7 +37,6 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
             var key = catId
           }
           var asOwner = false;
-
           switch (key) {
             case constans.MY_DOCUMENTS:
               functionName = 'RetrieveDocuments';
@@ -48,7 +50,7 @@ export function constructRetrieveDocumentsUrl(env, sessionToken, fId, sortBy, so
               functionName = 'RetrieveArchivedDocuments';
               break;
             case constans.DOCUMENTS_SHARE_WITH_ME:
-              functionName = 'RetrieveSharedDocuments';
+              functionName = folderId == '00000000-0000-0000-0000-000000000000' ? 'RetrieveSharedDocuments' : 'RetrieveDocuments';
               break;
             case constans.CHECKED_OUT_DOCUMENTS:
               functionName = 'RetrieveCheckedOutDocuments';
