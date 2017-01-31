@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
 
          super(props)
          this.state = {
-             selectedEnv: 'dev',
+             selectedEnv: 'production',
              value: {
                  username: "",
                  password: "",
@@ -340,8 +340,7 @@ const styles = StyleSheet.create({
                                    
                                     options={options}
                                 />
-                            {this.renderEnvPicker()}
-                            
+
                             <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
 
                             <TouchableWithoutFeedback onPress={ this.NavigateToForgotPassword.bind(this)} >
