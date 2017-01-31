@@ -32,7 +32,7 @@ class Document extends React.Component{
   constructor(props){
   
     super(props);
-   
+ 
     this.documentProps = this.props.data// _.filter(routes, function(o) { return o.key == 'document'; })[0];
    
     this.state = {  
@@ -44,6 +44,8 @@ class Document extends React.Component{
       toolbarVisible: true
     };
   }
+
+   webview = null;
 
 componentWillUnmount(){
       if (!this.state.toolbarVisible)
@@ -171,9 +173,17 @@ componentWillMount(){
        <View></View>
    )
  }
- 
 
-onBridgeMessage(message){
+ sendToBridge(message){
+       if (this.webview) {
+            this.webview.postMessage(message);
+    }
+ }
+ 
+onBridgeMessage(event){
+  console.log('this is the message from bridge: '); 
+  console.log(JSON.stringify(event)); 
+  var message = event.nativeEvent.data
   if (message == 'ViewerDocumentLoaded')
     setTimeout(this.hideLoading.bind(this), 300)
     }
@@ -182,61 +192,62 @@ hideLoading(){
   this.setState({isLoading: false});
 }
   zoomIn(){
-      const { webviewbridge } = this.refs;
-     webviewbridge.sendToBridge("zoomIn");
+     // const { webviewbridge } = this.refs;
+     this.sendToBridge("zoomIn");
   }
    zoomOut(){
-       const { webviewbridge } = this.refs;
-      webviewbridge.sendToBridge("zoomOut");
+     //  const { webviewbridge } = this.refs;
+      this.sendToBridge("zoomOut");
 
   }
   setZoom(value){
-      const { webviewbridge } = this.refs;
-      webviewbridge.sendToBridge("setZoom_" + value.toString());
+    //  const { webviewbridge } = this.refs;
+      this.sendToBridge("setZoom_" + value.toString());
   }
   orientationChanged(orientation){
-     const { webviewbridge } = this.refs;
-     webviewbridge.sendToBridge("onDeviceOrientationChanged_" + orientation);
+     //const { webviewbridge } = this.refs;
+     this.sendToBridge("onDeviceOrientationChanged_" + orientation);
   }
 
   // componentDidMount(){
   //   this.setState({isLoading: false});
   // }
 
+
   render(){
     console.log('this.props.data.viewerUrl = ' +  JSON.stringify(this.props.data));
     writeToLog("", constans.DEBUG, `Document Component - url: ${this.props.data.viewerUrl}`)
     const injectScript = `
       (function () {
-              if (WebViewBridge)
-                   WebViewBridge.onMessage = function (message) {
-                        if (message.indexOf("setZoom") >  -1)
-                        {
-                             var zoomLevel = parseInt(message.split("_")[1]);
-                             activateSetZoom(zoomLevel);
-                        } 
-                        else if (message.indexOf("onDeviceOrientationChanged") >  -1)
-                        {
-                             var orientation = message.split("_")[1];
-                             onDeviceOrientationChanged(orientation);
-                        } 
-                        else
-                          switch (message) {
-                                    case "zoomIn":
-                                        activateZoomIn();
-                                    break;
-                                    case "zoomOut":
-                                            activateZoomOut();
-                                    break;
-                                    case "setZoom":
-                                            activateSetZoom(100);
-                                    break;
+            document.addEventListener('message', function (event) {
+                var message = event.data;
+                if (message.indexOf("setZoom") >  -1)
+                {
+                      var zoomLevel = parseInt(message.split("_")[1]);
+                      activateSetZoom(zoomLevel);
+                } 
+                else if (message.indexOf("onDeviceOrientationChanged") >  -1)
+                {
+                      var orientation = message.split("_")[1];
+                      onDeviceOrientationChanged(orientation);
+                } 
+                else
+                  switch (message) {
+                            case "zoomIn":
+                                activateZoomIn();
+                            break;
+                            case "zoomOut":
+                                    activateZoomOut();
+                            break;
+                            case "setZoom":
+                                    activateSetZoom(100);
+                            break;
 
-                                   
-                                }
-                        
+                            
+                        }
+                
 
-                   }
+            })
                  
        }());
     
@@ -247,12 +258,11 @@ hideLoading(){
         
             {this.renderLoading()}
       
-            <WebViewBridge
-              ref="webviewbridge"
+            <WebView
+              ref={webview => { this.webview = webview; }}
               style={styles.webview_body}
               source={{ uri: this.props.data.viewerUrl }}
-              
-             // source={{ uri: 'https://viewer2d.kenesto.com/?t=1&document=http%3a%2f%2fstage-app.kenesto.com%2fKenesto%2fFile%2fExternalFileWithTokenAsAction%3fuserId%3dUFJDQiUyZktIVVd4MjQyWGVReExEcmtjclJyJTJmUXlhbmZDSiUyYk00dnZ0elhybk5iVkRwSFlyZVlKMEc4WVU3alNwUWRiciUyYlRCd1lDOUwlMmJDekpaWExCUEFwSSUyZkFpanNSRWZFMDB1V2libVA4ZUlmT3hQc3Y2UFMydUMlMmZsTW03Sm1rMGMyaEFRUHhhN2hGVHoyelBsblVWcWRTcEFFdFNndFFDZ1VpSHVUYUpPQzglM2Q%3d%26useItemVersion%3dFalse%26fileID%3d569e89c3-8dd4-4c21-90c6-cec2d3b9e7aa.xls' }}
+          
               onLoadEnd={this.onLoadEnd.bind(this) }
               javaScriptEnabled={true}
               domStorageEnabled={true}
