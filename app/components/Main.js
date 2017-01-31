@@ -40,13 +40,15 @@ import NetInfoManager from './NetInfoManager'
 //import PushController from './PushController';
 //import PushNotification from 'react-native-push-notification';
 //import OneSignal from 'react-native-onesignal';
-var MessageBarAlert = require('react-native-message-bar').MessageBar;
+
+import msBar from 'react-native-message-bar'
+var MessageBarAlert = msBar.MessageBar ;// require('react-native-message-bar').MessageBar;
 // var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 import DropDownOptions from './DropDownOptions';
 var Orientation = require('./KenestoDeviceOrientation');
-var Dimensions = require('Dimensions');
+//var Dimensions = require('Dimensions');
+import Dimensions from 'Dimensions'
 var { width, height } = Dimensions.get('window');
-
 let styles = StyleSheet.create({
   container: {
     flex: 1,
