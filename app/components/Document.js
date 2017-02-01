@@ -180,9 +180,10 @@ componentWillMount(){
     }
  }
  
-onBridgeMessage(event){
+onMessage(event){
+  alert('fdfd')
   console.log('this is the message from bridge: '); 
-  console.log(JSON.stringify(event)); 
+
   var message = event.nativeEvent.data
   if (message == 'ViewerDocumentLoaded')
     setTimeout(this.hideLoading.bind(this), 300)
@@ -209,17 +210,16 @@ hideLoading(){
      this.sendToBridge("onDeviceOrientationChanged_" + orientation);
   }
 
-  // componentDidMount(){
-  //   this.setState({isLoading: false});
-  // }
+  componentDidMount(){
+    this.setState({isLoading: false});
+  }
 
 
   render(){
-    console.log('this.props.data.viewerUrl = ' +  JSON.stringify(this.props.data));
     writeToLog("", constans.DEBUG, `Document Component - url: ${this.props.data.viewerUrl}`)
     const injectScript = `
       (function () {
-            document.addEventListener('message', function (event) {
+            window.addEventListener('message', function (event) {
                 var message = event.data;
                 if (message.indexOf("setZoom") >  -1)
                 {
@@ -256,8 +256,7 @@ hideLoading(){
 
       <View style={{ flex: 1 }}>
         
-            {this.renderLoading()}
-      
+          
             <WebView
               ref={webview => { this.webview = webview; }}
               style={styles.webview_body}
@@ -268,7 +267,7 @@ hideLoading(){
               domStorageEnabled={true}
               startInLoadingState={true}
               scalesPageToFit={true}
-              onBridgeMessage={this.onBridgeMessage.bind(this)}
+              onMessage={this.onMessage}
               injectedJavaScript={injectScript}
                    {...this.gestureResponder}
               />
