@@ -127,10 +127,10 @@ const styles = StyleSheet.create({
 
  class Login  extends React.Component { 
      constructor(props) {
-
+         var initialDev =  __DEV__ ? 'dev' : 'production';
          super(props)
          this.state = {
-             selectedEnv: 'production',
+             selectedEnv: initialDev,
              value: {
                  username: "",
                  password: "",
@@ -216,6 +216,9 @@ const styles = StyleSheet.create({
 
 
     renderEnvPicker(){
+            if (!__DEV__) {
+                return null;
+            }
             return(
                  <Picker
                     style={styles.picker}
@@ -340,7 +343,8 @@ const styles = StyleSheet.create({
                                    
                                     options={options}
                                 />
-
+                            {this.renderEnvPicker()}
+                            
                             <Button containerStyle={styles.loginBtnContainer} onPress={this._makeLogin.bind(this)} style={styles.loginBtn}>Login</Button>
 
                             <TouchableWithoutFeedback onPress={ this.NavigateToForgotPassword.bind(this)} >
@@ -366,6 +370,7 @@ const styles = StyleSheet.create({
 
 
     render(){
+
 
         if (this.props.isFetching ){
             return (
