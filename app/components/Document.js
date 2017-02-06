@@ -34,7 +34,6 @@ class Document extends React.Component{
     super(props);
    
     this.documentProps = this.props.data// _.filter(routes, function(o) { return o.key == 'document'; })[0];
-   
     this.state = {  
       isLoading: !this.props.data.isExternalLink,
       scalingEnabled: true,
@@ -44,11 +43,6 @@ class Document extends React.Component{
       toolbarVisible: true,
       clearId : null
     };
-  }
-
-componentWillUnmount(){
-      if (!this.state.toolbarVisible)
-        this.showToolBar();
   }
 
 componentWillMount(){
@@ -206,6 +200,8 @@ hideLoading(){
     
   }
   componentWillUnmount(){
+    if (!this.state.toolbarVisible)
+        this.showToolBar();
      if (this.state.clearId != null)
         clearTimeout(this.state.clearId);
   }

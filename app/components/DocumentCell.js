@@ -67,6 +67,10 @@ var DocumentCell = React.createClass({
     var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
     var uploadingInProgress = this.props.document.IsUploading
     var TouchableElement = TouchableHighlight;
+    var fileExtension = this.props.document.IsExternalLink? 'link' : this.props.document.FileExtension;
+
+    var documentName = fileExtension == '' || fileExtension == null ? this.props.document.Name : this.props.document.Name + fileExtension;
+
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
     }
@@ -86,7 +90,7 @@ var DocumentCell = React.createClass({
       }
       else {
         if (typeof this.props.document.IconName != 'undefined') {
-          var fileExtension = this.props.document.IsExternalLink? 'link' : this.props.document.FileExtension;
+         
           var iconName = getIconNameFromExtension(fileExtension).iconName;
           var customStyle = getIconNameFromExtension(fileExtension).customStyle;
           elementIcon = <View style={styles.iconFiletype}>
@@ -104,6 +108,7 @@ var DocumentCell = React.createClass({
     }
 
     return (
+      
       <View>  
         <TouchableElement
           onPress={this.props.onSelect}
@@ -119,7 +124,7 @@ var DocumentCell = React.createClass({
                   <CustomIcon name="checkout" style={[styles.icon, styles.smallIcon]} />
                 </View>}
                 <Text style={styles.documentTitle} numberOfLines={2}>
-                  {this.props.document.Name}
+                  {documentName}
                 </Text>
               </View>
               <Text style={styles.documentYear} numberOfLines={1}>
