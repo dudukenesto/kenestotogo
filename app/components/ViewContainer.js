@@ -44,7 +44,7 @@ class ViewContainer extends React.Component {
       
       
         {this.props.children}
-         <MessageBarAlert ref="alert" />
+        
       </View>
     )
   }
