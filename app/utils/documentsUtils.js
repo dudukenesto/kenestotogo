@@ -339,6 +339,9 @@ export function getIconNameFromExtension(extension: string) {
     case "link":
       iconName = "web";
       break;
+    case 'dropbox': 
+      iconName = 'dropbox';
+      break;
     case ".csv":
       iconName = "file-chart";
       break;
@@ -477,7 +480,8 @@ export function parseUploadUserData(userData: string) {
 }
 
 export function getViewerUrl(env: string, document: Object, orientation) {
-  if (document.isExternalLink) {
+ 
+   if (document.IsExternalLink && document.ExternalLinkType != 'DROPBOX') {
     return document.ViewerUrl;
   }
   else {
@@ -486,9 +490,7 @@ export function getViewerUrl(env: string, document: Object, orientation) {
     var shortDimension = window.height > window.width ? window.width : window.height;
     var width = orientation === 'PORTRAIT' ? shortDimension : longDimension;
     var height = orientation === 'PORTRAIT' ? longDimension : shortDimension;
-    
-    if (document.IsExternalLink)
-        return document.ViewerUrl;
+  
 
     var url = document.ViewerUrl.replace('localhost', getEnvIp(env)) + "&w=" + width + "&h=" + height + "&t=" + time;
     
@@ -497,7 +499,6 @@ export function getViewerUrl(env: string, document: Object, orientation) {
       
       url = url + '&tu=' + encodeURIComponent(document.ThumbnailUrl);
     }
-    
     return url;
   }
 }

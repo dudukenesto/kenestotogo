@@ -147,6 +147,7 @@ export function getDocumentInfo(documentId: string, familyCode: string, actionTy
                         fId: documentlist.fId,
                         viewerUrl:viewerUrl,
                         isExternalLink: document.IsExternalLink,
+                        externalLinkType: document.ExternalLinkType,
                         isVault: document.IsVault,
                         ThumbnailUrl: document.ThumbnailUrl,
                         env: env,
@@ -697,6 +698,7 @@ export function downloadDocument(id: string, fileName: string, mimeType: string)
                 })
                     .fetch('GET', downloadUrl)
                     .then((res) => {
+                     
                         //  RNFetchBlob.android.actionViewIntent( res.path(), 'image/jpg')
                     }
                     // RNFetchBlob.fs.scanFile([ { path : res.path(), mime : 'audio/mpeg' } ]

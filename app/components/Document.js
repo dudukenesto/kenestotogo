@@ -33,9 +33,12 @@ class Document extends React.Component{
   
     super(props);
    
-    this.documentProps = this.props.data// _.filter(routes, function(o) { return o.key == 'document'; })[0];
+    this.documentProps = this.props.data;
+    var isloading = !this.props.data.isExternalLink; 
+    if (this.props.data.externalLinkType == 'DROPBOX')
+        isloading = true;
     this.state = {  
-      isLoading: !this.props.data.isExternalLink,
+      isLoading: isloading,
       scalingEnabled: true,
       prevPinch: null, 
       pinchDirection : null, 
@@ -248,7 +251,7 @@ hideLoading(){
       <View style={{ flex: 1 }}>
            
             {this.renderLoading()}
-      
+     
             <WebViewBridge
               ref="webviewbridge"
               style={styles.webview_body}

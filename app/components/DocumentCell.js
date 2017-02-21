@@ -67,9 +67,18 @@ var DocumentCell = React.createClass({
     var dummyProgressBar = <View style={styles.progressBarContainer}><Progress.Bar indeterminate={true}  width={75} height={4} borderRadius={0} borderWidth={0} unfilledColor={"#ccc"} /></View>
     var uploadingInProgress = this.props.document.IsUploading
     var TouchableElement = TouchableHighlight;
-    var fileExtension = this.props.document.IsExternalLink? 'link' : this.props.document.FileExtension;
+    var fileExtension = this.props.document.FileExtension; // this.props.document.IsExternalLink? 'link' : this.props.document.FileExtension;
+    if (this.props.document.IsExternalLink){
+        if (this.props.document.ExternalLinkType == 'DROPBOX')
+        {
+            fileExtension = 'dropbox'; 
+        }
+            
+        else 
+              fileExtension = 'link';
+      }
 
-    var documentName = fileExtension == '' || fileExtension == null ? this.props.document.Name : this.props.document.Name + fileExtension;
+    var documentName = this.props.document.IsExternalLink || fileExtension == '' || fileExtension == null ? this.props.document.Name : this.props.document.Name + fileExtension;
 
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
