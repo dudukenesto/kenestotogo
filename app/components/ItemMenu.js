@@ -410,7 +410,6 @@ class ItemMenu extends React.Component {
     }
 
     render() {
-        console.log(this.props.documentsReducer.selectedObject.permissions)
         var elementIcon;
         const {navReducer} = this.props
         var currRouteData = getDocumentsContext(navReducer);
@@ -425,8 +424,10 @@ class ItemMenu extends React.Component {
             }
             else {
                 if (typeof this.state.document.IconName != 'undefined') {
-                    var iconName = getIconNameFromExtension(this.state.document.FileExtension).iconName;
-                    var customStyle = getIconNameFromExtension(this.state.document.FileExtension).customStyle;
+                     var fileExtension = this.state.document.IsExternalLink && this.state.document.ExternalLinkType != 'DROPBOX' ?
+                                            FileExtension = 'link' :  this.state.document.FileExtension;
+                    var iconName = getIconNameFromExtension(fileExtension).iconName;
+                    var customStyle = getIconNameFromExtension(fileExtension).customStyle;
                     elementIcon = <View style={styles.iconFiletype}>
                         {iconName === 'solidw' ?
                             <CustomIcon name={iconName} style={[styles.icon, customStyle]} />
